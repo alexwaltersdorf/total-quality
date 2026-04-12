@@ -10,6 +10,7 @@ import {
   ArrowUpRight,
   Check,
 } from "lucide-react";
+import { Link } from "wouter";
 
 const DIAGNOSTIC_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-lab_848f61cd.png";
 const CARDIOLOGY_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-cardiology_f4f4a6c3.png";
@@ -146,6 +147,20 @@ export default function ExamesSection() {
                 Agendar Exame
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
+              <Link
+                href="/checkup"
+                className="btn-pill bg-transparent !text-foreground border border-black/15 hover:!bg-black/5"
+              >
+                Check-Up
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </Link>
+              <Link
+                href="/bioimpedancia"
+                className="btn-pill bg-transparent !text-foreground border border-black/15 hover:!bg-black/5"
+              >
+                Bioimpedância
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
           </div>
         </div>

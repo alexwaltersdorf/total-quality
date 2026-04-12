@@ -4,6 +4,7 @@
  */
 import { useState, useEffect } from "react";
 import { Menu, X, ArrowUpRight } from "lucide-react";
+import { Link, useLocation } from "wouter";
 
 const navLinks = [
   { label: "Início", href: "#inicio" },
@@ -11,6 +12,11 @@ const navLinks = [
   { label: "Exames", href: "#exames" },
   { label: "Sobre", href: "#sobre" },
   { label: "Contato", href: "#contato" },
+];
+
+const serviceLinks = [
+  { label: "Check-Up", href: "/checkup" },
+  { label: "Bioimpedância", href: "/bioimpedancia" },
 ];
 
 export default function Navbar() {
@@ -60,6 +66,15 @@ export default function Navbar() {
               {link.label}
             </button>
           ))}
+          {serviceLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-xs font-semibold uppercase tracking-[0.15em] text-brand/80 hover:text-brand transition-colors duration-300"
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
 
         {/* Desktop CTA */}
@@ -107,6 +122,19 @@ export default function Navbar() {
                   {link.label.toUpperCase()}
                 </span>
               </button>
+            ))}
+            {serviceLinks.map((link, i) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="block w-full text-left py-4 border-b border-black/5"
+                style={{ animationDelay: `${(navLinks.length + i) * 50}ms` }}
+                onClick={() => setMobileOpen(false)}
+              >
+                <span className="heading-display text-4xl text-brand hover:text-brand-dark transition-colors">
+                  {link.label.toUpperCase()}
+                </span>
+              </Link>
             ))}
           </div>
           <div className="mt-10 space-y-4">

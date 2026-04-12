@@ -3,13 +3,19 @@
  * Footer: Clean layout with brand, links, contact info
  */
 import { Phone, MessageCircle, Instagram, MapPin, ArrowUpRight } from "lucide-react";
+import { Link } from "wouter";
 
 const footerLinks = [
-  { label: "Início", href: "#inicio" },
-  { label: "Diferenciais", href: "#diferenciais" },
-  { label: "Exames", href: "#exames" },
-  { label: "Sobre", href: "#sobre" },
-  { label: "Contato", href: "#contato" },
+  { label: "Início", href: "#inicio", isRoute: false },
+  { label: "Diferenciais", href: "#diferenciais", isRoute: false },
+  { label: "Exames", href: "#exames", isRoute: false },
+  { label: "Sobre", href: "#sobre", isRoute: false },
+  { label: "Contato", href: "#contato", isRoute: false },
+];
+
+const serviceLinks = [
+  { label: "Check-Up Preventivo", href: "/checkup" },
+  { label: "Bioimpedância", href: "/bioimpedancia" },
 ];
 
 export default function Footer() {
@@ -61,6 +67,19 @@ export default function Footer() {
                   >
                     {link.label}
                   </button>
+                </li>
+              ))}
+            </ul>
+            <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-white/40 mb-4 mt-8">Serviços</h4>
+            <ul className="space-y-3">
+              {serviceLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-white/60 hover:text-white text-sm transition-colors"
+                  >
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>
