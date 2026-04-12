@@ -1,58 +1,67 @@
 /*
- * Design: "Warm Clinical" — Humanized Material Design 3
- * Cartão Total Quality: CTA section for the loyalty card
+ * Style: Optik Editorial — Dark CTA section with brand accent
+ * Cartão Total Quality: Promotional block
  */
-import { Button } from "@/components/ui/button";
-import { CreditCard, Users, Percent, ArrowRight } from "lucide-react";
+import { ArrowUpRight, CreditCard, Users, Percent } from "lucide-react";
 
 export default function CartaoSection() {
   return (
-    <section className="py-16 lg:py-20 relative overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-teal-600 via-teal-700 to-teal-800" />
-      <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+    <section className="py-24 lg:py-32 bg-foreground text-white relative overflow-hidden">
+      {/* Decorative large text */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none">
+        <span className="heading-display text-[20vw] text-white/[0.03] whitespace-nowrap">
+          TOTAL QUALITY
+        </span>
+      </div>
 
-      <div className="relative container">
-        <div className="grid lg:grid-cols-2 gap-10 items-center">
+      <div className="container relative z-10">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Text */}
           <div className="reveal">
-            <div className="inline-flex items-center gap-2 bg-white/15 text-white/90 text-sm font-medium px-4 py-2 rounded-full mb-6 border border-white/10">
+            <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-brand-light mb-6">
               <CreditCard className="w-4 h-4" />
               Novidade
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-              Cartão Total Quality
+            </span>
+            <h2 className="heading-display text-5xl sm:text-6xl lg:text-7xl text-white mb-6">
+              CARTÃO
+              <br />
+              <span className="text-brand-light">TOTAL QUALITY</span>
             </h2>
-            <p className="text-lg text-white/80 leading-relaxed mb-8 max-w-lg">
+            <p className="text-lg text-white/60 leading-relaxed mb-10 max-w-lg">
               Descontos exclusivos em exames para toda sua família. Faça seu cartão e aproveite benefícios especiais em todos os nossos serviços.
             </p>
-            <Button
-              size="lg"
-              className="rounded-full bg-white text-teal-800 hover:bg-teal-50 font-semibold px-8 py-6 shadow-lg hover:shadow-xl transition-all ripple-effect"
+            <button
               onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de saber mais sobre o Cartão Total Quality.", "_blank")}
+              className="btn-pill bg-white !text-foreground hover:!bg-brand hover:!text-white"
             >
               Saiba Mais
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
           </div>
 
-          {/* Benefits cards */}
-          <div className="reveal grid grid-cols-2 gap-4" style={{ transitionDelay: "200ms" }}>
-            <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-6 border border-white/10">
-              <Percent className="w-8 h-8 text-teal-200 mb-3" />
-              <h3 className="text-lg font-semibold text-white mb-1">Descontos</h3>
-              <p className="text-sm text-white/70">Preços especiais em todos os exames</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-6 border border-white/10">
-              <Users className="w-8 h-8 text-teal-200 mb-3" />
-              <h3 className="text-lg font-semibold text-white mb-1">Família</h3>
-              <p className="text-sm text-white/70">Benefícios para toda a família</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-6 border border-white/10 col-span-2">
-              <CreditCard className="w-8 h-8 text-teal-200 mb-3" />
-              <h3 className="text-lg font-semibold text-white mb-1">Fácil e Prático</h3>
-              <p className="text-sm text-white/70">Cadastro simples e rápido, sem burocracia. Comece a economizar hoje mesmo.</p>
-            </div>
+          {/* Benefits */}
+          <div className="reveal grid grid-cols-1 gap-0" style={{ transitionDelay: "200ms" }}>
+            {[
+              { icon: Percent, title: "Descontos Exclusivos", description: "Preços especiais em todos os exames da clínica" },
+              { icon: Users, title: "Benefícios Familiares", description: "Extensível para toda a família sem custo adicional" },
+              { icon: CreditCard, title: "Fácil e Prático", description: "Cadastro simples e rápido, sem burocracia" },
+            ].map((item, i) => (
+              <div
+                key={item.title}
+                className={`flex items-start gap-6 py-8 ${i < 2 ? "border-b border-white/10" : ""}`}
+              >
+                <div className="w-12 h-12 flex items-center justify-center text-brand-light shrink-0">
+                  <item.icon className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-1">{item.title}</h3>
+                  <p className="text-sm text-white/50">{item.description}</p>
+                </div>
+                <span className="number-outline !text-4xl ![-webkit-text-stroke:1px_rgba(255,255,255,0.1)] ml-auto">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

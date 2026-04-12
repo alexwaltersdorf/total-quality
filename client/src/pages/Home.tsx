@@ -1,6 +1,6 @@
 /*
- * Design: "Warm Clinical" — Humanized Material Design 3
- * Home page: Composes all sections in the patient journey order
+ * Style: Optik Editorial — Minimalist, uppercase display type, brand #9B212B
+ * Home page: Composes all sections in editorial flow
  * Hero → Diferenciais → Exames → Cartão → Sobre → Contato → Footer
  */
 import { useScrollReveal } from "@/hooks/useScrollReveal";
