@@ -1,6 +1,6 @@
 /*
  * Style: Optik Editorial — Giant display type, asymmetric layout
- * Theme: Dark gray background (#5A5A5A), white text, brand #9B212B
+ * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  */
 import { ArrowUpRight } from "lucide-react";
 
@@ -15,7 +15,7 @@ const marqueeItems = [
 
 export default function HeroSection() {
   return (
-    <section id="inicio" className="relative min-h-screen bg-surface overflow-hidden">
+    <section id="inicio" className="relative min-h-screen bg-white overflow-hidden">
       {/* Main content grid */}
       <div className="container relative z-10 pt-28 lg:pt-32 pb-16">
         <div className="grid lg:grid-cols-12 gap-8 items-start">
@@ -26,12 +26,12 @@ export default function HeroSection() {
             </div>
 
             <h1 className="reveal heading-display text-[clamp(3.5rem,10vw,8rem)] leading-[0.85] mb-8" style={{ transitionDelay: "100ms" }}>
-              <span className="text-white/90">TOTAL</span>
+              <span className="text-text">TOTAL</span>
               <br />
               <span className="text-brand">QUALITY</span>
             </h1>
 
-            <p className="reveal text-lg text-white/60 leading-relaxed max-w-md mb-10" style={{ transitionDelay: "200ms" }}>
+            <p className="reveal text-lg text-text-light leading-relaxed max-w-md mb-10" style={{ transitionDelay: "200ms" }}>
               Desde 2003, mais de 30.000 famílias confiam na nossa combinação de tecnologia de última geração e atendimento humanizado.
             </p>
 
@@ -48,7 +48,7 @@ export default function HeroSection() {
                   const el = document.querySelector("#exames");
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="btn-pill bg-transparent !text-white border border-white/20 hover:!bg-white/10"
+                className="btn-pill !bg-transparent !text-text border border-black/15 hover:!bg-black/5"
               >
                 Ver Exames
                 <ArrowUpRight className="w-3.5 h-3.5" />
@@ -64,7 +64,7 @@ export default function HeroSection() {
               ].map((stat) => (
                 <div key={stat.label}>
                   <p className="heading-display text-4xl lg:text-5xl text-brand">{stat.value}</p>
-                  <p className="text-xs text-white/50 uppercase tracking-wider mt-1 whitespace-pre-line">{stat.label}</p>
+                  <p className="text-xs text-text-muted uppercase tracking-wider mt-1 whitespace-pre-line">{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -79,24 +79,24 @@ export default function HeroSection() {
                 className="w-full h-[50vh] lg:h-[80vh] object-cover"
               />
               {/* Floating info card */}
-              <div className="absolute bottom-6 left-6 bg-surface-dark/95 backdrop-blur-sm p-5 max-w-xs">
+              <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-5 max-w-xs shadow-lg">
                 <p className="text-xs uppercase tracking-[0.15em] font-semibold text-brand mb-1">Caraguatatuba-SP</p>
-                <p className="text-sm text-white/70">Rua Padre Anchieta, 1010 - Centro</p>
-                <p className="text-sm text-white/70">Seg-Sex: 08h às 18h</p>
+                <p className="text-sm text-text-light">Rua Padre Anchieta, 1010 - Centro</p>
+                <p className="text-sm text-text-light">Seg-Sex: 08h às 18h</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Marquee strip — gray background, white text */}
-      <div className="py-4 overflow-hidden bg-surface-dark border-t border-b border-white/10">
+      {/* Marquee strip — light gray background, dark text */}
+      <div className="py-4 overflow-hidden bg-surface-dark border-t border-b border-black/5">
         <div className="animate-marquee whitespace-nowrap flex">
           {Array.from({ length: 3 }).map((_, i) => (
             <span key={i} className="inline-flex items-center gap-8 mx-8">
               {marqueeItems.map((item) => (
                 <span key={`${i}-${item}`} className="inline-flex items-center gap-8">
-                  <span className="heading-display text-2xl text-white">{item}</span>
+                  <span className="heading-display text-2xl text-text">{item}</span>
                   <span className="w-2 h-2 rounded-full bg-brand" />
                 </span>
               ))}

@@ -1,6 +1,6 @@
 /*
  * Style: Optik Editorial — Giant display type, asymmetric layout, brand #9B212B
- * Theme: Dark gray background, white text
+ * Theme: White background, dark gray #5A5A5A text
  * Page: Bioimpedância
  */
 import { useEffect, useRef } from "react";
@@ -53,13 +53,13 @@ export default function Bioimpedancia() {
   }, []);
 
   return (
-    <div ref={wrapperRef} className="min-h-screen bg-surface">
+    <div ref={wrapperRef} className="min-h-screen bg-white">
       {/* Sticky top bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-surface-dark/95 backdrop-blur-md border-b border-white/10">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-black/10">
         <div className="container flex items-center justify-between py-4">
           <Link href="/" className="flex items-center gap-3 group">
-            <ArrowLeft className="w-5 h-5 text-white/50 group-hover:text-brand transition-colors" />
-            <span className="heading-display text-2xl tracking-tight text-white group-hover:text-brand transition-colors">
+            <ArrowLeft className="w-5 h-5 text-text-muted group-hover:text-brand transition-colors" />
+            <span className="heading-display text-2xl tracking-tight text-text group-hover:text-brand transition-colors">
               TOTAL QUALITY
             </span>
           </Link>
@@ -81,12 +81,12 @@ export default function Bioimpedancia() {
               <div className="reveal">
                 <span className="section-label mb-6 block">Composição Corporal</span>
               </div>
-              <h1 className="reveal heading-display text-[clamp(3rem,8vw,6.5rem)] text-white leading-[0.85] mb-6" style={{ transitionDelay: "100ms" }}>
+              <h1 className="reveal heading-display text-[clamp(3rem,8vw,6.5rem)] text-text leading-[0.85] mb-6" style={{ transitionDelay: "100ms" }}>
                 BIO
                 <br />
                 <span className="text-brand">IMPEDÂNCIA</span>
               </h1>
-              <p className="reveal text-lg text-white/60 leading-relaxed max-w-md mb-8" style={{ transitionDelay: "200ms" }}>
+              <p className="reveal text-lg text-text-light leading-relaxed max-w-md mb-8" style={{ transitionDelay: "200ms" }}>
                 Conheça seu corpo por dentro. A bioimpedância é o exame mais preciso e acessível para analisar sua composição corporal completa: gordura, músculo, água e muito mais.
               </p>
               <div className="reveal flex flex-wrap gap-4 mb-12" style={{ transitionDelay: "300ms" }}>
@@ -99,7 +99,7 @@ export default function Bioimpedancia() {
                 </button>
                 <button
                   onClick={() => { const el = document.querySelector("#metricas"); if (el) el.scrollIntoView({ behavior: "smooth" }); }}
-                  className="btn-pill bg-transparent !text-white border border-white/20 hover:!bg-white/10"
+                  className="btn-pill bg-transparent !text-text border border-black/20 hover:!bg-black/5"
                 >
                   O que Analisa
                   <ArrowUpRight className="w-3.5 h-3.5" />
@@ -113,7 +113,7 @@ export default function Bioimpedancia() {
                 ].map((stat) => (
                   <div key={stat.label}>
                     <p className="heading-display text-4xl text-brand">{stat.value}</p>
-                    <p className="text-xs text-white/50 uppercase tracking-wider mt-1 whitespace-pre-line">{stat.label}</p>
+                    <p className="text-xs text-text-muted uppercase tracking-wider mt-1 whitespace-pre-line">{stat.label}</p>
                   </div>
                 ))}
               </div>
@@ -121,9 +121,9 @@ export default function Bioimpedancia() {
             <div className="lg:col-span-7 reveal-right">
               <div className="relative">
                 <img src={HERO_IMG} alt="Exame de Bioimpedância" className="w-full h-[50vh] lg:h-[75vh] object-cover" />
-                <div className="absolute bottom-6 left-6 bg-surface-dark/95 backdrop-blur-sm p-5 max-w-xs">
+                <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-5 max-w-xs shadow-sm">
                   <p className="text-xs uppercase tracking-[0.15em] font-semibold text-brand mb-1">Não Invasivo</p>
-                  <p className="text-sm text-white/60">Exame rápido, indolor e com resultados imediatos</p>
+                  <p className="text-sm text-text-light">Exame rápido, indolor e com resultados imediatos</p>
                 </div>
               </div>
             </div>
@@ -132,15 +132,15 @@ export default function Bioimpedancia() {
       </section>
 
       {/* What is Bioimpedance */}
-      <section className="py-24 lg:py-32 border-t border-white/10">
+      <section className="py-24 lg:py-32 border-t border-black/10">
         <div className="container">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="reveal">
               <span className="section-label mb-6 block">O Exame</span>
-              <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-white leading-[0.9] mb-6">
+              <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-6">
                 O QUE É A<br /><span className="text-brand">BIOIMPEDÂNCIA?</span>
               </h2>
-              <div className="space-y-4 text-white/60 leading-relaxed">
+              <div className="space-y-4 text-text-light leading-relaxed">
                 <p>
                   A bioimpedância elétrica (BIA) é um método de avaliação da composição corporal que utiliza uma corrente elétrica de baixa intensidade para medir a resistência dos diferentes tecidos do corpo.
                 </p>
@@ -164,10 +164,10 @@ export default function Bioimpedancia() {
         <div className="container">
           <div className="reveal text-center mb-16">
             <span className="section-label mb-6 inline-block">Métricas Analisadas</span>
-            <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-white leading-[0.9] mb-4">
+            <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-4">
               O QUE O EXAME <span className="text-brand">REVELA</span>
             </h2>
-            <p className="text-white/60 text-lg max-w-2xl mx-auto">
+            <p className="text-text-light text-lg max-w-2xl mx-auto">
               Cada métrica oferece informações valiosas sobre sua saúde e composição corporal.
             </p>
           </div>
@@ -175,16 +175,16 @@ export default function Bioimpedancia() {
             {metrics.map((m, i) => (
               <div
                 key={m.title}
-                className="reveal bg-surface p-8 border border-white/10 hover:border-brand/30 transition-all duration-300 group"
+                className="reveal bg-white p-8 border border-black/10 hover:border-brand/30 transition-all duration-300 group"
                 style={{ transitionDelay: `${i * 80}ms` }}
               >
                 <div className="flex items-start gap-4 mb-4">
                   <div className="w-12 h-12 flex items-center justify-center bg-surface-dark text-brand flex-shrink-0 group-hover:bg-brand group-hover:text-white transition-all duration-300">
                     <m.icon className="w-5 h-5" />
                   </div>
-                  <h3 className="heading-display text-xl text-white pt-2">{m.title}</h3>
+                  <h3 className="heading-display text-xl text-text pt-2">{m.title}</h3>
                 </div>
-                <p className="text-sm text-white/50 leading-relaxed">{m.desc}</p>
+                <p className="text-sm text-text-muted leading-relaxed">{m.desc}</p>
               </div>
             ))}
           </div>
@@ -192,16 +192,16 @@ export default function Bioimpedancia() {
       </section>
 
       {/* Who Needs Section */}
-      <section className="py-24 lg:py-32 bg-surface">
+      <section className="py-24 lg:py-32 bg-white">
         <div className="container">
           <div className="grid lg:grid-cols-12 gap-16 items-start">
             <div className="lg:col-span-5">
               <div className="reveal lg:sticky lg:top-28">
                 <span className="section-label mb-6 block">Indicações</span>
-                <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-white leading-[0.9] mb-6">
+                <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-6">
                   PARA QUEM É<br /><span className="text-brand">INDICADO?</span>
                 </h2>
-                <p className="text-white/60 text-lg leading-relaxed">
+                <p className="text-text-light text-lg leading-relaxed">
                   A bioimpedância é uma ferramenta versátil, útil tanto para atletas de alto rendimento quanto para quem busca melhorar a saúde e a forma física.
                 </p>
               </div>
@@ -209,13 +209,13 @@ export default function Bioimpedancia() {
             <div className="lg:col-span-7">
               <div className="space-y-0">
                 {whoNeeds.map((item, i) => (
-                  <div key={item.title} className="reveal flex gap-6 py-8 border-b border-white/10" style={{ transitionDelay: `${i * 100}ms` }}>
+                  <div key={item.title} className="reveal flex gap-6 py-8 border-b border-black/10" style={{ transitionDelay: `${i * 100}ms` }}>
                     <div className="w-14 h-14 flex items-center justify-center bg-surface-dark text-brand flex-shrink-0">
                       <item.icon className="w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="heading-display text-2xl text-white mb-2">{item.title}</h3>
-                      <p className="text-sm text-white/50 leading-relaxed">{item.desc}</p>
+                      <h3 className="heading-display text-2xl text-text mb-2">{item.title}</h3>
+                      <p className="text-sm text-text-muted leading-relaxed">{item.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -230,7 +230,7 @@ export default function Bioimpedancia() {
         <div className="container">
           <div className="reveal text-center mb-16">
             <span className="section-label mb-6 inline-block">Preparo</span>
-            <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-white leading-[0.9] mb-4">
+            <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-4">
               COMO SE <span className="text-brand">PREPARAR</span>
             </h2>
           </div>
@@ -243,8 +243,8 @@ export default function Bioimpedancia() {
             ].map((step, i) => (
               <div key={step.num} className="reveal text-center" style={{ transitionDelay: `${i * 100}ms` }}>
                 <span className="number-outline text-7xl block mb-4">{step.num}</span>
-                <h3 className="heading-display text-xl text-white mb-2">{step.title}</h3>
-                <p className="text-sm text-white/50">{step.desc}</p>
+                <h3 className="heading-display text-xl text-text mb-2">{step.title}</h3>
+                <p className="text-sm text-text-muted">{step.desc}</p>
               </div>
             ))}
           </div>
@@ -252,16 +252,16 @@ export default function Bioimpedancia() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-24 lg:py-32 bg-surface">
+      <section className="py-24 lg:py-32 bg-white">
         <div className="container">
           <div className="grid lg:grid-cols-12 gap-16">
             <div className="lg:col-span-4">
               <div className="reveal lg:sticky lg:top-28">
                 <span className="section-label mb-6 block">Dúvidas</span>
-                <h2 className="heading-display text-[clamp(2.5rem,5vw,4rem)] text-white leading-[0.9] mb-6">
+                <h2 className="heading-display text-[clamp(2.5rem,5vw,4rem)] text-text leading-[0.9] mb-6">
                   PERGUNTAS<br /><span className="text-brand">FREQUENTES</span>
                 </h2>
-                <p className="text-white/60 leading-relaxed">
+                <p className="text-text-light leading-relaxed">
                   Tire suas dúvidas sobre o exame de bioimpedância. Se precisar de mais informações, entre em contato conosco.
                 </p>
               </div>
@@ -269,13 +269,13 @@ export default function Bioimpedancia() {
             <div className="lg:col-span-8">
               <div className="space-y-0">
                 {faqs.map((faq, i) => (
-                  <details key={i} className="reveal group border-b border-white/10" style={{ transitionDelay: `${i * 80}ms` }}>
+                  <details key={i} className="reveal group border-b border-black/10" style={{ transitionDelay: `${i * 80}ms` }}>
                     <summary className="flex items-center justify-between py-6 cursor-pointer list-none">
-                      <h3 className="heading-display text-xl text-white group-hover:text-brand transition-colors pr-4">{faq.q}</h3>
+                      <h3 className="heading-display text-xl text-text group-hover:text-brand transition-colors pr-4">{faq.q}</h3>
                       <span className="heading-display text-2xl text-brand flex-shrink-0 transition-transform group-open:rotate-45">+</span>
                     </summary>
                     <div className="pb-6 pr-12">
-                      <p className="text-sm text-white/50 leading-relaxed">{faq.a}</p>
+                      <p className="text-sm text-text-muted leading-relaxed">{faq.a}</p>
                     </div>
                   </details>
                 ))}
@@ -333,13 +333,13 @@ export default function Bioimpedancia() {
       </section>
 
       {/* Back to Home */}
-      <section className="py-12 border-t border-white/10 bg-surface-dark">
+      <section className="py-12 border-t border-black/10 bg-white">
         <div className="container flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-sm text-white/50 hover:text-brand transition-colors">
+          <Link href="/" className="flex items-center gap-2 text-sm text-text-muted hover:text-brand transition-colors">
             <ArrowLeft className="w-4 h-4" />
             Voltar ao Início
           </Link>
-          <Link href="/checkup" className="flex items-center gap-2 text-sm text-white/50 hover:text-brand transition-colors">
+          <Link href="/checkup" className="flex items-center gap-2 text-sm text-text-muted hover:text-brand transition-colors">
             Check-Up Preventivo
             <ArrowUpRight className="w-4 h-4" />
           </Link>

@@ -1,6 +1,6 @@
 /*
  * Style: Optik Editorial — Clean WhatsApp FAB
- * Theme: Dark gray background, white text, brand #9B212B
+ * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  */
 import { useState, useEffect } from "react";
 import { MessageCircle, X } from "lucide-react";
@@ -29,9 +29,9 @@ export default function WhatsAppFAB() {
           expanded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
         }`}
       >
-        <div className="bg-surface-dark shadow-xl p-5 w-64 border border-white/10">
-          <p className="font-semibold text-white text-sm mb-1">Precisa de ajuda?</p>
-          <p className="text-white/50 text-xs mb-3">Agende seu exame pelo WhatsApp de forma rápida.</p>
+        <div className="bg-white shadow-xl p-5 w-64 border border-black/10">
+          <p className="font-semibold text-text text-sm mb-1">Precisa de ajuda?</p>
+          <p className="text-text-muted text-xs mb-3">Agende seu exame pelo WhatsApp de forma rápida.</p>
           <a
             href="https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame."
             target="_blank"
@@ -48,7 +48,7 @@ export default function WhatsAppFAB() {
         onClick={() => setExpanded(!expanded)}
         className={`w-14 h-14 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 ${
           expanded
-            ? "bg-surface-dark hover:bg-surface"
+            ? "bg-text hover:bg-text-light"
             : "bg-[#25D366] hover:bg-[#1da851] animate-bounce-gentle"
         }`}
         style={{

@@ -1,6 +1,6 @@
 /*
  * Style: Optik Editorial — Giant display type, asymmetric layout, brand #9B212B
- * Theme: Dark gray background, white text
+ * Theme: White background, dark gray #5A5A5A text
  * Page: Check-Up Preventivo
  */
 import { useEffect, useRef } from "react";
@@ -76,13 +76,13 @@ export default function CheckUp() {
   }, []);
 
   return (
-    <div ref={wrapperRef} className="min-h-screen bg-surface">
+    <div ref={wrapperRef} className="min-h-screen bg-white">
       {/* Sticky top bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-surface-dark/95 backdrop-blur-md border-b border-white/10">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-black/10">
         <div className="container flex items-center justify-between py-4">
           <Link href="/" className="flex items-center gap-3 group">
-            <ArrowLeft className="w-5 h-5 text-white/50 group-hover:text-brand transition-colors" />
-            <span className="heading-display text-2xl tracking-tight text-white group-hover:text-brand transition-colors">
+            <ArrowLeft className="w-5 h-5 text-text-muted group-hover:text-brand transition-colors" />
+            <span className="heading-display text-2xl tracking-tight text-text group-hover:text-brand transition-colors">
               TOTAL QUALITY
             </span>
           </Link>
@@ -104,12 +104,12 @@ export default function CheckUp() {
               <div className="reveal">
                 <span className="section-label mb-6 block">Saúde Preventiva</span>
               </div>
-              <h1 className="reveal heading-display text-[clamp(3rem,8vw,7rem)] text-white leading-[0.85] mb-6" style={{ transitionDelay: "100ms" }}>
+              <h1 className="reveal heading-display text-[clamp(3rem,8vw,7rem)] text-text leading-[0.85] mb-6" style={{ transitionDelay: "100ms" }}>
                 CHECK-UP
                 <br />
                 <span className="text-brand">PREVENTIVO</span>
               </h1>
-              <p className="reveal text-lg text-white/60 leading-relaxed max-w-md mb-8" style={{ transitionDelay: "200ms" }}>
+              <p className="reveal text-lg text-text-light leading-relaxed max-w-md mb-8" style={{ transitionDelay: "200ms" }}>
                 Cuide da sua saúde de forma completa. Nossos pacotes de check-up combinam exames laboratoriais, de imagem e cardiológicos para uma avaliação abrangente do seu estado de saúde.
               </p>
               <div className="reveal flex flex-wrap gap-4 mb-12" style={{ transitionDelay: "300ms" }}>
@@ -122,7 +122,7 @@ export default function CheckUp() {
                 </button>
                 <button
                   onClick={() => { const el = document.querySelector("#pacotes"); if (el) el.scrollIntoView({ behavior: "smooth" }); }}
-                  className="btn-pill bg-transparent !text-white border border-white/20 hover:!bg-white/10"
+                  className="btn-pill bg-transparent !text-text border border-black/20 hover:!bg-black/5"
                 >
                   Ver Pacotes
                   <ArrowUpRight className="w-3.5 h-3.5" />
@@ -136,7 +136,7 @@ export default function CheckUp() {
                 ].map((stat) => (
                   <div key={stat.label}>
                     <p className="heading-display text-4xl text-brand">{stat.value}</p>
-                    <p className="text-xs text-white/50 uppercase tracking-wider mt-1 whitespace-pre-line">{stat.label}</p>
+                    <p className="text-xs text-text-muted uppercase tracking-wider mt-1 whitespace-pre-line">{stat.label}</p>
                   </div>
                 ))}
               </div>
@@ -144,9 +144,9 @@ export default function CheckUp() {
             <div className="lg:col-span-7 reveal-right">
               <div className="relative">
                 <img src={HERO_IMG} alt="Check-Up Preventivo" className="w-full h-[50vh] lg:h-[75vh] object-cover" />
-                <div className="absolute bottom-6 left-6 bg-surface-dark/95 backdrop-blur-sm p-5 max-w-xs">
+                <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-5 max-w-xs shadow-sm">
                   <p className="text-xs uppercase tracking-[0.15em] font-semibold text-brand mb-1">Tecnologia Avançada</p>
-                  <p className="text-sm text-white/60">Equipamentos de última geração para diagnósticos precisos</p>
+                  <p className="text-sm text-text-light">Equipamentos de última geração para diagnósticos precisos</p>
                 </div>
               </div>
             </div>
@@ -164,10 +164,10 @@ export default function CheckUp() {
             <div className="lg:col-span-7">
               <div className="reveal">
                 <span className="section-label mb-6 block">Por que fazer?</span>
-                <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-white leading-[0.9] mb-4">
+                <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-4">
                   BENEFÍCIOS DO<br /><span className="text-brand">CHECK-UP</span>
                 </h2>
-                <p className="text-white/60 text-lg leading-relaxed max-w-lg mb-12">
+                <p className="text-text-light text-lg leading-relaxed max-w-lg mb-12">
                   A medicina preventiva é a forma mais inteligente de cuidar da saúde. Descubra problemas antes que eles apareçam.
                 </p>
               </div>
@@ -179,8 +179,8 @@ export default function CheckUp() {
                         <b.icon className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="heading-display text-xl text-white mb-2">{b.title}</h3>
-                        <p className="text-sm text-white/50 leading-relaxed">{b.desc}</p>
+                        <h3 className="heading-display text-xl text-text mb-2">{b.title}</h3>
+                        <p className="text-sm text-text-muted leading-relaxed">{b.desc}</p>
                       </div>
                     </div>
                   </div>
@@ -196,7 +196,7 @@ export default function CheckUp() {
         <div className="container">
           <div className="reveal text-center mb-16">
             <span className="section-label mb-6 inline-block">Nossos Pacotes</span>
-            <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-white leading-[0.9]">
+            <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9]">
               ESCOLHA SEU <span className="text-brand">CHECK-UP</span>
             </h2>
           </div>
@@ -206,8 +206,8 @@ export default function CheckUp() {
                 key={pkg.title}
                 className={`reveal p-8 lg:p-10 transition-all duration-300 ${
                   pkg.highlight
-                    ? "bg-brand text-white ring-2 ring-brand-light"
-                    : "bg-surface border border-white/10 hover:border-brand/30"
+                    ? "bg-brand text-white ring-2 ring-brand"
+                    : "bg-white border border-black/10 hover:border-brand/30"
                 }`}
                 style={{ transitionDelay: `${i * 150}ms` }}
               >
@@ -216,13 +216,13 @@ export default function CheckUp() {
                     Mais Popular
                   </span>
                 )}
-                <h3 className="heading-display text-3xl mb-1">{pkg.title}</h3>
-                <p className={`text-sm mb-8 ${pkg.highlight ? "text-white/70" : "text-white/50"}`}>{pkg.subtitle}</p>
+                <h3 className={`heading-display text-3xl mb-1 ${pkg.highlight ? "text-white" : "text-text"}`}>{pkg.title}</h3>
+                <p className={`text-sm mb-8 ${pkg.highlight ? "text-white/70" : "text-text-muted"}`}>{pkg.subtitle}</p>
                 <ul className="space-y-3 mb-10">
                   {pkg.items.map((item) => (
                     <li key={item} className="flex items-start gap-3">
                       <CheckCircle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${pkg.highlight ? "text-white/80" : "text-brand"}`} />
-                      <span className={`text-sm ${pkg.highlight ? "text-white/90" : "text-white/60"}`}>{item}</span>
+                      <span className={`text-sm ${pkg.highlight ? "text-white/90" : "text-text-light"}`}>{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -231,7 +231,7 @@ export default function CheckUp() {
                   className={`w-full py-3.5 text-xs uppercase tracking-[0.15em] font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
                     pkg.highlight
                       ? "bg-white text-brand hover:bg-white/90"
-                      : "bg-brand text-white hover:bg-brand-light"
+                      : "bg-brand text-white hover:bg-brand-dark"
                   }`}
                 >
                   Agendar {pkg.title}
@@ -244,23 +244,23 @@ export default function CheckUp() {
       </section>
 
       {/* Process Section */}
-      <section className="py-24 lg:py-32 bg-surface">
+      <section className="py-24 lg:py-32 bg-white">
         <div className="container">
           <div className="grid lg:grid-cols-12 gap-16 items-start">
             <div className="lg:col-span-6">
               <div className="reveal">
                 <span className="section-label mb-6 block">Como Funciona</span>
-                <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-white leading-[0.9] mb-12">
+                <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-12">
                   PROCESSO<br /><span className="text-brand">SIMPLIFICADO</span>
                 </h2>
               </div>
               <div className="space-y-0">
                 {processSteps.map((step, i) => (
-                  <div key={step.num} className="reveal flex gap-6 py-8 border-b border-white/10" style={{ transitionDelay: `${i * 100}ms` }}>
+                  <div key={step.num} className="reveal flex gap-6 py-8 border-b border-black/10" style={{ transitionDelay: `${i * 100}ms` }}>
                     <span className="number-outline text-6xl flex-shrink-0 w-20">{step.num}</span>
                     <div>
-                      <h3 className="heading-display text-2xl text-white mb-2">{step.title}</h3>
-                      <p className="text-sm text-white/50 leading-relaxed">{step.desc}</p>
+                      <h3 className="heading-display text-2xl text-text mb-2">{step.title}</h3>
+                      <p className="text-sm text-text-muted leading-relaxed">{step.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -278,10 +278,10 @@ export default function CheckUp() {
         <div className="container">
           <div className="reveal text-center mb-16">
             <span className="section-label mb-6 inline-block">Indicações</span>
-            <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-white leading-[0.9] mb-4">
+            <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-4">
               QUEM DEVE FAZER <span className="text-brand">CHECK-UP?</span>
             </h2>
-            <p className="text-white/60 text-lg max-w-2xl mx-auto">
+            <p className="text-text-light text-lg max-w-2xl mx-auto">
               O check-up é recomendado para todas as idades, mas é especialmente importante em determinadas situações.
             </p>
           </div>
@@ -296,12 +296,12 @@ export default function CheckUp() {
             ].map((item, i) => (
               <div
                 key={item.title}
-                className="reveal bg-surface p-8 border border-white/10 hover:border-brand/30 transition-all duration-300"
+                className="reveal bg-white p-8 border border-black/10 hover:border-brand/30 transition-all duration-300"
                 style={{ transitionDelay: `${i * 80}ms` }}
               >
                 <item.icon className="w-6 h-6 text-brand mb-4" />
-                <h3 className="heading-display text-xl text-white mb-2">{item.title}</h3>
-                <p className="text-sm text-white/50 leading-relaxed">{item.desc}</p>
+                <h3 className="heading-display text-xl text-text mb-2">{item.title}</h3>
+                <p className="text-sm text-text-muted leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -356,13 +356,13 @@ export default function CheckUp() {
       </section>
 
       {/* Back to Home */}
-      <section className="py-12 border-t border-white/10 bg-surface-dark">
+      <section className="py-12 border-t border-black/10 bg-white">
         <div className="container flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-sm text-white/50 hover:text-brand transition-colors">
+          <Link href="/" className="flex items-center gap-2 text-sm text-text-muted hover:text-brand transition-colors">
             <ArrowLeft className="w-4 h-4" />
             Voltar ao Início
           </Link>
-          <Link href="/bioimpedancia" className="flex items-center gap-2 text-sm text-white/50 hover:text-brand transition-colors">
+          <Link href="/bioimpedancia" className="flex items-center gap-2 text-sm text-text-muted hover:text-brand transition-colors">
             Bioimpedância
             <ArrowUpRight className="w-4 h-4" />
           </Link>

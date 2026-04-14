@@ -1,6 +1,6 @@
 /*
  * Style: Optik Editorial — Numbered list with outline numbers
- * Theme: Dark gray background, white text, brand #9B212B
+ * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  */
 import {
   Award,
@@ -46,19 +46,19 @@ const diferenciais = [
 
 export default function DiferenciaisSection() {
   return (
-    <section id="diferenciais" className="py-24 lg:py-32 bg-surface">
+    <section id="diferenciais" className="py-24 lg:py-32 bg-white">
       <div className="container">
         {/* Section header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-20">
           <div>
             <span className="reveal section-label mb-4 block">Nossos Diferenciais</span>
-            <h2 className="reveal heading-display text-5xl sm:text-6xl lg:text-7xl text-white" style={{ transitionDelay: "100ms" }}>
+            <h2 className="reveal heading-display text-5xl sm:text-6xl lg:text-7xl text-text" style={{ transitionDelay: "100ms" }}>
               POR QUE ESCOLHER
               <br />
               <span className="text-brand">A TOTAL QUALITY?</span>
             </h2>
           </div>
-          <p className="reveal text-white/60 max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
+          <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
             Nossos diferenciais fazem toda a diferença no cuidado com sua saúde e bem-estar.
           </p>
         </div>
@@ -82,8 +82,8 @@ export default function DiferenciaisSection() {
                   <div className="w-10 h-10 flex items-center justify-center text-brand mb-4 group-hover:scale-110 transition-transform duration-300">
                     <item.icon className="w-6 h-6" />
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
-                  <p className="text-white/50 leading-relaxed text-sm">{item.description}</p>
+                  <h3 className="text-lg font-semibold text-text mb-2">{item.title}</h3>
+                  <p className="text-text-muted leading-relaxed text-sm">{item.description}</p>
                 </div>
               </div>
             </div>
@@ -93,7 +93,7 @@ export default function DiferenciaisSection() {
         {/* Recognition badge */}
         <div className="reveal mt-20 flex items-center gap-4" style={{ transitionDelay: "500ms" }}>
           <div className="w-12 h-[1px] bg-brand" />
-          <p className="text-sm font-medium text-white/50 uppercase tracking-wider">
+          <p className="text-sm font-medium text-text-muted uppercase tracking-wider">
             Reconhecida como referência no Litoral Norte de São Paulo
           </p>
         </div>
