@@ -1,6 +1,6 @@
 /*
- * Style: Optik Editorial — Large image panels, minimal tabs, clean typography
- * Exames: Category switcher with editorial image + exam list
+ * Style: Optik Editorial — Large image panels, minimal tabs
+ * Theme: Dark gray background, white text, brand #9B212B
  */
 import { useState } from "react";
 import {
@@ -65,24 +65,24 @@ export default function ExamesSection() {
   const data = examData[active];
 
   return (
-    <section id="exames" className="py-24 lg:py-32 bg-[#f7f7f5]">
+    <section id="exames" className="py-24 lg:py-32 bg-surface-dark">
       <div className="container">
         {/* Section header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-16">
           <div>
             <span className="reveal section-label mb-4 block">Nossos Exames</span>
-            <h2 className="reveal heading-display text-5xl sm:text-6xl lg:text-7xl text-foreground" style={{ transitionDelay: "100ms" }}>
+            <h2 className="reveal heading-display text-5xl sm:text-6xl lg:text-7xl text-white" style={{ transitionDelay: "100ms" }}>
               PRINCIPAIS
               <br />
               <span className="text-brand">EXAMES</span>
             </h2>
           </div>
-          <p className="reveal text-muted-foreground max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
+          <p className="reveal text-white/60 max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
             Oferecemos uma ampla gama de exames diagnósticos com tecnologia de ponta e resultados confiáveis.
           </p>
         </div>
 
-        {/* Category tabs - Optik style */}
+        {/* Category tabs */}
         <div className="reveal flex gap-2 mb-12" style={{ transitionDelay: "300ms" }}>
           {categories.map((cat) => (
             <button
@@ -90,8 +90,8 @@ export default function ExamesSection() {
               onClick={() => setActive(cat.id)}
               className={`flex items-center gap-2 px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] transition-all duration-300 border ${
                 active === cat.id
-                  ? "bg-foreground text-white border-foreground"
-                  : "bg-transparent text-foreground/60 border-black/10 hover:border-black/30"
+                  ? "bg-white text-surface-dark border-white"
+                  : "bg-transparent text-white/60 border-white/20 hover:border-white/40"
               }`}
             >
               <cat.icon className="w-4 h-4" />
@@ -111,7 +111,7 @@ export default function ExamesSection() {
               className="w-full h-[350px] lg:h-[520px] object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute top-6 left-6">
-              <span className="inline-block bg-white/95 backdrop-blur-sm text-xs font-semibold uppercase tracking-[0.12em] px-4 py-2">
+              <span className="inline-block bg-surface-dark/90 backdrop-blur-sm text-white text-xs font-semibold uppercase tracking-[0.12em] px-4 py-2">
                 {data.tag}
               </span>
             </div>
@@ -120,17 +120,17 @@ export default function ExamesSection() {
           {/* Exam list panel */}
           <div className="lg:col-span-5 flex flex-col justify-between">
             <div>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+              <p className="text-lg text-white/60 leading-relaxed mb-8">
                 {data.description}
               </p>
               <div className="space-y-0">
                 {data.exams.map((exam, i) => (
                   <div
                     key={exam}
-                    className="flex items-center gap-4 py-5 border-b border-black/5 group/item hover:pl-2 transition-all duration-300"
+                    className="flex items-center gap-4 py-5 border-b border-white/10 group/item hover:pl-2 transition-all duration-300"
                   >
                     <Check className="w-4 h-4 text-brand shrink-0" />
-                    <span className="text-foreground font-medium">{exam}</span>
+                    <span className="text-white font-medium">{exam}</span>
                     <span className="number-outline !text-3xl ml-auto opacity-30">
                       {String(i + 1).padStart(2, "0")}
                     </span>
@@ -149,14 +149,14 @@ export default function ExamesSection() {
               </button>
               <Link
                 href="/checkup"
-                className="btn-pill bg-transparent !text-foreground border border-black/15 hover:!bg-black/5"
+                className="btn-pill bg-transparent !text-white border border-white/20 hover:!bg-white/10"
               >
                 Check-Up
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </Link>
               <Link
                 href="/bioimpedancia"
-                className="btn-pill bg-transparent !text-foreground border border-black/15 hover:!bg-black/5"
+                className="btn-pill bg-transparent !text-white border border-white/20 hover:!bg-white/10"
               >
                 Bioimpedância
                 <ArrowUpRight className="w-3.5 h-3.5" />
@@ -166,7 +166,7 @@ export default function ExamesSection() {
         </div>
 
         {/* Stats strip */}
-        <div className="reveal grid grid-cols-2 sm:grid-cols-4 gap-8 mt-20 pt-12 border-t border-black/10" style={{ transitionDelay: "500ms" }}>
+        <div className="reveal grid grid-cols-2 sm:grid-cols-4 gap-8 mt-20 pt-12 border-t border-white/10" style={{ transitionDelay: "500ms" }}>
           {[
             { value: "24H", label: "Resultados em até" },
             { value: "3K+", label: "Tipos de exames" },
@@ -175,7 +175,7 @@ export default function ExamesSection() {
           ].map((stat) => (
             <div key={stat.label}>
               <p className="heading-display text-4xl lg:text-5xl text-brand">{stat.value}</p>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider mt-2">{stat.label}</p>
+              <p className="text-xs text-white/50 uppercase tracking-wider mt-2">{stat.label}</p>
             </div>
           ))}
         </div>

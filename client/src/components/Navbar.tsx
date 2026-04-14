@@ -1,6 +1,6 @@
 /*
- * Style: Optik Editorial — Minimalist, uppercase nav, brand color #9B212B
- * Navbar: Clean top bar with brand + pill CTAs, mobile hamburger
+ * Style: Optik Editorial — Minimalist, uppercase nav
+ * Theme: Dark gray background, white text, brand #9B212B
  */
 import { useState, useEffect } from "react";
 import { Menu, X, ArrowUpRight } from "lucide-react";
@@ -39,7 +39,7 @@ export default function Navbar() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
-          ? "bg-white/95 backdrop-blur-md border-b border-black/5"
+          ? "bg-surface-dark/95 backdrop-blur-md border-b border-white/10"
           : "bg-transparent"
       }`}
     >
@@ -50,7 +50,7 @@ export default function Navbar() {
           className="flex items-center gap-3 group"
           onClick={(e) => { e.preventDefault(); scrollTo("#inicio"); }}
         >
-          <span className="heading-display text-3xl tracking-tight text-foreground group-hover:text-brand transition-colors">
+          <span className="heading-display text-3xl tracking-tight text-white group-hover:text-brand transition-colors">
             TOTAL QUALITY
           </span>
         </a>
@@ -61,7 +61,7 @@ export default function Navbar() {
             <button
               key={link.href}
               onClick={() => scrollTo(link.href)}
-              className="text-xs font-semibold uppercase tracking-[0.15em] text-foreground/60 hover:text-brand transition-colors duration-300"
+              className="text-xs font-semibold uppercase tracking-[0.15em] text-white/60 hover:text-brand transition-colors duration-300"
             >
               {link.label}
             </button>
@@ -70,7 +70,7 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-xs font-semibold uppercase tracking-[0.15em] text-brand/80 hover:text-brand transition-colors duration-300"
+              className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-light hover:text-brand transition-colors duration-300"
             >
               {link.label}
             </Link>
@@ -81,7 +81,7 @@ export default function Navbar() {
         <div className="hidden lg:flex items-center gap-4">
           <button
             onClick={() => window.open("https://totalquality.med.br", "_blank")}
-            className="text-xs font-semibold uppercase tracking-[0.15em] text-foreground/60 hover:text-brand transition-colors"
+            className="text-xs font-semibold uppercase tracking-[0.15em] text-white/60 hover:text-brand transition-colors"
           >
             Resultados
           </button>
@@ -96,7 +96,7 @@ export default function Navbar() {
 
         {/* Mobile menu button */}
         <button
-          className="lg:hidden p-2"
+          className="lg:hidden p-2 text-white"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -105,7 +105,7 @@ export default function Navbar() {
 
       {/* Mobile drawer */}
       <div
-        className={`lg:hidden fixed inset-0 top-0 bg-white z-40 transition-all duration-500 ${
+        className={`lg:hidden fixed inset-0 top-0 bg-surface-dark z-40 transition-all duration-500 ${
           mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
       >
@@ -115,10 +115,10 @@ export default function Navbar() {
               <button
                 key={link.href}
                 onClick={() => scrollTo(link.href)}
-                className="block w-full text-left py-4 border-b border-black/5"
+                className="block w-full text-left py-4 border-b border-white/10"
                 style={{ animationDelay: `${i * 50}ms` }}
               >
-                <span className="heading-display text-4xl text-foreground hover:text-brand transition-colors">
+                <span className="heading-display text-4xl text-white hover:text-brand transition-colors">
                   {link.label.toUpperCase()}
                 </span>
               </button>
@@ -127,11 +127,11 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="block w-full text-left py-4 border-b border-black/5"
+                className="block w-full text-left py-4 border-b border-white/10"
                 style={{ animationDelay: `${(navLinks.length + i) * 50}ms` }}
                 onClick={() => setMobileOpen(false)}
               >
-                <span className="heading-display text-4xl text-brand hover:text-brand-dark transition-colors">
+                <span className="heading-display text-4xl text-brand hover:text-brand-light transition-colors">
                   {link.label.toUpperCase()}
                 </span>
               </Link>
@@ -147,12 +147,12 @@ export default function Navbar() {
             </button>
             <button
               onClick={() => { setMobileOpen(false); window.open("https://totalquality.med.br", "_blank"); }}
-              className="btn-pill w-full justify-center bg-transparent !text-foreground border border-black/10 hover:!bg-black/5"
+              className="btn-pill w-full justify-center bg-transparent !text-white border border-white/20 hover:!bg-white/10"
             >
               Resultados Online
             </button>
           </div>
-          <div className="mt-10 text-xs text-muted-foreground space-y-1">
+          <div className="mt-10 text-xs text-white/50 space-y-1">
             <p>Rua Padre Anchieta, 1010 - Centro, Caraguatatuba-SP</p>
             <p>Seg-Sex: 08h às 18h</p>
             <a href="tel:1238873535" className="block hover:text-brand">(12) 3887-3535</a>

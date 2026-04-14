@@ -1,12 +1,12 @@
 /*
  * Style: Optik Editorial — Dark CTA section with brand accent
- * Cartão Total Quality: Promotional block
+ * Theme: Dark gray background, white text, brand #9B212B
  */
 import { ArrowUpRight, CreditCard, Users, Percent } from "lucide-react";
 
 export default function CartaoSection() {
   return (
-    <section className="py-24 lg:py-32 bg-foreground text-white relative overflow-hidden">
+    <section className="py-24 lg:py-32 bg-surface-dark relative overflow-hidden">
       {/* Decorative large text */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none">
         <span className="heading-display text-[20vw] text-white/[0.03] whitespace-nowrap">
@@ -27,12 +27,12 @@ export default function CartaoSection() {
               <br />
               <span className="text-brand-light">TOTAL QUALITY</span>
             </h2>
-            <p className="text-lg text-white/60 leading-relaxed mb-10 max-w-lg">
+            <p className="text-lg text-white/50 leading-relaxed mb-10 max-w-lg">
               Descontos exclusivos em exames para toda sua família. Faça seu cartão e aproveite benefícios especiais em todos os nossos serviços.
             </p>
             <button
               onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de saber mais sobre o Cartão Total Quality.", "_blank")}
-              className="btn-pill bg-white !text-foreground hover:!bg-brand hover:!text-white"
+              className="btn-pill"
             >
               Saiba Mais
               <ArrowUpRight className="w-3.5 h-3.5" />
@@ -55,7 +55,7 @@ export default function CartaoSection() {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white mb-1">{item.title}</h3>
-                  <p className="text-sm text-white/50">{item.description}</p>
+                  <p className="text-sm text-white/40">{item.description}</p>
                 </div>
                 <span className="number-outline !text-4xl ![-webkit-text-stroke:1px_rgba(255,255,255,0.1)] ml-auto">
                   {String(i + 1).padStart(2, "0")}

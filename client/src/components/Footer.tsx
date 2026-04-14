@@ -1,6 +1,6 @@
 /*
  * Style: Optik Editorial — Minimal footer with large display text
- * Footer: Clean layout with brand, links, contact info
+ * Theme: Dark gray background, white text, brand #9B212B
  */
 import { Phone, MessageCircle, Instagram, MapPin, ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
@@ -25,7 +25,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-foreground text-white">
+    <footer className="bg-surface-dark text-white">
       {/* CTA strip */}
       <div className="border-b border-white/10">
         <div className="container py-16 lg:py-20 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
@@ -36,7 +36,7 @@ export default function Footer() {
           </h3>
           <button
             onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame.", "_blank")}
-            className="btn-pill bg-white !text-foreground hover:!bg-brand hover:!text-white"
+            className="btn-pill"
           >
             Agendar pelo WhatsApp
             <ArrowUpRight className="w-3.5 h-3.5" />
