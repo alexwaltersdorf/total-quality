@@ -6,6 +6,7 @@
  */
 import { ArrowUpRight } from "lucide-react";
 import { trackScheduleExam } from "@/lib/tracking";
+import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 
 const HERO_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png";
 
@@ -21,6 +22,7 @@ const marqueeItems = [
 export default function HeroSection() {
   const handleScheduleClick = () => {
     trackScheduleExam("hero_cta", "geral");
+    trackLeadDirect("hero_cta");
     window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame na Total Quality.", "_blank");
   };
 

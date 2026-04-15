@@ -7,6 +7,8 @@ import { useEffect, useMemo } from "react";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, ArrowUpRight, Clock, Calendar, Tag, Share2 } from "lucide-react";
 import { blogPosts } from "@/lib/blogData";
+import { trpc } from "@/lib/trpc";
+import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
@@ -25,12 +27,21 @@ export default function BlogPost() {
       .slice(0, 3);
   }, [post]);
 
+  const blogViewMutation = trpc.blog.trackView.useMutation();
+  const { data: viewData } = trpc.blog.viewCount.useQuery(
+    { slug: slug ?? "" },
+    { enabled: !!slug }
+  );
+
   useEffect(() => {
     window.scrollTo(0, 0);
     if (post) {
       document.title = `${post.title} | Blog Total Quality Medicina Diagnóstica`;
+      // Registrar visualização no banco de dados
+      blogViewMutation.mutate({ slug: post.slug });
+      trackEventDirect("blog_view", "content", { slug: post.slug, title: post.title });
     }
-  }, [post]);
+  }, [post?.slug]);
 
   const handleShare = () => {
     if (navigator.share) {

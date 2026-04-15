@@ -1,0 +1,12 @@
+
+- [x] Criar tabelas no banco de dados (contatos, leads WhatsApp, analytics events, blog views)
+- [x] Implementar APIs tRPC para persistir dados de contato do formulário
+- [x] Implementar API para registrar cliques no WhatsApp (leads)
+- [x] Implementar API para registrar eventos de analytics
+- [x] Implementar API para contagem de visualizações do blog
+- [x] Integrar formulário de contato com API backend
+- [x] Integrar cliques de WhatsApp com API de leads
+- [x] Integrar analytics com API de eventos
+- [x] Integrar blog com contagem de visualizações
+- [ ] Atualizar dashboard para usar dados reais do banco
+- [x] Escrever testes vitest para as APIs (19 testes passando)

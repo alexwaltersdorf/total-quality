@@ -24,6 +24,7 @@ import {
   initSectionObserver,
 } from "@/lib/tracking";
 import { initAnalyticsCapture } from "@/lib/analyticsStore";
+import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
 
 export default function Home() {
   const scrollRef = useScrollReveal();
@@ -40,6 +41,7 @@ export default function Home() {
 
     // Tracking: page view + engagement metrics
     trackPageView("Home");
+    trackEventDirect("page_view", "navigation", { page: "Home" });
     const cleanupScroll = initScrollTracking();
     const cleanupTime = initTimeTracking();
 

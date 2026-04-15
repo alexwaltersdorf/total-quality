@@ -1,6 +1,7 @@
 /*
  * Style: Optik Editorial — Contact form with Google Maps
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
+ * Integração: tRPC para persistir contatos no banco de dados
  */
 import { useState, useRef } from "react";
 import {
@@ -11,9 +12,11 @@ import {
   Send,
   Instagram,
   ArrowUpRight,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { MapView } from "@/components/Map";
+import { trpc } from "@/lib/trpc";
 import { trackFormStart, trackFormSubmit, trackPhoneClick, trackWhatsAppClick, trackExternalLink, trackMapInteraction } from "@/lib/tracking";
 
 export default function ContatoSection() {
@@ -25,19 +28,51 @@ export default function ContatoSection() {
     mensagem: "",
   });
   const mapRef = useRef<google.maps.Map | null>(null);
-
   const [formStarted, setFormStarted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const contactMutation = trpc.contact.create.useMutation({
+    onSuccess: () => {
+      toast.success("Mensagem enviada com sucesso! Redirecionando para o WhatsApp...");
+      // Redirecionar para WhatsApp após salvar no banco
+      const msg = `Olá! Meu nome é ${formData.nome}.%0A` +
+        `Telefone: ${formData.telefone}%0A` +
+        `E-mail: ${formData.email}%0A` +
+        (formData.tipoExame ? `Exame: ${formData.tipoExame}%0A` : "") +
+        (formData.mensagem ? `Mensagem: ${formData.mensagem}` : "");
+      window.open(`https://wa.me/551238873535?text=${msg}`, "_blank");
+      // Limpar formulário
+      setFormData({ nome: "", telefone: "", email: "", tipoExame: "", mensagem: "" });
+      setFormStarted(false);
+    },
+    onError: () => {
+      // Mesmo se falhar ao salvar, redireciona para WhatsApp
+      toast.info("Redirecionando para o WhatsApp...");
+      const msg = `Olá! Meu nome é ${formData.nome}.%0A` +
+        `Telefone: ${formData.telefone}%0A` +
+        `E-mail: ${formData.email}%0A` +
+        (formData.tipoExame ? `Exame: ${formData.tipoExame}%0A` : "") +
+        (formData.mensagem ? `Mensagem: ${formData.mensagem}` : "");
+      window.open(`https://wa.me/551238873535?text=${msg}`, "_blank");
+    },
+    onSettled: () => {
+      setIsSubmitting(false);
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     trackFormSubmit({ name: formData.nome, subject: formData.tipoExame });
-    const msg = `Olá! Meu nome é ${formData.nome}.%0A` +
-      `Telefone: ${formData.telefone}%0A` +
-      `E-mail: ${formData.email}%0A` +
-      (formData.tipoExame ? `Exame: ${formData.tipoExame}%0A` : "") +
-      (formData.mensagem ? `Mensagem: ${formData.mensagem}` : "");
-    window.open(`https://wa.me/551238873535?text=${msg}`, "_blank");
-    toast.success("Redirecionando para o WhatsApp...");
+
+    // Persistir contato no banco de dados
+    contactMutation.mutate({
+      name: formData.nome,
+      email: formData.email,
+      phone: formData.telefone || undefined,
+      subject: formData.tipoExame || undefined,
+      message: formData.mensagem,
+    });
   };
 
   const handleFormFocus = () => {
@@ -242,10 +277,19 @@ export default function ContatoSection() {
                   <p className="text-xs text-text-muted">
                     * Campos obrigatórios
                   </p>
-                  <button type="submit" className="btn-pill-brand btn-pill">
-                    <Send className="w-3.5 h-3.5" />
-                    Enviar
-                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  <button type="submit" className="btn-pill-brand btn-pill" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Enviando...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-3.5 h-3.5" />
+                        Enviar
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </>
+                    )}
                   </button>
                 </div>
               </form>
