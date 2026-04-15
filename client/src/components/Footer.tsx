@@ -4,6 +4,7 @@
  */
 import { Phone, MessageCircle, Instagram, MapPin, ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
+import { trackScheduleExam, trackPhoneClick, trackWhatsAppClick, trackExternalLink } from "@/lib/tracking";
 
 const footerLinks = [
   { label: "Início", href: "#inicio", isRoute: false },
@@ -35,7 +36,7 @@ export default function Footer() {
             <span className="text-brand">EXAME AGORA</span>
           </h3>
           <button
-            onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame.", "_blank")}
+            onClick={() => { trackScheduleExam("footer_cta", "geral"); window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame.", "_blank"); }}
             className="btn-pill"
           >
             Agendar pelo WhatsApp
@@ -96,11 +97,11 @@ export default function Footer() {
                   Centro, Caraguatatuba-SP
                 </p>
               </div>
-              <a href="tel:1238873535" className="flex items-center gap-3 text-text-light hover:text-brand text-sm transition-colors">
+              <a href="tel:1238873535" className="flex items-center gap-3 text-text-light hover:text-brand text-sm transition-colors" onClick={() => trackPhoneClick("footer")}>
                 <Phone className="w-4 h-4 text-brand" />
                 (12) 3887-3535
               </a>
-              <a href="https://wa.me/5512997743535" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-text-light hover:text-brand text-sm transition-colors">
+              <a href="https://wa.me/5512997743535" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-text-light hover:text-brand text-sm transition-colors" onClick={() => trackWhatsAppClick("footer")}>
                 <MessageCircle className="w-4 h-4 text-brand" />
                 (12) 99774-3535
               </a>
@@ -119,6 +120,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-3 text-text-light hover:text-brand text-sm transition-colors"
+              onClick={() => trackExternalLink("instagram", "https://www.instagram.com/totalqualitymedicina")}
             >
               <Instagram className="w-5 h-5" />
               @totalqualitymedicina

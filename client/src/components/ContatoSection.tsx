@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { MapView } from "@/components/Map";
+import { trackFormStart, trackFormSubmit, trackPhoneClick, trackWhatsAppClick, trackExternalLink, trackMapInteraction } from "@/lib/tracking";
 
 export default function ContatoSection() {
   const [formData, setFormData] = useState({
@@ -25,8 +26,11 @@ export default function ContatoSection() {
   });
   const mapRef = useRef<google.maps.Map | null>(null);
 
+  const [formStarted, setFormStarted] = useState(false);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    trackFormSubmit({ name: formData.nome, subject: formData.tipoExame });
     const msg = `Olá! Meu nome é ${formData.nome}.%0A` +
       `Telefone: ${formData.telefone}%0A` +
       `E-mail: ${formData.email}%0A` +
@@ -34,6 +38,13 @@ export default function ContatoSection() {
       (formData.mensagem ? `Mensagem: ${formData.mensagem}` : "");
     window.open(`https://wa.me/5512997743535?text=${msg}`, "_blank");
     toast.success("Redirecionando para o WhatsApp...");
+  };
+
+  const handleFormFocus = () => {
+    if (!formStarted) {
+      setFormStarted(true);
+      trackFormStart();
+    }
   };
 
   const handleChange = (field: string, value: string) => {
@@ -103,8 +114,8 @@ export default function ContatoSection() {
                     <Phone className="w-4 h-4 text-brand" />
                     <span className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted">Telefones</span>
                   </div>
-                  <a href="tel:1238873535" className="block text-text font-medium hover:text-brand transition-colors">(12) 3887-3535</a>
-                  <a href="https://wa.me/5512997743535" className="block text-text font-medium hover:text-brand transition-colors">(12) 99774-3535</a>
+                  <a href="tel:1238873535" className="block text-text font-medium hover:text-brand transition-colors" onClick={() => trackPhoneClick("contato_section")}>(12) 3887-3535</a>
+                  <a href="https://wa.me/5512997743535" className="block text-text font-medium hover:text-brand transition-colors" onClick={() => trackWhatsAppClick("contato_section")}>(12) 99774-3535</a>
                 </div>
 
                 <div className="border-t border-black/10 pt-8">
@@ -120,7 +131,7 @@ export default function ContatoSection() {
               {/* Quick actions */}
               <div className="mt-10 space-y-3">
                 <button
-                  onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de informações.", "_blank")}
+                  onClick={() => { trackWhatsAppClick("contato_quick_action"); window.open("https://wa.me/5512997743535?text=Olá! Gostaria de informações.", "_blank"); }}
                   className="btn-pill w-full justify-center !bg-[#25D366] hover:!bg-[#1da851] !text-white"
                 >
                   <MessageCircle className="w-4 h-4" />
@@ -135,6 +146,7 @@ export default function ContatoSection() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-3 text-sm text-text-muted hover:text-brand transition-colors"
+                  onClick={() => trackExternalLink("instagram", "https://www.instagram.com/totalqualitymedicina")}
                 >
                   <Instagram className="w-5 h-5" />
                   @totalqualitymedicina
@@ -160,6 +172,7 @@ export default function ContatoSection() {
                       required
                       value={formData.nome}
                       onChange={(e) => handleChange("nome", e.target.value)}
+                      onFocus={handleFormFocus}
                       className="w-full px-0 py-3 bg-transparent border-0 border-b border-black/15 text-text focus:outline-none focus:border-brand transition-colors placeholder:text-text-muted/50"
                       placeholder="Seu nome completo"
                     />

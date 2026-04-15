@@ -4,6 +4,7 @@
  */
 import { useState, useEffect } from "react";
 import { MessageCircle, X } from "lucide-react";
+import { trackWhatsAppClick } from "@/lib/tracking";
 
 export default function WhatsAppFAB() {
   const [visible, setVisible] = useState(false);
@@ -36,6 +37,7 @@ export default function WhatsAppFAB() {
             href="https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame."
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackWhatsAppClick("fab_iniciar_conversa")}
             className="block w-full text-center bg-[#25D366] hover:bg-[#1da851] text-white text-xs font-semibold uppercase tracking-wider py-3 transition-colors"
           >
             Iniciar Conversa
@@ -45,7 +47,7 @@ export default function WhatsAppFAB() {
 
       {/* FAB Button */}
       <button
-        onClick={() => setExpanded(!expanded)}
+        onClick={() => { if (!expanded) trackWhatsAppClick("fab_open"); setExpanded(!expanded); }}
         className={`w-14 h-14 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 ${
           expanded
             ? "bg-text hover:bg-text-light"

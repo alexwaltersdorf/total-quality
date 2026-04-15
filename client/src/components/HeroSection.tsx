@@ -2,8 +2,10 @@
  * Style: Optik Editorial — Giant display type, asymmetric layout
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  * SEO: Keywords in headings, alt texts, and semantic HTML
+ * Tracking: CTA clicks → generate_lead, nav clicks
  */
 import { ArrowUpRight } from "lucide-react";
+import { trackScheduleExam } from "@/lib/tracking";
 
 const HERO_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png";
 
@@ -17,6 +19,11 @@ const marqueeItems = [
 ];
 
 export default function HeroSection() {
+  const handleScheduleClick = () => {
+    trackScheduleExam("hero_cta", "geral");
+    window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame na Total Quality.", "_blank");
+  };
+
   return (
     <section id="inicio" className="relative min-h-screen bg-white overflow-hidden" aria-label="Início - Total Quality Medicina Diagnóstica Caraguatatuba">
       {/* Main content grid */}
@@ -40,7 +47,7 @@ export default function HeroSection() {
 
             <div className="reveal flex flex-wrap gap-4 mb-16" style={{ transitionDelay: "300ms" }}>
               <button
-                onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame na Total Quality.", "_blank")}
+                onClick={handleScheduleClick}
                 className="btn-pill-brand btn-pill"
                 aria-label="Agendar exame na Total Quality via WhatsApp"
               >

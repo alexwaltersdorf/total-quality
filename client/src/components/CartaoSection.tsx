@@ -3,6 +3,7 @@
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  */
 import { ArrowUpRight, CreditCard, Users, Percent } from "lucide-react";
+import { trackCardInterest } from "@/lib/tracking";
 
 export default function CartaoSection() {
   return (
@@ -31,7 +32,7 @@ export default function CartaoSection() {
               Descontos exclusivos em exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma e análises laboratoriais para toda sua família em Caraguatatuba. Faça seu cartão e aproveite benefícios especiais.
             </p>
             <button
-              onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de saber mais sobre o Cartão Total Quality.", "_blank")}
+              onClick={() => { trackCardInterest(); window.open("https://wa.me/5512997743535?text=Olá! Gostaria de saber mais sobre o Cartão Total Quality.", "_blank"); }}
               className="btn-pill"
             >
               Saiba Mais

@@ -3,6 +3,7 @@
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  */
 import { useState } from "react";
+import { trackExamCategorySelect, trackScheduleExam } from "@/lib/tracking";
 import {
   Scan,
   HeartPulse,
@@ -89,7 +90,7 @@ export default function ExamesSection() {
           {categories.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => setActive(cat.id)}
+              onClick={() => { setActive(cat.id); trackExamCategorySelect(cat.id); }}
               className={`flex items-center gap-2 px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] transition-all duration-300 border ${
                 active === cat.id
                   ? "bg-text text-white border-text"
@@ -143,7 +144,7 @@ export default function ExamesSection() {
 
             <div className="flex flex-wrap gap-3 mt-8">
               <button
-                onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame.", "_blank")}
+                onClick={() => { trackScheduleExam("exames_section", active); window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame.", "_blank"); }}
                 className="btn-pill-brand btn-pill"
               >
                 Agendar Exame

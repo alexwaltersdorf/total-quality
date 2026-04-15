@@ -3,6 +3,7 @@
  * Home page: Composes all sections in editorial flow
  * Hero → Diferenciais → Exames → Cartão → Sobre → Contato → Footer
  * SEO: Semantic HTML structure with proper heading hierarchy
+ * Tracking: Full dataLayer integration for GTM/GA4/Meta/TikTok
  */
 import { useEffect } from "react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
@@ -15,6 +16,12 @@ import SobreSection from "@/components/SobreSection";
 import ContatoSection from "@/components/ContatoSection";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
+import {
+  trackPageView,
+  initScrollTracking,
+  initTimeTracking,
+  initSectionObserver,
+} from "@/lib/tracking";
 
 export default function Home() {
   const scrollRef = useScrollReveal();
@@ -25,6 +32,22 @@ export default function Home() {
     if (metaDesc) {
       metaDesc.setAttribute("content", "Total Quality Medicina Diagnóstica e Laboratorial em Caraguatatuba-SP. Exames de sangue, hemograma, glicemia, colesterol, triglicerídeos, TSH, T4 livre, PSA, vitamina D, ácido úrico, ureia, creatinina, TGO, TGP. Tomografia, ultrassonografia, mamografia, ecocardiograma, check-up e mais de 3.000 tipos de exames laboratoriais.");
     }
+
+    // Tracking: page view + engagement metrics
+    trackPageView("Home");
+    const cleanupScroll = initScrollTracking();
+    const cleanupTime = initTimeTracking();
+
+    // Small delay to ensure sections are rendered before observing
+    const sectionTimeout = setTimeout(() => {
+      initSectionObserver();
+    }, 500);
+
+    return () => {
+      cleanupScroll();
+      cleanupTime();
+      clearTimeout(sectionTimeout);
+    };
   }, []);
 
   return (
