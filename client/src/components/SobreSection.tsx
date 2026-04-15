@@ -5,7 +5,7 @@
 import { Target, Eye, Heart, ShieldCheck, Leaf, GraduationCap } from "lucide-react";
 import { ArrowUpRight } from "lucide-react";
 
-const TEAM_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/tq-sobre-edificio_f807c2b1.png";
+const TEAM_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/IMG-20251112-WA0022_e9b2d95e.jpg";
 const CLINIC_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/tq-fachada-caraguatatuba_56be3e3d.jpg";
 
 const values = [
@@ -42,7 +42,7 @@ export default function SobreSection() {
           <div className="lg:col-span-6 reveal-left relative">
             <img
               src={TEAM_IMG}
-              alt="Equipe médica da Total Quality - Profissionais especializados em exames de sangue, análises clínicas, diagnóstico por imagem e cardiologia em Caraguatatuba-SP"
+              alt="Recepção e sala de espera da Total Quality Medicina Diagnóstica em Caraguatatuba-SP - Ambiente moderno e acolhedor com parede verde e estrutura de madeira"
               className="w-full h-[400px] lg:h-[550px] object-cover"
             />
             {/* Floating experience card */}
