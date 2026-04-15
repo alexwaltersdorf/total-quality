@@ -30,7 +30,7 @@ const diferenciais = [
   },
   {
     icon: Stethoscope,
-    title: "Equipe médica altamente qualificada",
+    title: "Equipe Médica Altamente Qualificada",
     description: "Profissionais especializados em cardiologia, diagnóstico por imagem, análises clínicas e exames laboratoriais dedicados ao seu bem-estar.",
   },
   {
@@ -40,7 +40,7 @@ const diferenciais = [
   },
   {
     icon: Globe,
-    title: "Resultados de exames online 24h",
+    title: "Resultados de exames online",
     description: "Acesso rápido e seguro aos seus laudos de exames de sangue, hemograma, glicemia, colesterol, tomografia, ultrassonografia e mamografia a qualquer momento.",
   },
 ];
@@ -60,7 +60,8 @@ export default function DiferenciaisSection() {
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
-            Nossos diferenciais em medicina diagnóstica e laboratório de análises clínicas fazem toda a diferença no cuidado com sua saúde. Referência em exames de sangue, diagnóstico por imagem, cardiologia e laboratório no Litoral Norte de São Paulo.
+            Nossos diferenciais em Medicina Diagnóstica e Laboratório de Análises Clínicas fazem toda a diferença no cuidado com sua saúde. 
+Referência em exames de sangue, diagnóstico por imagem, cardiologia e prevenção no Litoral Norte de São Paulo.
           </p>
         </div>
 

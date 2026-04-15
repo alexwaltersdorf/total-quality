@@ -11,11 +11,11 @@ const HERO_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL5
 
 const marqueeItems = [
   "TOMOGRAFIA", "EXAMES DE SANGUE", "HEMOGRAMA",
-  "ULTRASSONOGRAFIA", "GLICEMIA", "MAMOGRAFIA", "COLESTEROL",
-  "ECOCARDIOGRAMA", "BIOIMPEDÂNCIA", "CHECK-UP",
+  "ULTRASSONOGRAFIA", "GLICEMIA", "RAIO-X", "COLESTEROL",
+  "ELETROCARDIOGRAMA", "BIOIMPEDÂNCIA", "CHECK-UP",
   "DIAGNÓSTICO POR IMAGEM", "LABORATÓRIO", "HORMÔNIOS",
-  "RAIO-X", "HOLTER", "MAPA", "VITAMINA D", "PSA",
-  "ANÁLISES CLÍNICAS", "UREIA", "CREATININA",
+  "ESPIROMETRIA", "HOLTER", "MAPA", "VITAMINA D", "PSA",
+  "ANÁLISES CLÍNICAS", "ELETROENCEFALOGRAMA", "CREATININA",
 ];
 
 export default function HeroSection() {
@@ -32,7 +32,7 @@ export default function HeroSection() {
           {/* Left column - Text */}
           <div className="lg:col-span-6 xl:col-span-5 pt-8 lg:pt-16">
             <div className="reveal">
-              <span className="section-label mb-8 block">Laboratório e Medicina Diagnóstica em Caraguatatuba-SP</span>
+              <span className="section-label mb-8 block">Laboratório e Medicina Diagnóstica Caraguatatuba-SP</span>
             </div>
 
             <h1 className="reveal heading-display text-[clamp(3.5rem,10vw,8rem)] leading-[0.85] mb-8" style={{ transitionDelay: "100ms" }}>
