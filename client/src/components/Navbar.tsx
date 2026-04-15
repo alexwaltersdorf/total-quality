@@ -67,9 +67,11 @@ export default function Navbar() {
           className="flex items-center gap-3 group"
           onClick={(e) => { e.preventDefault(); scrollTo("#inicio"); }}
         >
-          <span className="heading-display text-3xl tracking-tight text-text group-hover:text-brand transition-colors">
-            TOTAL QUALITY
-          </span>
+          <img
+            src="https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/total-quality-logo_ce648054.png"
+            alt="Total Quality Medicina Diagnóstica"
+            className="h-10 md:h-12 w-auto object-contain"
+          />
         </a>
 
         {/* Desktop nav links */}
