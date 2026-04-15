@@ -1,0 +1,25 @@
+# robots.txt — Total Quality Medicina Diagnóstica
+# https://totalqualmed-jl54vver.manus.space
+
+User-agent: *
+Allow: /
+Disallow: /dashboard
+
+# Sitemap
+Sitemap: https://totalqualmed-jl54vver.manus.space/sitemap.xml
+
+# Crawl-delay (opcional, para bots que respeitam)
+Crawl-delay: 5
+
+# Bloquear bots de scraping indesejados
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
