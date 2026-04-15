@@ -25,7 +25,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-surface-dark text-text">
+    <footer className="bg-surface-dark text-text" role="contentinfo" aria-label="Rodapé Total Quality Medicina Diagnóstica Caraguatatuba">
       {/* CTA strip */}
       <div className="border-b border-black/10">
         <div className="container py-16 lg:py-20 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
@@ -51,7 +51,7 @@ export default function Footer() {
           <div>
             <span className="heading-display text-3xl text-text block mb-4">TOTAL QUALITY</span>
             <p className="text-text-muted text-sm leading-relaxed">
-              Desde 2003, oferecendo diagnósticos precisos com tecnologia de última geração e atendimento humanizado.
+              Clínica de medicina diagnóstica em Caraguatatuba-SP. Desde 2003, oferecendo tomografia, ultrassonografia, mamografia, ecocardiograma, check-up preventivo e exames laboratoriais com tecnologia de última geração.
             </p>
           </div>
 
@@ -134,7 +134,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Total Quality Medicina Diagnóstica. Todos os direitos reservados.
           </p>
           <p className="text-text-muted text-xs">
-            Caraguatatuba-SP
+            Medicina Diagnóstica • Caraguatatuba-SP • Litoral Norte
           </p>
         </div>
       </div>

@@ -12,12 +12,12 @@ const values = [
   {
     icon: Target,
     title: "Missão",
-    description: "Oferecer diagnósticos precisos e atendimento humanizado, contribuindo para a saúde e bem-estar de nossos pacientes.",
+    description: "Oferecer diagnósticos precisos em tomografia, ultrassonografia, mamografia, cardiologia e análises clínicas com atendimento humanizado em Caraguatatuba-SP.",
   },
   {
     icon: Eye,
     title: "Visão",
-    description: "Ser reconhecida como a principal referência em Medicina Diagnóstica no Litoral Norte de São Paulo.",
+    description: "Ser reconhecida como a principal referência em medicina diagnóstica e exames laboratoriais no Litoral Norte de São Paulo.",
   },
   {
     icon: Heart,
@@ -27,14 +27,14 @@ const values = [
 ];
 
 const timeline = [
-  { year: "2003", title: "Fundação", description: "Início das atividades com foco em diagnóstico de qualidade", icon: ShieldCheck },
-  { year: "2015", title: "Expansão", description: "Ampliação da estrutura e incorporação de novas tecnologias", icon: GraduationCap },
+  { year: "2003", title: "Fundação", description: "Início das atividades de medicina diagnóstica em Caraguatatuba com foco em exames de qualidade", icon: ShieldCheck },
+  { year: "2015", title: "Expansão", description: "Ampliação da estrutura com tomografia multislice, mamografia digital e novos equipamentos de cardiologia", icon: GraduationCap },
   { year: "2020", title: "Sustentabilidade", description: "Implementação do sistema de energia solar sustentável", icon: Leaf },
 ];
 
 export default function SobreSection() {
   return (
-    <section id="sobre" className="py-24 lg:py-32 bg-white">
+    <section id="sobre" className="py-24 lg:py-32 bg-white" aria-label="Sobre a Total Quality Medicina Diagnóstica Caraguatatuba">
       <div className="container">
         {/* Main about block */}
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start mb-24">
@@ -42,7 +42,7 @@ export default function SobreSection() {
           <div className="lg:col-span-6 reveal-left relative">
             <img
               src={TEAM_IMG}
-              alt="Equipe Total Quality"
+              alt="Equipe médica da Total Quality Medicina Diagnóstica - Profissionais especializados em diagnóstico por imagem, cardiologia e laboratório em Caraguatatuba-SP"
               className="w-full h-[400px] lg:h-[550px] object-cover"
             />
             {/* Floating experience card */}
@@ -54,15 +54,15 @@ export default function SobreSection() {
 
           {/* Text side */}
           <div className="lg:col-span-6 reveal-right pt-4 lg:pt-12">
-            <span className="section-label mb-6 block">Sobre Nós</span>
+            <span className="section-label mb-6 block">Sobre a Clínica de Medicina Diagnóstica</span>
             <h2 className="heading-display text-5xl sm:text-6xl text-text mb-8">
               SOBRE A
               <br />
               <span className="text-brand">TOTAL QUALITY</span>
             </h2>
             <p className="text-lg text-text-light leading-relaxed mb-8">
-              Fundada em 2003, a Total Quality Medicina Diagnóstica é reconhecida como
-              <strong className="text-text"> "a mais completa do Litoral Norte"</strong>. Nossa trajetória de mais de 20 anos é marcada pela constante busca pela excelência em diagnósticos médicos.
+              Fundada em 2003 em Caraguatatuba-SP, a Total Quality Medicina Diagnóstica é reconhecida como
+              <strong className="text-text"> "a clínica mais completa do Litoral Norte de São Paulo"</strong>. Nossa trajetória de mais de 20 anos é marcada pela excelência em tomografia, ultrassonografia, mamografia, ecocardiograma, exames laboratoriais e atendimento humanizado.
             </p>
 
             {/* Highlight cards */}
@@ -141,7 +141,7 @@ export default function SobreSection() {
           <div className="lg:col-span-7 reveal-right">
             <img
               src={CLINIC_IMG}
-              alt="Clínica Total Quality"
+              alt="Clínica Total Quality Medicina Diagnóstica em Caraguatatuba-SP - Estrutura moderna com equipamentos de tomografia e diagnóstico por imagem"
               className="w-full h-[350px] lg:h-[450px] object-cover"
             />
           </div>

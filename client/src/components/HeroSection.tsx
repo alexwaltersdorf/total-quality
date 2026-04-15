@@ -1,6 +1,7 @@
 /*
  * Style: Optik Editorial — Giant display type, asymmetric layout
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
+ * SEO: Keywords in headings, alt texts, and semantic HTML
  */
 import { ArrowUpRight } from "lucide-react";
 
@@ -15,14 +16,14 @@ const marqueeItems = [
 
 export default function HeroSection() {
   return (
-    <section id="inicio" className="relative min-h-screen bg-white overflow-hidden">
+    <section id="inicio" className="relative min-h-screen bg-white overflow-hidden" aria-label="Início - Total Quality Medicina Diagnóstica Caraguatatuba">
       {/* Main content grid */}
       <div className="container relative z-10 pt-28 lg:pt-32 pb-16">
         <div className="grid lg:grid-cols-12 gap-8 items-start">
           {/* Left column - Text */}
           <div className="lg:col-span-6 xl:col-span-5 pt-8 lg:pt-16">
             <div className="reveal">
-              <span className="section-label mb-8 block">Medicina Diagnóstica</span>
+              <span className="section-label mb-8 block">Medicina Diagnóstica em Caraguatatuba-SP</span>
             </div>
 
             <h1 className="reveal heading-display text-[clamp(3.5rem,10vw,8rem)] leading-[0.85] mb-8" style={{ transitionDelay: "100ms" }}>
@@ -32,13 +33,14 @@ export default function HeroSection() {
             </h1>
 
             <p className="reveal text-lg text-text-light leading-relaxed max-w-md mb-10" style={{ transitionDelay: "200ms" }}>
-              Desde 2003, mais de 30.000 famílias confiam na nossa combinação de tecnologia de última geração e atendimento humanizado.
+              Desde 2003, mais de 30.000 famílias confiam na nossa clínica de medicina diagnóstica em Caraguatatuba. Realizamos tomografia, ultrassonografia, mamografia, ecocardiograma, check-up preventivo e exames laboratoriais com tecnologia de última geração e atendimento humanizado.
             </p>
 
             <div className="reveal flex flex-wrap gap-4 mb-16" style={{ transitionDelay: "300ms" }}>
               <button
-                onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame.", "_blank")}
+                onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame na Total Quality.", "_blank")}
                 className="btn-pill-brand btn-pill"
+                aria-label="Agendar exame na Total Quality via WhatsApp"
               >
                 Agendar Exame
                 <ArrowUpRight className="w-3.5 h-3.5" />
@@ -49,6 +51,7 @@ export default function HeroSection() {
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
                 className="btn-pill !bg-transparent !text-text border border-black/15 hover:!bg-black/5"
+                aria-label="Ver lista de exames disponíveis"
               >
                 Ver Exames
                 <ArrowUpRight className="w-3.5 h-3.5" />
@@ -75,8 +78,11 @@ export default function HeroSection() {
             <div className="relative">
               <img
                 src={HERO_IMAGE}
-                alt="Clínica Total Quality - Ambiente moderno"
+                alt="Clínica Total Quality Medicina Diagnóstica em Caraguatatuba-SP - Interior moderno com equipamentos de tomografia e diagnóstico por imagem"
                 className="w-full h-[50vh] lg:h-[80vh] object-cover"
+                loading="eager"
+                width="800"
+                height="600"
               />
               {/* Floating info card */}
               <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-5 max-w-xs shadow-lg">
@@ -89,8 +95,8 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Marquee strip — light gray background, dark text */}
-      <div className="py-4 overflow-hidden bg-surface-dark border-t border-b border-black/5">
+      {/* Marquee strip — SEO: visible service keywords */}
+      <div className="py-4 overflow-hidden bg-surface-dark border-t border-b border-black/5" aria-label="Serviços de exames disponíveis na Total Quality">
         <div className="animate-marquee whitespace-nowrap flex">
           {Array.from({ length: 3 }).map((_, i) => (
             <span key={i} className="inline-flex items-center gap-8 mx-8">

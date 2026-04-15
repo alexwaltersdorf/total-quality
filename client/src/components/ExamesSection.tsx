@@ -28,7 +28,7 @@ const examData: Record<Category, { image: string; tag: string; exams: string[]; 
   imagem: {
     image: DIAGNOSTIC_IMG,
     tag: "Tecnologia de Última Geração",
-    description: "Equipamentos de ponta para diagnósticos por imagem com alta precisão e rapidez nos resultados.",
+    description: "Equipamentos de ponta para diagnósticos por imagem em Caraguatatuba. Tomografia computadorizada multislice, ultrassonografia geral e Doppler, mamografia digital e raio-X digital com alta precisão e rapidez nos resultados.",
     exams: [
       "Tomografia Computadorizada Multislice",
       "Ultrassonografia Geral e Doppler",
@@ -39,7 +39,7 @@ const examData: Record<Category, { image: string; tag: string; exams: string[]; 
   cardiologia: {
     image: CARDIOLOGY_IMG,
     tag: "Cuidado Especializado",
-    description: "Exames cardiológicos completos com profissionais especializados e equipamentos modernos.",
+    description: "Exames cardiológicos completos em Caraguatatuba com profissionais especializados. Eletrocardiograma, MAPA 24h, Holter 24h e check-up cardiovascular com equipamentos modernos.",
     exams: [
       "Eletrocardiograma (ECG)",
       "MAPA - Pressão Arterial",
@@ -50,7 +50,7 @@ const examData: Record<Category, { image: string; tag: string; exams: string[]; 
   laboratorio: {
     image: LAB_IMG,
     tag: "Análises Clínicas",
-    description: "Laboratório completo com mais de 3.000 tipos de exames e resultados em até 24 horas.",
+    description: "Laboratório de análises clínicas completo em Caraguatatuba com mais de 3.000 tipos de exames laboratoriais e resultados online em até 24 horas.",
     exams: [
       "Exames de Rotina",
       "Análises de Alta Complexidade",
@@ -65,12 +65,12 @@ export default function ExamesSection() {
   const data = examData[active];
 
   return (
-    <section id="exames" className="py-24 lg:py-32 bg-surface-dark">
+    <section id="exames" className="py-24 lg:py-32 bg-surface-dark" aria-label="Exames diagnósticos disponíveis na Total Quality Caraguatatuba">
       <div className="container">
         {/* Section header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-16">
           <div>
-            <span className="reveal section-label mb-4 block">Nossos Exames</span>
+            <span className="reveal section-label mb-4 block">Exames Diagnósticos em Caraguatatuba</span>
             <h2 className="reveal heading-display text-5xl sm:text-6xl lg:text-7xl text-text" style={{ transitionDelay: "100ms" }}>
               PRINCIPAIS
               <br />
@@ -78,7 +78,7 @@ export default function ExamesSection() {
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
-            Oferecemos uma ampla gama de exames diagnósticos com tecnologia de ponta e resultados confiáveis.
+            Oferecemos mais de 3.000 tipos de exames diagnósticos em Caraguatatuba-SP, incluindo tomografia, ultrassonografia, mamografia, ecocardiograma, holter, MAPA e análises laboratoriais com tecnologia de ponta.
           </p>
         </div>
 
@@ -107,7 +107,7 @@ export default function ExamesSection() {
           <div className="lg:col-span-7 relative overflow-hidden group">
             <img
               src={data.image}
-              alt={categories.find(c => c.id === active)?.label}
+              alt={`Exame de ${categories.find(c => c.id === active)?.label} na Total Quality Medicina Diagnóstica Caraguatatuba`}
               className="w-full h-[350px] lg:h-[520px] object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute top-6 left-6">
