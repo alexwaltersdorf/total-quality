@@ -12,8 +12,9 @@ import {
 import {
   ArrowLeft, ArrowUpRight, ArrowDownRight, TrendingUp, Eye, Phone,
   MessageCircle, FileText, Users, Activity, Clock, MousePointerClick,
-  BarChart3, RefreshCw, Trash2, Database, Map, Instagram, ChevronDown,
+  BarChart3, RefreshCw, Trash2, Database, Map, Instagram, ChevronDown, LogOut,
 } from "lucide-react";
+import DashboardLogin, { logout } from "@/components/DashboardLogin";
 import {
   getAllEvents, getEventsByPeriod, getTodayEvents, getSummaryMetrics,
   getDailyMetrics, getHourlyDistribution, getTopPages, getTopSections,
@@ -175,7 +176,7 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
 // ============================================================
 // COMPONENTE PRINCIPAL: DASHBOARD
 // ============================================================
-export default function Dashboard() {
+function DashboardContent() {
   const [period, setPeriod] = useState<7 | 14 | 30>(7);
   const [events, setEvents] = useState<AnalyticsEvent[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -304,6 +305,10 @@ export default function Dashboard() {
             </button>
             <button onClick={handleClearData} className="p-2 rounded-lg hover:opacity-70 transition-opacity" style={{ color: COLORS.textMuted }} title="Limpar dados">
               <Trash2 className="w-4 h-4" />
+            </button>
+            <div className="h-5 w-px" style={{ backgroundColor: COLORS.border }} />
+            <button onClick={logout} className="p-2 rounded-lg hover:opacity-70 transition-opacity" style={{ color: COLORS.textMuted }} title="Sair">
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -720,4 +725,16 @@ function getEventColor(event: string): string {
     results_online_click: COLORS.blueDark,
   };
   return colors[event] || COLORS.gray;
+}
+
+
+// ============================================================
+// EXPORT COM PROTEÇÃO DE LOGIN
+// ============================================================
+export default function Dashboard() {
+  return (
+    <DashboardLogin>
+      <DashboardContent />
+    </DashboardLogin>
+  );
 }
