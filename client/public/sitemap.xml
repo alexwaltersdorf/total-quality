@@ -5,19 +5,15 @@
 
   <!-- Página Inicial -->
   <url>
-    <loc>https://totalqualmed-jl54vver.manus.space/</loc>
+    <loc>https://www.totalquality.med.br/</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <image:image>
-      <image:loc>https://totalqualmed-jl54vver.manus.space/og-image.png</image:loc>
-      <image:title>Total Quality Medicina Diagnóstica - Clínica e Laboratório em Caraguatatuba-SP</image:title>
-    </image:image>
   </url>
 
   <!-- Página de Check-Up Preventivo -->
   <url>
-    <loc>https://totalqualmed-jl54vver.manus.space/checkup</loc>
+    <loc>https://www.totalquality.med.br/checkup</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
@@ -25,7 +21,7 @@
 
   <!-- Página de Bioimpedância -->
   <url>
-    <loc>https://totalqualmed-jl54vver.manus.space/bioimpedancia</loc>
+    <loc>https://www.totalquality.med.br/bioimpedancia</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
@@ -33,28 +29,28 @@
 
   <!-- Seções da Página Inicial (âncoras para SEO) -->
   <url>
-    <loc>https://totalqualmed-jl54vver.manus.space/#diferenciais</loc>
+    <loc>https://www.totalquality.med.br/#diferenciais</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://totalqualmed-jl54vver.manus.space/#exames</loc>
+    <loc>https://www.totalquality.med.br/#exames</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://totalqualmed-jl54vver.manus.space/#sobre</loc>
+    <loc>https://www.totalquality.med.br/#sobre</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://totalqualmed-jl54vver.manus.space/#contato</loc>
+    <loc>https://www.totalquality.med.br/#contato</loc>
     <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

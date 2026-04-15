@@ -1,12 +1,12 @@
 # robots.txt — Total Quality Medicina Diagnóstica
-# https://totalqualmed-jl54vver.manus.space
+# https://www.totalquality.med.br
 
 User-agent: *
 Allow: /
 Disallow: /dashboard
 
 # Sitemap
-Sitemap: https://totalqualmed-jl54vver.manus.space/sitemap.xml
+Sitemap: https://www.totalquality.med.br/sitemap.xml
 
 # Crawl-delay (opcional, para bots que respeitam)
 Crawl-delay: 5
