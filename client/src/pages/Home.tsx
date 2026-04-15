@@ -25,6 +25,8 @@ import {
 } from "@/lib/tracking";
 import { initAnalyticsCapture } from "@/lib/analyticsStore";
 import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
+import { captureUTMParams, getUTMForAPI } from "@/lib/utmTracker";
+import { startPageTracking } from "@/lib/engagementTracker";
 
 export default function Home() {
   const scrollRef = useScrollReveal();
@@ -39,9 +41,33 @@ export default function Home() {
     // Initialize analytics capture for dashboard
     initAnalyticsCapture();
 
+    // Capture UTM params and track session
+    const utmData = captureUTMParams();
+    const utmForAPI = getUTMForAPI();
+    const sessionId = sessionStorage.getItem("tq_session_id") || `sess_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    if (!sessionStorage.getItem("tq_session_id")) sessionStorage.setItem("tq_session_id", sessionId);
+
+    // Track session with UTM data
+    fetch("/api/trpc/session.track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ json: {
+        sessionId,
+        ...utmForAPI,
+        landingPage: window.location.pathname,
+        device: /Mobi|Android/i.test(navigator.userAgent) ? "mobile" : /Tablet|iPad/i.test(navigator.userAgent) ? "tablet" : "desktop",
+        browser: navigator.userAgent.match(/(Chrome|Firefox|Safari|Edge|Opera)/)?.[1] || "Outro",
+        os: navigator.platform || "Desconhecido",
+      }}),
+    }).catch(() => {});
+
+    // Start page engagement tracking (time on page, scroll depth, quartiles)
+    const cleanupEngagement = startPageTracking("/", "Home");
+
     // Tracking: page view + engagement metrics
     trackPageView("Home");
-    trackEventDirect("page_view", "navigation", { page: "Home" });
+    trackEventDirect("page_view", "navigation", { page: "Home", ...utmForAPI });
     const cleanupScroll = initScrollTracking();
     const cleanupTime = initTimeTracking();
 
@@ -54,6 +80,7 @@ export default function Home() {
       cleanupScroll();
       cleanupTime();
       clearTimeout(sectionTimeout);
+      if (cleanupEngagement) cleanupEngagement();
     };
   }, []);
 

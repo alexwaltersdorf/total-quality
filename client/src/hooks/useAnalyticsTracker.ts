@@ -1,9 +1,11 @@
 /**
  * Hook para rastrear eventos de analytics e leads via tRPC API.
  * Persiste dados no banco de dados além do GTM/dataLayer.
+ * Inclui UTM params para atribuição de canais/campanhas.
  */
 import { trpc } from "@/lib/trpc";
 import { useCallback, useRef } from "react";
+import { getUTMForAPI } from "@/lib/utmTracker";
 
 // Gerar ou recuperar sessionId do sessionStorage
 function getSessionId(): string {
@@ -20,6 +22,7 @@ export function useAnalyticsTracker() {
   const trackMutation = trpc.analytics.track.useMutation();
   const leadMutation = trpc.lead.create.useMutation();
   const blogViewMutation = trpc.blog.trackView.useMutation();
+  const conversionMutation = trpc.conversion.track.useMutation();
   const sessionId = useRef(getSessionId());
 
   const trackEvent = useCallback(
@@ -36,14 +39,25 @@ export function useAnalyticsTracker() {
   );
 
   const trackLead = useCallback(
-    (source: string) => {
+    (source: string, extraData?: { name?: string; phone?: string; email?: string }) => {
+      const utm = getUTMForAPI();
       leadMutation.mutate({
         source,
         page: window.location.pathname,
         referrer: document.referrer || undefined,
+        sessionId: sessionId.current,
+        ...utm,
+        ...extraData,
+      });
+      // Also track as conversion
+      conversionMutation.mutate({
+        sessionId: sessionId.current,
+        conversionType: source.includes("whatsapp") ? "whatsapp_click" : source.includes("form") ? "form_submit" : "cta_click",
+        page: window.location.pathname,
+        ...utm,
       });
     },
-    [leadMutation]
+    [leadMutation, conversionMutation]
   );
 
   const trackBlogView = useCallback(
@@ -89,8 +103,10 @@ export async function trackEventDirect(
   }
 }
 
-export async function trackLeadDirect(source: string) {
+export async function trackLeadDirect(source: string, extraData?: { name?: string; phone?: string; email?: string }) {
   try {
+    const sessionId = getSessionId();
+    const utm = getUTMForAPI();
     await fetch("/api/trpc/lead.create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -100,6 +116,23 @@ export async function trackLeadDirect(source: string) {
           source,
           page: window.location.pathname,
           referrer: document.referrer || undefined,
+          sessionId,
+          ...utm,
+          ...extraData,
+        },
+      }),
+    });
+    // Also track conversion
+    await fetch("/api/trpc/conversion.track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        json: {
+          sessionId,
+          conversionType: source.includes("whatsapp") ? "whatsapp_click" : source.includes("form") ? "form_submit" : "cta_click",
+          page: window.location.pathname,
+          ...utm,
         },
       }),
     });

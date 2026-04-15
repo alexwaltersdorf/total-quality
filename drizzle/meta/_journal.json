@@ -15,6 +15,13 @@
       "when": 1776279202262,
       "tag": "0001_uneven_sprite",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1776295096032,
+      "tag": "0002_cloudy_the_anarchist",
+      "breakpoints": true
     }
   ]
 }

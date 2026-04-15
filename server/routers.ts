@@ -5,9 +5,15 @@ import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_
 import { z } from "zod";
 import {
   createContact, getContacts, getContactsCount, updateContactStatus,
-  createLead, getLeads, getLeadsCount, getLeadsBySource,
+  createLead, getLeads, getLeadsCount, getLeadsBySource, getLeadsByChannel,
+  getLeadsByCampaign, getLeadsByDay, getLeadsByStatus, updateLeadStatus, updateLeadNotes,
   createAnalyticsEvent, getAnalyticsEvents, getAnalyticsSummary, getEventsByName,
   createBlogView, getBlogViewsBySlug, getBlogViewCount,
+  upsertSession, getSessionsCount, getSessionsByChannel, getSessionsByDay, getAvgSessionDuration, getBounceRate,
+  createPageView, getTopPages, getEngagementQuartiles,
+  createVideoView, getVideoStats,
+  createConversion, getConversionRate, getConversionsByChannel, getConversionsByType,
+  getDashboardKPIs,
 } from "./db";
 
 export const appRouter = router({
@@ -31,32 +37,19 @@ export const appRouter = router({
         subject: z.string().max(255).optional(),
         message: z.string().min(5),
       }))
-      .mutation(async ({ input, ctx }) => {
-        return createContact(input);
-      }),
+      .mutation(async ({ input }) => createContact(input)),
 
     list: protectedProcedure
-      .input(z.object({
-        limit: z.number().min(1).max(100).default(50),
-        offset: z.number().min(0).default(0),
-      }).optional())
+      .input(z.object({ limit: z.number().min(1).max(100).default(50), offset: z.number().min(0).default(0) }).optional())
       .query(async ({ input }) => {
         const { limit = 50, offset = 0 } = input ?? {};
-        const [items, total] = await Promise.all([
-          getContacts(limit, offset),
-          getContactsCount(),
-        ]);
+        const [items, total] = await Promise.all([getContacts(limit, offset), getContactsCount()]);
         return { items, total };
       }),
 
     updateStatus: protectedProcedure
-      .input(z.object({
-        id: z.number(),
-        status: z.enum(["new", "read", "replied", "archived"]),
-      }))
-      .mutation(async ({ input }) => {
-        return updateContactStatus(input.id, input.status);
-      }),
+      .input(z.object({ id: z.number(), status: z.enum(["new", "read", "replied", "archived"]) }))
+      .mutation(async ({ input }) => updateContactStatus(input.id, input.status)),
   }),
 
   // ===================== LEADS =====================
@@ -66,6 +59,20 @@ export const appRouter = router({
         source: z.string().max(100),
         page: z.string().max(255),
         referrer: z.string().max(500).optional(),
+        name: z.string().max(255).optional(),
+        phone: z.string().max(30).optional(),
+        email: z.string().max(320).optional(),
+        address: z.string().max(500).optional(),
+        city: z.string().max(100).optional(),
+        state: z.string().max(50).optional(),
+        zipCode: z.string().max(20).optional(),
+        utmSource: z.string().max(200).optional(),
+        utmMedium: z.string().max(200).optional(),
+        utmCampaign: z.string().max(500).optional(),
+        utmTerm: z.string().max(500).optional(),
+        utmContent: z.string().max(500).optional(),
+        channel: z.string().max(100).optional(),
+        sessionId: z.string().max(100).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
         return createLead({
@@ -79,29 +86,85 @@ export const appRouter = router({
       .input(z.object({
         limit: z.number().min(1).max(100).default(50),
         offset: z.number().min(0).default(0),
+        channel: z.string().optional(),
+        leadStatus: z.string().optional(),
+        days: z.number().min(1).max(365).optional(),
       }).optional())
       .query(async ({ input }) => {
-        const { limit = 50, offset = 0 } = input ?? {};
+        const { limit = 50, offset = 0, channel, leadStatus, days } = input ?? {};
+        const since = days ? new Date(Date.now() - days * 86400000) : undefined;
         const [items, total] = await Promise.all([
-          getLeads(limit, offset),
-          getLeadsCount(),
+          getLeads(limit, offset, { channel: channel || undefined, leadStatus: leadStatus || undefined, since }),
+          getLeadsCount(since),
         ]);
         return { items, total };
       }),
 
     stats: protectedProcedure
-      .input(z.object({
-        days: z.number().min(1).max(365).default(30),
-      }).optional())
+      .input(z.object({ days: z.number().min(1).max(365).default(30) }).optional())
       .query(async ({ input }) => {
         const days = input?.days ?? 30;
-        const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-        const [total, totalSince, bySource] = await Promise.all([
+        const since = new Date(Date.now() - days * 86400000);
+        const [total, totalSince, bySource, byChannel, byCampaign, byDay, byStatus] = await Promise.all([
           getLeadsCount(),
           getLeadsCount(since),
           getLeadsBySource(),
+          getLeadsByChannel(since),
+          getLeadsByCampaign(since),
+          getLeadsByDay(since),
+          getLeadsByStatus(),
         ]);
-        return { total, totalSince, bySource };
+        return { total, totalSince, bySource, byChannel, byCampaign, byDay, byStatus };
+      }),
+
+    updateStatus: protectedProcedure
+      .input(z.object({ id: z.number(), status: z.enum(["new", "contacted", "qualified", "converted", "lost"]) }))
+      .mutation(async ({ input }) => updateLeadStatus(input.id, input.status)),
+
+    updateNotes: protectedProcedure
+      .input(z.object({ id: z.number(), notes: z.string() }))
+      .mutation(async ({ input }) => updateLeadNotes(input.id, input.notes)),
+  }),
+
+  // ===================== SESSIONS =====================
+  session: router({
+    track: publicProcedure
+      .input(z.object({
+        sessionId: z.string().max(100),
+        utmSource: z.string().max(200).optional(),
+        utmMedium: z.string().max(200).optional(),
+        utmCampaign: z.string().max(500).optional(),
+        utmTerm: z.string().max(500).optional(),
+        utmContent: z.string().max(500).optional(),
+        channel: z.string().max(100).optional(),
+        referrer: z.string().max(500).optional(),
+        landingPage: z.string().max(255).optional(),
+        device: z.string().max(50).optional(),
+        browser: z.string().max(100).optional(),
+        os: z.string().max(100).optional(),
+        totalDurationMs: z.number().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return upsertSession({
+          ...input,
+          userAgent: ctx.req.headers["user-agent"] ?? null,
+          ipAddress: (ctx.req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? ctx.req.ip ?? null,
+        });
+      }),
+
+    stats: protectedProcedure
+      .input(z.object({ days: z.number().min(1).max(365).default(30) }).optional())
+      .query(async ({ input }) => {
+        const days = input?.days ?? 30;
+        const since = new Date(Date.now() - days * 86400000);
+        const [total, byChannel, byDay, avgDuration, bounceRate_] = await Promise.all([
+          getSessionsCount(since),
+          getSessionsByChannel(since),
+          getSessionsByDay(since),
+          getAvgSessionDuration(since),
+          getBounceRate(since),
+        ]);
+        return { total, byChannel, byDay, avgDuration, bounceRate: bounceRate_ };
       }),
   }),
 
@@ -123,38 +186,84 @@ export const appRouter = router({
         });
       }),
 
-    events: protectedProcedure
+    trackPageView: publicProcedure
       .input(z.object({
-        limit: z.number().min(1).max(500).default(100),
-        offset: z.number().min(0).default(0),
-      }).optional())
+        sessionId: z.string().max(100),
+        page: z.string().max(255),
+        title: z.string().max(500).optional(),
+        durationMs: z.number().default(0),
+        scrollDepthPct: z.number().default(0),
+        reached25pct: z.number().default(0),
+        reached50pct: z.number().default(0),
+        reached75pct: z.number().default(0),
+        reached100pct: z.number().default(0),
+        isExit: z.boolean().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return createPageView({
+          ...input,
+          userAgent: ctx.req.headers["user-agent"] ?? null,
+          ipAddress: (ctx.req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? ctx.req.ip ?? null,
+        });
+      }),
+
+    trackVideoView: publicProcedure
+      .input(z.object({
+        sessionId: z.string().max(100),
+        page: z.string().max(255).optional(),
+        videoId: z.string().max(255),
+        videoTitle: z.string().max(500).optional(),
+        videoDurationMs: z.number().default(0),
+        watchTimeMs: z.number().default(0),
+        reached25pct: z.number().default(0),
+        reached50pct: z.number().default(0),
+        reached75pct: z.number().default(0),
+        reached100pct: z.number().default(0),
+        utmSource: z.string().max(200).optional(),
+        utmCampaign: z.string().max(500).optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return createVideoView({
+          ...input,
+          userAgent: ctx.req.headers["user-agent"] ?? null,
+          ipAddress: (ctx.req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? ctx.req.ip ?? null,
+        });
+      }),
+
+    events: protectedProcedure
+      .input(z.object({ limit: z.number().min(1).max(500).default(100), offset: z.number().min(0).default(0) }).optional())
       .query(async ({ input }) => {
         const { limit = 100, offset = 0 } = input ?? {};
         return getAnalyticsEvents(limit, offset);
       }),
 
     summary: protectedProcedure
-      .input(z.object({
-        days: z.number().min(1).max(365).default(30),
-      }).optional())
+      .input(z.object({ days: z.number().min(1).max(365).default(30) }).optional())
       .query(async ({ input }) => {
         const days = input?.days ?? 30;
-        const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-        const [summary, eventsByName] = await Promise.all([
-          getAnalyticsSummary(since),
-          getEventsByName(since),
-        ]);
+        const since = new Date(Date.now() - days * 86400000);
+        const [summary, eventsByName] = await Promise.all([getAnalyticsSummary(since), getEventsByName(since)]);
         return { ...summary, eventsByName };
+      }),
+
+    engagement: protectedProcedure
+      .input(z.object({ days: z.number().min(1).max(365).default(30) }).optional())
+      .query(async ({ input }) => {
+        const days = input?.days ?? 30;
+        const since = new Date(Date.now() - days * 86400000);
+        const [topPages_, quartiles, videoStats_] = await Promise.all([
+          getTopPages(since, 20),
+          getEngagementQuartiles(since),
+          getVideoStats(since),
+        ]);
+        return { topPages: topPages_, quartiles, videoStats: videoStats_ };
       }),
   }),
 
   // ===================== BLOG =====================
   blog: router({
     trackView: publicProcedure
-      .input(z.object({
-        slug: z.string().max(255),
-        sessionId: z.string().max(100).optional(),
-      }))
+      .input(z.object({ slug: z.string().max(255), sessionId: z.string().max(100).optional() }))
       .mutation(async ({ input, ctx }) => {
         return createBlogView({
           ...input,
@@ -164,16 +273,48 @@ export const appRouter = router({
       }),
 
     viewCount: publicProcedure
-      .input(z.object({
-        slug: z.string().max(255),
-      }))
-      .query(async ({ input }) => {
-        return { count: await getBlogViewCount(input.slug) };
-      }),
+      .input(z.object({ slug: z.string().max(255) }))
+      .query(async ({ input }) => ({ count: await getBlogViewCount(input.slug) })),
 
-    viewStats: protectedProcedure
-      .query(async () => {
-        return getBlogViewsBySlug();
+    viewStats: protectedProcedure.query(async () => getBlogViewsBySlug()),
+  }),
+
+  // ===================== CONVERSIONS =====================
+  conversion: router({
+    track: publicProcedure
+      .input(z.object({
+        sessionId: z.string().max(100),
+        conversionType: z.string().max(100),
+        utmSource: z.string().max(200).optional(),
+        utmMedium: z.string().max(200).optional(),
+        utmCampaign: z.string().max(500).optional(),
+        channel: z.string().max(100).optional(),
+        page: z.string().max(255).optional(),
+      }))
+      .mutation(async ({ input }) => createConversion(input)),
+
+    stats: protectedProcedure
+      .input(z.object({ days: z.number().min(1).max(365).default(30) }).optional())
+      .query(async ({ input }) => {
+        const days = input?.days ?? 30;
+        const since = new Date(Date.now() - days * 86400000);
+        const [rate, byChannel, byType] = await Promise.all([
+          getConversionRate(since),
+          getConversionsByChannel(since),
+          getConversionsByType(since),
+        ]);
+        return { rate, byChannel, byType };
+      }),
+  }),
+
+  // ===================== DASHBOARD =====================
+  dashboard: router({
+    kpis: protectedProcedure
+      .input(z.object({ days: z.number().min(1).max(365).default(30) }).optional())
+      .query(async ({ input }) => {
+        const days = input?.days ?? 30;
+        const since = new Date(Date.now() - days * 86400000);
+        return getDashboardKPIs(since);
       }),
   }),
 });

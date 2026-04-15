@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { MapView } from "@/components/Map";
 import { trpc } from "@/lib/trpc";
 import { trackFormStart, trackFormSubmit, trackPhoneClick, trackWhatsAppClick, trackExternalLink, trackMapInteraction } from "@/lib/tracking";
+import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 
 export default function ContatoSection() {
   const [formData, setFormData] = useState({
@@ -72,6 +73,13 @@ export default function ContatoSection() {
       phone: formData.telefone || undefined,
       subject: formData.tipoExame || undefined,
       message: formData.mensagem,
+    });
+
+    // Rastrear como lead com UTM params
+    trackLeadDirect("form_contato", {
+      name: formData.nome,
+      phone: formData.telefone || undefined,
+      email: formData.email,
     });
   };
 

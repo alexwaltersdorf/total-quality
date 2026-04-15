@@ -1,0 +1,916 @@
+import { useAuth } from "@/_core/hooks/useAuth";
+import { getLoginUrl } from "@/const";
+import { trpc } from "@/lib/trpc";
+import { useLocation, useParams } from "wouter";
+import { useState, useMemo } from "react";
+import {
+  BarChart3, Users, MousePointerClick, Eye, Clock, TrendingUp,
+  ArrowUpRight, ArrowDownRight, Minus, Filter, Calendar,
+  LayoutDashboard, UserCheck, Megaphone, Activity, Target,
+  ChevronLeft, LogOut, MessageSquare, Phone, Mail, MapPin,
+  ExternalLink, Video, ScrollText
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from "@/components/ui/table";
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip,
+  ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line,
+  AreaChart, Area, Legend, Treemap
+} from "recharts";
+
+const COLORS = ["#9B212B", "#D4A574", "#2D5A3D", "#1E3A5F", "#8B5CF6", "#F59E0B", "#EF4444", "#10B981", "#6366F1", "#EC4899"];
+const CHANNEL_COLORS: Record<string, string> = {
+  "Facebook Ads": "#1877F2",
+  "Facebook Orgânico": "#4267B2",
+  "Instagram Ads": "#E4405F",
+  "Instagram Orgânico": "#C13584",
+  "Google Ads": "#4285F4",
+  "Google Orgânico": "#34A853",
+  "TikTok Ads": "#000000",
+  "TikTok Orgânico": "#25F4EE",
+  "YouTube Ads": "#FF0000",
+  "YouTube Orgânico": "#FF4444",
+  "Email Marketing": "#F59E0B",
+  "WhatsApp": "#25D366",
+  "Acesso Direto": "#6B7280",
+  "Referência": "#8B5CF6",
+};
+
+function getChannelColor(channel: string | null): string {
+  return CHANNEL_COLORS[channel || ""] || "#9B212B";
+}
+
+function formatDuration(ms: number): string {
+  if (!ms || ms === 0) return "0s";
+  const seconds = Math.floor(ms / 1000);
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}m ${remainingSeconds}s`;
+}
+
+function formatNumber(n: number): string {
+  if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
+  return n.toString();
+}
+
+// ===================== KPI Card =====================
+function KPICard({ title, value, subtitle, icon: Icon, trend, color = "text-primary" }: {
+  title: string; value: string | number; subtitle?: string;
+  icon: any; trend?: "up" | "down" | "neutral"; color?: string;
+}) {
+  return (
+    <Card className="relative overflow-hidden">
+      <CardContent className="p-6">
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-muted-foreground">{title}</p>
+            <p className={`text-3xl font-bold tracking-tight ${color}`}>{value}</p>
+            {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
+          </div>
+          <div className={`rounded-xl p-3 bg-muted`}>
+            <Icon className="h-5 w-5 text-muted-foreground" />
+          </div>
+        </div>
+        {trend && (
+          <div className="mt-3 flex items-center gap-1 text-xs">
+            {trend === "up" && <ArrowUpRight className="h-3 w-3 text-green-600" />}
+            {trend === "down" && <ArrowDownRight className="h-3 w-3 text-red-600" />}
+            {trend === "neutral" && <Minus className="h-3 w-3 text-gray-400" />}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ===================== Lead Status Badge =====================
+function LeadStatusBadge({ status }: { status: string }) {
+  const variants: Record<string, string> = {
+    new: "bg-blue-100 text-blue-800",
+    contacted: "bg-yellow-100 text-yellow-800",
+    qualified: "bg-purple-100 text-purple-800",
+    converted: "bg-green-100 text-green-800",
+    lost: "bg-red-100 text-red-800",
+  };
+  const labels: Record<string, string> = {
+    new: "Novo", contacted: "Contatado", qualified: "Qualificado",
+    converted: "Convertido", lost: "Perdido",
+  };
+  return (
+    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${variants[status] || "bg-gray-100 text-gray-800"}`}>
+      {labels[status] || status}
+    </span>
+  );
+}
+
+// ===================== DASHBOARD TAB =====================
+function DashboardTab({ days }: { days: number }) {
+  const { data: kpis, isLoading } = trpc.dashboard.kpis.useQuery({ days });
+  const { data: leadStats } = trpc.lead.stats.useQuery({ days });
+
+  if (isLoading) return <DashboardSkeleton />;
+  if (!kpis) return <p className="text-muted-foreground p-8">Nenhum dado disponível.</p>;
+
+  const channelData = (kpis.leadsByChannel || []).map((c: any) => ({
+    name: c.channel || "Não identificado",
+    value: c.total,
+    fill: getChannelColor(c.channel),
+  }));
+
+  const dailyData = (kpis.leadsByDay || []).map((d: any) => ({
+    date: new Date(d.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+    leads: d.total,
+  }));
+
+  const funnelData = (kpis.leadsStatus || []).map((s: any) => ({
+    name: s.leadStatus === "new" ? "Novos" : s.leadStatus === "contacted" ? "Contatados" : s.leadStatus === "qualified" ? "Qualificados" : s.leadStatus === "converted" ? "Convertidos" : "Perdidos",
+    value: s.total,
+  }));
+
+  const topPagesData = (kpis.topPages || []).map((p: any) => ({
+    page: p.page === "/" ? "Home" : p.page,
+    views: p.views,
+    avgDuration: formatDuration(p.avgDuration || 0),
+    avgScroll: `${Math.round(p.avgScroll || 0)}%`,
+  }));
+
+  return (
+    <div className="space-y-6">
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KPICard title="Total de Leads" value={formatNumber(kpis.totalLeads)} subtitle={`Últimos ${days} dias`} icon={Users} color="text-[#9B212B]" />
+        <KPICard title="Sessões" value={formatNumber(kpis.totalSessions)} subtitle={`Visitantes únicos`} icon={Eye} />
+        <KPICard title="Taxa de Conversão" value={`${kpis.conversionRate}%`} subtitle="Sessões → Leads" icon={Target} color="text-green-600" />
+        <KPICard title="Taxa de Rejeição" value={`${kpis.bounceRate}%`} subtitle="Sessões com 1 página" icon={TrendingUp} color={kpis.bounceRate > 60 ? "text-red-600" : "text-green-600"} />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KPICard title="Tempo Médio na Sessão" value={formatDuration(kpis.avgSessionDuration)} icon={Clock} />
+        <KPICard title="Engajamento 25%" value={formatNumber(kpis.engagementQuartiles?.q25 || 0)} subtitle="Visitantes que ficaram 25% do tempo" icon={Activity} />
+        <KPICard title="Engajamento 75%" value={formatNumber(kpis.engagementQuartiles?.q75 || 0)} subtitle="Visitantes altamente engajados" icon={Activity} color="text-green-600" />
+        <KPICard title="Engajamento 100%" value={formatNumber(kpis.engagementQuartiles?.q100 || 0)} subtitle="Visitantes que viram tudo" icon={Activity} color="text-[#9B212B]" />
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Leads por Dia */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Leads por Dia</CardTitle>
+            <CardDescription>Evolução diária de captação de leads</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {dailyData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={dailyData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="date" fontSize={11} />
+                  <YAxis fontSize={11} />
+                  <ReTooltip />
+                  <Area type="monotone" dataKey="leads" stroke="#9B212B" fill="#9B212B" fillOpacity={0.15} strokeWidth={2} name="Leads" />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[300px] text-muted-foreground">Nenhum dado no período</div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Leads por Canal */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Leads por Canal</CardTitle>
+            <CardDescription>Distribuição de leads por fonte de tráfego</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {channelData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie data={channelData} cx="50%" cy="50%" outerRadius={100} dataKey="value" nameKey="name" label={({ name, percent }: any) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={true} fontSize={11}>
+                    {channelData.map((entry: any, i: number) => (
+                      <Cell key={i} fill={entry.fill} />
+                    ))}
+                  </Pie>
+                  <ReTooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[300px] text-muted-foreground">Nenhum dado no período</div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Funil e Top Páginas */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Funil de Leads */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Funil de Leads</CardTitle>
+            <CardDescription>Status dos leads no pipeline</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {funnelData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={funnelData} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis type="number" fontSize={11} />
+                  <YAxis dataKey="name" type="category" width={100} fontSize={12} />
+                  <ReTooltip />
+                  <Bar dataKey="value" name="Leads" radius={[0, 4, 4, 0]}>
+                    {funnelData.map((_: any, i: number) => (
+                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[300px] text-muted-foreground">Nenhum dado</div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Top Páginas */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Páginas Mais Visitadas</CardTitle>
+            <CardDescription>Ranking de páginas por visualizações</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-[300px]">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Página</TableHead>
+                    <TableHead className="text-right">Views</TableHead>
+                    <TableHead className="text-right">Tempo Médio</TableHead>
+                    <TableHead className="text-right">Scroll</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {topPagesData.length > 0 ? topPagesData.map((p: any, i: number) => (
+                    <TableRow key={i}>
+                      <TableCell className="font-medium text-sm max-w-[200px] truncate">{p.page}</TableCell>
+                      <TableCell className="text-right">{p.views}</TableCell>
+                      <TableCell className="text-right">{p.avgDuration}</TableCell>
+                      <TableCell className="text-right">{p.avgScroll}</TableCell>
+                    </TableRow>
+                  )) : (
+                    <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground">Nenhum dado</TableCell></TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+// ===================== LEADS TAB =====================
+function LeadsTab({ days }: { days: number }) {
+  const { data: leadsData, isLoading } = trpc.lead.list.useQuery({ limit: 100, offset: 0, days });
+  const updateStatus = trpc.lead.updateStatus.useMutation();
+  const utils = trpc.useUtils();
+
+  if (isLoading) return <DashboardSkeleton />;
+
+  const items = leadsData?.items || [];
+
+  const handleStatusChange = async (id: number, status: "new" | "contacted" | "qualified" | "converted" | "lost") => {
+    await updateStatus.mutateAsync({ id, status });
+    utils.lead.list.invalidate();
+    utils.lead.stats.invalidate();
+    utils.dashboard.kpis.invalidate();
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Users className="h-5 w-5" /> Leads Recentes
+          </CardTitle>
+          <CardDescription>{leadsData?.total || 0} leads no total</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ScrollArea className="h-[600px]">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Data</TableHead>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>Telefone</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Cidade</TableHead>
+                  <TableHead>Canal</TableHead>
+                  <TableHead>Campanha</TableHead>
+                  <TableHead>Origem</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {items.length > 0 ? items.map((lead: any) => (
+                  <TableRow key={lead.id}>
+                    <TableCell className="text-xs whitespace-nowrap">
+                      {new Date(lead.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                    </TableCell>
+                    <TableCell className="font-medium">{lead.name || "—"}</TableCell>
+                    <TableCell>
+                      {lead.phone ? (
+                        <a href={`tel:${lead.phone}`} className="flex items-center gap-1 text-blue-600 hover:underline text-sm">
+                          <Phone className="h-3 w-3" />{lead.phone}
+                        </a>
+                      ) : "—"}
+                    </TableCell>
+                    <TableCell>
+                      {lead.email ? (
+                        <a href={`mailto:${lead.email}`} className="flex items-center gap-1 text-blue-600 hover:underline text-sm">
+                          <Mail className="h-3 w-3" />{lead.email}
+                        </a>
+                      ) : "—"}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {lead.city ? (
+                        <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{lead.city}{lead.state ? `/${lead.state}` : ""}</span>
+                      ) : "—"}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" style={{ borderColor: getChannelColor(lead.channel), color: getChannelColor(lead.channel) }}>
+                        {lead.channel || "—"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-xs max-w-[150px] truncate">{lead.utmCampaign || "—"}</TableCell>
+                    <TableCell className="text-xs">{lead.source}</TableCell>
+                    <TableCell><LeadStatusBadge status={lead.leadStatus} /></TableCell>
+                    <TableCell>
+                      <Select onValueChange={(v) => handleStatusChange(lead.id, v as any)} defaultValue={lead.leadStatus}>
+                        <SelectTrigger className="h-7 w-[120px] text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="new">Novo</SelectItem>
+                          <SelectItem value="contacted">Contatado</SelectItem>
+                          <SelectItem value="qualified">Qualificado</SelectItem>
+                          <SelectItem value="converted">Convertido</SelectItem>
+                          <SelectItem value="lost">Perdido</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                  </TableRow>
+                )) : (
+                  <TableRow>
+                    <TableCell colSpan={10} className="text-center py-12 text-muted-foreground">
+                      Nenhum lead registrado no período. Os leads aparecerão aqui conforme os visitantes interagirem com o site.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </ScrollArea>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ===================== CAMPAIGNS TAB =====================
+function CampaignsTab({ days }: { days: number }) {
+  const { data: leadStats, isLoading } = trpc.lead.stats.useQuery({ days });
+  const { data: sessionStats } = trpc.session.stats.useQuery({ days });
+
+  if (isLoading) return <DashboardSkeleton />;
+
+  const campaignData = (leadStats?.byCampaign || []).map((c: any) => ({
+    campaign: c.utmCampaign || "Sem campanha",
+    source: c.utmSource || "—",
+    channel: c.channel || "—",
+    leads: c.total,
+  }));
+
+  const channelComparison = (leadStats?.byChannel || []).map((c: any) => ({
+    name: c.channel || "Não identificado",
+    leads: c.total,
+    fill: getChannelColor(c.channel),
+  }));
+
+  const sessionsByChannel = (sessionStats?.byChannel || []).map((c: any) => ({
+    name: c.channel || "Não identificado",
+    sessions: c.total,
+    fill: getChannelColor(c.channel),
+  }));
+
+  // Merge leads and sessions by channel for comparison
+  const mergedChannels = channelComparison.map((ch: any) => {
+    const sess = sessionsByChannel.find((s: any) => s.name === ch.name);
+    return {
+      name: ch.name,
+      leads: ch.leads,
+      sessions: sess?.sessions || 0,
+      convRate: sess?.sessions ? `${((ch.leads / sess.sessions) * 100).toFixed(1)}%` : "—",
+    };
+  });
+
+  return (
+    <div className="space-y-6">
+      {/* Channel Performance */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Megaphone className="h-5 w-5" /> Performance por Canal
+          </CardTitle>
+          <CardDescription>Comparação de sessões, leads e taxa de conversão por canal</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {mergedChannels.length > 0 ? (
+            <>
+              <ResponsiveContainer width="100%" height={350}>
+                <BarChart data={mergedChannels}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="name" fontSize={10} angle={-20} textAnchor="end" height={80} />
+                  <YAxis fontSize={11} />
+                  <ReTooltip />
+                  <Legend />
+                  <Bar dataKey="sessions" name="Sessões" fill="#94a3b8" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="leads" name="Leads" fill="#9B212B" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+              <Table className="mt-4">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Canal</TableHead>
+                    <TableHead className="text-right">Sessões</TableHead>
+                    <TableHead className="text-right">Leads</TableHead>
+                    <TableHead className="text-right">Taxa de Conversão</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mergedChannels.map((ch: any, i: number) => (
+                    <TableRow key={i}>
+                      <TableCell>
+                        <Badge variant="outline" style={{ borderColor: getChannelColor(ch.name), color: getChannelColor(ch.name) }}>
+                          {ch.name}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">{ch.sessions}</TableCell>
+                      <TableCell className="text-right font-medium">{ch.leads}</TableCell>
+                      <TableCell className="text-right font-bold">{ch.convRate}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </>
+          ) : (
+            <div className="flex items-center justify-center h-[300px] text-muted-foreground">
+              Nenhum dado de campanha no período. Configure UTM params nas suas campanhas para rastrear.
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Campaign Details */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Detalhamento por Campanha</CardTitle>
+          <CardDescription>Leads gerados por cada campanha individual</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ScrollArea className="h-[400px]">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Campanha</TableHead>
+                  <TableHead>Fonte</TableHead>
+                  <TableHead>Canal</TableHead>
+                  <TableHead className="text-right">Leads</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {campaignData.length > 0 ? campaignData.map((c: any, i: number) => (
+                  <TableRow key={i}>
+                    <TableCell className="font-medium max-w-[250px] truncate">{c.campaign}</TableCell>
+                    <TableCell>{c.source}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" style={{ borderColor: getChannelColor(c.channel), color: getChannelColor(c.channel) }}>
+                        {c.channel}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right font-bold">{c.leads}</TableCell>
+                  </TableRow>
+                )) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                      Nenhuma campanha rastreada. Use UTM params nos links das suas campanhas.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </ScrollArea>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ===================== ENGAGEMENT TAB =====================
+function EngagementTab({ days }: { days: number }) {
+  const { data: engagement, isLoading } = trpc.analytics.engagement.useQuery({ days });
+  const { data: sessionStats } = trpc.session.stats.useQuery({ days });
+
+  if (isLoading) return <DashboardSkeleton />;
+
+  const quartiles = engagement?.quartiles || { total: 0, q25: 0, q50: 0, q75: 0, q100: 0 };
+  const quartileData = [
+    { name: "25%", value: quartiles.q25, fill: "#94a3b8" },
+    { name: "50%", value: quartiles.q50, fill: "#D4A574" },
+    { name: "75%", value: quartiles.q75, fill: "#2D5A3D" },
+    { name: "100%", value: quartiles.q100, fill: "#9B212B" },
+  ];
+
+  const videoStats = (engagement?.videoStats || []).map((v: any) => ({
+    videoId: v.videoId,
+    title: v.videoTitle || v.videoId,
+    views: v.views,
+    avgWatchTime: formatDuration(v.avgWatchTime || 0),
+    q25: v.q25 || 0,
+    q50: v.q50 || 0,
+    q75: v.q75 || 0,
+    q100: v.q100 || 0,
+  }));
+
+  const sessionsByDay = (sessionStats?.byDay || []).map((d: any) => ({
+    date: new Date(d.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+    sessions: d.total,
+  }));
+
+  return (
+    <div className="space-y-6">
+      {/* Engagement Quartiles */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Clock className="h-5 w-5" /> Quartis de Tempo de Visualização
+            </CardTitle>
+            <CardDescription>
+              Percentual de visitantes que permaneceram na página por cada quartil de tempo.
+              Essencial para audiências de remarketing.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={quartileData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="name" fontSize={12} />
+                <YAxis fontSize={11} />
+                <ReTooltip formatter={(value: number) => [value, "Visitantes"]} />
+                <Bar dataKey="value" name="Visitantes" radius={[4, 4, 0, 0]}>
+                  {quartileData.map((entry, i) => (
+                    <Cell key={i} fill={entry.fill} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+            <div className="mt-4 grid grid-cols-4 gap-2 text-center">
+              {quartileData.map((q, i) => (
+                <div key={i} className="p-2 rounded-lg bg-muted">
+                  <p className="text-xs text-muted-foreground">Quartil {q.name}</p>
+                  <p className="text-lg font-bold" style={{ color: q.fill }}>{q.value}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {quartiles.total > 0 ? `${((q.value / quartiles.total) * 100).toFixed(1)}%` : "0%"}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Sessions by Day */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Eye className="h-5 w-5" /> Sessões por Dia
+            </CardTitle>
+            <CardDescription>Volume de visitantes ao longo do tempo</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {sessionsByDay.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={sessionsByDay}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="date" fontSize={11} />
+                  <YAxis fontSize={11} />
+                  <ReTooltip />
+                  <Line type="monotone" dataKey="sessions" stroke="#1E3A5F" strokeWidth={2} dot={{ r: 3 }} name="Sessões" />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[300px] text-muted-foreground">Nenhum dado no período</div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Top Pages with Engagement */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <ScrollText className="h-5 w-5" /> Engajamento por Página
+          </CardTitle>
+          <CardDescription>Tempo médio, profundidade de scroll e visualizações por página</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ScrollArea className="h-[400px]">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Página</TableHead>
+                  <TableHead className="text-right">Views</TableHead>
+                  <TableHead className="text-right">Tempo Médio</TableHead>
+                  <TableHead className="text-right">Scroll Médio</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {(engagement?.topPages || []).length > 0 ? (engagement?.topPages || []).map((p: any, i: number) => (
+                  <TableRow key={i}>
+                    <TableCell className="font-medium">{p.page === "/" ? "Home" : p.page}</TableCell>
+                    <TableCell className="text-right">{p.views}</TableCell>
+                    <TableCell className="text-right">{formatDuration(p.avgDuration || 0)}</TableCell>
+                    <TableCell className="text-right">{Math.round(p.avgScroll || 0)}%</TableCell>
+                  </TableRow>
+                )) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">Nenhum dado de engajamento</TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </ScrollArea>
+        </CardContent>
+      </Card>
+
+      {/* Video Stats */}
+      {videoStats.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Video className="h-5 w-5" /> Visualizações de Vídeo
+            </CardTitle>
+            <CardDescription>Quartis de visualização de vídeo para remarketing</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Vídeo</TableHead>
+                  <TableHead className="text-right">Views</TableHead>
+                  <TableHead className="text-right">Tempo Médio</TableHead>
+                  <TableHead className="text-right">25%</TableHead>
+                  <TableHead className="text-right">50%</TableHead>
+                  <TableHead className="text-right">75%</TableHead>
+                  <TableHead className="text-right">100%</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {videoStats.map((v: any, i: number) => (
+                  <TableRow key={i}>
+                    <TableCell className="font-medium max-w-[200px] truncate">{v.title}</TableCell>
+                    <TableCell className="text-right">{v.views}</TableCell>
+                    <TableCell className="text-right">{v.avgWatchTime}</TableCell>
+                    <TableCell className="text-right">{v.q25}</TableCell>
+                    <TableCell className="text-right">{v.q50}</TableCell>
+                    <TableCell className="text-right">{v.q75}</TableCell>
+                    <TableCell className="text-right">{v.q100}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+
+// ===================== CONTACTS TAB =====================
+function ContactsTab() {
+  const { data: contactsData, isLoading } = trpc.contact.list.useQuery({ limit: 100, offset: 0 });
+  const updateStatus = trpc.contact.updateStatus.useMutation();
+  const utils = trpc.useUtils();
+
+  if (isLoading) return <DashboardSkeleton />;
+
+  const items = contactsData?.items || [];
+
+  const handleStatusChange = async (id: number, status: "new" | "read" | "replied" | "archived") => {
+    await updateStatus.mutateAsync({ id, status });
+    utils.contact.list.invalidate();
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center gap-2">
+          <MessageSquare className="h-5 w-5" /> Mensagens de Contato
+        </CardTitle>
+        <CardDescription>{contactsData?.total || 0} mensagens recebidas</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ScrollArea className="h-[600px]">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Data</TableHead>
+                <TableHead>Nome</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Telefone</TableHead>
+                <TableHead>Assunto</TableHead>
+                <TableHead>Mensagem</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {items.length > 0 ? items.map((c: any) => (
+                <TableRow key={c.id}>
+                  <TableCell className="text-xs whitespace-nowrap">
+                    {new Date(c.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" })}
+                  </TableCell>
+                  <TableCell className="font-medium">{c.name}</TableCell>
+                  <TableCell>
+                    <a href={`mailto:${c.email}`} className="text-blue-600 hover:underline text-sm">{c.email}</a>
+                  </TableCell>
+                  <TableCell>{c.phone || "—"}</TableCell>
+                  <TableCell className="text-sm">{c.subject || "—"}</TableCell>
+                  <TableCell className="text-xs max-w-[200px] truncate">{c.message}</TableCell>
+                  <TableCell>
+                    <Badge variant={c.status === "new" ? "default" : "secondary"}>
+                      {c.status === "new" ? "Novo" : c.status === "read" ? "Lido" : c.status === "replied" ? "Respondido" : "Arquivado"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Select onValueChange={(v) => handleStatusChange(c.id, v as any)} defaultValue={c.status}>
+                      <SelectTrigger className="h-7 w-[120px] text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="new">Novo</SelectItem>
+                        <SelectItem value="read">Lido</SelectItem>
+                        <SelectItem value="replied">Respondido</SelectItem>
+                        <SelectItem value="archived">Arquivado</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                </TableRow>
+              )) : (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center py-12 text-muted-foreground">
+                    Nenhuma mensagem de contato recebida ainda.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </ScrollArea>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ===================== SKELETON =====================
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[1, 2, 3, 4].map(i => (
+          <Card key={i}><CardContent className="p-6"><div className="h-20 bg-muted animate-pulse rounded" /></CardContent></Card>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {[1, 2].map(i => (
+          <Card key={i}><CardContent className="p-6"><div className="h-[300px] bg-muted animate-pulse rounded" /></CardContent></Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ===================== MAIN ADMIN PAGE =====================
+export default function Admin() {
+  const { user, loading, isAuthenticated } = useAuth();
+  const [, navigate] = useLocation();
+  const params = useParams<{ tab?: string }>();
+  const [days, setDays] = useState(30);
+
+  const activeTab = params.tab || "dashboard";
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <div className="h-12 w-12 mx-auto border-4 border-muted border-t-primary rounded-full animate-spin" />
+          <p className="text-muted-foreground">Carregando painel...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Card className="w-full max-w-md">
+          <CardContent className="p-8 text-center space-y-6">
+            <BarChart3 className="h-16 w-16 mx-auto text-[#9B212B]" />
+            <h1 className="text-2xl font-bold">Painel Administrativo</h1>
+            <p className="text-muted-foreground">Faça login para acessar o painel de controle da Total Quality.</p>
+            <Button asChild className="w-full bg-[#9B212B] hover:bg-[#7a1a22]">
+              <a href={getLoginUrl()}>Entrar</a>
+            </Button>
+            <Button variant="ghost" onClick={() => navigate("/")} className="w-full">
+              <ChevronLeft className="h-4 w-4 mr-2" /> Voltar ao site
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const tabs = [
+    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { id: "leads", label: "Leads", icon: UserCheck },
+    { id: "campanhas", label: "Campanhas", icon: Megaphone },
+    { id: "engajamento", label: "Engajamento", icon: Activity },
+    { id: "contatos", label: "Contatos", icon: MessageSquare },
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#fafafa]">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
+        <div className="container flex items-center justify-between h-16 px-4 md:px-6">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+              <ChevronLeft className="h-4 w-4 mr-1" /> Site
+            </Button>
+            <Separator orientation="vertical" className="h-6" />
+            <div className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-[#9B212B]" />
+              <h1 className="text-lg font-bold hidden sm:block">Painel Administrativo</h1>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Select value={days.toString()} onValueChange={(v) => setDays(parseInt(v))}>
+              <SelectTrigger className="w-[150px] h-9">
+                <Calendar className="h-4 w-4 mr-2" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7">Últimos 7 dias</SelectItem>
+                <SelectItem value="14">Últimos 14 dias</SelectItem>
+                <SelectItem value="30">Últimos 30 dias</SelectItem>
+                <SelectItem value="60">Últimos 60 dias</SelectItem>
+                <SelectItem value="90">Últimos 90 dias</SelectItem>
+                <SelectItem value="180">Últimos 180 dias</SelectItem>
+                <SelectItem value="365">Último ano</SelectItem>
+              </SelectContent>
+            </Select>
+            <span className="text-sm text-muted-foreground hidden md:block">{user?.name || user?.email}</span>
+          </div>
+        </div>
+      </header>
+
+      {/* Content */}
+      <main className="container px-4 md:px-6 py-6">
+        <Tabs value={activeTab} onValueChange={(v) => navigate(`/admin/${v}`)}>
+          <TabsList className="mb-6 flex-wrap h-auto gap-1">
+            {tabs.map(tab => (
+              <TabsTrigger key={tab.id} value={tab.id} className="flex items-center gap-2 data-[state=active]:bg-[#9B212B] data-[state=active]:text-white">
+                <tab.icon className="h-4 w-4" />
+                <span className="hidden sm:inline">{tab.label}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          <TabsContent value="dashboard"><DashboardTab days={days} /></TabsContent>
+          <TabsContent value="leads"><LeadsTab days={days} /></TabsContent>
+          <TabsContent value="campanhas"><CampaignsTab days={days} /></TabsContent>
+          <TabsContent value="engajamento"><EngagementTab days={days} /></TabsContent>
+          <TabsContent value="contatos"><ContactsTab /></TabsContent>
+        </Tabs>
+      </main>
+    </div>
+  );
+}
