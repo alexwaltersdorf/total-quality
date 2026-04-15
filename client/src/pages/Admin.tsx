@@ -2,13 +2,16 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { useLocation, useParams } from "wouter";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
+import { format, subDays, startOfDay, endOfDay, differenceInDays, isAfter, isBefore, startOfMonth, endOfMonth, subMonths } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import type { DateRange } from "react-day-picker";
 import {
   BarChart3, Users, MousePointerClick, Eye, Clock, TrendingUp,
-  ArrowUpRight, ArrowDownRight, Minus, Filter, Calendar,
+  ArrowUpRight, ArrowDownRight, Minus, Filter, CalendarIcon,
   LayoutDashboard, UserCheck, Megaphone, Activity, Target,
   ChevronLeft, LogOut, MessageSquare, Phone, Mail, MapPin,
-  ExternalLink, Video, ScrollText
+  ExternalLink, Video, ScrollText, CalendarDays, X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -17,6 +20,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -63,6 +68,162 @@ function formatNumber(n: number): string {
   return n.toString();
 }
 
+// ===================== Date Filter Types =====================
+type DateFilterMode = "preset" | "custom";
+interface DateFilter {
+  mode: DateFilterMode;
+  days?: number;
+  dateFrom?: string;
+  dateTo?: string;
+  label: string;
+}
+
+function dateFilterToQuery(filter: DateFilter): { days?: number; dateFrom?: string; dateTo?: string } {
+  if (filter.mode === "preset" && filter.days) {
+    return { days: filter.days };
+  }
+  return { dateFrom: filter.dateFrom, dateTo: filter.dateTo };
+}
+
+const PRESET_OPTIONS = [
+  { days: 7, label: "Últimos 7 dias" },
+  { days: 14, label: "Últimos 14 dias" },
+  { days: 30, label: "Últimos 30 dias" },
+  { days: 60, label: "Últimos 60 dias" },
+  { days: 90, label: "Últimos 90 dias" },
+  { days: 180, label: "Últimos 180 dias" },
+  { days: 365, label: "Último ano" },
+];
+
+// ===================== Date Range Picker Component =====================
+function DateRangePicker({ filter, onFilterChange }: { filter: DateFilter; onFilterChange: (f: DateFilter) => void }) {
+  const [open, setOpen] = useState(false);
+  const [tempRange, setTempRange] = useState<DateRange | undefined>(
+    filter.dateFrom && filter.dateTo
+      ? { from: new Date(filter.dateFrom), to: new Date(filter.dateTo) }
+      : undefined
+  );
+
+  const handlePresetSelect = (days: number) => {
+    const preset = PRESET_OPTIONS.find(p => p.days === days);
+    onFilterChange({
+      mode: "preset",
+      days,
+      label: preset?.label || `Últimos ${days} dias`,
+    });
+    setTempRange(undefined);
+    setOpen(false);
+  };
+
+  const handleRangeSelect = (range: DateRange | undefined) => {
+    setTempRange(range);
+    if (range?.from && range?.to) {
+      const daysDiff = differenceInDays(range.to, range.from);
+      onFilterChange({
+        mode: "custom",
+        dateFrom: format(range.from, "yyyy-MM-dd"),
+        dateTo: format(range.to, "yyyy-MM-dd"),
+        label: `${format(range.from, "dd/MM/yy")} — ${format(range.to, "dd/MM/yy")}`,
+      });
+    }
+  };
+
+  const handleQuickRange = (label: string, from: Date, to: Date) => {
+    const range = { from, to };
+    setTempRange(range);
+    onFilterChange({
+      mode: "custom",
+      dateFrom: format(from, "yyyy-MM-dd"),
+      dateTo: format(to, "yyyy-MM-dd"),
+      label,
+    });
+    setOpen(false);
+  };
+
+  const today = new Date();
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="sm" className="h-9 gap-2 min-w-[180px] justify-start text-left font-normal">
+          <CalendarDays className="h-4 w-4 text-muted-foreground shrink-0" />
+          <span className="truncate text-sm">{filter.label}</span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="end" sideOffset={8}>
+        <div className="flex flex-col sm:flex-row">
+          {/* Presets sidebar */}
+          <div className="border-b sm:border-b-0 sm:border-r p-3 space-y-1 min-w-[160px]">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-2">Período Rápido</p>
+            {PRESET_OPTIONS.map(opt => (
+              <button
+                key={opt.days}
+                onClick={() => handlePresetSelect(opt.days)}
+                className={`w-full text-left text-sm px-2 py-1.5 rounded-md transition-colors hover:bg-accent ${
+                  filter.mode === "preset" && filter.days === opt.days ? "bg-accent font-medium text-accent-foreground" : "text-foreground"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+            <Separator className="my-2" />
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-2">Atalhos</p>
+            <button
+              onClick={() => handleQuickRange("Hoje", startOfDay(today), endOfDay(today))}
+              className="w-full text-left text-sm px-2 py-1.5 rounded-md hover:bg-accent text-foreground"
+            >
+              Hoje
+            </button>
+            <button
+              onClick={() => handleQuickRange("Ontem", startOfDay(subDays(today, 1)), endOfDay(subDays(today, 1)))}
+              className="w-full text-left text-sm px-2 py-1.5 rounded-md hover:bg-accent text-foreground"
+            >
+              Ontem
+            </button>
+            <button
+              onClick={() => handleQuickRange("Este mês", startOfMonth(today), endOfDay(today))}
+              className="w-full text-left text-sm px-2 py-1.5 rounded-md hover:bg-accent text-foreground"
+            >
+              Este mês
+            </button>
+            <button
+              onClick={() => handleQuickRange("Mês passado", startOfMonth(subMonths(today, 1)), endOfMonth(subMonths(today, 1)))}
+              className="w-full text-left text-sm px-2 py-1.5 rounded-md hover:bg-accent text-foreground"
+            >
+              Mês passado
+            </button>
+          </div>
+
+          {/* Calendar */}
+          <div className="p-3">
+            <Calendar
+              mode="range"
+              selected={tempRange}
+              onSelect={handleRangeSelect}
+              numberOfMonths={2}
+              locale={ptBR}
+              disabled={{ after: today }}
+              defaultMonth={subMonths(today, 1)}
+              captionLayout="dropdown"
+            />
+            {tempRange?.from && tempRange?.to && (
+              <div className="flex items-center justify-between mt-2 pt-2 border-t">
+                <p className="text-xs text-muted-foreground">
+                  {format(tempRange.from, "dd MMM yyyy", { locale: ptBR })} — {format(tempRange.to, "dd MMM yyyy", { locale: ptBR })}
+                  <span className="ml-1">({differenceInDays(tempRange.to, tempRange.from) + 1} dias)</span>
+                </p>
+                <Button size="sm" variant="default" className="h-7 text-xs bg-[#9B212B] hover:bg-[#7a1a22]" onClick={() => setOpen(false)}>
+                  Aplicar
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 // ===================== KPI Card =====================
 function KPICard({ title, value, subtitle, icon: Icon, trend, color = "text-primary" }: {
   title: string; value: string | number; subtitle?: string;
@@ -103,20 +264,24 @@ function LeadStatusBadge({ status }: { status: string }) {
     lost: "bg-red-100 text-red-800",
   };
   const labels: Record<string, string> = {
-    new: "Novo", contacted: "Contatado", qualified: "Qualificado",
-    converted: "Convertido", lost: "Perdido",
+    new: "Novo",
+    contacted: "Contatado",
+    qualified: "Qualificado",
+    converted: "Convertido",
+    lost: "Perdido",
   };
   return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${variants[status] || "bg-gray-100 text-gray-800"}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${variants[status] || "bg-gray-100 text-gray-800"}`}>
       {labels[status] || status}
     </span>
   );
 }
 
 // ===================== DASHBOARD TAB =====================
-function DashboardTab({ days }: { days: number }) {
-  const { data: kpis, isLoading } = trpc.dashboard.kpis.useQuery({ days });
-  const { data: leadStats } = trpc.lead.stats.useQuery({ days });
+function DashboardTab({ filter }: { filter: DateFilter }) {
+  const queryInput = useMemo(() => dateFilterToQuery(filter), [filter]);
+  const { data: kpis, isLoading } = trpc.dashboard.kpis.useQuery(queryInput);
+  const { data: leadStats } = trpc.lead.stats.useQuery(queryInput);
 
   if (isLoading) return <DashboardSkeleton />;
   if (!kpis) return <p className="text-muted-foreground p-8">Nenhum dado disponível.</p>;
@@ -148,8 +313,8 @@ function DashboardTab({ days }: { days: number }) {
     <div className="space-y-6">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard title="Total de Leads" value={formatNumber(kpis.totalLeads)} subtitle={`Últimos ${days} dias`} icon={Users} color="text-[#9B212B]" />
-        <KPICard title="Sessões" value={formatNumber(kpis.totalSessions)} subtitle={`Visitantes únicos`} icon={Eye} />
+        <KPICard title="Total de Leads" value={formatNumber(kpis.totalLeads)} subtitle={filter.label} icon={Users} color="text-[#9B212B]" />
+        <KPICard title="Sessões" value={formatNumber(kpis.totalSessions)} subtitle="Visitantes únicos" icon={Eye} />
         <KPICard title="Taxa de Conversão" value={`${kpis.conversionRate}%`} subtitle="Sessões → Leads" icon={Target} color="text-green-600" />
         <KPICard title="Taxa de Rejeição" value={`${kpis.bounceRate}%`} subtitle="Sessões com 1 página" icon={TrendingUp} color={kpis.bounceRate > 60 ? "text-red-600" : "text-green-600"} />
       </div>
@@ -279,8 +444,9 @@ function DashboardTab({ days }: { days: number }) {
 }
 
 // ===================== LEADS TAB =====================
-function LeadsTab({ days }: { days: number }) {
-  const { data: leadsData, isLoading } = trpc.lead.list.useQuery({ limit: 100, offset: 0, days });
+function LeadsTab({ filter }: { filter: DateFilter }) {
+  const queryInput = useMemo(() => dateFilterToQuery(filter), [filter]);
+  const { data: leadsData, isLoading } = trpc.lead.list.useQuery({ limit: 100, offset: 0, ...queryInput });
   const updateStatus = trpc.lead.updateStatus.useMutation();
   const utils = trpc.useUtils();
 
@@ -302,7 +468,7 @@ function LeadsTab({ days }: { days: number }) {
           <CardTitle className="text-lg flex items-center gap-2">
             <Users className="h-5 w-5" /> Leads Recentes
           </CardTitle>
-          <CardDescription>{leadsData?.total || 0} leads no total</CardDescription>
+          <CardDescription>{leadsData?.total || 0} leads no período ({filter.label})</CardDescription>
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[600px]">
@@ -387,9 +553,10 @@ function LeadsTab({ days }: { days: number }) {
 }
 
 // ===================== CAMPAIGNS TAB =====================
-function CampaignsTab({ days }: { days: number }) {
-  const { data: leadStats, isLoading } = trpc.lead.stats.useQuery({ days });
-  const { data: sessionStats } = trpc.session.stats.useQuery({ days });
+function CampaignsTab({ filter }: { filter: DateFilter }) {
+  const queryInput = useMemo(() => dateFilterToQuery(filter), [filter]);
+  const { data: leadStats, isLoading } = trpc.lead.stats.useQuery(queryInput);
+  const { data: sessionStats } = trpc.session.stats.useQuery(queryInput);
 
   if (isLoading) return <DashboardSkeleton />;
 
@@ -412,7 +579,6 @@ function CampaignsTab({ days }: { days: number }) {
     fill: getChannelColor(c.channel),
   }));
 
-  // Merge leads and sessions by channel for comparison
   const mergedChannels = channelComparison.map((ch: any) => {
     const sess = sessionsByChannel.find((s: any) => s.name === ch.name);
     return {
@@ -431,7 +597,7 @@ function CampaignsTab({ days }: { days: number }) {
           <CardTitle className="text-lg flex items-center gap-2">
             <Megaphone className="h-5 w-5" /> Performance por Canal
           </CardTitle>
-          <CardDescription>Comparação de sessões, leads e taxa de conversão por canal</CardDescription>
+          <CardDescription>Comparação de sessões, leads e taxa de conversão por canal ({filter.label})</CardDescription>
         </CardHeader>
         <CardContent>
           {mergedChannels.length > 0 ? (
@@ -526,9 +692,10 @@ function CampaignsTab({ days }: { days: number }) {
 }
 
 // ===================== ENGAGEMENT TAB =====================
-function EngagementTab({ days }: { days: number }) {
-  const { data: engagement, isLoading } = trpc.analytics.engagement.useQuery({ days });
-  const { data: sessionStats } = trpc.session.stats.useQuery({ days });
+function EngagementTab({ filter }: { filter: DateFilter }) {
+  const queryInput = useMemo(() => dateFilterToQuery(filter), [filter]);
+  const { data: engagement, isLoading } = trpc.analytics.engagement.useQuery(queryInput);
+  const { data: sessionStats } = trpc.session.stats.useQuery(queryInput);
 
   if (isLoading) return <DashboardSkeleton />;
 
@@ -566,7 +733,7 @@ function EngagementTab({ days }: { days: number }) {
               <Clock className="h-5 w-5" /> Quartis de Tempo de Visualização
             </CardTitle>
             <CardDescription>
-              Percentual de visitantes que permaneceram na página por cada quartil de tempo.
+              Percentual de visitantes que permaneceram na página por cada quartil de tempo ({filter.label}).
               Essencial para audiências de remarketing.
             </CardDescription>
           </CardHeader>
@@ -813,7 +980,12 @@ export default function Admin() {
   const { user, loading, isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
   const params = useParams<{ tab?: string }>();
-  const [days, setDays] = useState(30);
+
+  const [dateFilter, setDateFilter] = useState<DateFilter>({
+    mode: "preset",
+    days: 30,
+    label: "Últimos 30 dias",
+  });
 
   const activeTab = params.tab || "dashboard";
 
@@ -872,21 +1044,7 @@ export default function Admin() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Select value={days.toString()} onValueChange={(v) => setDays(parseInt(v))}>
-              <SelectTrigger className="w-[150px] h-9">
-                <Calendar className="h-4 w-4 mr-2" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">Últimos 7 dias</SelectItem>
-                <SelectItem value="14">Últimos 14 dias</SelectItem>
-                <SelectItem value="30">Últimos 30 dias</SelectItem>
-                <SelectItem value="60">Últimos 60 dias</SelectItem>
-                <SelectItem value="90">Últimos 90 dias</SelectItem>
-                <SelectItem value="180">Últimos 180 dias</SelectItem>
-                <SelectItem value="365">Último ano</SelectItem>
-              </SelectContent>
-            </Select>
+            <DateRangePicker filter={dateFilter} onFilterChange={setDateFilter} />
             <span className="text-sm text-muted-foreground hidden md:block">{user?.name || user?.email}</span>
           </div>
         </div>
@@ -904,10 +1062,10 @@ export default function Admin() {
             ))}
           </TabsList>
 
-          <TabsContent value="dashboard"><DashboardTab days={days} /></TabsContent>
-          <TabsContent value="leads"><LeadsTab days={days} /></TabsContent>
-          <TabsContent value="campanhas"><CampaignsTab days={days} /></TabsContent>
-          <TabsContent value="engajamento"><EngagementTab days={days} /></TabsContent>
+          <TabsContent value="dashboard"><DashboardTab filter={dateFilter} /></TabsContent>
+          <TabsContent value="leads"><LeadsTab filter={dateFilter} /></TabsContent>
+          <TabsContent value="campanhas"><CampaignsTab filter={dateFilter} /></TabsContent>
+          <TabsContent value="engajamento"><EngagementTab filter={dateFilter} /></TabsContent>
           <TabsContent value="contatos"><ContactsTab /></TabsContent>
         </Tabs>
       </main>

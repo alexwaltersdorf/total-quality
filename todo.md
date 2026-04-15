@@ -33,3 +33,9 @@
 - [x] Página de engajamento: tempo de visualização, scroll, vídeo quartis
 - [x] Página de remarketing: audiências baseadas em engajamento
 - [x] Testes vitest para novas APIs (39 testes passando)
+
+## Filtro por Intervalo de Datas
+- [x] Substituir seletor de "últimos X dias" por date range picker com datas de início e fim
+- [x] Adicionar presets rápidos (Hoje, Últimos 7 dias, Últimos 30 dias, Este mês, Mês passado, Personalizado)
+- [x] Atualizar APIs para aceitar dateFrom/dateTo em vez de apenas "days"
+- [x] Testar filtro de datas no painel (47 testes passando)

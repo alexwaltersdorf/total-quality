@@ -103,23 +103,26 @@ export async function createLead(lead: InsertLead) {
   return { success: true };
 }
 
-export async function getLeads(limit = 50, offset = 0, filters?: { channel?: string; leadStatus?: string; since?: Date }) {
+export async function getLeads(limit = 50, offset = 0, filters?: { channel?: string; leadStatus?: string; since?: Date; until?: Date }) {
   const db = await getDb();
   if (!db) return [];
   const conditions: any[] = [];
   if (filters?.channel) conditions.push(eq(leads.channel, filters.channel));
   if (filters?.leadStatus) conditions.push(eq(leads.leadStatus, filters.leadStatus as any));
   if (filters?.since) conditions.push(gte(leads.createdAt, filters.since));
+  if (filters?.until) conditions.push(lte(leads.createdAt, filters.until));
   const query = conditions.length > 0
     ? db.select().from(leads).where(and(...conditions)).orderBy(desc(leads.createdAt)).limit(limit).offset(offset)
     : db.select().from(leads).orderBy(desc(leads.createdAt)).limit(limit).offset(offset);
   return query;
 }
 
-export async function getLeadsCount(since?: Date) {
+export async function getLeadsCount(since?: Date, until?: Date) {
   const db = await getDb();
   if (!db) return 0;
-  const conditions = since ? [gte(leads.createdAt, since)] : [];
+  const conditions: any[] = [];
+  if (since) conditions.push(gte(leads.createdAt, since));
+  if (until) conditions.push(lte(leads.createdAt, until));
   const query = conditions.length > 0
     ? db.select({ total: count() }).from(leads).where(and(...conditions))
     : db.select({ total: count() }).from(leads);
@@ -127,20 +130,24 @@ export async function getLeadsCount(since?: Date) {
   return result[0]?.total ?? 0;
 }
 
-export async function getLeadsByChannel(since?: Date) {
+export async function getLeadsByChannel(since?: Date, until?: Date) {
   const db = await getDb();
   if (!db) return [];
-  const conditions = since ? [gte(leads.createdAt, since)] : [];
+  const conditions: any[] = [];
+  if (since) conditions.push(gte(leads.createdAt, since));
+  if (until) conditions.push(lte(leads.createdAt, until));
   const query = conditions.length > 0
     ? db.select({ channel: leads.channel, total: count() }).from(leads).where(and(...conditions)).groupBy(leads.channel).orderBy(desc(count()))
     : db.select({ channel: leads.channel, total: count() }).from(leads).groupBy(leads.channel).orderBy(desc(count()));
   return query;
 }
 
-export async function getLeadsByCampaign(since?: Date) {
+export async function getLeadsByCampaign(since?: Date, until?: Date) {
   const db = await getDb();
   if (!db) return [];
-  const conditions = since ? [gte(leads.createdAt, since)] : [];
+  const conditions: any[] = [];
+  if (since) conditions.push(gte(leads.createdAt, since));
+  if (until) conditions.push(lte(leads.createdAt, until));
   const query = conditions.length > 0
     ? db.select({ utmCampaign: leads.utmCampaign, utmSource: leads.utmSource, channel: leads.channel, total: count() }).from(leads).where(and(...conditions)).groupBy(leads.utmCampaign, leads.utmSource, leads.channel).orderBy(desc(count()))
     : db.select({ utmCampaign: leads.utmCampaign, utmSource: leads.utmSource, channel: leads.channel, total: count() }).from(leads).groupBy(leads.utmCampaign, leads.utmSource, leads.channel).orderBy(desc(count()));
@@ -153,10 +160,12 @@ export async function getLeadsBySource() {
   return db.select({ source: leads.source, total: count() }).from(leads).groupBy(leads.source).orderBy(desc(count()));
 }
 
-export async function getLeadsByDay(since: Date) {
+export async function getLeadsByDay(since: Date, until?: Date) {
   const db = await getDb();
   if (!db) return [];
-  const result = await db.execute(sql`SELECT DATE(createdAt) as date, COUNT(*) as total FROM leads WHERE createdAt >= ${since} GROUP BY date ORDER BY date ASC`);
+  const result = until
+    ? await db.execute(sql`SELECT DATE(createdAt) as date, COUNT(*) as total FROM leads WHERE createdAt >= ${since} AND createdAt <= ${until} GROUP BY date ORDER BY date ASC`)
+    : await db.execute(sql`SELECT DATE(createdAt) as date, COUNT(*) as total FROM leads WHERE createdAt >= ${since} GROUP BY date ORDER BY date ASC`);
   return ((result as unknown as any[])[0] as any[]).map((r: any) => ({ date: r.date, total: Number(r.total) }));
 }
 
@@ -199,10 +208,12 @@ export async function upsertSession(session: InsertSession) {
   return { success: true };
 }
 
-export async function getSessionsCount(since?: Date) {
+export async function getSessionsCount(since?: Date, until?: Date) {
   const db = await getDb();
   if (!db) return 0;
-  const conditions = since ? [gte(sessions.startedAt, since)] : [];
+  const conditions: any[] = [];
+  if (since) conditions.push(gte(sessions.startedAt, since));
+  if (until) conditions.push(lte(sessions.startedAt, until));
   const query = conditions.length > 0
     ? db.select({ total: count() }).from(sessions).where(and(...conditions))
     : db.select({ total: count() }).from(sessions);
@@ -210,27 +221,33 @@ export async function getSessionsCount(since?: Date) {
   return result[0]?.total ?? 0;
 }
 
-export async function getSessionsByChannel(since?: Date) {
+export async function getSessionsByChannel(since?: Date, until?: Date) {
   const db = await getDb();
   if (!db) return [];
-  const conditions = since ? [gte(sessions.startedAt, since)] : [];
+  const conditions: any[] = [];
+  if (since) conditions.push(gte(sessions.startedAt, since));
+  if (until) conditions.push(lte(sessions.startedAt, until));
   const query = conditions.length > 0
     ? db.select({ channel: sessions.channel, total: count() }).from(sessions).where(and(...conditions)).groupBy(sessions.channel).orderBy(desc(count()))
     : db.select({ channel: sessions.channel, total: count() }).from(sessions).groupBy(sessions.channel).orderBy(desc(count()));
   return query;
 }
 
-export async function getSessionsByDay(since: Date) {
+export async function getSessionsByDay(since: Date, until?: Date) {
   const db = await getDb();
   if (!db) return [];
-  const result = await db.execute(sql`SELECT DATE(startedAt) as date, COUNT(*) as total FROM sessions WHERE startedAt >= ${since} GROUP BY date ORDER BY date ASC`);
+  const result = until
+    ? await db.execute(sql`SELECT DATE(startedAt) as date, COUNT(*) as total FROM sessions WHERE startedAt >= ${since} AND startedAt <= ${until} GROUP BY date ORDER BY date ASC`)
+    : await db.execute(sql`SELECT DATE(startedAt) as date, COUNT(*) as total FROM sessions WHERE startedAt >= ${since} GROUP BY date ORDER BY date ASC`);
   return ((result as unknown as any[])[0] as any[]).map((r: any) => ({ date: r.date, total: Number(r.total) }));
 }
 
-export async function getAvgSessionDuration(since?: Date) {
+export async function getAvgSessionDuration(since?: Date, until?: Date) {
   const db = await getDb();
   if (!db) return 0;
-  const conditions = since ? [gte(sessions.startedAt, since)] : [];
+  const conditions: any[] = [];
+  if (since) conditions.push(gte(sessions.startedAt, since));
+  if (until) conditions.push(lte(sessions.startedAt, until));
   const query = conditions.length > 0
     ? db.select({ avg: sql<number>`AVG(${sessions.totalDurationMs})` }).from(sessions).where(and(...conditions))
     : db.select({ avg: sql<number>`AVG(${sessions.totalDurationMs})` }).from(sessions);
@@ -238,10 +255,12 @@ export async function getAvgSessionDuration(since?: Date) {
   return result[0]?.avg ?? 0;
 }
 
-export async function getBounceRate(since?: Date) {
+export async function getBounceRate(since?: Date, until?: Date) {
   const db = await getDb();
   if (!db) return 0;
-  const conditions = since ? [gte(sessions.startedAt, since)] : [];
+  const conditions: any[] = [];
+  if (since) conditions.push(gte(sessions.startedAt, since));
+  if (until) conditions.push(lte(sessions.startedAt, until));
   const totalQuery = conditions.length > 0
     ? db.select({ total: count() }).from(sessions).where(and(...conditions))
     : db.select({ total: count() }).from(sessions);
@@ -451,7 +470,7 @@ export async function getConversionsByType(since?: Date) {
 
 // ===================== DASHBOARD KPIs =====================
 
-export async function getDashboardKPIs(since: Date) {
+export async function getDashboardKPIs(since: Date, until?: Date) {
   const [
     totalLeads,
     totalSessions,

@@ -298,6 +298,62 @@ describe("Dashboard API", () => {
   });
 });
 
+describe("Date Range Filter", () => {
+  it("dashboard KPIs with dateFrom/dateTo (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.dashboard.kpis({ dateFrom: "2026-03-01", dateTo: "2026-03-31" });
+    expect(result).toHaveProperty("totalLeads");
+    expect(result).toHaveProperty("totalSessions");
+  });
+
+  it("lead stats with dateFrom/dateTo (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.lead.stats({ dateFrom: "2026-01-01", dateTo: "2026-04-15" });
+    expect(result).toHaveProperty("total");
+    expect(result).toHaveProperty("byChannel");
+  });
+
+  it("session stats with dateFrom/dateTo (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.session.stats({ dateFrom: "2026-04-01", dateTo: "2026-04-15" });
+    expect(result).toHaveProperty("total");
+    expect(result).toHaveProperty("byChannel");
+  });
+
+  it("engagement with dateFrom/dateTo (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.analytics.engagement({ dateFrom: "2026-04-01", dateTo: "2026-04-15" });
+    expect(result).toHaveProperty("topPages");
+    expect(result).toHaveProperty("quartiles");
+  });
+
+  it("conversion stats with dateFrom/dateTo (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.conversion.stats({ dateFrom: "2026-02-01", dateTo: "2026-02-28" });
+    expect(result).toHaveProperty("rate");
+    expect(result).toHaveProperty("byChannel");
+  });
+
+  it("lead list with dateFrom/dateTo (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.lead.list({ limit: 10, offset: 0, dateFrom: "2026-03-01", dateTo: "2026-03-31" });
+    expect(result).toHaveProperty("items");
+    expect(result).toHaveProperty("total");
+  });
+
+  it("dashboard KPIs with days only (backward compatible)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.dashboard.kpis({ days: 7 });
+    expect(result).toHaveProperty("totalLeads");
+  });
+
+  it("dashboard KPIs with no filter defaults to 30 days", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.dashboard.kpis({});
+    expect(result).toHaveProperty("totalLeads");
+  });
+});
+
 describe("Blog API", () => {
   it("tracks a blog view (public)", async () => {
     const caller = appRouter.createCaller(createPublicContext());

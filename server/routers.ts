@@ -16,6 +16,29 @@ import {
   getDashboardKPIs,
 } from "./db";
 
+// Shared date filter schema: accepts either dateFrom/dateTo or days (backward compatible)
+const dateFilterSchema = z.object({
+  days: z.number().min(1).max(365).default(30).optional(),
+  dateFrom: z.string().optional(), // ISO date string e.g. "2026-01-01"
+  dateTo: z.string().optional(),   // ISO date string e.g. "2026-01-31"
+}).optional();
+
+// Helper to resolve date range from input
+function resolveDateRange(input?: { days?: number; dateFrom?: string; dateTo?: string }): { since: Date; until?: Date } {
+  if (input?.dateFrom) {
+    const since = new Date(input.dateFrom);
+    since.setHours(0, 0, 0, 0);
+    let until: Date | undefined;
+    if (input.dateTo) {
+      until = new Date(input.dateTo);
+      until.setHours(23, 59, 59, 999);
+    }
+    return { since, until };
+  }
+  const days = input?.days ?? 30;
+  return { since: new Date(Date.now() - days * 86400000) };
+}
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -89,29 +112,31 @@ export const appRouter = router({
         channel: z.string().optional(),
         leadStatus: z.string().optional(),
         days: z.number().min(1).max(365).optional(),
+        dateFrom: z.string().optional(),
+        dateTo: z.string().optional(),
       }).optional())
       .query(async ({ input }) => {
-        const { limit = 50, offset = 0, channel, leadStatus, days } = input ?? {};
-        const since = days ? new Date(Date.now() - days * 86400000) : undefined;
+        const { limit = 50, offset = 0, channel, leadStatus } = input ?? {};
+        const { since, until } = resolveDateRange(input);
+        const hasDates = input?.days || input?.dateFrom;
         const [items, total] = await Promise.all([
-          getLeads(limit, offset, { channel: channel || undefined, leadStatus: leadStatus || undefined, since }),
-          getLeadsCount(since),
+          getLeads(limit, offset, { channel: channel || undefined, leadStatus: leadStatus || undefined, since: hasDates ? since : undefined, until }),
+          getLeadsCount(hasDates ? since : undefined, until),
         ]);
         return { items, total };
       }),
 
     stats: protectedProcedure
-      .input(z.object({ days: z.number().min(1).max(365).default(30) }).optional())
+      .input(dateFilterSchema)
       .query(async ({ input }) => {
-        const days = input?.days ?? 30;
-        const since = new Date(Date.now() - days * 86400000);
+        const { since, until } = resolveDateRange(input);
         const [total, totalSince, bySource, byChannel, byCampaign, byDay, byStatus] = await Promise.all([
           getLeadsCount(),
-          getLeadsCount(since),
+          getLeadsCount(since, until),
           getLeadsBySource(),
-          getLeadsByChannel(since),
-          getLeadsByCampaign(since),
-          getLeadsByDay(since),
+          getLeadsByChannel(since, until),
+          getLeadsByCampaign(since, until),
+          getLeadsByDay(since, until),
           getLeadsByStatus(),
         ]);
         return { total, totalSince, bySource, byChannel, byCampaign, byDay, byStatus };
@@ -153,16 +178,15 @@ export const appRouter = router({
       }),
 
     stats: protectedProcedure
-      .input(z.object({ days: z.number().min(1).max(365).default(30) }).optional())
+      .input(dateFilterSchema)
       .query(async ({ input }) => {
-        const days = input?.days ?? 30;
-        const since = new Date(Date.now() - days * 86400000);
+        const { since, until } = resolveDateRange(input);
         const [total, byChannel, byDay, avgDuration, bounceRate_] = await Promise.all([
-          getSessionsCount(since),
-          getSessionsByChannel(since),
-          getSessionsByDay(since),
-          getAvgSessionDuration(since),
-          getBounceRate(since),
+          getSessionsCount(since, until),
+          getSessionsByChannel(since, until),
+          getSessionsByDay(since, until),
+          getAvgSessionDuration(since, until),
+          getBounceRate(since, until),
         ]);
         return { total, byChannel, byDay, avgDuration, bounceRate: bounceRate_ };
       }),
@@ -238,19 +262,17 @@ export const appRouter = router({
       }),
 
     summary: protectedProcedure
-      .input(z.object({ days: z.number().min(1).max(365).default(30) }).optional())
+      .input(dateFilterSchema)
       .query(async ({ input }) => {
-        const days = input?.days ?? 30;
-        const since = new Date(Date.now() - days * 86400000);
+        const { since, until } = resolveDateRange(input);
         const [summary, eventsByName] = await Promise.all([getAnalyticsSummary(since), getEventsByName(since)]);
         return { ...summary, eventsByName };
       }),
 
     engagement: protectedProcedure
-      .input(z.object({ days: z.number().min(1).max(365).default(30) }).optional())
+      .input(dateFilterSchema)
       .query(async ({ input }) => {
-        const days = input?.days ?? 30;
-        const since = new Date(Date.now() - days * 86400000);
+        const { since, until } = resolveDateRange(input);
         const [topPages_, quartiles, videoStats_] = await Promise.all([
           getTopPages(since, 20),
           getEngagementQuartiles(since),
@@ -294,10 +316,9 @@ export const appRouter = router({
       .mutation(async ({ input }) => createConversion(input)),
 
     stats: protectedProcedure
-      .input(z.object({ days: z.number().min(1).max(365).default(30) }).optional())
+      .input(dateFilterSchema)
       .query(async ({ input }) => {
-        const days = input?.days ?? 30;
-        const since = new Date(Date.now() - days * 86400000);
+        const { since, until } = resolveDateRange(input);
         const [rate, byChannel, byType] = await Promise.all([
           getConversionRate(since),
           getConversionsByChannel(since),
@@ -310,11 +331,10 @@ export const appRouter = router({
   // ===================== DASHBOARD =====================
   dashboard: router({
     kpis: protectedProcedure
-      .input(z.object({ days: z.number().min(1).max(365).default(30) }).optional())
+      .input(dateFilterSchema)
       .query(async ({ input }) => {
-        const days = input?.days ?? 30;
-        const since = new Date(Date.now() - days * 86400000);
-        return getDashboardKPIs(since);
+        const { since, until } = resolveDateRange(input);
+        return getDashboardKPIs(since, until);
       }),
   }),
 });
