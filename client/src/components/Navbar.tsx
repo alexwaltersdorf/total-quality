@@ -21,6 +21,10 @@ const serviceLinks = [
   { label: "Bioimpedância", href: "/bioimpedancia" },
 ];
 
+const adminLinks = [
+  { label: "Dashboard", href: "/dashboard" },
+];
+
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -95,6 +99,13 @@ export default function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden lg:flex items-center gap-4">
+          <Link
+            href="/dashboard"
+            className="text-xs font-semibold uppercase tracking-[0.15em] text-text-light hover:text-brand transition-colors"
+            onClick={() => trackNavClick("dashboard")}
+          >
+            Dashboard
+          </Link>
           <button
             onClick={handleResultsClick}
             className="text-xs font-semibold uppercase tracking-[0.15em] text-text-light hover:text-brand transition-colors"

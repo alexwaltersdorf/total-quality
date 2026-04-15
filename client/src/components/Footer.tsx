@@ -83,6 +83,14 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/dashboard"
+                  className="text-text-light hover:text-brand text-sm transition-colors"
+                >
+                  Dashboard Analytics
+                </Link>
+              </li>
             </ul>
           </div>
 

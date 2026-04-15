@@ -22,6 +22,7 @@ import {
   initTimeTracking,
   initSectionObserver,
 } from "@/lib/tracking";
+import { initAnalyticsCapture } from "@/lib/analyticsStore";
 
 export default function Home() {
   const scrollRef = useScrollReveal();
@@ -32,6 +33,9 @@ export default function Home() {
     if (metaDesc) {
       metaDesc.setAttribute("content", "Total Quality Medicina Diagnóstica e Laboratorial em Caraguatatuba-SP. Exames de sangue, hemograma, glicemia, colesterol, triglicerídeos, TSH, T4 livre, PSA, vitamina D, ácido úrico, ureia, creatinina, TGO, TGP. Tomografia, ultrassonografia, mamografia, ecocardiograma, check-up e mais de 3.000 tipos de exames laboratoriais.");
     }
+
+    // Initialize analytics capture for dashboard
+    initAnalyticsCapture();
 
     // Tracking: page view + engagement metrics
     trackPageView("Home");

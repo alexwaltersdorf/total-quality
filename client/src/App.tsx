@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import CheckUp from "./pages/CheckUp";
 import Bioimpedancia from "./pages/Bioimpedancia";
+import Dashboard from "./pages/Dashboard";
 
 
 function Router() {
@@ -15,6 +16,7 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/checkup"} component={CheckUp} />
       <Route path={"/bioimpedancia"} component={Bioimpedancia} />
+      <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
