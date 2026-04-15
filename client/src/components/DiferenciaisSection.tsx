@@ -21,7 +21,7 @@ const diferenciais = [
   {
     icon: Cpu,
     title: "Tecnologia de última geração em exames diagnósticos",
-    description: "Equipamentos modernos de tomografia, ultrassonografia e mamografia digital para diagnósticos precisos e confiáveis.",
+    description: "Equipamentos modernos de tomografia, ultrassonografia, mamografia digital e laboratório automatizado para exames de sangue e análises clínicas com diagnósticos precisos e confiáveis.",
   },
   {
     icon: Sun,
@@ -31,7 +31,7 @@ const diferenciais = [
   {
     icon: Stethoscope,
     title: "Equipe médica altamente qualificada",
-    description: "Profissionais especializados em cardiologia, diagnóstico por imagem e análises clínicas dedicados ao seu bem-estar.",
+    description: "Profissionais especializados em cardiologia, diagnóstico por imagem, análises clínicas e exames laboratoriais dedicados ao seu bem-estar.",
   },
   {
     icon: GraduationCap,
@@ -41,13 +41,13 @@ const diferenciais = [
   {
     icon: Globe,
     title: "Resultados de exames online 24h",
-    description: "Acesso rápido e seguro aos seus laudos de tomografia, ultrassonografia, mamografia e exames laboratoriais a qualquer momento.",
+    description: "Acesso rápido e seguro aos seus laudos de exames de sangue, hemograma, glicemia, colesterol, tomografia, ultrassonografia e mamografia a qualquer momento.",
   },
 ];
 
 export default function DiferenciaisSection() {
   return (
-    <section id="diferenciais" className="py-24 lg:py-32 bg-white" aria-label="Diferenciais da Total Quality Medicina Diagnóstica">
+    <section id="diferenciais" className="py-24 lg:py-32 bg-white" aria-label="Diferenciais da Total Quality - Laboratório e Medicina Diagnóstica Caraguatatuba">
       <div className="container">
         {/* Section header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-20">
@@ -60,7 +60,7 @@ export default function DiferenciaisSection() {
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
-            Nossos diferenciais em medicina diagnóstica fazem toda a diferença no cuidado com sua saúde. Referência em exames de imagem, cardiologia e laboratório no Litoral Norte de São Paulo.
+            Nossos diferenciais em medicina diagnóstica e laboratório de análises clínicas fazem toda a diferença no cuidado com sua saúde. Referência em exames de sangue, diagnóstico por imagem, cardiologia e laboratório no Litoral Norte de São Paulo.
           </p>
         </div>
 
@@ -95,7 +95,7 @@ export default function DiferenciaisSection() {
         <div className="reveal mt-20 flex items-center gap-4" style={{ transitionDelay: "500ms" }}>
           <div className="w-12 h-[1px] bg-brand" />
           <p className="text-sm font-medium text-text-muted uppercase tracking-wider">
-            Reconhecida como referência em medicina diagnóstica no Litoral Norte de São Paulo
+            Reconhecida como referência em exames laboratoriais, exames de sangue e medicina diagnóstica no Litoral Norte de São Paulo
           </p>
         </div>
       </div>

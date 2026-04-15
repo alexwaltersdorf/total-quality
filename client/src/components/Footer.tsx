@@ -51,7 +51,7 @@ export default function Footer() {
           <div>
             <span className="heading-display text-3xl text-text block mb-4">TOTAL QUALITY</span>
             <p className="text-text-muted text-sm leading-relaxed">
-              Clínica de medicina diagnóstica em Caraguatatuba-SP. Desde 2003, oferecendo tomografia, ultrassonografia, mamografia, ecocardiograma, check-up preventivo e exames laboratoriais com tecnologia de última geração.
+              Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba-SP. Desde 2003, oferecendo exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma e check-up preventivo com tecnologia de última geração.
             </p>
           </div>
 
@@ -134,7 +134,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Total Quality Medicina Diagnóstica. Todos os direitos reservados.
           </p>
           <p className="text-text-muted text-xs">
-            Medicina Diagnóstica • Caraguatatuba-SP • Litoral Norte
+            Exames de Sangue • Laboratório • Medicina Diagnóstica • Caraguatatuba-SP • Litoral Norte
           </p>
         </div>
       </div>

@@ -6,7 +6,7 @@ import { ArrowUpRight, CreditCard, Users, Percent } from "lucide-react";
 
 export default function CartaoSection() {
   return (
-    <section className="py-24 lg:py-32 bg-white relative overflow-hidden" aria-label="Cartão Total Quality - Descontos em exames diagnósticos em Caraguatatuba">
+    <section className="py-24 lg:py-32 bg-white relative overflow-hidden" aria-label="Cartão Total Quality - Descontos em exames de sangue, laboratoriais e diagnósticos em Caraguatatuba">
       {/* Decorative large text */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none">
         <span className="heading-display text-[20vw] text-black/[0.03] whitespace-nowrap">
@@ -28,7 +28,7 @@ export default function CartaoSection() {
               <span className="text-brand">TOTAL QUALITY</span>
             </h2>
             <p className="text-lg text-text-light leading-relaxed mb-10 max-w-lg">
-              Descontos exclusivos em exames de tomografia, ultrassonografia, mamografia, ecocardiograma e análises laboratoriais para toda sua família em Caraguatatuba. Faça seu cartão e aproveite benefícios especiais.
+              Descontos exclusivos em exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma e análises laboratoriais para toda sua família em Caraguatatuba. Faça seu cartão e aproveite benefícios especiais.
             </p>
             <button
               onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de saber mais sobre o Cartão Total Quality.", "_blank")}
@@ -42,7 +42,7 @@ export default function CartaoSection() {
           {/* Benefits */}
           <div className="reveal grid grid-cols-1 gap-0" style={{ transitionDelay: "200ms" }}>
             {[
-              { icon: Percent, title: "Descontos Exclusivos em Exames", description: "Preços especiais em tomografia, ultrassonografia, mamografia, check-up e exames laboratoriais" },
+              { icon: Percent, title: "Descontos Exclusivos em Exames de Sangue e Diagnósticos", description: "Preços especiais em exames de sangue, hemograma, glicemia, colesterol, tomografia, ultrassonografia, mamografia e check-up" },
               { icon: Users, title: "Benefícios Familiares", description: "Extensível para toda a família sem custo adicional" },
               { icon: CreditCard, title: "Fácil e Prático", description: "Cadastro simples e rápido, sem burocracia" },
             ].map((item, i) => (

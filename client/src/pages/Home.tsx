@@ -20,10 +20,10 @@ export default function Home() {
   const scrollRef = useScrollReveal();
 
   useEffect(() => {
-    document.title = "Total Quality Medicina Diagnóstica | Exames em Caraguatatuba-SP";
+    document.title = "Total Quality Medicina Diagnóstica | Exames de Sangue e Laboratoriais em Caraguatatuba-SP";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", "Total Quality Medicina Diagnóstica em Caraguatatuba-SP. Tomografia, ultrassonografia, mamografia, raio-X, ecocardiograma, holter, MAPA, bioimpedância, check-up e exames laboratoriais. Mais de 3.000 tipos de exames com tecnologia de última geração.");
+      metaDesc.setAttribute("content", "Total Quality Medicina Diagnóstica e Laboratorial em Caraguatatuba-SP. Exames de sangue, hemograma, glicemia, colesterol, triglicerídeos, TSH, T4 livre, PSA, vitamina D, ácido úrico, ureia, creatinina, TGO, TGP. Tomografia, ultrassonografia, mamografia, ecocardiograma, check-up e mais de 3.000 tipos de exames laboratoriais.");
     }
   }, []);
 

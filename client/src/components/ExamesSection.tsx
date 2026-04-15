@@ -21,7 +21,7 @@ type Category = "imagem" | "cardiologia" | "laboratorio";
 const categories = [
   { id: "imagem" as Category, label: "Diagnóstico por Imagem", shortLabel: "Imagem", icon: Scan },
   { id: "cardiologia" as Category, label: "Cardiologia", shortLabel: "Cardio", icon: HeartPulse },
-  { id: "laboratorio" as Category, label: "Laboratório", shortLabel: "Lab", icon: FlaskConical },
+  { id: "laboratorio" as Category, label: "Laboratório e Exames de Sangue", shortLabel: "Lab", icon: FlaskConical },
 ];
 
 const examData: Record<Category, { image: string; tag: string; exams: string[]; description: string }> = {
@@ -49,13 +49,15 @@ const examData: Record<Category, { image: string; tag: string; exams: string[]; 
   },
   laboratorio: {
     image: LAB_IMG,
-    tag: "Análises Clínicas",
-    description: "Laboratório de análises clínicas completo em Caraguatatuba com mais de 3.000 tipos de exames laboratoriais e resultados online em até 24 horas.",
+    tag: "Análises Clínicas e Exames de Sangue",
+    description: "Laboratório de análises clínicas completo em Caraguatatuba com mais de 3.000 tipos de exames de sangue e laboratoriais. Hemograma, glicemia, colesterol, triglicerídeos, TSH, T4 livre, PSA, vitamina D, ácido úrico, ureia, creatinina, TGO, TGP, hemoglobina glicada, hormônios e marcadores tumorais com resultados online em até 24 horas.",
     exams: [
-      "Exames de Rotina",
-      "Análises de Alta Complexidade",
-      "Hormônios e Marcadores",
-      "Exames Especializados",
+      "Hemograma Completo e Exames de Sangue",
+      "Glicemia, Colesterol e Triglicerídeos",
+      "Hormônios (TSH, T4, Estradiol, Testosterona)",
+      "PSA, Vitamina D e Marcadores Tumorais",
+      "Ureia, Creatinina, TGO, TGP e Ácido Úrico",
+      "Hemoglobina Glicada e Exame de Urina",
     ],
   },
 };
@@ -65,12 +67,12 @@ export default function ExamesSection() {
   const data = examData[active];
 
   return (
-    <section id="exames" className="py-24 lg:py-32 bg-surface-dark" aria-label="Exames diagnósticos disponíveis na Total Quality Caraguatatuba">
+    <section id="exames" className="py-24 lg:py-32 bg-surface-dark" aria-label="Exames de sangue, laboratoriais e diagnósticos na Total Quality Caraguatatuba">
       <div className="container">
         {/* Section header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-16">
           <div>
-            <span className="reveal section-label mb-4 block">Exames Diagnósticos em Caraguatatuba</span>
+            <span className="reveal section-label mb-4 block">Exames de Sangue, Laboratoriais e Diagnósticos em Caraguatatuba</span>
             <h2 className="reveal heading-display text-5xl sm:text-6xl lg:text-7xl text-text" style={{ transitionDelay: "100ms" }}>
               PRINCIPAIS
               <br />
@@ -78,7 +80,7 @@ export default function ExamesSection() {
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
-            Oferecemos mais de 3.000 tipos de exames diagnósticos em Caraguatatuba-SP, incluindo tomografia, ultrassonografia, mamografia, ecocardiograma, holter, MAPA e análises laboratoriais com tecnologia de ponta.
+            Oferecemos mais de 3.000 tipos de exames de sangue, laboratoriais e diagnósticos em Caraguatatuba-SP. Hemograma, glicemia, colesterol, hormônios, vitamina D, PSA, tomografia, ultrassonografia, mamografia, ecocardiograma e análises clínicas com tecnologia de ponta.
           </p>
         </div>
 

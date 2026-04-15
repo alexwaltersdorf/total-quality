@@ -12,12 +12,12 @@ const values = [
   {
     icon: Target,
     title: "Missão",
-    description: "Oferecer diagnósticos precisos em tomografia, ultrassonografia, mamografia, cardiologia e análises clínicas com atendimento humanizado em Caraguatatuba-SP.",
+    description: "Oferecer diagnósticos precisos em exames de sangue, análises clínicas, tomografia, ultrassonografia, mamografia e cardiologia com atendimento humanizado em Caraguatatuba-SP.",
   },
   {
     icon: Eye,
     title: "Visão",
-    description: "Ser reconhecida como a principal referência em medicina diagnóstica e exames laboratoriais no Litoral Norte de São Paulo.",
+    description: "Ser reconhecida como a principal referência em exames de sangue, laboratório de análises clínicas e medicina diagnóstica no Litoral Norte de São Paulo.",
   },
   {
     icon: Heart,
@@ -34,7 +34,7 @@ const timeline = [
 
 export default function SobreSection() {
   return (
-    <section id="sobre" className="py-24 lg:py-32 bg-white" aria-label="Sobre a Total Quality Medicina Diagnóstica Caraguatatuba">
+    <section id="sobre" className="py-24 lg:py-32 bg-white" aria-label="Sobre a Total Quality - Laboratório de Análises Clínicas e Medicina Diagnóstica em Caraguatatuba">
       <div className="container">
         {/* Main about block */}
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start mb-24">
@@ -42,7 +42,7 @@ export default function SobreSection() {
           <div className="lg:col-span-6 reveal-left relative">
             <img
               src={TEAM_IMG}
-              alt="Equipe médica da Total Quality Medicina Diagnóstica - Profissionais especializados em diagnóstico por imagem, cardiologia e laboratório em Caraguatatuba-SP"
+              alt="Equipe médica da Total Quality - Profissionais especializados em exames de sangue, análises clínicas, diagnóstico por imagem e cardiologia em Caraguatatuba-SP"
               className="w-full h-[400px] lg:h-[550px] object-cover"
             />
             {/* Floating experience card */}

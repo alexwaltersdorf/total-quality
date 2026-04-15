@@ -8,10 +8,12 @@ import { ArrowUpRight } from "lucide-react";
 const HERO_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png";
 
 const marqueeItems = [
-  "TOMOGRAFIA", "ESPIROMETRIA", "ELETROENCEFALOGRAMA",
-  "ULTRASSONOGRAFIA", "RAIO-X", "MAMOGRAFIA", "HOLTER",
-  "MAPA", "ECOCARDIOGRAMA", "BIOIMPEDÂNCIA", "CHECK-UP",
-  "DIAGNÓSTICO POR IMAGEM", "CARDIOLOGIA", "LABORATÓRIO",
+  "TOMOGRAFIA", "EXAMES DE SANGUE", "HEMOGRAMA",
+  "ULTRASSONOGRAFIA", "GLICEMIA", "MAMOGRAFIA", "COLESTEROL",
+  "ECOCARDIOGRAMA", "BIOIMPEDÂNCIA", "CHECK-UP",
+  "DIAGNÓSTICO POR IMAGEM", "LABORATÓRIO", "HORMÔNIOS",
+  "RAIO-X", "HOLTER", "MAPA", "VITAMINA D", "PSA",
+  "ANÁLISES CLÍNICAS", "UREIA", "CREATININA",
 ];
 
 export default function HeroSection() {
@@ -23,7 +25,7 @@ export default function HeroSection() {
           {/* Left column - Text */}
           <div className="lg:col-span-6 xl:col-span-5 pt-8 lg:pt-16">
             <div className="reveal">
-              <span className="section-label mb-8 block">Medicina Diagnóstica em Caraguatatuba-SP</span>
+              <span className="section-label mb-8 block">Laboratório e Medicina Diagnóstica em Caraguatatuba-SP</span>
             </div>
 
             <h1 className="reveal heading-display text-[clamp(3.5rem,10vw,8rem)] leading-[0.85] mb-8" style={{ transitionDelay: "100ms" }}>
@@ -33,7 +35,7 @@ export default function HeroSection() {
             </h1>
 
             <p className="reveal text-lg text-text-light leading-relaxed max-w-md mb-10" style={{ transitionDelay: "200ms" }}>
-              Desde 2003, mais de 30.000 famílias confiam na nossa clínica de medicina diagnóstica em Caraguatatuba. Realizamos tomografia, ultrassonografia, mamografia, ecocardiograma, check-up preventivo e exames laboratoriais com tecnologia de última geração e atendimento humanizado.
+              Desde 2003, mais de 30.000 famílias confiam no nosso laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba. Realizamos exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma e check-up preventivo com tecnologia de última geração.
             </p>
 
             <div className="reveal flex flex-wrap gap-4 mb-16" style={{ transitionDelay: "300ms" }}>

@@ -54,12 +54,12 @@ export default function ContatoSection() {
   };
 
   return (
-    <section id="contato" className="py-24 lg:py-32 bg-surface-dark" aria-label="Contato e agendamento de exames na Total Quality Caraguatatuba">
+    <section id="contato" className="py-24 lg:py-32 bg-surface-dark" aria-label="Contato e agendamento de exames de sangue e laboratoriais na Total Quality Caraguatatuba">
       <div className="container">
         {/* Section header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-16">
           <div>
-            <span className="reveal section-label mb-4 block">Agende seu exame em Caraguatatuba</span>
+            <span className="reveal section-label mb-4 block">Agende seu exame de sangue ou diagnóstico em Caraguatatuba</span>
             <h2 className="reveal heading-display text-5xl sm:text-6xl lg:text-7xl text-text" style={{ transitionDelay: "100ms" }}>
               ENTRE EM
               <br />
@@ -67,7 +67,7 @@ export default function ContatoSection() {
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
-            Agende sua tomografia, ultrassonografia, mamografia, ecocardiograma, check-up ou exame laboratorial na Total Quality em Caraguatatuba-SP. Atendemos de segunda a sexta, das 08h às 18h.
+            Agende seu exame de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma ou check-up na Total Quality em Caraguatatuba-SP. Atendemos de segunda a sexta, das 08h às 18h.
           </p>
         </div>
 
