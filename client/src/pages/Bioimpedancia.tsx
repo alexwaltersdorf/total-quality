@@ -64,7 +64,7 @@ export default function Bioimpedancia() {
             </span>
           </Link>
           <button
-            onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame de Bioimpedância.", "_blank")}
+            onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame de Bioimpedância.", "_blank")}
             className="btn-pill"
           >
             Agendar Exame
@@ -91,7 +91,7 @@ export default function Bioimpedancia() {
               </p>
               <div className="reveal flex flex-wrap gap-4 mb-12" style={{ transitionDelay: "300ms" }}>
                 <button
-                  onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame de Bioimpedância.", "_blank")}
+                  onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame de Bioimpedância.", "_blank")}
                   className="btn-pill-brand btn-pill"
                 >
                   Agendar Exame
@@ -298,7 +298,7 @@ export default function Bioimpedancia() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <button
-                  onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame de Bioimpedância.", "_blank")}
+                  onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame de Bioimpedância.", "_blank")}
                   className="btn-pill !bg-white !text-brand hover:!bg-white/90"
                 >
                   Agendar pelo WhatsApp

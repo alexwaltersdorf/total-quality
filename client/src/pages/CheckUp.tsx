@@ -87,7 +87,7 @@ export default function CheckUp() {
             </span>
           </Link>
           <button
-            onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
+            onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
             className="btn-pill"
           >
             Agendar Check-Up
@@ -114,7 +114,7 @@ export default function CheckUp() {
               </p>
               <div className="reveal flex flex-wrap gap-4 mb-12" style={{ transitionDelay: "300ms" }}>
                 <button
-                  onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
+                  onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
                   className="btn-pill-brand btn-pill"
                 >
                   Agendar Agora
@@ -227,7 +227,7 @@ export default function CheckUp() {
                   ))}
                 </ul>
                 <button
-                  onClick={() => window.open(`https://wa.me/5512997743535?text=Olá! Gostaria de agendar o ${pkg.title}.`, "_blank")}
+                  onClick={() => window.open(`https://wa.me/551238873535?text=Olá! Gostaria de agendar o ${pkg.title}.`, "_blank")}
                   className={`w-full py-3.5 text-xs uppercase tracking-[0.15em] font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
                     pkg.highlight
                       ? "bg-white text-brand hover:bg-white/90"
@@ -321,7 +321,7 @@ export default function CheckUp() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <button
-                  onClick={() => window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
+                  onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
                   className="btn-pill !bg-white !text-brand hover:!bg-white/90"
                 >
                   Agendar pelo WhatsApp

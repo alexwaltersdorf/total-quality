@@ -144,7 +144,7 @@ export default function ExamesSection() {
 
             <div className="flex flex-wrap gap-3 mt-8">
               <button
-                onClick={() => { trackScheduleExam("exames_section", active); window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame.", "_blank"); }}
+                onClick={() => { trackScheduleExam("exames_section", active); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame.", "_blank"); }}
                 className="btn-pill-brand btn-pill"
               >
                 Agendar Exame

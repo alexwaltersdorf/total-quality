@@ -42,7 +42,7 @@ export default function Navbar() {
   const handleScheduleClick = () => {
     setMobileOpen(false);
     trackScheduleExam("navbar_cta", "geral");
-    window.open("https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame.", "_blank");
+    window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame.", "_blank");
   };
 
   const handleResultsClick = () => {

@@ -34,7 +34,7 @@ export default function WhatsAppFAB() {
           <p className="font-semibold text-text text-sm mb-1">Precisa de ajuda?</p>
           <p className="text-text-muted text-xs mb-3">Agende seu exame pelo WhatsApp de forma rápida.</p>
           <a
-            href="https://wa.me/5512997743535?text=Olá! Gostaria de agendar um exame."
+            href="https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame."
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackWhatsAppClick("fab_iniciar_conversa")}
