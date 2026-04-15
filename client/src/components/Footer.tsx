@@ -17,6 +17,7 @@ const footerLinks = [
 const serviceLinks = [
   { label: "Check-Up Preventivo", href: "/checkup" },
   { label: "Bioimpedância", href: "/bioimpedancia" },
+  { label: "Blog Saúde", href: "/blog" },
 ];
 
 export default function Footer() {

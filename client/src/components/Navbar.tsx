@@ -19,6 +19,7 @@ const navLinks = [
 const serviceLinks = [
   { label: "Check-Up", href: "/checkup" },
   { label: "Bioimpedância", href: "/bioimpedancia" },
+  { label: "Blog", href: "/blog" },
 ];
 
 

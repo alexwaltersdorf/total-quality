@@ -1,7 +1,7 @@
 /*
  * Style: Optik Editorial — Minimalist, uppercase display type, brand #9B212B
  * Home page: Composes all sections in editorial flow
- * Hero → Diferenciais → Exames → Cartão → Sobre → Contato → Footer
+ * Hero → Diferenciais → Exames → Cartão → Blog → Sobre → Contato → Footer
  * SEO: Semantic HTML structure with proper heading hierarchy
  * Tracking: Full dataLayer integration for GTM/GA4/Meta/TikTok
  */
@@ -12,6 +12,7 @@ import HeroSection from "@/components/HeroSection";
 import DiferenciaisSection from "@/components/DiferenciaisSection";
 import ExamesSection from "@/components/ExamesSection";
 import CartaoSection from "@/components/CartaoSection";
+import BlogPreviewSection from "@/components/BlogPreviewSection";
 import SobreSection from "@/components/SobreSection";
 import ContatoSection from "@/components/ContatoSection";
 import Footer from "@/components/Footer";
@@ -62,6 +63,7 @@ export default function Home() {
         <DiferenciaisSection />
         <ExamesSection />
         <CartaoSection />
+        <BlogPreviewSection />
         <SobreSection />
         <ContatoSection />
       </main>
