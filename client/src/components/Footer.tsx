@@ -7,17 +7,26 @@ import { Link } from "wouter";
 import { trackScheduleExam, trackPhoneClick, trackWhatsAppClick, trackExternalLink } from "@/lib/tracking";
 
 const footerLinks = [
-  { label: "Início", href: "#inicio", isRoute: false },
-  { label: "Diferenciais", href: "#diferenciais", isRoute: false },
-  { label: "Exames", href: "#exames", isRoute: false },
-  { label: "Sobre", href: "#sobre", isRoute: false },
-  { label: "Contato", href: "#contato", isRoute: false },
+  { label: "Início", href: "#inicio" },
+  { label: "Diferenciais", href: "#diferenciais" },
+  { label: "Sobre", href: "#sobre" },
+  { label: "Contato", href: "#contato" },
+  { label: "Blog", href: "/blog", isRoute: true },
+  { label: "Check-Up Preventivo", href: "/checkup", isRoute: true },
+  { label: "Bioimpedância", href: "/bioimpedancia", isRoute: true },
 ];
 
-const serviceLinks = [
-  { label: "Check-Up Preventivo", href: "/checkup" },
-  { label: "Bioimpedância", href: "/bioimpedancia" },
-  { label: "Blog Saúde", href: "/blog" },
+const examSitelinks = [
+  { label: "Exames de Sangue", href: "/exames/exames-de-sangue" },
+  { label: "Tomografia Computadorizada", href: "/exames/tomografia-computadorizada" },
+  { label: "Raio-X", href: "/exames/raio-x" },
+  { label: "Ultrassonografia", href: "/exames/ultrassonografia" },
+  { label: "MAPA", href: "/exames/mapa" },
+  { label: "Holter", href: "/exames/holter" },
+  { label: "Espirometria", href: "/exames/espirometria" },
+  { label: "Eletrocardiograma", href: "/exames/eletrocardiograma" },
+  { label: "Eletroencefalograma", href: "/exames/eletroencefalograma" },
+  { label: "Exame Toxicológico", href: "/exames/exame-toxicologico" },
 ];
 
 export default function Footer() {
@@ -48,12 +57,12 @@ export default function Footer() {
 
       {/* Main footer */}
       <div className="container py-16">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand */}
-          <div>
+          <div className="lg:col-span-1">
             <span className="heading-display text-3xl text-text block mb-4">TOTAL QUALITY</span>
             <p className="text-text-muted text-sm leading-relaxed">
-              Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba-SP. Desde 2003, oferecendo exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma e check-up preventivo com tecnologia de última geração.
+              Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba-SP. Desde 2003, tecnologia de última geração para cuidar da sua saúde.
             </p>
           </div>
 
@@ -63,24 +72,37 @@ export default function Footer() {
             <ul className="space-y-3">
               {footerLinks.map((link) => (
                 <li key={link.href}>
-                  <button
-                    onClick={() => scrollTo(link.href)}
-                    className="text-text-light hover:text-brand text-sm transition-colors"
-                  >
-                    {link.label}
-                  </button>
+                  {"isRoute" in link && link.isRoute ? (
+                    <Link
+                      href={link.href}
+                      className="text-text-light hover:text-brand text-sm transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={() => scrollTo(link.href)}
+                      className="text-text-light hover:text-brand text-sm transition-colors"
+                    >
+                      {link.label}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
-            <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-4 mt-8">Serviços</h4>
+          </div>
+
+          {/* Exames Sitelinks */}
+          <div className="lg:col-span-1">
+            <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-6">Nossos Exames</h4>
             <ul className="space-y-3">
-              {serviceLinks.map((link) => (
-                <li key={link.href}>
+              {examSitelinks.map((exam) => (
+                <li key={exam.href}>
                   <Link
-                    href={link.href}
+                    href={exam.href}
                     className="text-text-light hover:text-brand text-sm transition-colors"
                   >
-                    {link.label}
+                    {exam.label}
                   </Link>
                 </li>
               ))}
@@ -136,8 +158,8 @@ export default function Footer() {
           <p className="text-text-muted text-xs">
             &copy; {new Date().getFullYear()} Total Quality Medicina Diagnóstica. Todos os direitos reservados.
           </p>
-          <p className="text-text-muted text-xs">
-            Exames de Sangue • Laboratório • Medicina Diagnóstica • Caraguatatuba-SP • Litoral Norte
+          <p className="text-text-muted text-xs text-center">
+            Exames de Sangue • Tomografia • Raio-X • Ultrassonografia • Eletrocardiograma • Caraguatatuba-SP
           </p>
         </div>
       </div>

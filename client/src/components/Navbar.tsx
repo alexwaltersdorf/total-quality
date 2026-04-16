@@ -3,8 +3,8 @@
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  * Tracking: nav clicks, CTA clicks, phone clicks, results clicks
  */
-import { useState, useEffect } from "react";
-import { Menu, X, ArrowUpRight } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { trackNavClick, trackScheduleExam, trackResultsClick, trackPhoneClick } from "@/lib/tracking";
 
@@ -22,15 +22,42 @@ const serviceLinks = [
   { label: "Blog", href: "/blog" },
 ];
 
+const examSitelinks = [
+  { label: "Exames de Sangue", href: "/exames/exames-de-sangue" },
+  { label: "Tomografia Computadorizada", href: "/exames/tomografia-computadorizada" },
+  { label: "Raio-X", href: "/exames/raio-x" },
+  { label: "Ultrassonografia", href: "/exames/ultrassonografia" },
+  { label: "MAPA", href: "/exames/mapa" },
+  { label: "Holter", href: "/exames/holter" },
+  { label: "Espirometria", href: "/exames/espirometria" },
+  { label: "Eletrocardiograma", href: "/exames/eletrocardiograma" },
+  { label: "Eletroencefalograma", href: "/exames/eletroencefalograma" },
+  { label: "Exame Toxicológico", href: "/exames/exame-toxicologico" },
+];
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [examesDropdownOpen, setExamesDropdownOpen] = useState(false);
+  const [mobileExamesOpen, setMobileExamesOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setExamesDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const scrollTo = (href: string) => {
@@ -50,6 +77,15 @@ export default function Navbar() {
     setMobileOpen(false);
     trackResultsClick();
     window.open("https://totalquality.med.br", "_blank");
+  };
+
+  const handleDropdownEnter = () => {
+    if (dropdownTimeout.current) clearTimeout(dropdownTimeout.current);
+    setExamesDropdownOpen(true);
+  };
+
+  const handleDropdownLeave = () => {
+    dropdownTimeout.current = setTimeout(() => setExamesDropdownOpen(false), 200);
   };
 
   return (
@@ -85,7 +121,62 @@ export default function Navbar() {
               {link.label}
             </button>
           ))}
-          {serviceLinks.map((link) => (
+
+          {/* Exames Dropdown */}
+          <div
+            ref={dropdownRef}
+            className="relative"
+            onMouseEnter={handleDropdownEnter}
+            onMouseLeave={handleDropdownLeave}
+          >
+            <button
+              className="flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.15em] text-brand hover:text-brand-dark transition-colors duration-300"
+              onClick={() => setExamesDropdownOpen(!examesDropdownOpen)}
+            >
+              Nossos Exames
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${examesDropdownOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {/* Dropdown menu */}
+            <div
+              className={`absolute top-full left-1/2 -translate-x-1/2 mt-4 w-64 bg-white rounded-xl shadow-xl border border-black/10 overflow-hidden transition-all duration-200 ${
+                examesDropdownOpen
+                  ? "opacity-100 translate-y-0 pointer-events-auto"
+                  : "opacity-0 -translate-y-2 pointer-events-none"
+              }`}
+            >
+              <div className="py-2">
+                {examSitelinks.map((exam) => (
+                  <Link
+                    key={exam.href}
+                    href={exam.href}
+                    className="block px-5 py-2.5 text-sm text-text-light hover:text-brand hover:bg-brand/5 transition-colors"
+                    onClick={() => { setExamesDropdownOpen(false); trackNavClick(exam.label.toLowerCase()); }}
+                  >
+                    {exam.label}
+                  </Link>
+                ))}
+              </div>
+              <div className="border-t border-black/10 p-3">
+                <Link
+                  href="/checkup"
+                  className="block px-2 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-brand hover:text-brand-dark transition-colors"
+                  onClick={() => { setExamesDropdownOpen(false); trackNavClick("checkup"); }}
+                >
+                  Check-Up Preventivo →
+                </Link>
+                <Link
+                  href="/bioimpedancia"
+                  className="block px-2 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-brand hover:text-brand-dark transition-colors"
+                  onClick={() => { setExamesDropdownOpen(false); trackNavClick("bioimpedancia"); }}
+                >
+                  Bioimpedância →
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {serviceLinks.filter(l => l.label === "Blog").map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -125,7 +216,7 @@ export default function Navbar() {
 
       {/* Mobile drawer */}
       <div
-        className={`lg:hidden fixed inset-0 top-0 bg-white z-40 transition-all duration-500 ${
+        className={`lg:hidden fixed inset-0 top-0 bg-white z-40 transition-all duration-500 overflow-y-auto ${
           mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
       >
@@ -143,19 +234,55 @@ export default function Navbar() {
                 </span>
               </button>
             ))}
-            {serviceLinks.map((link, i) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="block w-full text-left py-4 border-b border-black/10"
-                style={{ animationDelay: `${(navLinks.length + i) * 50}ms` }}
-                onClick={() => { setMobileOpen(false); trackNavClick(link.label.toLowerCase()); }}
+
+            {/* Mobile Exames Accordion */}
+            <div className="border-b border-black/10">
+              <button
+                onClick={() => setMobileExamesOpen(!mobileExamesOpen)}
+                className="flex items-center justify-between w-full text-left py-4"
               >
-                <span className="heading-display text-4xl text-brand hover:text-brand-dark transition-colors">
-                  {link.label.toUpperCase()}
-                </span>
-              </Link>
-            ))}
+                <span className="heading-display text-4xl text-brand">NOSSOS EXAMES</span>
+                <ChevronDown className={`w-6 h-6 text-brand transition-transform duration-200 ${mobileExamesOpen ? "rotate-180" : ""}`} />
+              </button>
+              <div className={`overflow-hidden transition-all duration-300 ${mobileExamesOpen ? "max-h-[600px] pb-4" : "max-h-0"}`}>
+                <div className="pl-4 space-y-1">
+                  {examSitelinks.map((exam) => (
+                    <Link
+                      key={exam.href}
+                      href={exam.href}
+                      className="block py-2.5 text-lg text-text-light hover:text-brand transition-colors"
+                      onClick={() => { setMobileOpen(false); trackNavClick(exam.label.toLowerCase()); }}
+                    >
+                      {exam.label}
+                    </Link>
+                  ))}
+                  <Link
+                    href="/checkup"
+                    className="block py-2.5 text-lg font-semibold text-brand"
+                    onClick={() => { setMobileOpen(false); trackNavClick("checkup"); }}
+                  >
+                    Check-Up Preventivo →
+                  </Link>
+                  <Link
+                    href="/bioimpedancia"
+                    className="block py-2.5 text-lg font-semibold text-brand"
+                    onClick={() => { setMobileOpen(false); trackNavClick("bioimpedancia"); }}
+                  >
+                    Bioimpedância →
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <Link
+              href="/blog"
+              className="block w-full text-left py-4 border-b border-black/10"
+              onClick={() => { setMobileOpen(false); trackNavClick("blog"); }}
+            >
+              <span className="heading-display text-4xl text-brand hover:text-brand-dark transition-colors">
+                BLOG
+              </span>
+            </Link>
           </div>
           <div className="mt-10 space-y-4">
             <button

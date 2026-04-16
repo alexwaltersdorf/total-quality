@@ -67,3 +67,19 @@
 - [x] Criar tela de login personalizada no /admin
 - [x] Configurar credenciais como secrets do ambiente
 - [x] Testes vitest para API de login (66 testes passando)
+
+## Sitelinks de Exames
+- [x] Criar página individual: Exames de Sangue
+- [x] Criar página individual: Tomografia Computadorizada
+- [x] Criar página individual: Raio-x
+- [x] Criar página individual: Ultrassonografia
+- [x] Criar página individual: MAPA
+- [x] Criar página individual: Holter
+- [x] Criar página individual: Espirometria
+- [x] Criar página individual: Eletrocardiograma
+- [x] Criar página individual: Eletroencefalograma
+- [x] Criar página individual: Exame Toxicológico
+- [x] Adicionar sitelinks na navegação do site (dropdown "Nossos Exames")
+- [x] Adicionar sitelinks no footer (coluna dedicada)
+- [x] Configurar rotas no App.tsx (/exames/:slug)
+- [x] SEO: meta tags, title e description para cada página de exame
