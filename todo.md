@@ -51,3 +51,11 @@
 - [x] Adicionar filtro por tags na aba de Leads
 - [x] Exibir tags nos KPIs do dashboard (leads por tag)
 - [x] Testes vitest para APIs de tags (61 testes passando)
+
+## Gerador de UTM no Painel
+- [x] Criar aba "UTM Builder" no painel administrativo
+- [x] Formulário para gerar links UTM com source, medium, campaign, term, content
+- [x] Presets por plataforma (Facebook, Instagram, Google Ads, TikTok, YouTube)
+- [x] Botão de copiar link gerado para clipboard
+- [x] Guia passo a passo para configurar UTM em cada plataforma
+- [x] Histórico de links UTM gerados (integrado ao painel)

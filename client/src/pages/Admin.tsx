@@ -12,7 +12,8 @@ import {
   LayoutDashboard, UserCheck, Megaphone, Activity, Target,
   ChevronLeft, LogOut, MessageSquare, Phone, Mail, MapPin,
   ExternalLink, Video, ScrollText, CalendarDays, X, Tag, Plus,
-  Pencil, Trash2, Check, Tags
+  Pencil, Trash2, Check, Tags, Link, Copy, Clipboard, Info,
+  Globe, BookOpen
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -1403,6 +1404,372 @@ function TagsTab({ filter }: { filter: DateFilter }) {
   );
 }
 
+// ===================== UTM BUILDER TAB =====================
+const UTM_PLATFORMS = [
+  {
+    id: "facebook",
+    name: "Facebook Ads",
+    icon: "📘",
+    defaults: { source: "facebook", medium: "paid" },
+    instructions: [
+      "Acesse o Gerenciador de Anúncios do Facebook (adsmanager.facebook.com)",
+      "Selecione ou crie uma campanha",
+      "No nível do Anúncio, vá até a seção 'Destino'",
+      "Clique em 'Criar parâmetro de URL' ou 'Build a URL parameter'",
+      "Cole os parâmetros UTM gerados abaixo no campo 'Parâmetros de URL'",
+      "Ou cole o link completo no campo 'URL do site'",
+    ],
+  },
+  {
+    id: "instagram",
+    name: "Instagram Ads",
+    icon: "📸",
+    defaults: { source: "instagram", medium: "paid" },
+    instructions: [
+      "Os anúncios do Instagram são gerenciados pelo mesmo Gerenciador de Anúncios do Facebook",
+      "Selecione 'Instagram' como posicionamento na campanha",
+      "No nível do Anúncio, vá até 'Destino' > 'Parâmetros de URL'",
+      "Cole os parâmetros UTM gerados abaixo",
+      "Para posts orgânicos com link na bio, use o link completo gerado",
+    ],
+  },
+  {
+    id: "google",
+    name: "Google Ads",
+    icon: "🔍",
+    defaults: { source: "google", medium: "cpc" },
+    instructions: [
+      "Acesse ads.google.com e selecione a campanha",
+      "Vá em Configurações da Campanha > Opções de URL da campanha",
+      "No campo 'Modelo de acompanhamento', adicione: {lpurl}? seguido dos parâmetros UTM",
+      "Ou use 'Sufixo de URL final' para adicionar os parâmetros automaticamente",
+      "Dica: Use {campaignid} e {adgroupid} como valores dinâmicos do Google",
+      "Para campanhas de pesquisa, o utm_medium recomendado é 'cpc'",
+    ],
+  },
+  {
+    id: "tiktok",
+    name: "TikTok Ads",
+    icon: "🎵",
+    defaults: { source: "tiktok", medium: "paid" },
+    instructions: [
+      "Acesse ads.tiktok.com e selecione a campanha",
+      "No nível do Anúncio, vá até 'Destino'",
+      "No campo 'URL', cole o link completo com UTM params",
+      "Ou use macros dinâmicas do TikTok: __CAMPAIGN_NAME__, __AID_NAME__",
+      "Exemplo: utm_campaign=__CAMPAIGN_NAME__&utm_content=__AID_NAME__",
+    ],
+  },
+  {
+    id: "youtube",
+    name: "YouTube Ads",
+    icon: "▶️",
+    defaults: { source: "youtube", medium: "video" },
+    instructions: [
+      "Os anúncios do YouTube são gerenciados pelo Google Ads",
+      "Crie uma campanha de vídeo no Google Ads",
+      "No campo 'URL final', use o link do seu site com UTM params",
+      "Adicione os parâmetros no 'Modelo de acompanhamento' ou 'Sufixo de URL final'",
+      "Para links orgânicos na descrição do vídeo, cole o link completo gerado",
+    ],
+  },
+  {
+    id: "email",
+    name: "Email Marketing",
+    icon: "✉️",
+    defaults: { source: "email", medium: "email" },
+    instructions: [
+      "Adicione os parâmetros UTM a todos os links dentro do email",
+      "Use o utm_campaign para identificar cada disparo (ex: newsletter-abril-2026)",
+      "Use utm_content para diferenciar links dentro do mesmo email (ex: botao-cta, link-texto)",
+      "A maioria das ferramentas de email (Mailchimp, RD Station) tem campo próprio para UTM",
+    ],
+  },
+  {
+    id: "organico",
+    name: "Orgânico / Outros",
+    icon: "🌐",
+    defaults: { source: "direto", medium: "organico" },
+    instructions: [
+      "Use para links compartilhados em redes sociais sem anúncio pago",
+      "Ideal para posts orgânicos, stories, bio do Instagram, WhatsApp, etc.",
+      "Mude o utm_source para a rede específica (ex: whatsapp, linkedin)",
+      "O utm_medium 'organico' indica que não é tráfego pago",
+    ],
+  },
+];
+
+function UTMBuilderTab() {
+  const [baseUrl, setBaseUrl] = useState("https://www.totalquality.med.br");
+  const [utmSource, setUtmSource] = useState("");
+  const [utmMedium, setUtmMedium] = useState("");
+  const [utmCampaign, setUtmCampaign] = useState("");
+  const [utmTerm, setUtmTerm] = useState("");
+  const [utmContent, setUtmContent] = useState("");
+  const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [copiedParams, setCopiedParams] = useState(false);
+  const [expandedGuide, setExpandedGuide] = useState<string | null>(null);
+
+  const selectPlatform = (platformId: string) => {
+    const platform = UTM_PLATFORMS.find(p => p.id === platformId);
+    if (platform) {
+      setSelectedPlatform(platformId);
+      setUtmSource(platform.defaults.source);
+      setUtmMedium(platform.defaults.medium);
+    }
+  };
+
+  const utmParams = useMemo(() => {
+    const params = new URLSearchParams();
+    if (utmSource) params.set("utm_source", utmSource);
+    if (utmMedium) params.set("utm_medium", utmMedium);
+    if (utmCampaign) params.set("utm_campaign", utmCampaign);
+    if (utmTerm) params.set("utm_term", utmTerm);
+    if (utmContent) params.set("utm_content", utmContent);
+    return params.toString();
+  }, [utmSource, utmMedium, utmCampaign, utmTerm, utmContent]);
+
+  const fullUrl = useMemo(() => {
+    if (!utmParams) return baseUrl;
+    const separator = baseUrl.includes("?") ? "&" : "?";
+    return `${baseUrl}${separator}${utmParams}`;
+  }, [baseUrl, utmParams]);
+
+  const copyToClipboard = async (text: string, type: "full" | "params") => {
+    await navigator.clipboard.writeText(text);
+    if (type === "full") { setCopied(true); setTimeout(() => setCopied(false), 2000); }
+    else { setCopiedParams(true); setTimeout(() => setCopiedParams(false), 2000); }
+  };
+
+  const isValid = utmSource && utmMedium && utmCampaign;
+
+  return (
+    <div className="space-y-6">
+      {/* Platform Selector */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Globe className="h-5 w-5 text-[#9B212B]" />
+            Selecione a Plataforma
+          </CardTitle>
+          <CardDescription>Escolha a plataforma de anúncios para preencher automaticamente os parâmetros recomendados</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
+            {UTM_PLATFORMS.map(platform => (
+              <button
+                key={platform.id}
+                onClick={() => selectPlatform(platform.id)}
+                className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all hover:shadow-md ${
+                  selectedPlatform === platform.id
+                    ? "border-[#9B212B] bg-[#9B212B]/5 shadow-md"
+                    : "border-muted hover:border-[#9B212B]/30"
+                }`}
+              >
+                <span className="text-2xl">{platform.icon}</span>
+                <span className="text-xs font-medium text-center leading-tight">{platform.name}</span>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* UTM Builder Form */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Link className="h-5 w-5 text-[#9B212B]" />
+            Gerador de Link UTM
+          </CardTitle>
+          <CardDescription>Preencha os campos abaixo para gerar o link rastreável. Os 3 primeiros campos são obrigatórios.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">URL de destino</label>
+            <Input
+              value={baseUrl}
+              onChange={(e) => setBaseUrl(e.target.value)}
+              placeholder="https://www.totalquality.med.br"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                utm_source <span className="text-red-500">*</span>
+                <span className="text-xs text-muted-foreground ml-1">(de onde vem)</span>
+              </label>
+              <Input
+                value={utmSource}
+                onChange={(e) => setUtmSource(e.target.value)}
+                placeholder="facebook, google, instagram..."
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                utm_medium <span className="text-red-500">*</span>
+                <span className="text-xs text-muted-foreground ml-1">(tipo de tráfego)</span>
+              </label>
+              <Input
+                value={utmMedium}
+                onChange={(e) => setUtmMedium(e.target.value)}
+                placeholder="paid, cpc, email, organico..."
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                utm_campaign <span className="text-red-500">*</span>
+                <span className="text-xs text-muted-foreground ml-1">(nome da campanha)</span>
+              </label>
+              <Input
+                value={utmCampaign}
+                onChange={(e) => setUtmCampaign(e.target.value)}
+                placeholder="checkup-maio, cardiologia-promo..."
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                utm_term <span className="text-xs text-muted-foreground">(opcional - palavra-chave)</span>
+              </label>
+              <Input
+                value={utmTerm}
+                onChange={(e) => setUtmTerm(e.target.value)}
+                placeholder="exame de sangue, check-up..."
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                utm_content <span className="text-xs text-muted-foreground">(opcional - variação do anúncio)</span>
+              </label>
+              <Input
+                value={utmContent}
+                onChange={(e) => setUtmContent(e.target.value)}
+                placeholder="banner-azul, video-depoimento..."
+              />
+            </div>
+          </div>
+
+          {/* Generated URL */}
+          {isValid && (
+            <div className="mt-6 space-y-3">
+              <Separator />
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[#9B212B]">Link completo gerado:</label>
+                <div className="flex gap-2">
+                  <div className="flex-1 p-3 bg-muted rounded-lg text-sm break-all font-mono">
+                    {fullUrl}
+                  </div>
+                  <Button
+                    onClick={() => copyToClipboard(fullUrl, "full")}
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0"
+                  >
+                    {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+                    <span className="ml-1 hidden sm:inline">{copied ? "Copiado!" : "Copiar"}</span>
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-muted-foreground">Apenas os parâmetros UTM:</label>
+                <div className="flex gap-2">
+                  <div className="flex-1 p-3 bg-muted rounded-lg text-sm break-all font-mono">
+                    {utmParams}
+                  </div>
+                  <Button
+                    onClick={() => copyToClipboard(utmParams, "params")}
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0"
+                  >
+                    {copiedParams ? <Check className="h-4 w-4 text-green-600" /> : <Clipboard className="h-4 w-4" />}
+                    <span className="ml-1 hidden sm:inline">{copiedParams ? "Copiado!" : "Copiar"}</span>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Platform Guides */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-[#9B212B]" />
+            Guia de Configuração por Plataforma
+          </CardTitle>
+          <CardDescription>Clique em cada plataforma para ver o passo a passo de como aplicar os UTM params</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {UTM_PLATFORMS.map(platform => (
+            <div key={platform.id} className="border rounded-lg overflow-hidden">
+              <button
+                onClick={() => setExpandedGuide(expandedGuide === platform.id ? null : platform.id)}
+                className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">{platform.icon}</span>
+                  <span className="font-medium">{platform.name}</span>
+                </div>
+                <ChevronLeft className={`h-4 w-4 transition-transform ${expandedGuide === platform.id ? "-rotate-90" : "rotate-180"}`} />
+              </button>
+              {expandedGuide === platform.id && (
+                <div className="px-4 pb-4 border-t bg-muted/20">
+                  <ol className="mt-3 space-y-2">
+                    {platform.instructions.map((step, i) => (
+                      <li key={i} className="flex gap-3 text-sm">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#9B212B] text-white flex items-center justify-center text-xs font-bold">
+                          {i + 1}
+                        </span>
+                        <span className="pt-0.5">{step}</span>
+                      </li>
+                    ))}
+                  </ol>
+                  {selectedPlatform === platform.id && isValid && (
+                    <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-sm font-medium text-green-800 flex items-center gap-2">
+                        <Check className="h-4 w-4" />
+                        Link gerado para {platform.name}:
+                      </p>
+                      <p className="text-xs font-mono mt-1 text-green-700 break-all">{fullUrl}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* Tips Card */}
+      <Card className="border-[#9B212B]/20 bg-[#9B212B]/5">
+        <CardContent className="p-6">
+          <div className="flex gap-3">
+            <Info className="h-5 w-5 text-[#9B212B] shrink-0 mt-0.5" />
+            <div className="space-y-3">
+              <h3 className="font-semibold text-[#9B212B]">Dicas Importantes</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><strong>Consistência:</strong> Use sempre os mesmos nomes para source e medium. Ex: sempre "facebook" (não "Facebook" ou "fb").</li>
+                <li><strong>Sem espaços:</strong> Use hífens (-) em vez de espaços nos nomes das campanhas. Ex: "checkup-maio-2026".</li>
+                <li><strong>Minúsculas:</strong> Mantenha tudo em letras minúsculas para evitar duplicações no painel.</li>
+                <li><strong>Nomeação:</strong> Crie um padrão de nomenclatura. Ex: [tipo]-[objetivo]-[mes]-[ano] como "video-checkup-maio-2026".</li>
+                <li><strong>Teste:</strong> Após configurar, clique no link gerado e verifique no painel se o lead aparece com a fonte correta.</li>
+                <li><strong>Rastreamento automático:</strong> O site já captura automaticamente os UTM params de qualquer visitante. Basta usar os links gerados aqui nas suas campanhas.</li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 // ===================== SKELETON =====================
 function DashboardSkeleton() {
   return (
@@ -1473,6 +1840,7 @@ export default function Admin() {
     { id: "engajamento", label: "Engajamento", icon: Activity },
     { id: "contatos", label: "Contatos", icon: MessageSquare },
     { id: "tags", label: "Tags", icon: Tags },
+    { id: "utm", label: "UTM Builder", icon: Link },
   ];
 
   return (
@@ -1515,6 +1883,7 @@ export default function Admin() {
           <TabsContent value="engajamento"><EngagementTab filter={dateFilter} /></TabsContent>
           <TabsContent value="contatos"><ContactsTab /></TabsContent>
           <TabsContent value="tags"><TagsTab filter={dateFilter} /></TabsContent>
+          <TabsContent value="utm"><UTMBuilderTab /></TabsContent>
         </Tabs>
       </main>
     </div>
