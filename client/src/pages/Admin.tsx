@@ -1,5 +1,4 @@
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { useLocation, useParams } from "wouter";
 import { useState, useMemo, useCallback } from "react";
@@ -13,7 +12,7 @@ import {
   ChevronLeft, LogOut, MessageSquare, Phone, Mail, MapPin,
   ExternalLink, Video, ScrollText, CalendarDays, X, Tag, Plus,
   Pencil, Trash2, Check, Tags, Link, Copy, Clipboard, Info,
-  Globe, BookOpen
+  Globe, BookOpen, EyeOff, Loader2, Lock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -1790,9 +1789,32 @@ function DashboardSkeleton() {
 
 // ===================== MAIN ADMIN PAGE =====================
 export default function Admin() {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { user, loading, isAuthenticated, logout } = useAuth();
   const [, navigate] = useLocation();
   const params = useParams<{ tab?: string }>();
+
+  // Login form state
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState("");
+
+  const loginMutation = trpc.auth.adminLogin.useMutation({
+    onSuccess: () => {
+      setLoginError("");
+      // Reload to pick up the new session cookie
+      window.location.reload();
+    },
+    onError: (err) => {
+      setLoginError(err.message || "Email ou senha incorretos");
+    },
+  });
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError("");
+    loginMutation.mutate({ email: loginEmail, password: loginPassword });
+  };
 
   const [dateFilter, setDateFilter] = useState<DateFilter>({
     mode: "preset",
@@ -1815,15 +1837,75 @@ export default function Admin() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Card className="w-full max-w-md">
-          <CardContent className="p-8 text-center space-y-6">
-            <BarChart3 className="h-16 w-16 mx-auto text-[#9B212B]" />
-            <h1 className="text-2xl font-bold">Painel Administrativo</h1>
-            <p className="text-muted-foreground">Faça login para acessar o painel de controle da Total Quality.</p>
-            <Button asChild className="w-full bg-[#9B212B] hover:bg-[#7a1a22]">
-              <a href={getLoginUrl()}>Entrar</a>
-            </Button>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#fafafa] to-[#f0e8e9]">
+        <Card className="w-full max-w-md shadow-xl border-0">
+          <CardContent className="p-8 space-y-6">
+            <div className="text-center space-y-3">
+              <div className="h-16 w-16 mx-auto rounded-2xl bg-[#9B212B] flex items-center justify-center">
+                <Lock className="h-8 w-8 text-white" />
+              </div>
+              <h1 className="text-2xl font-bold">Painel Administrativo</h1>
+              <p className="text-muted-foreground text-sm">Acesso restrito. Insira suas credenciais para continuar.</p>
+            </div>
+
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    className="pl-10"
+                    required
+                    autoFocus
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Senha</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    className="pl-10 pr-10"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {loginError && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                  {loginError}
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                className="w-full bg-[#9B212B] hover:bg-[#7a1a22] h-11"
+                disabled={loginMutation.isPending}
+              >
+                {loginMutation.isPending ? (
+                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Entrando...</>
+                ) : (
+                  "Entrar"
+                )}
+              </Button>
+            </form>
+
             <Button variant="ghost" onClick={() => navigate("/")} className="w-full">
               <ChevronLeft className="h-4 w-4 mr-2" /> Voltar ao site
             </Button>

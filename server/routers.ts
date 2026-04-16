@@ -1,9 +1,13 @@
-import { COOKIE_NAME } from "@shared/const";
+import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
+import { ENV } from "./_core/env";
+import { sdk } from "./_core/sdk";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 import {
+  upsertUser,
   createContact, getContacts, getContactsCount, updateContactStatus,
   createLead, getLeads, getLeadsCount, getLeadsBySource, getLeadsByChannel,
   getLeadsByCampaign, getLeadsByDay, getLeadsByStatus, updateLeadStatus, updateLeadNotes,
@@ -50,6 +54,55 @@ export const appRouter = router({
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
     }),
+    adminLogin: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        password: z.string().min(1),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const adminEmail = ENV.adminEmail;
+        const adminPassword = ENV.adminPassword;
+
+        if (!adminEmail || !adminPassword) {
+          throw new Error("Admin credentials not configured");
+        }
+
+        // Compare email (case-insensitive)
+        if (input.email.toLowerCase() !== adminEmail.toLowerCase()) {
+          throw new Error("Email ou senha incorretos");
+        }
+
+        // Compare password directly (env stored)
+        if (input.password !== adminPassword) {
+          throw new Error("Email ou senha incorretos");
+        }
+
+        // Upsert admin user in DB
+        const openId = `admin_${adminEmail.toLowerCase()}`;
+        await upsertUser({
+          openId,
+          name: "Administrador",
+          email: adminEmail,
+          loginMethod: "email",
+          role: "admin",
+          lastSignedIn: new Date(),
+        });
+
+        // Create JWT session token
+        const token = await sdk.createSessionToken(openId, {
+          name: "Administrador",
+          expiresInMs: ONE_YEAR_MS,
+        });
+
+        // Set session cookie
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, token, {
+          ...cookieOptions,
+          maxAge: ONE_YEAR_MS,
+        });
+
+        return { success: true, name: "Administrador" } as const;
+      }),
   }),
 
   // ===================== CONTACTS =====================

@@ -59,3 +59,11 @@
 - [x] Botão de copiar link gerado para clipboard
 - [x] Guia passo a passo para configurar UTM em cada plataforma
 - [x] Histórico de links UTM gerados (integrado ao painel)
+
+## Login Admin com Email/Senha
+- [x] Criar API de login com email/senha no backend
+- [x] Hash de senha com bcrypt para segurança
+- [x] Gerar JWT token para sessão autenticada
+- [x] Criar tela de login personalizada no /admin
+- [x] Configurar credenciais como secrets do ambiente
+- [x] Testes vitest para API de login (66 testes passando)
