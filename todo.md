@@ -39,3 +39,15 @@
 - [x] Adicionar presets rápidos (Hoje, Últimos 7 dias, Últimos 30 dias, Este mês, Mês passado, Personalizado)
 - [x] Atualizar APIs para aceitar dateFrom/dateTo em vez de apenas "days"
 - [x] Testar filtro de datas no painel (47 testes passando)
+
+## Sistema de Tags para Leads
+- [x] Criar tabela de tags (id, nome, cor, categoria, descrição)
+- [x] Criar tabela de relação lead_tags (lead_id, tag_id)
+- [x] Implementar APIs CRUD para tags (criar, listar, editar, excluir)
+- [x] Implementar APIs para associar/desassociar tags de leads
+- [x] Implementar filtro de leads por tags no painel
+- [x] Criar UI de gestão de tags (criar, editar cores, excluir)
+- [x] Adicionar seletor de tags na tabela de leads
+- [x] Adicionar filtro por tags na aba de Leads
+- [x] Exibir tags nos KPIs do dashboard (leads por tag)
+- [x] Testes vitest para APIs de tags (61 testes passando)

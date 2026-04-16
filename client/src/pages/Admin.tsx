@@ -11,13 +11,17 @@ import {
   ArrowUpRight, ArrowDownRight, Minus, Filter, CalendarIcon,
   LayoutDashboard, UserCheck, Megaphone, Activity, Target,
   ChevronLeft, LogOut, MessageSquare, Phone, Mail, MapPin,
-  ExternalLink, Video, ScrollText, CalendarDays, X
+  ExternalLink, Video, ScrollText, CalendarDays, X, Tag, Plus,
+  Pencil, Trash2, Check, Tags
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -449,6 +453,8 @@ function LeadsTab({ filter }: { filter: DateFilter }) {
   const { data: leadsData, isLoading } = trpc.lead.list.useQuery({ limit: 100, offset: 0, ...queryInput });
   const updateStatus = trpc.lead.updateStatus.useMutation();
   const utils = trpc.useUtils();
+  const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+  const [selectedLead, setSelectedLead] = useState<{ id: number; name: string } | null>(null);
 
   if (isLoading) return <DashboardSkeleton />;
 
@@ -459,6 +465,11 @@ function LeadsTab({ filter }: { filter: DateFilter }) {
     utils.lead.list.invalidate();
     utils.lead.stats.invalidate();
     utils.dashboard.kpis.invalidate();
+  };
+
+  const openAssignTags = (lead: any) => {
+    setSelectedLead({ id: lead.id, name: lead.name || lead.phone || lead.email || "Lead" });
+    setAssignDialogOpen(true);
   };
 
   return (
@@ -483,6 +494,7 @@ function LeadsTab({ filter }: { filter: DateFilter }) {
                   <TableHead>Canal</TableHead>
                   <TableHead>Campanha</TableHead>
                   <TableHead>Origem</TableHead>
+                  <TableHead>Tags</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Ações</TableHead>
                 </TableRow>
@@ -520,6 +532,14 @@ function LeadsTab({ filter }: { filter: DateFilter }) {
                     </TableCell>
                     <TableCell className="text-xs max-w-[150px] truncate">{lead.utmCampaign || "—"}</TableCell>
                     <TableCell className="text-xs">{lead.source}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <LeadTagsDisplay leadId={lead.id} />
+                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => openAssignTags(lead)}>
+                          <Tag className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </TableCell>
                     <TableCell><LeadStatusBadge status={lead.leadStatus} /></TableCell>
                     <TableCell>
                       <Select onValueChange={(v) => handleStatusChange(lead.id, v as any)} defaultValue={lead.leadStatus}>
@@ -538,7 +558,7 @@ function LeadsTab({ filter }: { filter: DateFilter }) {
                   </TableRow>
                 )) : (
                   <TableRow>
-                    <TableCell colSpan={10} className="text-center py-12 text-muted-foreground">
+                    <TableCell colSpan={11} className="text-center py-12 text-muted-foreground">
                       Nenhum lead registrado no período. Os leads aparecerão aqui conforme os visitantes interagirem com o site.
                     </TableCell>
                   </TableRow>
@@ -548,6 +568,16 @@ function LeadsTab({ filter }: { filter: DateFilter }) {
           </ScrollArea>
         </CardContent>
       </Card>
+
+      {/* Assign Tags Dialog */}
+      {selectedLead && (
+        <AssignTagsDialog
+          open={assignDialogOpen}
+          onOpenChange={setAssignDialogOpen}
+          leadId={selectedLead.id}
+          leadName={selectedLead.name}
+        />
+      )}
     </div>
   );
 }
@@ -957,6 +987,422 @@ function ContactsTab() {
   );
 }
 
+// ===================== TAG BADGE =====================
+function TagBadge({ name, color, onRemove }: { name: string; color: string; onRemove?: () => void }) {
+  return (
+    <span
+      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-white"
+      style={{ backgroundColor: color }}
+    >
+      {name}
+      {onRemove && (
+        <button onClick={(e) => { e.stopPropagation(); onRemove(); }} className="ml-0.5 hover:opacity-70">
+          <X className="h-3 w-3" />
+        </button>
+      )}
+    </span>
+  );
+}
+
+// ===================== TAG COLORS =====================
+const TAG_COLORS = [
+  "#9B212B", "#1877F2", "#E4405F", "#34A853", "#F59E0B",
+  "#8B5CF6", "#EF4444", "#10B981", "#6366F1", "#EC4899",
+  "#0EA5E9", "#D97706", "#059669", "#7C3AED", "#DC2626",
+];
+
+const TAG_CATEGORIES = [
+  "Interesse", "Exame", "Perfil", "Campanha", "Prioridade", "Segmento", "Outro"
+];
+
+// ===================== CREATE/EDIT TAG DIALOG =====================
+function TagDialog({ open, onOpenChange, editTag, onSave }: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  editTag?: { id: number; name: string; color: string; category: string | null; description: string | null } | null;
+  onSave: (data: { name: string; color: string; category?: string; description?: string }) => void;
+}) {
+  const [name, setName] = useState(editTag?.name || "");
+  const [color, setColor] = useState(editTag?.color || "#9B212B");
+  const [category, setCategory] = useState(editTag?.category || "");
+  const [description, setDescription] = useState(editTag?.description || "");
+
+  const handleSave = () => {
+    if (!name.trim()) return;
+    onSave({
+      name: name.trim(),
+      color,
+      category: category || undefined,
+      description: description || undefined,
+    });
+    onOpenChange(false);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{editTag ? "Editar Tag" : "Nova Tag"}</DialogTitle>
+          <DialogDescription>
+            {editTag ? "Atualize as informações da tag." : "Crie uma nova tag para segmentar seus leads."}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Nome</label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex: Check-up, Cardiologia, VIP" />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Cor</label>
+            <div className="flex flex-wrap gap-2">
+              {TAG_COLORS.map(c => (
+                <button
+                  key={c}
+                  onClick={() => setColor(c)}
+                  className={`h-8 w-8 rounded-full border-2 transition-all ${color === c ? "border-foreground scale-110 ring-2 ring-offset-2 ring-foreground" : "border-transparent hover:scale-105"}`}
+                  style={{ backgroundColor: c }}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Categoria</label>
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger><SelectValue placeholder="Selecione uma categoria" /></SelectTrigger>
+              <SelectContent>
+                {TAG_CATEGORIES.map(cat => (
+                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Descrição (opcional)</label>
+            <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Breve descrição da tag" />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+          <Button onClick={handleSave} disabled={!name.trim()} className="bg-[#9B212B] hover:bg-[#7a1a22]">
+            {editTag ? "Salvar" : "Criar Tag"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ===================== ASSIGN TAGS DIALOG =====================
+function AssignTagsDialog({ open, onOpenChange, leadId, leadName }: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  leadId: number;
+  leadName: string;
+}) {
+  const { data: allTags } = trpc.tag.list.useQuery();
+  const { data: leadTagsList } = trpc.leadTag.getForLead.useQuery({ leadId });
+  const bulkSet = trpc.leadTag.bulkSet.useMutation();
+  const utils = trpc.useUtils();
+
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [initialized, setInitialized] = useState(false);
+
+  // Initialize selected tags from lead's current tags
+  if (leadTagsList && !initialized) {
+    setSelectedIds(new Set(leadTagsList.map((t: any) => t.id)));
+    setInitialized(true);
+  }
+
+  const toggleTag = (tagId: number) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(tagId)) next.delete(tagId);
+      else next.add(tagId);
+      return next;
+    });
+  };
+
+  const handleSave = async () => {
+    await bulkSet.mutateAsync({ leadId, tagIds: Array.from(selectedIds) });
+    utils.leadTag.getForLead.invalidate({ leadId });
+    utils.tag.stats.invalidate();
+    onOpenChange(false);
+    setInitialized(false);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) setInitialized(false); }}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Tags do Lead</DialogTitle>
+          <DialogDescription>
+            Selecione as tags para <strong>{leadName || "este lead"}</strong>
+          </DialogDescription>
+        </DialogHeader>
+        <ScrollArea className="max-h-[300px] py-2">
+          <div className="space-y-2">
+            {allTags && allTags.length > 0 ? (
+              (() => {
+                const grouped = allTags.reduce((acc: Record<string, typeof allTags>, tag: any) => {
+                  const cat = tag.category || "Sem categoria";
+                  if (!acc[cat]) acc[cat] = [];
+                  acc[cat].push(tag);
+                  return acc;
+                }, {} as Record<string, typeof allTags>);
+                return Object.entries(grouped).map(([cat, catTags]) => (
+                  <div key={cat} className="space-y-1">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1 pt-2">{cat}</p>
+                    {(catTags as any[]).map((tag: any) => (
+                      <label key={tag.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted cursor-pointer">
+                        <Checkbox
+                          checked={selectedIds.has(tag.id)}
+                          onCheckedChange={() => toggleTag(tag.id)}
+                        />
+                        <span className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: tag.color }} />
+                        <span className="text-sm">{tag.name}</span>
+                        {tag.description && <span className="text-xs text-muted-foreground ml-auto">{tag.description}</span>}
+                      </label>
+                    ))}
+                  </div>
+                ));
+              })()
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">Nenhuma tag criada ainda. Crie tags na aba "Tags" primeiro.</p>
+            )}
+          </div>
+        </ScrollArea>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => { onOpenChange(false); setInitialized(false); }}>Cancelar</Button>
+          <Button onClick={handleSave} disabled={bulkSet.isPending} className="bg-[#9B212B] hover:bg-[#7a1a22]">
+            {bulkSet.isPending ? "Salvando..." : "Salvar Tags"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ===================== LEAD TAG DISPLAY =====================
+function LeadTagsDisplay({ leadId }: { leadId: number }) {
+  const { data: leadTagsList } = trpc.leadTag.getForLead.useQuery({ leadId });
+  if (!leadTagsList || leadTagsList.length === 0) return <span className="text-xs text-muted-foreground">—</span>;
+  return (
+    <div className="flex flex-wrap gap-1">
+      {leadTagsList.map((tag: any) => (
+        <TagBadge key={tag.id} name={tag.name} color={tag.color} />
+      ))}
+    </div>
+  );
+}
+
+// ===================== TAGS TAB =====================
+function TagsTab({ filter }: { filter: DateFilter }) {
+  const queryInput = useMemo(() => dateFilterToQuery(filter), [filter]);
+  const { data: allTags, isLoading } = trpc.tag.list.useQuery();
+  const { data: tagStats } = trpc.tag.stats.useQuery(queryInput);
+  const createTagMut = trpc.tag.create.useMutation();
+  const updateTagMut = trpc.tag.update.useMutation();
+  const deleteTagMut = trpc.tag.delete.useMutation();
+  const utils = trpc.useUtils();
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingTag, setEditingTag] = useState<any>(null);
+  const [filterCategory, setFilterCategory] = useState<string>("all");
+
+  if (isLoading) return <DashboardSkeleton />;
+
+  const handleCreate = async (data: { name: string; color: string; category?: string; description?: string }) => {
+    await createTagMut.mutateAsync(data);
+    utils.tag.list.invalidate();
+    utils.tag.stats.invalidate();
+  };
+
+  const handleUpdate = async (data: { name: string; color: string; category?: string; description?: string }) => {
+    if (!editingTag) return;
+    await updateTagMut.mutateAsync({ id: editingTag.id, ...data });
+    utils.tag.list.invalidate();
+    utils.tag.stats.invalidate();
+    setEditingTag(null);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Tem certeza que deseja excluir esta tag? Ela será removida de todos os leads.")) return;
+    await deleteTagMut.mutateAsync({ id });
+    utils.tag.list.invalidate();
+    utils.tag.stats.invalidate();
+  };
+
+  const filteredTags = filterCategory === "all"
+    ? (allTags || [])
+    : (allTags || []).filter((t: any) => (t.category || "Sem categoria") === filterCategory);
+
+  const categories = Array.from(new Set((allTags || []).map((t: any) => t.category || "Sem categoria")));
+
+  // Merge tag stats with tag data
+  const tagStatsMap = new Map((tagStats || []).map((s: any) => [s.tagId, s.count]));
+
+  // Chart data for tags distribution
+  const chartData = (allTags || []).map((t: any) => ({
+    name: t.name,
+    leads: tagStatsMap.get(t.id) || 0,
+    fill: t.color,
+  })).filter((d: any) => d.leads > 0).sort((a: any, b: any) => b.leads - a.leads);
+
+  return (
+    <div className="space-y-6">
+      {/* Header with create button */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold flex items-center gap-2"><Tags className="h-5 w-5" /> Gestão de Tags</h2>
+          <p className="text-sm text-muted-foreground mt-1">{(allTags || []).length} tags criadas</p>
+        </div>
+        <Button onClick={() => { setEditingTag(null); setDialogOpen(true); }} className="bg-[#9B212B] hover:bg-[#7a1a22]">
+          <Plus className="h-4 w-4 mr-2" /> Nova Tag
+        </Button>
+      </div>
+
+      {/* Stats chart */}
+      {chartData.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Leads por Tag</CardTitle>
+            <CardDescription>Distribuição de leads por tag no período ({filter.label})</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={chartData} layout="vertical" margin={{ left: 20, right: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis type="number" />
+                <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 12 }} />
+                <ReTooltip formatter={(v: any) => [`${v} leads`, "Total"]} />
+                <Bar dataKey="leads" radius={[0, 4, 4, 0]}>
+                  {chartData.map((entry: any, i: number) => (
+                    <Cell key={i} fill={entry.fill} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Tags list */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-lg">Todas as Tags</CardTitle>
+              <CardDescription>Gerencie suas tags para segmentação de leads</CardDescription>
+            </div>
+            {categories.length > 1 && (
+              <Select value={filterCategory} onValueChange={setFilterCategory}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Filtrar por categoria" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas as categorias</SelectItem>
+                  {categories.map(cat => (
+                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {filteredTags.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {filteredTags.map((tag: any) => (
+                <div key={tag.id} className="flex items-center gap-3 p-3 rounded-lg border hover:shadow-sm transition-shadow">
+                  <span className="h-4 w-4 rounded-full flex-shrink-0" style={{ backgroundColor: tag.color }} />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm truncate">{tag.name}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      {tag.category && <span className="text-xs text-muted-foreground">{tag.category}</span>}
+                      <span className="text-xs font-medium" style={{ color: tag.color }}>
+                        {tagStatsMap.get(tag.id) || 0} leads
+                      </span>
+                    </div>
+                    {tag.description && <p className="text-xs text-muted-foreground mt-1 truncate">{tag.description}</p>}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => { setEditingTag(tag); setDialogOpen(true); }}>
+                      <Pencil className="h-3 w-3" />
+                    </Button>
+                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-red-500 hover:text-red-700" onClick={() => handleDelete(tag.id)}>
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <Tags className="h-12 w-12 mx-auto mb-4 opacity-30" />
+              <p>Nenhuma tag criada ainda.</p>
+              <p className="text-sm mt-1">Crie tags para organizar e segmentar seus leads.</p>
+              <Button onClick={() => { setEditingTag(null); setDialogOpen(true); }} className="mt-4 bg-[#9B212B] hover:bg-[#7a1a22]">
+                <Plus className="h-4 w-4 mr-2" /> Criar Primeira Tag
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Suggested tags */}
+      {(allTags || []).length === 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Sugestões de Tags</CardTitle>
+            <CardDescription>Tags recomendadas para uma clínica de medicina diagnóstica</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              {[
+                { name: "Check-up", color: "#34A853", category: "Exame" },
+                { name: "Cardiologia", color: "#EF4444", category: "Exame" },
+                { name: "Laboratorial", color: "#1877F2", category: "Exame" },
+                { name: "Imagem", color: "#8B5CF6", category: "Exame" },
+                { name: "VIP", color: "#F59E0B", category: "Perfil" },
+                { name: "Convênio", color: "#10B981", category: "Perfil" },
+                { name: "Particular", color: "#6366F1", category: "Perfil" },
+                { name: "Retorno", color: "#EC4899", category: "Perfil" },
+                { name: "Urgente", color: "#DC2626", category: "Prioridade" },
+                { name: "Facebook", color: "#1877F2", category: "Campanha" },
+                { name: "Instagram", color: "#E4405F", category: "Campanha" },
+                { name: "Google", color: "#4285F4", category: "Campanha" },
+              ].map(suggestion => (
+                <Button
+                  key={suggestion.name}
+                  variant="outline"
+                  className="justify-start gap-2 h-auto py-2"
+                  onClick={async () => {
+                    await createTagMut.mutateAsync(suggestion);
+                    utils.tag.list.invalidate();
+                  }}
+                >
+                  <span className="h-3 w-3 rounded-full" style={{ backgroundColor: suggestion.color }} />
+                  <span className="text-sm">{suggestion.name}</span>
+                  <span className="text-xs text-muted-foreground ml-auto">{suggestion.category}</span>
+                  <Plus className="h-3 w-3 ml-1" />
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Tag Dialog */}
+      <TagDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        editTag={editingTag}
+        onSave={editingTag ? handleUpdate : handleCreate}
+      />
+    </div>
+  );
+}
+
 // ===================== SKELETON =====================
 function DashboardSkeleton() {
   return (
@@ -1026,6 +1472,7 @@ export default function Admin() {
     { id: "campanhas", label: "Campanhas", icon: Megaphone },
     { id: "engajamento", label: "Engajamento", icon: Activity },
     { id: "contatos", label: "Contatos", icon: MessageSquare },
+    { id: "tags", label: "Tags", icon: Tags },
   ];
 
   return (
@@ -1067,6 +1514,7 @@ export default function Admin() {
           <TabsContent value="campanhas"><CampaignsTab filter={dateFilter} /></TabsContent>
           <TabsContent value="engajamento"><EngagementTab filter={dateFilter} /></TabsContent>
           <TabsContent value="contatos"><ContactsTab /></TabsContent>
+          <TabsContent value="tags"><TagsTab filter={dateFilter} /></TabsContent>
         </Tabs>
       </main>
     </div>

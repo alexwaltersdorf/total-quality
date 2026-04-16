@@ -14,6 +14,8 @@ import {
   createVideoView, getVideoStats,
   createConversion, getConversionRate, getConversionsByChannel, getConversionsByType,
   getDashboardKPIs,
+  createTag, getAllTags, getTagById, updateTag, deleteTag, getTagsByCategory,
+  addTagToLead, removeTagFromLead, getTagsForLead, getLeadsByTag, getLeadCountByTag, bulkAddTagsToLead,
 } from "./db";
 
 // Shared date filter schema: accepts either dateFrom/dateTo or days (backward compatible)
@@ -328,6 +330,72 @@ export const appRouter = router({
       }),
   }),
 
+  // ===================== TAGS =====================
+  tag: router({
+    create: protectedProcedure
+      .input(z.object({
+        name: z.string().min(1).max(100),
+        color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).default("#9B212B"),
+        category: z.string().max(100).optional(),
+        description: z.string().max(500).optional(),
+      }))
+      .mutation(async ({ input }) => createTag(input)),
+    list: protectedProcedure
+      .query(async () => getAllTags()),
+    getById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => getTagById(input.id)),
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().min(1).max(100).optional(),
+        color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+        category: z.string().max(100).optional(),
+        description: z.string().max(500).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        return updateTag(id, data);
+      }),
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => deleteTag(input.id)),
+    categories: protectedProcedure
+      .query(async () => getTagsByCategory()),
+    stats: protectedProcedure
+      .input(dateFilterSchema)
+      .query(async ({ input }) => {
+        const { since, until } = resolveDateRange(input);
+        return getLeadCountByTag(since, until);
+      }),
+  }),
+  // ===================== LEAD TAGS =====================
+  leadTag: router({
+    add: protectedProcedure
+      .input(z.object({ leadId: z.number(), tagId: z.number() }))
+      .mutation(async ({ input }) => addTagToLead(input.leadId, input.tagId)),
+    remove: protectedProcedure
+      .input(z.object({ leadId: z.number(), tagId: z.number() }))
+      .mutation(async ({ input }) => removeTagFromLead(input.leadId, input.tagId)),
+    getForLead: protectedProcedure
+      .input(z.object({ leadId: z.number() }))
+      .query(async ({ input }) => getTagsForLead(input.leadId)),
+    bulkSet: protectedProcedure
+      .input(z.object({ leadId: z.number(), tagIds: z.array(z.number()) }))
+      .mutation(async ({ input }) => bulkAddTagsToLead(input.leadId, input.tagIds)),
+    leadsByTag: protectedProcedure
+      .input(z.object({
+        tagId: z.number(),
+        days: z.number().min(1).max(365).default(30).optional(),
+        dateFrom: z.string().optional(),
+        dateTo: z.string().optional(),
+      }))
+      .query(async ({ input }) => {
+        const { tagId, ...rest } = input;
+        const { since, until } = resolveDateRange(rest);
+        return getLeadsByTag(tagId, since, until);
+      }),
+  }),
   // ===================== DASHBOARD =====================
   dashboard: router({
     kpis: protectedProcedure

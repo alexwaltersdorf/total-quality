@@ -47,6 +47,18 @@ vi.mock("./db", () => ({
     avgSessionDuration: 0, engagementQuartiles: { total: 0, q25: 0, q50: 0, q75: 0, q100: 0 },
     leadsByChannel: [], leadsByDay: [], leadsStatus: [], topPages: [],
   }),
+  createTag: vi.fn().mockResolvedValue({ id: 1 }),
+  getAllTags: vi.fn().mockResolvedValue([{ id: 1, name: "Check-up", color: "#34A853", category: "Exame", description: null, createdAt: new Date(), updatedAt: new Date() }]),
+  getTagById: vi.fn().mockResolvedValue({ id: 1, name: "Check-up", color: "#34A853", category: "Exame", description: null }),
+  updateTag: vi.fn().mockResolvedValue(true),
+  deleteTag: vi.fn().mockResolvedValue(true),
+  getTagsByCategory: vi.fn().mockResolvedValue([{ category: "Exame", count: 3 }]),
+  addTagToLead: vi.fn().mockResolvedValue({ id: 1 }),
+  removeTagFromLead: vi.fn().mockResolvedValue(true),
+  getTagsForLead: vi.fn().mockResolvedValue([{ id: 1, name: "Check-up", color: "#34A853" }]),
+  getLeadsByTag: vi.fn().mockResolvedValue([]),
+  getLeadCountByTag: vi.fn().mockResolvedValue([{ tagId: 1, tagName: "Check-up", count: 5 }]),
+  bulkAddTagsToLead: vi.fn().mockResolvedValue(true),
 }));
 
 type CookieCall = { name: string; options: Record<string, unknown> };
@@ -368,5 +380,106 @@ describe("Blog API", () => {
     const caller = appRouter.createCaller(createPublicContext());
     const result = await caller.blog.viewCount({ slug: "check-up-preventivo" });
     expect(result).toHaveProperty("count");
+  });
+});
+
+// ===================== TAG TESTS =====================
+describe("Tag CRUD API", () => {
+  it("creates a tag (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.tag.create({
+      name: "Check-up",
+      color: "#34A853",
+      category: "Exame",
+      description: "Leads interessados em check-up",
+    });
+    expect(result).toHaveProperty("id");
+  });
+
+  it("lists all tags (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.tag.list();
+    expect(Array.isArray(result)).toBe(true);
+    expect(result.length).toBeGreaterThan(0);
+    expect(result[0]).toHaveProperty("name");
+    expect(result[0]).toHaveProperty("color");
+  });
+
+  it("gets a tag by id (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.tag.getById({ id: 1 });
+    expect(result).toHaveProperty("name", "Check-up");
+  });
+
+  it("updates a tag (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.tag.update({
+      id: 1,
+      name: "Check-up Completo",
+      color: "#10B981",
+    });
+    expect(result).toBe(true);
+  });
+
+  it("deletes a tag (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.tag.delete({ id: 1 });
+    expect(result).toBe(true);
+  });
+
+  it("gets tag categories (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.tag.categories();
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it("gets tag stats with date filter (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.tag.stats({ days: 30 });
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it("rejects tag creation without auth", async () => {
+    const caller = appRouter.createCaller(createPublicContext());
+    await expect(caller.tag.create({ name: "Test", color: "#FF0000" })).rejects.toThrow();
+  });
+});
+
+describe("Lead Tag Association API", () => {
+  it("adds a tag to a lead (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.leadTag.add({ leadId: 1, tagId: 1 });
+    expect(result).toHaveProperty("id");
+  });
+
+  it("removes a tag from a lead (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.leadTag.remove({ leadId: 1, tagId: 1 });
+    expect(result).toBe(true);
+  });
+
+  it("gets tags for a lead (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.leadTag.getForLead({ leadId: 1 });
+    expect(Array.isArray(result)).toBe(true);
+    expect(result[0]).toHaveProperty("name");
+    expect(result[0]).toHaveProperty("color");
+  });
+
+  it("bulk sets tags for a lead (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.leadTag.bulkSet({ leadId: 1, tagIds: [1, 2, 3] });
+    expect(result).toBe(true);
+  });
+
+  it("gets leads by tag with date filter (protected)", async () => {
+    const caller = appRouter.createCaller(createAuthContext());
+    const result = await caller.leadTag.leadsByTag({ tagId: 1, days: 30 });
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it("rejects lead tag operations without auth", async () => {
+    const caller = appRouter.createCaller(createPublicContext());
+    await expect(caller.leadTag.add({ leadId: 1, tagId: 1 })).rejects.toThrow();
   });
 });

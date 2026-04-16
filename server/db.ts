@@ -10,6 +10,8 @@ import {
   InsertPageView, pageViews,
   InsertVideoView, videoViews,
   InsertConversion, conversions,
+  InsertTag, tags,
+  InsertLeadTag, leadTags,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -510,4 +512,140 @@ export async function getDashboardKPIs(since: Date, until?: Date) {
     leadsStatus,
     conversionsByChannel: convByChannel,
   };
+}
+
+// ===================== TAGS =====================
+
+export async function createTag(data: { name: string; color: string; category?: string; description?: string }) {
+  const db = await getDb();
+  if (!db) return null;
+  const [result] = await db.insert(tags).values(data).$returningId();
+  return result;
+}
+
+export async function getAllTags() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(tags).orderBy(tags.name);
+}
+
+export async function getTagById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(tags).where(eq(tags.id, id)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function updateTag(id: number, data: { name?: string; color?: string; category?: string; description?: string }) {
+  const db = await getDb();
+  if (!db) return false;
+  await db.update(tags).set(data).where(eq(tags.id, id));
+  return true;
+}
+
+export async function deleteTag(id: number) {
+  const db = await getDb();
+  if (!db) return false;
+  // Remove all lead associations first
+  await db.delete(leadTags).where(eq(leadTags.tagId, id));
+  await db.delete(tags).where(eq(tags.id, id));
+  return true;
+}
+
+export async function getTagsByCategory() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({
+    category: tags.category,
+    count: sql<number>`count(*)`,
+  }).from(tags).groupBy(tags.category).orderBy(tags.category);
+}
+
+// ===================== LEAD TAGS =====================
+
+export async function addTagToLead(leadId: number, tagId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  // Check if already exists
+  const existing = await db.select().from(leadTags)
+    .where(and(eq(leadTags.leadId, leadId), eq(leadTags.tagId, tagId)))
+    .limit(1);
+  if (existing.length > 0) return existing[0];
+  const [result] = await db.insert(leadTags).values({ leadId, tagId }).$returningId();
+  return result;
+}
+
+export async function removeTagFromLead(leadId: number, tagId: number) {
+  const db = await getDb();
+  if (!db) return false;
+  await db.delete(leadTags).where(and(eq(leadTags.leadId, leadId), eq(leadTags.tagId, tagId)));
+  return true;
+}
+
+export async function getTagsForLead(leadId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  const result = await db.select({
+    id: tags.id,
+    name: tags.name,
+    color: tags.color,
+    category: tags.category,
+  }).from(leadTags)
+    .innerJoin(tags, eq(leadTags.tagId, tags.id))
+    .where(eq(leadTags.leadId, leadId));
+  return result;
+}
+
+export async function getLeadsByTag(tagId: number, since?: Date, until?: Date) {
+  const db = await getDb();
+  if (!db) return [];
+  const conditions = [eq(leadTags.tagId, tagId)];
+  if (since) conditions.push(gte(leads.createdAt, since));
+  if (until) conditions.push(lte(leads.createdAt, until));
+  return db.select({
+    id: leads.id,
+    name: leads.name,
+    phone: leads.phone,
+    email: leads.email,
+    channel: leads.channel,
+    leadStatus: leads.leadStatus,
+    createdAt: leads.createdAt,
+  }).from(leadTags)
+    .innerJoin(leads, eq(leadTags.leadId, leads.id))
+    .where(and(...conditions));
+}
+
+export async function getLeadCountByTag(since?: Date, until?: Date) {
+  const db = await getDb();
+  if (!db) return [];
+  const conditions: any[] = [];
+  if (since) conditions.push(gte(leads.createdAt, since));
+  if (until) conditions.push(lte(leads.createdAt, until));
+  
+  const baseQuery = db.select({
+    tagId: tags.id,
+    tagName: tags.name,
+    tagColor: tags.color,
+    tagCategory: tags.category,
+    count: sql<number>`count(DISTINCT ${leadTags.leadId})`,
+  }).from(tags)
+    .leftJoin(leadTags, eq(tags.id, leadTags.tagId))
+    .leftJoin(leads, eq(leadTags.leadId, leads.id));
+
+  if (conditions.length > 0) {
+    return baseQuery.where(and(...conditions)).groupBy(tags.id, tags.name, tags.color, tags.category).orderBy(sql`count(DISTINCT ${leadTags.leadId}) DESC`);
+  }
+  return baseQuery.groupBy(tags.id, tags.name, tags.color, tags.category).orderBy(sql`count(DISTINCT ${leadTags.leadId}) DESC`);
+}
+
+export async function bulkAddTagsToLead(leadId: number, tagIds: number[]) {
+  const db = await getDb();
+  if (!db) return false;
+  // Remove existing tags for this lead
+  await db.delete(leadTags).where(eq(leadTags.leadId, leadId));
+  // Insert new tags
+  if (tagIds.length > 0) {
+    await db.insert(leadTags).values(tagIds.map(tagId => ({ leadId, tagId })));
+  }
+  return true;
 }

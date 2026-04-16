@@ -223,3 +223,33 @@ export const conversions = mysqlTable("conversions", {
 
 export type Conversion = typeof conversions.$inferSelect;
 export type InsertConversion = typeof conversions.$inferInsert;
+
+/**
+ * Tags para segmentação e organização de leads.
+ * Cada tag tem um nome, cor e categoria opcional para agrupamento.
+ */
+export const tags = mysqlTable("tags", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 100 }).notNull().unique(),
+  color: varchar("color", { length: 7 }).notNull().default("#9B212B"), // hex color
+  category: varchar("category", { length: 100 }), // e.g., "Interesse", "Exame", "Perfil", "Campanha"
+  description: varchar("description", { length: 500 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Tag = typeof tags.$inferSelect;
+export type InsertTag = typeof tags.$inferInsert;
+
+/**
+ * Relação many-to-many entre leads e tags.
+ */
+export const leadTags = mysqlTable("lead_tags", {
+  id: int("id").autoincrement().primaryKey(),
+  leadId: int("leadId").notNull(),
+  tagId: int("tagId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type LeadTag = typeof leadTags.$inferSelect;
+export type InsertLeadTag = typeof leadTags.$inferInsert;
