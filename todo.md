@@ -86,3 +86,11 @@
 
 ## Bug Fix - Login Admin
 - [x] Corrigir login admin que retorna "Email ou senha incorretos" (email era .me.br, corrigido para .med.br)
+
+## Correção Contatos + Filtro + Exportação
+- [x] Corrigir formulário de contato para salvar dados reais (limpar dados de teste do banco)
+- [x] Limpar dados de teste do banco de dados
+- [x] Adicionar filtro de datas na aba Contatos + filtro por status
+- [x] Implementar exportação de contatos para CSV
+- [x] Implementar exportação de contatos para Excel (.xls)
+- [x] Implementar exportação de contatos para PDF (via impressão)

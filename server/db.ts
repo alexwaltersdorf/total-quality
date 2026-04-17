@@ -72,16 +72,26 @@ export async function createContact(contact: InsertContact) {
   return { success: true };
 }
 
-export async function getContacts(limit = 50, offset = 0) {
+export async function getContacts(limit = 50, offset = 0, since?: Date, until?: Date, status?: "new" | "read" | "replied" | "archived") {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(contacts).orderBy(desc(contacts.createdAt)).limit(limit).offset(offset);
+  const conditions: any[] = [];
+  if (since) conditions.push(gte(contacts.createdAt, since));
+  if (until) conditions.push(lte(contacts.createdAt, until));
+  if (status) conditions.push(eq(contacts.status, status));
+  const query = conditions.length > 0
+    ? db.select().from(contacts).where(and(...conditions)).orderBy(desc(contacts.createdAt)).limit(limit).offset(offset)
+    : db.select().from(contacts).orderBy(desc(contacts.createdAt)).limit(limit).offset(offset);
+  return query;
 }
 
-export async function getContactsCount(since?: Date) {
+export async function getContactsCount(since?: Date, until?: Date, status?: "new" | "read" | "replied" | "archived") {
   const db = await getDb();
   if (!db) return 0;
-  const conditions = since ? [gte(contacts.createdAt, since)] : [];
+  const conditions: any[] = [];
+  if (since) conditions.push(gte(contacts.createdAt, since));
+  if (until) conditions.push(lte(contacts.createdAt, until));
+  if (status) conditions.push(eq(contacts.status, status));
   const query = conditions.length > 0
     ? db.select({ total: count() }).from(contacts).where(and(...conditions))
     : db.select({ total: count() }).from(contacts);

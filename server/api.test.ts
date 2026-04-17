@@ -1,8 +1,63 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi, beforeEach } from "vitest";
 import { appRouter } from "./routers";
 import type { TrpcContext } from "./_core/context";
 
 type AuthenticatedUser = NonNullable<TrpcContext["user"]>;
+
+// Mock the db module to prevent test data from being written to production database
+vi.mock("./db", () => ({
+  upsertUser: vi.fn().mockResolvedValue(undefined),
+  createContact: vi.fn().mockResolvedValue({ success: true }),
+  getContacts: vi.fn().mockResolvedValue([]),
+  getContactsCount: vi.fn().mockResolvedValue(0),
+  updateContactStatus: vi.fn().mockResolvedValue({ success: true }),
+  createLead: vi.fn().mockResolvedValue({ success: true }),
+  getLeads: vi.fn().mockResolvedValue([]),
+  getLeadsCount: vi.fn().mockResolvedValue(0),
+  getLeadsBySource: vi.fn().mockResolvedValue([]),
+  getLeadsByChannel: vi.fn().mockResolvedValue([]),
+  getLeadsByCampaign: vi.fn().mockResolvedValue([]),
+  getLeadsByDay: vi.fn().mockResolvedValue([]),
+  getLeadsByStatus: vi.fn().mockResolvedValue([]),
+  updateLeadStatus: vi.fn().mockResolvedValue({ success: true }),
+  updateLeadNotes: vi.fn().mockResolvedValue({ success: true }),
+  createAnalyticsEvent: vi.fn().mockResolvedValue({ success: true }),
+  getAnalyticsEvents: vi.fn().mockResolvedValue([]),
+  getAnalyticsSummary: vi.fn().mockResolvedValue({ totalEvents: 0, pageViews: 0, uniqueSessions: 0, eventsByName: [] }),
+  getEventsByName: vi.fn().mockResolvedValue([]),
+  createBlogView: vi.fn().mockResolvedValue({ success: true }),
+  getBlogViewsBySlug: vi.fn().mockResolvedValue([]),
+  getBlogViewCount: vi.fn().mockResolvedValue(0),
+  upsertSession: vi.fn().mockResolvedValue({ success: true }),
+  getSessionsCount: vi.fn().mockResolvedValue(0),
+  getSessionsByChannel: vi.fn().mockResolvedValue([]),
+  getSessionsByDay: vi.fn().mockResolvedValue([]),
+  getAvgSessionDuration: vi.fn().mockResolvedValue(0),
+  getBounceRate: vi.fn().mockResolvedValue(0),
+  createPageView: vi.fn().mockResolvedValue({ success: true }),
+  getTopPages: vi.fn().mockResolvedValue([]),
+  getEngagementQuartiles: vi.fn().mockResolvedValue({ q25: 0, q50: 0, q75: 0, q100: 0 }),
+  createVideoView: vi.fn().mockResolvedValue({ success: true }),
+  getVideoStats: vi.fn().mockResolvedValue([]),
+  createConversion: vi.fn().mockResolvedValue({ success: true }),
+  getConversionRate: vi.fn().mockResolvedValue(0),
+  getConversionsByChannel: vi.fn().mockResolvedValue([]),
+  getConversionsByType: vi.fn().mockResolvedValue([]),
+  getDashboardKPIs: vi.fn().mockResolvedValue({ totalLeads: 0, totalSessions: 0, conversionRate: 0, bounceRate: 0, avgDuration: 0 }),
+  createTag: vi.fn().mockResolvedValue({ success: true, id: 1 }),
+  getAllTags: vi.fn().mockResolvedValue([]),
+  getTagById: vi.fn().mockResolvedValue(null),
+  updateTag: vi.fn().mockResolvedValue({ success: true }),
+  deleteTag: vi.fn().mockResolvedValue({ success: true }),
+  getTagsByCategory: vi.fn().mockResolvedValue([]),
+  addTagToLead: vi.fn().mockResolvedValue({ success: true }),
+  removeTagFromLead: vi.fn().mockResolvedValue({ success: true }),
+  getTagsForLead: vi.fn().mockResolvedValue([]),
+  getLeadsByTag: vi.fn().mockResolvedValue([]),
+  getLeadCountByTag: vi.fn().mockResolvedValue([]),
+  bulkAddTagsToLead: vi.fn().mockResolvedValue({ success: true }),
+  getUserByOpenId: vi.fn().mockResolvedValue(undefined),
+}));
 
 function createPublicContext(): TrpcContext {
   return {
@@ -56,9 +111,9 @@ describe("contact.create", () => {
     const caller = appRouter.createCaller(ctx);
 
     const result = await caller.contact.create({
-      name: "João Silva",
-      email: "joao@example.com",
-      phone: "(12) 99999-0000",
+      name: "Maria Teste",
+      email: "maria@test.com",
+      phone: "(12) 99999-1111",
       subject: "Tomografia",
       message: "Gostaria de agendar uma tomografia.",
     });

@@ -118,11 +118,36 @@ export const appRouter = router({
       .mutation(async ({ input }) => createContact(input)),
 
     list: protectedProcedure
-      .input(z.object({ limit: z.number().min(1).max(100).default(50), offset: z.number().min(0).default(0) }).optional())
+      .input(z.object({
+        limit: z.number().min(1).max(500).default(50),
+        offset: z.number().min(0).default(0),
+        dateFrom: z.string().optional(),
+        dateTo: z.string().optional(),
+        status: z.enum(["new", "read", "replied", "archived"]).optional(),
+      }).optional())
       .query(async ({ input }) => {
-        const { limit = 50, offset = 0 } = input ?? {};
-        const [items, total] = await Promise.all([getContacts(limit, offset), getContactsCount()]);
+        const { limit = 50, offset = 0, dateFrom, dateTo, status } = input ?? {};
+        const since = dateFrom ? new Date(dateFrom) : undefined;
+        const until = dateTo ? (() => { const d = new Date(dateTo); d.setHours(23,59,59,999); return d; })() : undefined;
+        const [items, total] = await Promise.all([
+          getContacts(limit, offset, since, until, status),
+          getContactsCount(since, until, status),
+        ]);
         return { items, total };
+      }),
+
+    exportAll: protectedProcedure
+      .input(z.object({
+        dateFrom: z.string().optional(),
+        dateTo: z.string().optional(),
+        status: z.enum(["new", "read", "replied", "archived"]).optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const { dateFrom, dateTo, status } = input ?? {};
+        const since = dateFrom ? new Date(dateFrom) : undefined;
+        const until = dateTo ? (() => { const d = new Date(dateTo); d.setHours(23,59,59,999); return d; })() : undefined;
+        const items = await getContacts(9999, 0, since, until, status);
+        return { items };
       }),
 
     updateStatus: protectedProcedure
