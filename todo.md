@@ -83,3 +83,6 @@
 - [x] Adicionar sitelinks no footer (coluna dedicada)
 - [x] Configurar rotas no App.tsx (/exames/:slug)
 - [x] SEO: meta tags, title e description para cada página de exame
+
+## Bug Fix - Login Admin
+- [x] Corrigir login admin que retorna "Email ou senha incorretos" (email era .me.br, corrigido para .med.br)
