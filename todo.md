@@ -102,3 +102,13 @@
 - [x] Configurar notificação automática ao receber novo lead (via notifyOwner)
 - [x] Testes vitest passando (66 testes)
 - [x] Imagem de tomografia computadorizada adicionada à página do exame
+
+## Vídeo Scroll-Driven na Tomografia
+- [x] Converter TOMOGRAFIA.avi para MP4 (H.264, keyframe a cada frame)
+- [x] Upload do vídeo para CDN (CloudFront)
+- [x] Adicionar campo videoUrl à interface ExamData
+- [x] Criar componente ScrollVideo com scroll-driven video scrubbing
+- [x] Integrar ScrollVideo na ExamePage entre "O que é" e "Quando Realizar"
+- [x] Barra de progresso visual durante o scroll
+- [x] Indicador "Role para explorar" no início
+- [x] Testes vitest passando (66 testes)

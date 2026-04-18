@@ -31,6 +31,7 @@ export interface ExamData {
   faqs: ExamFAQ[];
   whatsappMessage: string;
   heroImage?: string;
+  videoUrl?: string;
   category: "laboratorio" | "imagem" | "cardiologia" | "neurologia" | "outros";
   keywords: string[];
 }
@@ -106,6 +107,7 @@ export const examesData: ExamData[] = [
     ],
     whatsappMessage: "Olá! Gostaria de agendar uma tomografia computadorizada.",
     heroImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/tomografia-computadorizada_c4982f52.png",
+    videoUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/tomografia_5e4bcd8d.mp4",
     category: "imagem",
     keywords: ["tomografia computadorizada", "TC", "tomografia de crânio", "tomografia de tórax", "diagnóstico por imagem", "Caraguatatuba"],
   },

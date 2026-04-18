@@ -3,11 +3,12 @@
  * Theme: White background, dark gray #5A5A5A text
  * Page: Dynamic Exam Page (reusable for all exams)
  */
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, lazy, Suspense } from "react";
 import { ArrowUpRight, ArrowLeft, ChevronRight, CheckCircle } from "lucide-react";
 import { Link, useParams, useLocation } from "wouter";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { getExamBySlug, examesData } from "@/lib/examesData";
+const ScrollVideo = lazy(() => import("@/components/ScrollVideo"));
 
 export default function ExamePage() {
   const params = useParams<{ slug: string }>();
@@ -147,6 +148,17 @@ export default function ExamePage() {
           </div>
         </div>
       </section>
+
+      {/* Scroll-driven Video (between "O que é" and "Quando Realizar") */}
+      {exam.videoUrl && (
+        <Suspense fallback={
+          <div className="h-screen flex items-center justify-center bg-black">
+            <div className="w-10 h-10 border-3 border-white/30 border-t-brand rounded-full animate-spin" />
+          </div>
+        }>
+          <ScrollVideo src={exam.videoUrl} alt={`Vídeo de ${exam.shortTitle} - Total Quality`} />
+        </Suspense>
+      )}
 
       {/* Divider */}
       <div className="container"><div className="border-t border-black/10" /></div>
