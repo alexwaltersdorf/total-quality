@@ -30,6 +30,7 @@ export interface ExamData {
   preparations: ExamPrep[];
   faqs: ExamFAQ[];
   whatsappMessage: string;
+  heroImage?: string;
   category: "laboratorio" | "imagem" | "cardiologia" | "neurologia" | "outros";
   keywords: string[];
 }
@@ -104,6 +105,7 @@ export const examesData: ExamData[] = [
       { q: "Posso fazer tomografia com prótese metálica?", a: "Sim. Diferente da ressonância magnética, a tomografia pode ser realizada em pacientes com próteses metálicas, marcapassos e implantes." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar uma tomografia computadorizada.",
+    heroImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/tomografia-computadorizada_c4982f52.png",
     category: "imagem",
     keywords: ["tomografia computadorizada", "TC", "tomografia de crânio", "tomografia de tórax", "diagnóstico por imagem", "Caraguatatuba"],
   },

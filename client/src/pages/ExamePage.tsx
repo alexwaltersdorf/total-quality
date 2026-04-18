@@ -108,6 +108,22 @@ export default function ExamePage() {
         </div>
       </section>
 
+      {/* Hero Image */}
+      {exam.heroImage && (
+        <section className="pb-8 lg:pb-12">
+          <div className="container">
+            <div className="reveal rounded-2xl overflow-hidden shadow-lg" style={{ transitionDelay: "400ms" }}>
+              <img
+                src={exam.heroImage}
+                alt={`${exam.shortTitle} - Total Quality Medicina Diagnóstica em Caraguatatuba`}
+                className="w-full h-[300px] sm:h-[400px] lg:h-[500px] object-cover"
+                loading="eager"
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Divider */}
       <div className="container"><div className="border-t border-black/10" /></div>
 

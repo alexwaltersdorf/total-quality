@@ -459,15 +459,18 @@ function DashboardTab({ filter }: { filter: DateFilter }) {
 // ===================== LEADS TAB =====================
 function LeadsTab({ filter }: { filter: DateFilter }) {
   const queryInput = useMemo(() => dateFilterToQuery(filter), [filter]);
-  const { data: leadsData, isLoading } = trpc.lead.list.useQuery({ limit: 100, offset: 0, ...queryInput });
+  const { data: leadsData, isLoading } = trpc.lead.list.useQuery({ limit: 500, offset: 0, ...queryInput });
   const updateStatus = trpc.lead.updateStatus.useMutation();
   const utils = trpc.useUtils();
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<{ id: number; name: string } | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  if (isLoading) return <DashboardSkeleton />;
-
-  const items = leadsData?.items || [];
+  const items = useMemo(() => {
+    const all = leadsData?.items || [];
+    if (statusFilter === "all") return all;
+    return all.filter((l: any) => l.leadStatus === statusFilter);
+  }, [leadsData, statusFilter]);
 
   const handleStatusChange = async (id: number, status: "new" | "contacted" | "qualified" | "converted" | "lost") => {
     await updateStatus.mutateAsync({ id, status });
@@ -481,14 +484,157 @@ function LeadsTab({ filter }: { filter: DateFilter }) {
     setAssignDialogOpen(true);
   };
 
+  // ===== EXPORT FUNCTIONS =====
+  const statusLabels: Record<string, string> = { new: "Novo", contacted: "Contatado", qualified: "Qualificado", converted: "Convertido", lost: "Perdido" };
+
+  const exportLeadsCSV = useCallback(() => {
+    if (!items.length) return;
+    const headers = ["Data", "Nome", "Telefone", "Email", "Cidade", "Estado", "Canal", "Campanha", "Origem", "Status"];
+    const rows = items.map((l: any) => [
+      new Date(l.createdAt).toLocaleDateString("pt-BR"),
+      l.name || "",
+      l.phone || "",
+      l.email || "",
+      l.city || "",
+      l.state || "",
+      l.channel || "",
+      l.utmCampaign || "",
+      l.source || "",
+      statusLabels[l.leadStatus] || l.leadStatus,
+    ]);
+    const bom = "\uFEFF";
+    const csv = bom + [headers.join(";"), ...rows.map(r => r.join(";"))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `leads_totalquality_${format(new Date(), "yyyy-MM-dd")}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [items]);
+
+  const exportLeadsExcel = useCallback(() => {
+    if (!items.length) return;
+    let xml = '<?xml version="1.0" encoding="UTF-8"?>';
+    xml += '<?mso-application progid="Excel.Sheet"?>';
+    xml += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">';
+    xml += '<Styles><Style ss:ID="header"><Interior ss:Color="#9B212B" ss:Pattern="Solid"/><Font ss:Color="#FFFFFF" ss:Bold="1" ss:Size="11"/></Style></Styles>';
+    xml += '<Worksheet ss:Name="Leads"><Table>';
+    xml += '<Row ss:StyleID="header"><Cell><Data ss:Type="String">Data</Data></Cell><Cell><Data ss:Type="String">Nome</Data></Cell><Cell><Data ss:Type="String">Telefone</Data></Cell><Cell><Data ss:Type="String">Email</Data></Cell><Cell><Data ss:Type="String">Cidade</Data></Cell><Cell><Data ss:Type="String">Estado</Data></Cell><Cell><Data ss:Type="String">Canal</Data></Cell><Cell><Data ss:Type="String">Campanha</Data></Cell><Cell><Data ss:Type="String">Origem</Data></Cell><Cell><Data ss:Type="String">Status</Data></Cell></Row>';
+    items.forEach((l: any) => {
+      xml += '<Row>';
+      xml += `<Cell><Data ss:Type="String">${new Date(l.createdAt).toLocaleDateString("pt-BR")}</Data></Cell>`;
+      xml += `<Cell><Data ss:Type="String">${escapeXml(l.name || "")}</Data></Cell>`;
+      xml += `<Cell><Data ss:Type="String">${escapeXml(l.phone || "")}</Data></Cell>`;
+      xml += `<Cell><Data ss:Type="String">${escapeXml(l.email || "")}</Data></Cell>`;
+      xml += `<Cell><Data ss:Type="String">${escapeXml(l.city || "")}</Data></Cell>`;
+      xml += `<Cell><Data ss:Type="String">${escapeXml(l.state || "")}</Data></Cell>`;
+      xml += `<Cell><Data ss:Type="String">${escapeXml(l.channel || "")}</Data></Cell>`;
+      xml += `<Cell><Data ss:Type="String">${escapeXml(l.utmCampaign || "")}</Data></Cell>`;
+      xml += `<Cell><Data ss:Type="String">${escapeXml(l.source || "")}</Data></Cell>`;
+      xml += `<Cell><Data ss:Type="String">${statusLabels[l.leadStatus] || l.leadStatus}</Data></Cell>`;
+      xml += '</Row>';
+    });
+    xml += '</Table></Worksheet></Workbook>';
+    const blob = new Blob([xml], { type: "application/vnd.ms-excel" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `leads_totalquality_${format(new Date(), "yyyy-MM-dd")}.xls`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [items]);
+
+  const exportLeadsPDF = useCallback(() => {
+    if (!items.length) return;
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Leads - Total Quality</title>
+    <style>
+      body { font-family: Arial, sans-serif; padding: 20px; font-size: 10px; }
+      h1 { color: #9B212B; font-size: 18px; margin-bottom: 5px; }
+      h2 { color: #666; font-size: 12px; font-weight: normal; margin-bottom: 15px; }
+      table { width: 100%; border-collapse: collapse; }
+      th { background: #9B212B; color: white; padding: 6px 4px; text-align: left; font-size: 9px; }
+      td { padding: 5px 4px; border-bottom: 1px solid #eee; font-size: 9px; }
+      tr:nth-child(even) { background: #f9f9f9; }
+      .footer { margin-top: 20px; text-align: center; color: #999; font-size: 9px; }
+      @media print { body { padding: 0; } @page { size: landscape; } }
+    </style></head><body>
+    <h1>Total Quality - Leads</h1>
+    <h2>Exportado em ${new Date().toLocaleDateString("pt-BR")} | ${items.length} leads</h2>
+    <table><thead><tr><th>Data</th><th>Nome</th><th>Telefone</th><th>Email</th><th>Cidade</th><th>Canal</th><th>Campanha</th><th>Origem</th><th>Status</th></tr></thead><tbody>
+    ${items.map((l: any) => `<tr>
+      <td>${new Date(l.createdAt).toLocaleDateString("pt-BR")}</td>
+      <td>${escapeHtml(l.name || "\u2014")}</td>
+      <td>${escapeHtml(l.phone || "\u2014")}</td>
+      <td>${escapeHtml(l.email || "\u2014")}</td>
+      <td>${escapeHtml(l.city ? l.city + (l.state ? "/" + l.state : "") : "\u2014")}</td>
+      <td>${escapeHtml(l.channel || "\u2014")}</td>
+      <td>${escapeHtml(l.utmCampaign || "\u2014")}</td>
+      <td>${escapeHtml(l.source || "\u2014")}</td>
+      <td>${statusLabels[l.leadStatus] || l.leadStatus}</td>
+    </tr>`).join("")}
+    </tbody></table>
+    <div class="footer">Total Quality Medicina Diagn\u00f3stica - Relat\u00f3rio de Leads</div>
+    <script>setTimeout(() => { window.print(); }, 500);</script>
+    </body></html>`;
+    printWindow.document.write(html);
+    printWindow.document.close();
+  }, [items]);
+
+  if (isLoading) return <DashboardSkeleton />;
+
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Users className="h-5 w-5" /> Leads Recentes
-          </CardTitle>
-          <CardDescription>{leadsData?.total || 0} leads no período ({filter.label})</CardDescription>
+        <CardHeader className="pb-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Users className="h-5 w-5" /> Leads Recentes
+              </CardTitle>
+              <CardDescription>{leadsData?.total || 0} leads no período ({filter.label})</CardDescription>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Filtro por status */}
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="h-8 w-[140px] text-xs">
+                  <Filter className="h-3 w-3 mr-1" />
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="new">Novo</SelectItem>
+                  <SelectItem value="contacted">Contatado</SelectItem>
+                  <SelectItem value="qualified">Qualificado</SelectItem>
+                  <SelectItem value="converted">Convertido</SelectItem>
+                  <SelectItem value="lost">Perdido</SelectItem>
+                </SelectContent>
+              </Select>
+              {/* Botões de exportação */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8 text-xs gap-1" disabled={!items.length}>
+                    <Download className="h-3.5 w-3.5" /> Exportar
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 p-2" align="end">
+                  <div className="space-y-1">
+                    <button onClick={exportLeadsExcel} className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-accent transition-colors">
+                      <FileSpreadsheet className="h-4 w-4 text-green-600" /> Excel (.xls)
+                    </button>
+                    <button onClick={exportLeadsCSV} className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-accent transition-colors">
+                      <FileText className="h-4 w-4 text-blue-600" /> CSV (.csv)
+                    </button>
+                    <button onClick={exportLeadsPDF} className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-accent transition-colors">
+                      <FileText className="h-4 w-4 text-red-600" /> PDF (Imprimir)
+                    </button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[600px]">

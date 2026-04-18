@@ -94,3 +94,11 @@
 - [x] Implementar exportação de contatos para CSV
 - [x] Implementar exportação de contatos para Excel (.xls)
 - [x] Implementar exportação de contatos para PDF (via impressão)
+
+## Exportação de Leads + Notificações Email
+- [x] Adicionar botões de exportação Excel/CSV/PDF na aba Leads
+- [x] Exportação inclui: nome, email, telefone, endereço, canal, campanha, tags, data
+- [x] Configurar notificação automática ao receber novo contato (via notifyOwner)
+- [x] Configurar notificação automática ao receber novo lead (via notifyOwner)
+- [x] Testes vitest passando (66 testes)
+- [x] Imagem de tomografia computadorizada adicionada à página do exame

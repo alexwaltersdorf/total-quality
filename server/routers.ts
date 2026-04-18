@@ -3,6 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { ENV } from "./_core/env";
+import { notifyOwner } from "./_core/notification";
 import { sdk } from "./_core/sdk";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
@@ -115,7 +116,25 @@ export const appRouter = router({
         subject: z.string().max(255).optional(),
         message: z.string().min(5),
       }))
-      .mutation(async ({ input }) => createContact(input)),
+      .mutation(async ({ input }) => {
+        const result = await createContact(input);
+        // Notificação automática para sac@totalquality.med.br
+        try {
+          await notifyOwner({
+            title: `Novo Contato: ${input.name} - ${input.subject || "Sem assunto"}`,
+            content: `Um novo contato foi recebido pelo formulário do site Total Quality.\n\n` +
+              `**Nome:** ${input.name}\n` +
+              `**Email:** ${input.email}\n` +
+              `**Telefone:** ${input.phone || "Não informado"}\n` +
+              `**Assunto:** ${input.subject || "Não informado"}\n` +
+              `**Mensagem:** ${input.message}\n\n` +
+              `Acesse o painel administrativo para responder.`,
+          });
+        } catch (e) {
+          console.warn("[Notification] Falha ao notificar novo contato:", e);
+        }
+        return result;
+      }),
 
     list: protectedProcedure
       .input(z.object({
@@ -178,11 +197,30 @@ export const appRouter = router({
         sessionId: z.string().max(100).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
-        return createLead({
+        const result = await createLead({
           ...input,
           userAgent: ctx.req.headers["user-agent"] ?? null,
           ipAddress: (ctx.req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? ctx.req.ip ?? null,
         });
+        // Notificação automática para sac@totalquality.med.br
+        try {
+          const channelLabel = input.channel || input.utmSource || input.source || "Direto";
+          await notifyOwner({
+            title: `Novo Lead: ${input.name || "Anônimo"} via ${channelLabel}`,
+            content: `Um novo lead foi capturado no site Total Quality.\n\n` +
+              `**Nome:** ${input.name || "Não informado"}\n` +
+              `**Telefone:** ${input.phone || "Não informado"}\n` +
+              `**Email:** ${input.email || "Não informado"}\n` +
+              `**Fonte:** ${input.source}\n` +
+              `**Canal:** ${channelLabel}\n` +
+              `**Página:** ${input.page}\n` +
+              (input.utmCampaign ? `**Campanha:** ${input.utmCampaign}\n` : "") +
+              `\nAcesse o painel administrativo para acompanhar.`,
+          });
+        } catch (e) {
+          console.warn("[Notification] Falha ao notificar novo lead:", e);
+        }
+        return result;
       }),
 
     list: protectedProcedure
