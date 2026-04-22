@@ -112,3 +112,5 @@
 - [x] Barra de progresso visual durante o scroll
 - [x] Indicador "Role para explorar" no início
 - [x] Testes vitest passando (66 testes)
+- [x] Transição suave na barra de progresso (gradient glow, lerp animation, fade-in do percentual)
+- [x] Correção do loading overlay (verificação de readyState no mount)
