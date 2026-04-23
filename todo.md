@@ -143,3 +143,22 @@
 
 ## Layout Side-by-Side Texto + Vídeo Scroll (Tomografia)
 - [x] Mover texto "O que é Tomografia?" para o lado direito do vídeo scroll (layout side-by-side)
+
+## Briefing SEO — Correções Obrigatórias (Imediatas)
+- [x] CORREÇÃO 2: Reescrever H1 da home para "Laboratório de Análises Clínicas e Medicina Diagnóstica em Caraguatatuba-SP"
+- [x] CORREÇÃO 3: Reduzir title tag da home para "Laboratório em Caraguatatuba | Total Quality Diagnóstica" (55 chars)
+- [x] CORREÇÃO 4: Reescrever meta description da home (144 chars)
+- [x] CORREÇÃO 5a: Alterar @type LocalBusiness para ["MedicalClinic", "LocalBusiness"]
+- [x] CORREÇÃO 5b: Adicionar schema FAQPage na home (4 perguntas geolocalizadas)
+
+## Briefing SEO — Correções de Médio Prazo
+- [x] CORREÇÃO 6: Criar landing page /laboratorio-caraguatatuba (800-1000 palavras)
+- [x] CORREÇÃO 7: Expandir conteúdo da home (+400 palavras, seção "Por que escolher")
+- [x] CORREÇÃO 8: Verificar/atualizar breadcrumbs nas páginas internas (já existentes via SEOHead)
+- [x] CORREÇÃO 9: Criar 5 artigos de blog geolocalizados
+  - [x] Artigo 1: Onde fazer exame de sangue em Caraguatatuba (1200 palavras)
+  - [x] Artigo 2: Convênios aceitos no laboratório em Caraguatatuba (800 palavras)
+  - [x] Artigo 3: Hemograma em Caraguatatuba (1000 palavras)
+  - [x] Artigo 4: Ultrassonografia em Caraguatatuba (800 palavras)
+  - [x] Artigo 5: Tomografia em Caraguatatuba (800 palavras)
+- [x] Atualizar sitemap.xml com novas páginas (24 URLs total)

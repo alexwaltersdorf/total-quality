@@ -14,6 +14,7 @@ import ExamesSection from "@/components/ExamesSection";
 import CartaoSection from "@/components/CartaoSection";
 import BlogPreviewSection from "@/components/BlogPreviewSection";
 import SobreSection from "@/components/SobreSection";
+import PorQueEscolherSection from "@/components/PorQueEscolherSection";
 import ContatoSection from "@/components/ContatoSection";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
@@ -32,10 +33,10 @@ export default function Home() {
   const scrollRef = useScrollReveal();
 
   useEffect(() => {
-    document.title = "Total Quality Medicina Diagnóstica | Exames de Sangue e Laboratoriais em Caraguatatuba-SP";
+    document.title = "Laboratório em Caraguatatuba | Total Quality Diagnóstica";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", "Total Quality Medicina Diagnóstica e Laboratorial em Caraguatatuba-SP. Exames de sangue, hemograma, glicemia, colesterol, triglicerídeos, TSH, T4 livre, PSA, vitamina D, ácido úrico, ureia, creatinina, TGO, TGP. Tomografia, ultrassonografia, mamografia, ecocardiograma, check-up e mais de 3.000 tipos de exames laboratoriais.");
+      metaDesc.setAttribute("content", "Laboratório de análises clínicas em Caraguatatuba-SP. Mais de 3.000 exames: hemograma, tomografia, ultrassom e muito mais. Agende pelo WhatsApp!");
     }
 
     // Initialize analytics capture for dashboard
@@ -94,6 +95,7 @@ export default function Home() {
         <CartaoSection />
         <BlogPreviewSection />
         <SobreSection />
+        <PorQueEscolherSection />
         <ContatoSection />
       </main>
       <Footer />

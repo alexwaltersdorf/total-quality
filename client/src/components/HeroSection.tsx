@@ -37,10 +37,15 @@ export default function HeroSection() {
               <span className="section-label mb-8 block">Laboratório e Medicina Diagnóstica Caraguatatuba-SP</span>
             </div>
 
-            <h1 className="reveal heading-display text-[clamp(3.5rem,10vw,8rem)] leading-[0.85] mb-8" style={{ transitionDelay: "100ms" }}>
-              <span className="text-text">TOTAL</span>
-              <br />
-              <span className="text-brand">QUALITY</span>
+            <h1 className="reveal mb-8" style={{ transitionDelay: "100ms" }}>
+              <span className="heading-display text-[clamp(3.5rem,10vw,8rem)] leading-[0.85] block">
+                <span className="text-text">TOTAL</span>
+                <br />
+                <span className="text-brand">QUALITY</span>
+              </span>
+              <span className="block text-lg lg:text-xl text-text-light font-light tracking-wide mt-4">
+                Laboratório de Análises Clínicas e Medicina Diagnóstica em Caraguatatuba-SP
+              </span>
             </h1>
 
             <p className="reveal text-lg text-text-light leading-relaxed max-w-md mb-10" style={{ transitionDelay: "200ms" }}>
