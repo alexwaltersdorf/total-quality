@@ -116,12 +116,12 @@ export default function ScrollVideo({ src, alt = "Vídeo" }: ScrollVideoProps) {
       style={{ height: "300vh" }}
     >
       {/* Sticky wrapper */}
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
+      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-white">
 
         {/* ── Progress bar with smooth glow ── */}
         <div className="absolute top-0 left-0 right-0 z-10">
           {/* Track background */}
-          <div className="h-1 bg-white/10">
+          <div className="h-1 bg-black/10">
             {/* Filled bar — smooth gradient */}
             <div
               className="h-full relative"
@@ -156,7 +156,7 @@ export default function ScrollVideo({ src, alt = "Vídeo" }: ScrollVideoProps) {
         <div
           className="absolute top-4 right-4 z-10 font-mono text-xs tabular-nums"
           style={{
-            color: `rgba(255,255,255,${Math.min(1, Math.max(0, (smoothProgress - 0.05) * 5))})`,
+            color: `rgba(0,0,0,${Math.min(1, Math.max(0, (smoothProgress - 0.05) * 5))})`,
             transition: "color 0.3s ease",
           }}
         >
@@ -176,10 +176,10 @@ export default function ScrollVideo({ src, alt = "Vídeo" }: ScrollVideoProps) {
 
         {/* Loading state — only visible when video is NOT ready */}
         {!isReady && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black transition-opacity duration-500">
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-white transition-opacity duration-500">
             <div className="flex flex-col items-center gap-4">
-              <div className="w-10 h-10 border-3 border-white/30 border-t-brand rounded-full animate-spin" />
-              <span className="text-white/70 text-sm">Carregando vídeo...</span>
+              <div className="w-10 h-10 border-3 border-black/20 border-t-brand rounded-full animate-spin" />
+              <span className="text-black/60 text-sm">Carregando vídeo...</span>
             </div>
           </div>
         )}
@@ -193,11 +193,11 @@ export default function ScrollVideo({ src, alt = "Vídeo" }: ScrollVideoProps) {
               transition: "opacity 0.5s ease-out",
             }}
           >
-            <span className="text-white/60 text-xs font-medium tracking-wider uppercase">
+            <span className="text-black/50 text-xs font-medium tracking-wider uppercase">
               Role para explorar
             </span>
             <svg
-              className="w-5 h-5 text-white/60"
+              className="w-5 h-5 text-black/50"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

@@ -137,3 +137,6 @@
 - [x] Adicionar campo 'image' no LocalBusiness schema (hero image da clínica)
 - [x] Adicionar campo 'image' no MedicalBusiness schema (hero image da clínica)
 - [x] Adicionar campo 'priceRange' no MedicalBusiness schema ("$$")
+
+## Fundo Branco no Scroll Video da Tomografia
+- [x] Alterar fundo do componente ScrollVideo de preto para branco na página de tomografia
