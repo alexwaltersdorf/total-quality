@@ -131,3 +131,9 @@
 - [x] Adicionar email contato@totalquality.med.br na ContatoSection
 - [x] Instagram URL padronizado (@totalqualitymedicina)
 - [x] Testar Schema com validador do Google (robots.txt e sitemap.xml acessíveis, footer NAP verificado)
+
+## Correções Rich Results Test (Google Search Console)
+- [x] Corrigir telefone no LocalBusiness schema (já estava correto no código, Google leu versão antiga)
+- [x] Adicionar campo 'image' no LocalBusiness schema (hero image da clínica)
+- [x] Adicionar campo 'image' no MedicalBusiness schema (hero image da clínica)
+- [x] Adicionar campo 'priceRange' no MedicalBusiness schema ("$$")
