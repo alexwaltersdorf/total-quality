@@ -140,3 +140,6 @@
 
 ## Fundo Branco no Scroll Video da Tomografia
 - [x] Alterar fundo do componente ScrollVideo de preto para branco na página de tomografia
+
+## Layout Side-by-Side Texto + Vídeo Scroll (Tomografia)
+- [x] Mover texto "O que é Tomografia?" para o lado direito do vídeo scroll (layout side-by-side)

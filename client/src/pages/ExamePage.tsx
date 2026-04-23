@@ -152,8 +152,8 @@ export default function ExamePage() {
       {/* Divider */}
       <div className="container"><div className="border-t border-black/10" /></div>
 
-      {/* What is */}
-      <section className="py-16 lg:py-24">
+      {/* What is — hidden on desktop when video exists (text shown beside video instead) */}
+      <section className={`py-16 lg:py-24 ${exam.videoUrl ? 'lg:hidden' : ''}`}>
         <div className="container">
           <div className="grid lg:grid-cols-12 gap-12">
             <div className="lg:col-span-5">
@@ -176,11 +176,21 @@ export default function ExamePage() {
       {/* Scroll-driven Video (between "O que é" and "Quando Realizar") */}
       {exam.videoUrl && (
         <Suspense fallback={
-          <div className="h-screen flex items-center justify-center bg-black">
-            <div className="w-10 h-10 border-3 border-white/30 border-t-brand rounded-full animate-spin" />
+          <div className="h-screen flex items-center justify-center bg-white">
+            <div className="w-10 h-10 border-3 border-black/20 border-t-brand rounded-full animate-spin" />
           </div>
         }>
-          <ScrollVideo src={exam.videoUrl} alt={`Vídeo de ${exam.shortTitle} - Total Quality`} />
+          <ScrollVideo src={exam.videoUrl} alt={`Vídeo de ${exam.shortTitle} - Total Quality`}>
+            <h2 className="heading-display text-3xl xl:text-4xl text-text mb-6">
+              O QUE É O <span className="text-brand">{exam.shortTitle.toUpperCase()}?</span>
+            </h2>
+            <p className="text-text-light text-base xl:text-lg leading-relaxed mb-6">
+              {exam.whatIs}
+            </p>
+            <p className="text-text-light text-base xl:text-lg leading-relaxed">
+              {exam.howItWorks}
+            </p>
+          </ScrollVideo>
         </Suspense>
       )}
 
