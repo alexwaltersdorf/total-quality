@@ -12,6 +12,7 @@ import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
+import { useBreadcrumbSchema, useBlogPostingSchema, useCanonical, useMetaDescription } from "@/components/SEOHead";
 
 export default function BlogPost() {
   const params = useParams<{ slug: string }>();
@@ -42,6 +43,30 @@ export default function BlogPost() {
       trackEventDirect("blog_view", "content", { slug: post.slug, title: post.title });
     }
   }, [post?.slug]);
+
+  // SEO: Meta description
+  useMetaDescription(post?.excerpt || "Blog Total Quality Medicina Diagnóstica - Artigos sobre saúde e bem-estar");
+
+  // SEO: Canonical URL
+  useCanonical(`/blog/${slug || ""}`);
+
+  // SEO: BreadcrumbList
+  const breadcrumbs = useMemo(() => post ? [
+    { name: "Início", url: "/" },
+    { name: "Blog", url: "/blog" },
+    { name: post.title, url: `/blog/${post.slug}` },
+  ] : [], [post]);
+  useBreadcrumbSchema(breadcrumbs);
+
+  // SEO: BlogPosting schema
+  useBlogPostingSchema({
+    title: post?.title || "",
+    description: post?.excerpt || "",
+    url: `/blog/${post?.slug || ""}`,
+    datePublished: post?.date || "",
+    authorName: post?.author || "",
+    imageUrl: post?.image,
+  });
 
   const handleShare = () => {
     if (navigator.share) {

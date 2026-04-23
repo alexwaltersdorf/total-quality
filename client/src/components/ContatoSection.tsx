@@ -13,6 +13,7 @@ import {
   Instagram,
   ArrowUpRight,
   Loader2,
+  Mail,
 } from "lucide-react";
 import { toast } from "sonner";
 import { MapView } from "@/components/Map";
@@ -159,6 +160,14 @@ export default function ContatoSection() {
                   </div>
                   <a href="tel:1238873535" className="block text-text font-medium hover:text-brand transition-colors" onClick={() => trackPhoneClick("contato_section")}>(12) 3887-3535</a>
                   <a href="https://wa.me/551238873535" className="block text-text font-medium hover:text-brand transition-colors" onClick={() => trackWhatsAppClick("contato_section")}>(12) 3887-3535</a>
+                </div>
+
+                <div className="border-t border-black/10 pt-8">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Mail className="w-4 h-4 text-brand" />
+                    <span className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted">E-mail</span>
+                  </div>
+                  <a href="mailto:contato@totalquality.med.br" className="block text-text font-medium hover:text-brand transition-colors">contato@totalquality.med.br</a>
                 </div>
 
                 <div className="border-t border-black/10 pt-8">

@@ -52,14 +52,66 @@
     <!-- SEO: Geo Tags -->
     <meta name="geo.region" content="BR-SP" />
     <meta name="geo.placename" content="Caraguatatuba" />
-    <meta name="geo.position" content="-23.6208;-45.4131" />
-    <meta name="ICBM" content="-23.6208, -45.4131" />
+    <meta name="geo.position" content="-23.6225;-45.4132" />
+    <meta name="ICBM" content="-23.6225, -45.4132" />
 
-    <!-- SEO: Schema.org JSON-LD Structured Data -->
+    <!-- SEO: Schema.org JSON-LD — LocalBusiness (Google Maps / Local Pack) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "@id": "https://www.totalquality.med.br/#localbusiness",
+      "name": "Total Quality Medicina Diagnóstica",
+      "alternateName": "Total Quality",
+      "description": "Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba-SP. Mais de 3.000 tipos de exames laboratoriais, tomografia, ultrassonografia, mamografia, raio-X e check-up preventivo.",
+      "url": "https://www.totalquality.med.br/",
+      "telephone": "+55-12-3887-3535",
+      "email": "contato@totalquality.med.br",
+      "priceRange": "$$",
+      "currenciesAccepted": "BRL",
+      "paymentAccepted": "Cash, Credit Card, Debit Card, PIX",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Rua Padre Anchieta, 1010",
+        "addressLocality": "Caraguatatuba",
+        "addressRegion": "SP",
+        "postalCode": "11660-010",
+        "addressCountry": "BR",
+        "addressNeighborhood": "Centro"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -23.6225,
+        "longitude": -45.4132
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "opens": "08:00",
+        "closes": "18:00"
+      },
+      "foundingDate": "2003",
+      "areaServed": {
+        "@type": "GeoCircle",
+        "geoMidpoint": {
+          "@type": "GeoCoordinates",
+          "latitude": -23.6225,
+          "longitude": -45.4132
+        },
+        "geoRadius": "50000"
+      },
+      "sameAs": [
+        "https://www.instagram.com/totalqualitymedicina/"
+      ]
+    }
+    </script>
+
+    <!-- SEO: Schema.org JSON-LD — MedicalBusiness (Serviços Médicos) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "MedicalBusiness",
+      "@id": "https://www.totalquality.med.br/#medicalbusiness",
       "name": "Total Quality Medicina Diagnóstica",
       "alternateName": "Total Quality",
       "description": "Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba-SP. Exames de sangue (hemograma, glicemia, colesterol, triglicerídeos, TSH, T4 livre, PSA, vitamina D, ácido úrico, ureia, creatinina, TGO, TGP, hemoglobina glicada), tomografia, ultrassonografia, mamografia digital, raio-X, ecocardiograma, holter, MAPA, bioimpedância e check-up preventivo com tecnologia de última geração.",
@@ -72,12 +124,13 @@
         "addressLocality": "Caraguatatuba",
         "addressRegion": "SP",
         "postalCode": "11660-010",
-        "addressCountry": "BR"
+        "addressCountry": "BR",
+        "addressNeighborhood": "Centro"
       },
       "geo": {
         "@type": "GeoCoordinates",
-        "latitude": -23.6208,
-        "longitude": -45.4131
+        "latitude": -23.6225,
+        "longitude": -45.4132
       },
       "openingHoursSpecification": {
         "@type": "OpeningHoursSpecification",
@@ -91,136 +144,56 @@
         "Clinical Laboratory"
       ],
       "availableService": [
-        {
-          "@type": "MedicalTest",
-          "name": "Tomografia Computadorizada Multislice"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Ultrassonografia Geral e Doppler"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Mamografia Digital"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Raio-X Digital"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Ecocardiograma"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Holter 24h"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "MAPA 24h"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Eletrocardiograma"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Espirometria"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Eletroencefalograma"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Bioimpedância"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Check-up Preventivo"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Exames Laboratoriais e Análises Clínicas"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Hemograma Completo"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Glicemia em Jejum"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Colesterol Total e Frações"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Triglicerídeos"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "TSH e T4 Livre"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "PSA Total e Livre"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Vitamina D"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Hemoglobina Glicada"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Ureia e Creatinina"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "TGO e TGP"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Ácido Úrico"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Exame de Urina"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Hormônios (Estradiol, Progesterona, Testosterona, LH, FSH)"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Marcadores Tumorais"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Coagulograma"
-        },
-        {
-          "@type": "MedicalTest",
-          "name": "Exame de Fezes (Parasitológico)"
-        }
+        { "@type": "MedicalTest", "name": "Tomografia Computadorizada Multislice" },
+        { "@type": "MedicalTest", "name": "Ultrassonografia Geral e Doppler" },
+        { "@type": "MedicalTest", "name": "Mamografia Digital" },
+        { "@type": "MedicalTest", "name": "Raio-X Digital" },
+        { "@type": "MedicalTest", "name": "Ecocardiograma" },
+        { "@type": "MedicalTest", "name": "Holter 24h" },
+        { "@type": "MedicalTest", "name": "MAPA 24h" },
+        { "@type": "MedicalTest", "name": "Eletrocardiograma" },
+        { "@type": "MedicalTest", "name": "Espirometria" },
+        { "@type": "MedicalTest", "name": "Eletroencefalograma" },
+        { "@type": "MedicalTest", "name": "Bioimpedância" },
+        { "@type": "MedicalTest", "name": "Check-up Preventivo" },
+        { "@type": "MedicalTest", "name": "Exames Laboratoriais e Análises Clínicas" },
+        { "@type": "MedicalTest", "name": "Hemograma Completo" },
+        { "@type": "MedicalTest", "name": "Glicemia em Jejum" },
+        { "@type": "MedicalTest", "name": "Colesterol Total e Frações" },
+        { "@type": "MedicalTest", "name": "Triglicerídeos" },
+        { "@type": "MedicalTest", "name": "TSH e T4 Livre" },
+        { "@type": "MedicalTest", "name": "PSA Total e Livre" },
+        { "@type": "MedicalTest", "name": "Vitamina D" },
+        { "@type": "MedicalTest", "name": "Hemoglobina Glicada" },
+        { "@type": "MedicalTest", "name": "Ureia e Creatinina" },
+        { "@type": "MedicalTest", "name": "TGO e TGP" },
+        { "@type": "MedicalTest", "name": "Ácido Úrico" },
+        { "@type": "MedicalTest", "name": "Exame de Urina" },
+        { "@type": "MedicalTest", "name": "Hormônios (Estradiol, Progesterona, Testosterona, LH, FSH)" },
+        { "@type": "MedicalTest", "name": "Marcadores Tumorais" },
+        { "@type": "MedicalTest", "name": "Coagulograma" },
+        { "@type": "MedicalTest", "name": "Exame de Fezes (Parasitológico)" },
+        { "@type": "MedicalTest", "name": "Exame Toxicológico" }
       ],
       "foundingDate": "2003",
-      "areaServed": {
-        "@type": "GeoCircle",
-        "geoMidpoint": {
-          "@type": "GeoCoordinates",
-          "latitude": -23.6208,
-          "longitude": -45.4131
-        },
-        "geoRadius": "50000"
-      },
       "sameAs": [
-        "https://www.instagram.com/totalqualitymed/"
+        "https://www.instagram.com/totalqualitymedicina/"
       ]
+    }
+    </script>
+
+    <!-- SEO: Schema.org JSON-LD — WebSite (Sitelinks Search Box) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Total Quality Medicina Diagnóstica",
+      "url": "https://www.totalquality.med.br/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://www.totalquality.med.br/blog?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
     }
     </script>
 

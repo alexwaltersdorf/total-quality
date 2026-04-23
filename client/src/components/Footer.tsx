@@ -117,7 +117,8 @@ export default function Footer() {
                 <MapPin className="w-4 h-4 text-brand mt-0.5 shrink-0" />
                 <p className="text-text-light text-sm">
                   Rua Padre Anchieta, 1010<br />
-                  Centro, Caraguatatuba-SP
+                  Centro, Caraguatatuba-SP<br />
+                  CEP 11660-010
                 </p>
               </div>
               <a href="tel:1238873535" className="flex items-center gap-3 text-text-light hover:text-brand text-sm transition-colors" onClick={() => trackPhoneClick("footer")}>

@@ -7,6 +7,7 @@ import { useEffect, useRef } from "react";
 import { ArrowUpRight, ArrowLeft, Zap, TrendingUp, Droplets, Bone, Flame, Scale, Target, Users, BarChart3 } from "lucide-react";
 import { Link } from "wouter";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
+import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 
 const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/bioimpedancia-hero-JBi4rGhcubZh8PJVdKomAz.webp";
 const DETAIL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/bioimpedancia-detail-impYZJEExk9frRXt9avf3V.webp";
@@ -38,7 +39,14 @@ const faqs = [
 export default function Bioimpedancia() {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.title = "Bioimpedância em Caraguatatuba-SP | Total Quality Medicina Diagnóstica";
+  }, []);
+
+  // SEO: Meta description e canonical
+  useMetaDescription("Exame de bioimpedância corporal em Caraguatatuba-SP. Avaliação precisa de gordura corporal, massa muscular, água corporal e taxa metabólica basal. Rápido, indolor e sem preparo. Agende na Total Quality.");
+  useCanonical("/bioimpedancia");
 
   useEffect(() => {
     const root = wrapperRef.current;

@@ -7,6 +7,7 @@ import { useEffect, useRef } from "react";
 import { ArrowUpRight, ArrowLeft, Heart, Shield, Activity, Clock, CheckCircle, Stethoscope, FlaskConical, Brain } from "lucide-react";
 import { Link } from "wouter";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
+import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 
 const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/checkup-hero-DYtfLmtu8bZzaLQHsJcbup.webp";
 const PROCESS_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/checkup-process-5wKyH9PSvZxL2VqGetV3Ee.webp";
@@ -61,7 +62,14 @@ const processSteps = [
 export default function CheckUp() {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.title = "Check-Up Preventivo em Caraguatatuba-SP | Total Quality Medicina Diagnóstica";
+  }, []);
+
+  // SEO: Meta description e canonical
+  useMetaDescription("Check-up preventivo completo em Caraguatatuba-SP. Pacotes básico, completo e premium com hemograma, glicemia, colesterol, tomografia, ecocardiograma e mais. Resultados em 48h. Agende na Total Quality.");
+  useCanonical("/checkup");
 
   useEffect(() => {
     const root = wrapperRef.current;

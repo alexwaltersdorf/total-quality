@@ -10,6 +10,7 @@ import { blogPosts, blogCategories, type BlogPost } from "@/lib/blogData";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
+import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 
 function BlogCard({ post, featured = false }: { post: BlogPost; featured?: boolean }) {
   if (featured) {
@@ -90,6 +91,10 @@ export default function Blog() {
     window.scrollTo(0, 0);
     document.title = "Blog | Total Quality Medicina Diagnóstica — Artigos sobre Saúde e Bem-Estar";
   }, []);
+
+  // SEO: Meta description e canonical
+  useMetaDescription("Blog da Total Quality Medicina Diagnóstica em Caraguatatuba-SP. Artigos sobre saúde preventiva, exames laboratoriais, cardiologia, nutrição e bem-estar. Dicas de especialistas para cuidar da sua saúde.");
+  useCanonical("/blog");
 
   const filteredPosts = blogPosts.filter((post) => {
     const matchesCategory = activeCategory === "Todos" || post.category === activeCategory;

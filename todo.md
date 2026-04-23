@@ -114,3 +114,20 @@
 - [x] Testes vitest passando (66 testes)
 - [x] Transição suave na barra de progresso (gradient glow, lerp animation, fade-in do percentual)
 - [x] Correção do loading overlay (verificação de readyState no mount)
+
+## Melhorias SEO / Google Ads Performance
+- [x] Auditar estado atual do site (meta tags, robots, sitemap, schema)
+- [x] Criar robots.txt otimizado (bloqueio /admin, /api, GPTBot, CCBot)
+- [x] Criar sitemap.xml com todas as 18 páginas (home, checkup, bioimpedância, 10 exames, blog + 5 posts)
+- [x] Implementar Schema Markup LocalBusiness (JSON-LD) no index.html
+- [x] Implementar Schema Markup MedicalBusiness (JSON-LD) no index.html
+- [x] Implementar WebSite schema (Sitelinks Search Box)
+- [x] Criar componente SEOHead.tsx (BreadcrumbList, FAQPage, MedicalTest, BlogPosting)
+- [x] Integrar SEOHead hooks na ExamePage
+- [x] Otimizar meta descriptions de todas as páginas (Blog, BlogPost, CheckUp, Bioimpedância, ExamePage)
+- [x] Adicionar canonical URLs dinâmicas em todas as páginas
+- [x] Padronizar NAP (Nome, Endereço, Telefone) em todo o site
+- [x] Adicionar CEP ao Footer
+- [x] Adicionar email contato@totalquality.med.br na ContatoSection
+- [x] Instagram URL padronizado (@totalqualitymedicina)
+- [x] Testar Schema com validador do Google (robots.txt e sitemap.xml acessíveis, footer NAP verificado)

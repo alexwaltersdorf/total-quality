@@ -3,11 +3,12 @@
  * Theme: White background, dark gray #5A5A5A text
  * Page: Dynamic Exam Page (reusable for all exams)
  */
-import { useEffect, useRef, lazy, Suspense } from "react";
+import { useEffect, useRef, useMemo, lazy, Suspense } from "react";
 import { ArrowUpRight, ArrowLeft, ChevronRight, CheckCircle } from "lucide-react";
 import { Link, useParams, useLocation } from "wouter";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { getExamBySlug, examesData } from "@/lib/examesData";
+import { useBreadcrumbSchema, useFAQSchema, useMedicalTestSchema, useCanonical } from "@/components/SEOHead";
 const ScrollVideo = lazy(() => import("@/components/ScrollVideo"));
 
 export default function ExamePage() {
@@ -18,6 +19,7 @@ export default function ExamePage() {
 
   useEffect(() => { window.scrollTo(0, 0); }, [params.slug]);
 
+  // SEO: Dynamic meta tags
   useEffect(() => {
     if (exam) {
       document.title = exam.metaTitle;
@@ -25,6 +27,28 @@ export default function ExamePage() {
       if (metaDesc) metaDesc.setAttribute("content", exam.metaDescription);
     }
   }, [exam]);
+
+  // SEO: Structured Data — BreadcrumbList
+  const breadcrumbs = useMemo(() => exam ? [
+    { name: "Início", url: "/" },
+    { name: "Exames", url: "/#exames" },
+    { name: exam.shortTitle, url: `/exames/${exam.slug}` },
+  ] : [], [exam]);
+  useBreadcrumbSchema(breadcrumbs);
+
+  // SEO: Structured Data — FAQPage
+  const faqs = useMemo(() => exam?.faqs || [], [exam]);
+  useFAQSchema(faqs);
+
+  // SEO: Structured Data — MedicalTest
+  useMedicalTestSchema({
+    name: exam?.title || "",
+    description: exam?.metaDescription || "",
+    url: `/exames/${exam?.slug || ""}`,
+  });
+
+  // SEO: Canonical URL
+  useCanonical(`/exames/${params.slug || ""}`);
 
   useEffect(() => {
     const root = wrapperRef.current;
