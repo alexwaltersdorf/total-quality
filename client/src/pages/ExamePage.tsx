@@ -91,8 +91,20 @@ export default function ExamePage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-24 lg:pt-28">
-        <div className="container">
+      <section className="pt-24 lg:pt-28 relative overflow-hidden">
+        {/* Background Image with Transparency */}
+        {exam.backgroundImage && (
+          <div
+            className="absolute inset-0 opacity-15 pointer-events-none"
+            style={{
+              backgroundImage: `url(${exam.backgroundImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center right',
+              backgroundAttachment: 'fixed',
+            }}
+          />
+        )}
+        <div className="container relative z-10">
           <div className="pt-8 lg:pt-16 max-w-4xl">
             {/* Breadcrumb */}
             <div className="reveal flex items-center gap-2 text-xs text-text-muted mb-6">

@@ -162,3 +162,8 @@
   - [x] Artigo 4: Ultrassonografia em Caraguatatuba (800 palavras)
   - [x] Artigo 5: Tomografia em Caraguatatuba (800 palavras)
 - [x] Atualizar sitemap.xml com novas páginas (24 URLs total)
+
+## Imagem Cientista na Página Exames de Sangue
+- [x] Upload imagem cientista para CDN
+- [x] Adicionar imagem como fundo transparente na seção hero de Exames de Sangue
+- [x] Garantir boa legibilidade do texto sobre a imagem (opacity-15, z-index, contrast adequado)

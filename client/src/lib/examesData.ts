@@ -32,6 +32,7 @@ export interface ExamData {
   whatsappMessage: string;
   heroImage?: string;
   videoUrl?: string;
+  backgroundImage?: string;
   category: "laboratorio" | "imagem" | "cardiologia" | "neurologia" | "outros";
   keywords: string[];
 }
@@ -46,6 +47,7 @@ export const examesData: ExamData[] = [
     metaTitle: "Exames de Sangue em Caraguatatuba-SP | Total Quality Medicina Diagnóstica",
     metaDescription: "Realize exames de sangue em Caraguatatuba-SP: hemograma, glicemia, colesterol, hormônios, vitamina D, PSA, TSH, T4 livre, ácido úrico e mais de 3.000 tipos. Resultados rápidos.",
     heroDescription: "Realizamos mais de 3.000 tipos de exames de sangue e análises clínicas com equipamentos de última geração e equipe especializada. Hemograma, glicemia, colesterol, hormônios, marcadores tumorais, sorologias e muito mais.",
+    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/researcher-working-laboratory_292dac6f.webp",
     whatIs: "Os exames de sangue são análises laboratoriais realizadas a partir de uma amostra de sangue coletada por punção venosa. São fundamentais para avaliar o funcionamento dos órgãos, detectar doenças, monitorar tratamentos e realizar check-ups preventivos. Na Total Quality, utilizamos equipamentos automatizados de alta precisão para garantir resultados confiáveis.",
     howItWorks: "A coleta é realizada por profissionais treinados em ambiente confortável e seguro. O sangue é processado em nosso laboratório com equipamentos automatizados que garantem precisão e rapidez. Os resultados ficam disponíveis online em até 24 horas para a maioria dos exames.",
     indications: [
