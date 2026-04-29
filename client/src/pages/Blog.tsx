@@ -207,6 +207,13 @@ export default function Blog() {
         </div>
       </section>
 
+      {/* Soro Widget */}
+      <section className="py-16 border-t border-black/10">
+        <div className="container">
+          <div id="soro-blog" />
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-16 bg-surface-light border-t border-black/10">
         <div className="container text-center">

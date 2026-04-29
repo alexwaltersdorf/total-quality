@@ -84,6 +84,7 @@ export const examesData: ExamData[] = [
     metaTitle: "Tomografia Computadorizada em Caraguatatuba-SP | Total Quality",
     metaDescription: "Tomografia computadorizada em Caraguatatuba-SP com equipamento multislice de última geração. Tomografia de crânio, tórax, abdômen, coluna e articulações. Resultados rápidos.",
     heroDescription: "A tomografia computadorizada é um dos exames de imagem mais completos e precisos da medicina moderna. Na Total Quality, contamos com equipamento multislice que produz imagens de alta resolução em poucos minutos.",
+    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "A Tomografia Computadorizada (TC) é um exame de diagnóstico por imagem que utiliza raios-X e processamento computadorizado para produzir imagens detalhadas em cortes transversais do corpo. Permite visualizar ossos, órgãos internos, vasos sanguíneos e tecidos moles com grande precisão.",
     howItWorks: "O paciente deita em uma mesa que desliza para dentro do aparelho em formato de anel. O tubo de raios-X gira ao redor do corpo, capturando múltiplas imagens que são processadas por computador para criar imagens tridimensionais detalhadas. O exame dura entre 10 e 30 minutos.",
     indications: [
@@ -122,6 +123,7 @@ export const examesData: ExamData[] = [
     metaTitle: "Raio-X Digital em Caraguatatuba-SP | Total Quality Medicina Diagnóstica",
     metaDescription: "Raio-X digital em Caraguatatuba-SP: tórax, coluna, membros, seios da face e articulações. Equipamento digital de alta resolução com resultados rápidos na Total Quality.",
     heroDescription: "O Raio-X é um dos exames de imagem mais utilizados na medicina, essencial para diagnóstico de fraturas, doenças pulmonares e diversas condições. Na Total Quality, utilizamos equipamento digital de última geração para imagens de alta resolução.",
+    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "O Raio-X (radiografia) é um exame de diagnóstico por imagem que utiliza radiação ionizante em doses baixas para produzir imagens do interior do corpo. É especialmente eficaz para visualizar ossos, pulmões e certas condições dos tecidos moles. A tecnologia digital permite imagens de alta qualidade com menor exposição à radiação.",
     howItWorks: "O paciente é posicionado entre o emissor de raios-X e o detector digital. A radiação atravessa o corpo e é captada pelo detector, gerando uma imagem digital instantânea. O exame é rápido, durando apenas alguns segundos por incidência.",
     indications: [

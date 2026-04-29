@@ -167,3 +167,16 @@
 - [x] Upload imagem cientista para CDN
 - [x] Adicionar imagem como fundo transparente na seção hero de Exames de Sangue
 - [x] Garantir boa legibilidade do texto sobre a imagem (opacity-15, z-index, contrast adequado)
+
+## Imagens de Fundo por Categoria de Exame
+- [x] Gerar imagem fundo: Laboratório (cientista, equipamentos, análises)
+- [x] Gerar imagem fundo: Diagnóstico por Imagem (tomógrafo, ultrassom, raio-X)
+- [x] Gerar imagem fundo: Cardiologia (coração, ECG, estetoscópio)
+- [x] Gerar imagem fundo: Neurologia (cérebro, EEG, neurônios)
+- [x] Upload das 4 imagens para CDN (URLs comprimidas webp)
+- [ ] Adicionar backgroundImage para cada exame conforme categoria
+- [ ] Testar todas as 10 páginas de exames
+
+## Widget Soro na Página Blog
+- [x] Implementar widget Soro (embed HTML) na página Blog.tsx
+- [x] Adicionar script Soro no index.html
