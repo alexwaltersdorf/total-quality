@@ -62,7 +62,7 @@ export default function Footer() {
           <div className="lg:col-span-1">
             <span className="heading-display text-3xl text-text block mb-4">TOTAL QUALITY</span>
             <p className="text-text-muted text-sm leading-relaxed">
-              Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba-SP. Desde 2003, tecnologia de última geração para cuidar da sua saúde.
+              Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba - SP. Desde 2003, tecnologia de última geração para cuidar da sua saúde.
             </p>
           </div>
 
@@ -116,8 +116,8 @@ export default function Footer() {
               <div className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-brand mt-0.5 shrink-0" />
                 <p className="text-text-light text-sm">
-                  Rua Padre Anchieta, 1010<br />
-                  Centro, Caraguatatuba-SP<br />
+                  R. Padre Anchieta, 1010<br />
+                  Centro, Caraguatatuba - SP<br />
                   CEP 11660-010
                 </p>
               </div>
@@ -160,7 +160,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Total Quality Medicina Diagnóstica. Todos os direitos reservados.
           </p>
           <p className="text-text-muted text-xs text-center">
-            Exames de Sangue • Tomografia • Raio-X • Ultrassonografia • Eletrocardiograma • Caraguatatuba-SP
+            Exames de Sangue • Tomografia • Raio-X • Ultrassonografia • Eletrocardiograma • Caraguatatuba - SP
           </p>
         </div>
       </div>

@@ -34,7 +34,7 @@ export default function HeroSection() {
           {/* Left column - Text */}
           <div className="lg:col-span-6 xl:col-span-5 pt-8 lg:pt-16">
             <div className="reveal">
-              <span className="section-label mb-8 block">Laboratório e Medicina Diagnóstica Caraguatatuba-SP</span>
+              <span className="section-label mb-8 block">Laboratório e Medicina Diagnóstica Caraguatatuba - SP</span>
             </div>
 
             <h1 className="reveal mb-8" style={{ transitionDelay: "100ms" }}>
@@ -44,7 +44,7 @@ export default function HeroSection() {
                 <span className="text-brand">QUALITY</span>
               </span>
               <span className="block text-lg lg:text-xl text-text-light font-light tracking-wide mt-4">
-                Laboratório de Análises Clínicas e Medicina Diagnóstica em Caraguatatuba-SP
+                Laboratório de Análises Clínicas e Medicina Diagnóstica em Caraguatatuba - SP
               </span>
             </h1>
 
@@ -94,7 +94,7 @@ export default function HeroSection() {
             <div className="relative">
               <img
                 src={HERO_IMAGE}
-                alt="Clínica Total Quality Medicina Diagnóstica em Caraguatatuba-SP - Interior moderno com equipamentos de tomografia e diagnóstico por imagem"
+                alt="Clínica Total Quality Medicina Diagnóstica em Caraguatatuba - SP - Interior moderno com equipamentos de tomografia e diagnóstico por imagem"
                 className="w-full h-[50vh] lg:h-[80vh] object-cover"
                 loading="eager"
                 width="800"
@@ -102,8 +102,8 @@ export default function HeroSection() {
               />
               {/* Floating info card */}
               <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-5 max-w-xs shadow-lg">
-                <p className="text-xs uppercase tracking-[0.15em] font-semibold text-brand mb-1">Caraguatatuba-SP</p>
-                <p className="text-sm text-text-light">Rua Padre Anchieta, 1010 - Centro</p>
+                <p className="text-xs uppercase tracking-[0.15em] font-semibold text-brand mb-1">Caraguatatuba - SP</p>
+                <p className="text-sm text-text-light">R. Padre Anchieta, 1010 - Centro</p>
                 <p className="text-sm text-text-light">Seg-Sex: 08h às 18h</p>
               </div>
             </div>

@@ -93,7 +93,7 @@ export default function Blog() {
   }, []);
 
   // SEO: Meta description e canonical
-  useMetaDescription("Blog da Total Quality Medicina Diagnóstica em Caraguatatuba-SP. Artigos sobre saúde preventiva, exames laboratoriais, cardiologia, nutrição e bem-estar. Dicas de especialistas para cuidar da sua saúde.");
+  useMetaDescription("Blog da Total Quality Medicina Diagnóstica em Caraguatatuba - SP. Artigos sobre saúde preventiva, exames laboratoriais, cardiologia, nutrição e bem-estar. Dicas de especialistas para cuidar da sua saúde.");
   useCanonical("/blog");
 
   const filteredPosts = blogPosts.filter((post) => {

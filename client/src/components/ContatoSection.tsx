@@ -122,7 +122,7 @@ export default function ContatoSection() {
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
-            Agende seu exame de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma ou check-up na Total Quality em Caraguatatuba-SP. Atendemos de segunda a sexta, das 08h às 18h.
+            Agende seu exame de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma ou check-up na Total Quality em Caraguatatuba - SP. Atendemos de segunda a sexta, das 08h às 18h.
           </p>
         </div>
 
@@ -148,8 +148,8 @@ export default function ContatoSection() {
                     <MapPin className="w-4 h-4 text-brand" />
                     <span className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted">Endereço</span>
                   </div>
-                  <p className="text-text font-medium">Rua Padre Anchieta, 1010</p>
-                  <p className="text-text-light">Centro, Caraguatatuba-SP</p>
+                  <p className="text-text font-medium">R. Padre Anchieta, 1010</p>
+                  <p className="text-text-light">Centro, Caraguatatuba - SP</p>
                   <p className="text-text-muted text-sm">CEP 11660-010</p>
                 </div>
 

@@ -20,7 +20,7 @@ const diferenciais = [
   {
     icon: Users,
     title: "Mais de 30.000 Famílias Atendidas",
-    text: "Somos o laboratório de análises clínicas mais completo de Caraguatatuba-SP, com mais de 3.000 tipos de exames laboratoriais e diagnósticos por imagem disponíveis.",
+    text: "Somos o laboratório de análises clínicas mais completo de Caraguatatuba - SP, com mais de 3.000 tipos de exames laboratoriais e diagnósticos por imagem disponíveis.",
   },
   {
     icon: Clock,
@@ -49,7 +49,7 @@ export default function PorQueEscolherSection() {
           </div>
           <div className="lg:col-span-7 flex items-end">
             <p className="reveal text-text-light text-lg leading-relaxed">
-              A Total Quality é referência em laboratório de análises clínicas em Caraguatatuba-SP desde 2003.
+              A Total Quality é referência em laboratório de análises clínicas em Caraguatatuba - SP desde 2003.
               Com mais de 20 anos de experiência e mais de 30.000 famílias atendidas, oferecemos a maior
               estrutura de medicina diagnóstica do litoral norte paulista. Nosso laboratório em Caraguatatuba
               realiza mais de 3.000 tipos de exames laboratoriais e diagnósticos por imagem, com resultados
@@ -83,7 +83,7 @@ export default function PorQueEscolherSection() {
               Nosso laboratório em Caraguatatuba oferece uma ampla variedade de exames de sangue, incluindo
               hemograma completo, glicemia em jejum, colesterol total e frações, triglicerídeos, TSH, T4 livre,
               PSA total e livre, vitamina D, hemoglobina glicada, ureia, creatinina, TGO, TGP, ácido úrico,
-              hormônios e marcadores tumorais. Todos os exames laboratoriais em Caraguatatuba-SP são realizados
+              hormônios e marcadores tumorais. Todos os exames laboratoriais em Caraguatatuba - SP são realizados
               com equipamentos automatizados que garantem precisão e confiabilidade nos resultados.
             </p>
             <p className="reveal text-text-light leading-relaxed">
@@ -122,7 +122,7 @@ export default function PorQueEscolherSection() {
                 LOCALIZAÇÃO E ACESSO
               </h3>
               <p className="text-text-light leading-relaxed mb-4">
-                O laboratório Total Quality está localizado no centro de Caraguatatuba, na Rua Padre Anchieta, 1010,
+                O laboratório Total Quality está localizado no centro de Caraguatatuba, na R. Padre Anchieta, 1010,
                 com fácil acesso de carro, ônibus ou a pé. Funcionamos de segunda a sexta-feira, das 08h às 18h.
                 Aceitamos diversos convênios de saúde e oferecemos atendimento particular com preços acessíveis.
               </p>

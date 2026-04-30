@@ -64,11 +64,11 @@ export default function CheckUp() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "Check-Up Preventivo em Caraguatatuba-SP | Total Quality Medicina Diagnóstica";
+    document.title = "Check-Up Preventivo em Caraguatatuba - SP | Total Quality Medicina Diagnóstica";
   }, []);
 
   // SEO: Meta description e canonical
-  useMetaDescription("Check-up preventivo completo em Caraguatatuba-SP. Pacotes básico, completo e premium com hemograma, glicemia, colesterol, tomografia, ecocardiograma e mais. Resultados em 48h. Agende na Total Quality.");
+  useMetaDescription("Check-up preventivo completo em Caraguatatuba - SP. Pacotes básico, completo e premium com hemograma, glicemia, colesterol, tomografia, ecocardiograma e mais. Resultados em 48h. Agende na Total Quality.");
   useCanonical("/checkup");
 
   useEffect(() => {
@@ -346,7 +346,7 @@ export default function CheckUp() {
                 <div className="space-y-4">
                   {[
                     { label: "Horário", value: "Segunda a Sexta, 08h às 18h" },
-                    { label: "Local", value: "Rua Padre Anchieta, 1010 - Centro, Caraguatatuba-SP" },
+                    { label: "Local", value: "R. Padre Anchieta, 1010 - Centro, Caraguatatuba - SP" },
                     { label: "Preparo", value: "Jejum de 12 horas para exames laboratoriais" },
                     { label: "Resultados", value: "Disponíveis em até 48 horas úteis" },
                     { label: "Convênios", value: "Aceitamos os principais convênios médicos" },

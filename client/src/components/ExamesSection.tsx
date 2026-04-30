@@ -81,7 +81,7 @@ export default function ExamesSection() {
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
-            Oferecemos mais de 3.000 tipos de Exames Laboratoriais, Diagnósticos por Imagem e Cardiologicos em Caraguatatuba-SP. 
+            Oferecemos mais de 3.000 tipos de Exames Laboratoriais, Diagnósticos por Imagem e Cardiologicos em Caraguatatuba - SP. 
 Hemograma, Glicemia, Colesterol, Hormônios, Vitaminas, Tomografia Computadorizada, Ultrassonografia, Raio-x, Eletrocardiograma, Espirometria, Eletroencefalograma com tecnologia de ponta.
           </p>
         </div>

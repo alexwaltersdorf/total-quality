@@ -12,7 +12,7 @@ const values = [
   {
     icon: Target,
     title: "Missão",
-    description: "Oferecer diagnósticos precisos em exames de sangue, análises clínicas, tomografia, ultrassonografia, mamografia e cardiologia com atendimento humanizado em Caraguatatuba-SP.",
+    description: "Oferecer diagnósticos precisos em exames de sangue, análises clínicas, tomografia, ultrassonografia, mamografia e cardiologia com atendimento humanizado em Caraguatatuba - SP.",
   },
   {
     icon: Eye,
@@ -42,7 +42,7 @@ export default function SobreSection() {
           <div className="lg:col-span-6 reveal-left relative">
             <img
               src={TEAM_IMG}
-              alt="Recepção e sala de espera da Total Quality Medicina Diagnóstica em Caraguatatuba-SP - Ambiente moderno e acolhedor com parede verde e estrutura de madeira"
+              alt="Recepção e sala de espera da Total Quality Medicina Diagnóstica em Caraguatatuba - SP - Ambiente moderno e acolhedor com parede verde e estrutura de madeira"
               className="w-full h-[400px] lg:h-[550px] object-cover"
             />
             {/* Floating experience card */}
@@ -61,7 +61,7 @@ export default function SobreSection() {
               <span className="text-brand">TOTAL QUALITY</span>
             </h2>
             <p className="text-lg text-text-light leading-relaxed mb-8">
-              Fundada em 2003 em Caraguatatuba-SP, a Total Quality Medicina Diagnóstica é reconhecida como
+              Fundada em 2003 em Caraguatatuba - SP, a Total Quality Medicina Diagnóstica é reconhecida como
               <strong className="text-text"> "a clínica mais completa do Litoral Norte de São Paulo"</strong>. Nossa trajetória de mais de 20 anos é marcada pela excelência em tomografia, ultrassonografia, mamografia, ecocardiograma, exames laboratoriais e atendimento humanizado.
             </p>
 
@@ -141,7 +141,7 @@ export default function SobreSection() {
           <div className="lg:col-span-7 reveal-right">
             <img
               src={CLINIC_IMG}
-              alt="Clínica Total Quality Medicina Diagnóstica em Caraguatatuba-SP - Estrutura moderna com equipamentos de tomografia e diagnóstico por imagem"
+              alt="Clínica Total Quality Medicina Diagnóstica em Caraguatatuba - SP - Estrutura moderna com equipamentos de tomografia e diagnóstico por imagem"
               className="w-full h-[350px] lg:h-[450px] object-cover"
             />
           </div>
