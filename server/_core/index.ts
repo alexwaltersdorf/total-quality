@@ -30,6 +30,34 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 async function startServer() {
   const app = express();
   const server = createServer(app);
+  // Canonical host redirect — force https://www.totalquality.med.br
+  // Combines:
+  //   - apex → www (totalquality.med.br → www.totalquality.med.br)
+  //   - http → https (when behind a reverse proxy that forwards X-Forwarded-Proto)
+  // Goal: consolidate all traffic on a single canonical host for analytics
+  // (Google Analytics, Facebook/Meta Pixel, TikTok Pixel, Instagram, etc.)
+  app.set("trust proxy", 1);
+  app.use((req, res, next) => {
+    // Skip in development so localhost previews keep working
+    if (process.env.NODE_ENV !== "production") return next();
+
+    const host = (req.headers.host || "").toLowerCase();
+    const proto = req.protocol; // resolves correctly thanks to trust proxy
+
+    // Only enforce on the production domain — preview / staging hosts pass through
+    const isProductionDomain =
+      host === "totalquality.med.br" || host === "www.totalquality.med.br";
+    if (!isProductionDomain) return next();
+
+    const isCanonical = host === "www.totalquality.med.br" && proto === "https";
+    if (isCanonical) return next();
+
+    return res.redirect(
+      301,
+      `https://www.totalquality.med.br${req.originalUrl}`
+    );
+  });
+
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
