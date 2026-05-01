@@ -1,79 +1,109 @@
-# Configuração dos secrets para o GitHub Action de deploy
+# Configuração de secrets — Deploy automático Hostinger
 
-Para o deploy automático funcionar, configure os 5 secrets abaixo em:
-**Repo → Settings → Secrets and variables → Actions → New repository secret**
+> Servidor identificado: **Hostinger Premium** (CloudLinux + Phusion Passenger)
+> App em: `/home/u666428935/domains/totalquality.med.br/nodejs/`
+> Node: 22.18.0 (alt-nodejs22)
+> Restart: Phusion Passenger via `touch tmp/restart.txt`
 
-URL direta: https://github.com/alexwaltersdorf/total-quality/settings/secrets/actions
+## Os 5 secrets
 
-| Nome do secret      | Valor                                               | Como obter |
-|---------------------|------------------------------------------------------|------------|
-| `HOSTINGER_HOST`    | IP ou hostname do servidor Hostinger                 | Painel hPanel → Servidores → IP |
-| `HOSTINGER_USER`    | Usuário SSH (ex: `root` ou `u123456`)               | Mesmo do hPanel SSH |
-| `HOSTINGER_PORT`    | Porta SSH (geralmente `22` ou `65002`)              | hPanel → Avançado → Acesso SSH |
-| `HOSTINGER_SSH_KEY` | Chave SSH PRIVADA (PEM, conteúdo completo)          | Veja abaixo  |
-| `HOSTINGER_PATH`    | Caminho absoluto do repo no servidor (ex: `/home/u123456/total-quality`) | `pwd` no servidor |
+Cadastre em: 👉 https://github.com/alexwaltersdorf/total-quality/settings/secrets/actions
 
-## Como gerar a SSH key
+| Nome do secret      | Valor                                                                       |
+|---------------------|------------------------------------------------------------------------------|
+| `HOSTINGER_HOST`    | `185.211.7.136`                                                             |
+| `HOSTINGER_USER`    | `u666428935`                                                                |
+| `HOSTINGER_PORT`    | `65002` (porta SSH padrão do Hostinger Premium)                             |
+| `HOSTINGER_PATH`    | `/home/u666428935/domains/totalquality.med.br/nodejs`                       |
+| `HOSTINGER_SSH_KEY` | (chave PRIVADA — gere abaixo)                                               |
 
-No seu terminal local (PowerShell):
+> **Confirme `HOSTINGER_PORT`:** veja em hPanel → Avançado → Acesso SSH. Pode ser 22 ou 65002 dependendo da configuração.
 
-```powershell
-ssh-keygen -t ed25519 -C "github-deploy@total-quality" -f $env:USERPROFILE\.ssh\hostinger_deploy
-```
+## Como gerar a chave SSH e cadastrar
 
-Aperta Enter quando pedir senha (deixa vazio para o GitHub Action conseguir usar).
+### Etapa 1 — Gerar chave SSH no SERVIDOR Hostinger
 
-Isso gera dois arquivos:
-- `hostinger_deploy` → chave PRIVADA (vai no secret `HOSTINGER_SSH_KEY`)
-- `hostinger_deploy.pub` → chave PÚBLICA (vai no servidor)
-
-### Adicionar a pública no servidor Hostinger
-
-Conecta via SSH no servidor com sua autenticação atual e roda:
+Conecta no SSH do servidor (mesma sessão que você está usando) e roda:
 
 ```bash
-mkdir -p ~/.ssh
-chmod 700 ~/.ssh
-echo "<conteudo-do-arquivo-hostinger_deploy.pub>" >> ~/.ssh/authorized_keys
-chmod 600 ~/.ssh/authorized_keys
+ssh-keygen -t ed25519 -C "github-deploy@total-quality" -f ~/.ssh/github_deploy -N ""
 ```
 
-### Colocar a privada no GitHub
+Isso cria dois arquivos:
+- `~/.ssh/github_deploy` — chave PRIVADA (vai pro GitHub Secret)
+- `~/.ssh/github_deploy.pub` — chave PÚBLICA (fica no servidor)
 
-1. Abre o arquivo `hostinger_deploy` (a chave privada) no editor
-2. Copia TODO o conteúdo, incluindo as linhas `-----BEGIN OPENSSH PRIVATE KEY-----` e `-----END OPENSSH PRIVATE KEY-----`
-3. Cola no secret `HOSTINGER_SSH_KEY` no GitHub
+### Etapa 2 — Adicionar a chave pública nas chaves autorizadas do servidor
 
-## Pré-requisitos no servidor
+```bash
+cat ~/.ssh/github_deploy.pub >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+chmod 700 ~/.ssh
+```
 
-Antes do primeiro deploy automático funcionar, certifique-se de que no servidor:
+Isso autoriza o GitHub Action a fazer SSH no servidor usando essa chave.
 
-1. **Repo está clonado:** `git clone https://github.com/alexwaltersdorf/total-quality.git` no path que vai virar `HOSTINGER_PATH`
-2. **Node + pnpm instalados:** `node --version` e `pnpm --version` precisam responder
-3. **`.env` configurado:** copie de `ENVIRONMENT_TEMPLATE.md` e preencha
-4. **Gerenciador de processo:** instale o PM2 (`npm install -g pm2`) e inicie a app uma vez:
-   ```bash
-   pm2 start dist/index.js --name total-quality
-   pm2 save
-   pm2 startup   # para auto-restart no reboot
-   ```
+### Etapa 3 — Copiar a chave privada para o GitHub Secret
 
-## Como testar o deploy
+No servidor, mostra a chave privada:
 
-Depois de configurar os 5 secrets:
+```bash
+cat ~/.ssh/github_deploy
+```
 
-**Opção 1 — Disparar manualmente:** vai em Actions → "Deploy to Hostinger" → "Run workflow"
+Copia **TUDO** que aparece (incluindo as linhas `-----BEGIN OPENSSH PRIVATE KEY-----` e `-----END OPENSSH PRIVATE KEY-----`).
 
-**Opção 2 — Mergear um PR na main:** o workflow dispara sozinho
+No GitHub, vai em https://github.com/alexwaltersdorf/total-quality/settings/secrets/actions, clica **"New repository secret"**:
+- Name: `HOSTINGER_SSH_KEY`
+- Secret: cola o conteúdo da chave privada
 
-Acompanhe o progresso em: https://github.com/alexwaltersdorf/total-quality/actions
+Salva.
+
+### Etapa 4 — Cadastra os outros 4 secrets
+
+Repete o "New repository secret" para cada um:
+
+| Nome | Valor |
+|------|-------|
+| `HOSTINGER_HOST` | `185.211.7.136` |
+| `HOSTINGER_USER` | `u666428935` |
+| `HOSTINGER_PORT` | `65002` (ou outro, conforme hPanel) |
+| `HOSTINGER_PATH` | `/home/u666428935/domains/totalquality.med.br/nodejs` |
+
+## Testar antes do primeiro merge real
+
+Depois dos 5 secrets cadastrados:
+
+1. Vai em https://github.com/alexwaltersdorf/total-quality/actions
+2. Clica em "Deploy to Hostinger" no menu lateral
+3. Clica "Run workflow" → seleciona branch `main` → "Run workflow"
+4. Acompanha o progresso. Se rodar verde, está tudo certo.
+
+## Como funciona o ciclo a partir daí
+
+1. Você (ou qualquer pessoa) faz merge na main no GitHub
+2. O Action dispara automaticamente em ~30 segundos
+3. SSH no servidor → git pull + pnpm install + pnpm build → touch tmp/restart.txt
+4. Phusion Passenger detecta o restart.txt e recarrega a app
+5. Em ~3-5 minutos o site está atualizado
+6. Confere em https://www.totalquality.med.br/
 
 ## Troubleshooting
 
 | Sintoma | Causa provável |
-|---------|---------------|
-| "Permission denied (publickey)" | Chave pública não está no `authorized_keys` do servidor |
-| "Host key verification failed" | Servidor mudou de host key. Adicione `host_key: ""` no step |
-| "pnpm: command not found" | PATH do GitHub Action não acha o pnpm. Edite o `export PATH=` no script |
-| "frozen-lockfile" error | `pnpm-lock.yaml` desatualizado. Rode `pnpm install` local e commite |
-| App não reinicia | PM2/systemd não estão configurados. Veja "Pré-requisitos" acima |
+|---------|----------------|
+| `Permission denied (publickey)` | Chave pública não foi adicionada em `~/.ssh/authorized_keys`. Refaz a etapa 2. |
+| `Host key verification failed` | Adicione `host_key_check: false` ou `host_key: ""` no step do workflow |
+| `pnpm: command not found` | PATH errado no script. Já está corrigido pra alt-nodejs22 — se mudar a versão, ajusta |
+| `frozen-lockfile` error | `pnpm-lock.yaml` desatualizado entre o que está commitado e o que o servidor tem. Roda `pnpm install` local e commita |
+| `App não reinicia após deploy` | Passenger pode estar com cache. Verifica `tmp/restart.txt` foi criado. Se não, gera com `mkdir -p tmp && touch tmp/restart.txt` manual |
+| `git pull` pede credencial | Repo voltou a ser privado. Configurar Deploy Key SSH no GitHub e trocar remote pra `git@github.com:...` |
+
+## Próxima evolução (opcional)
+
+Se quiser blindar contra o repo virar privado:
+
+1. Gera outra chave SSH no servidor (ou usa a mesma)
+2. Cadastra a pública como **Deploy Key** em https://github.com/alexwaltersdorf/total-quality/settings/keys
+3. No servidor: `git remote set-url origin git@github.com:alexwaltersdorf/total-quality.git`
+4. Pronto: pull funciona via SSH key, sem precisar de credencial HTTPS

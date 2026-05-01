@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy on Hostinger VPS
+    name: Deploy on Hostinger (CloudLinux + Passenger)
     runs-on: ubuntu-latest
     steps:
       - name: Deploy via SSH
@@ -23,37 +23,33 @@ jobs:
           username: ${{ secrets.HOSTINGER_USER }}
           key: ${{ secrets.HOSTINGER_SSH_KEY }}
           port: ${{ secrets.HOSTINGER_PORT }}
-          command_timeout: 20m
+          command_timeout: 30m
           script: |
             set -e
-            # Garante que pnpm/node estão no PATH (Hostinger geralmente exige isto)
-            export PATH="$HOME/.local/share/pnpm:$HOME/.npm-global/bin:/usr/local/bin:$PATH"
+
+            # Hostinger Premium: Node 22 via CloudLinux Node Selector
+            export PATH="/opt/alt/alt-nodejs22/root/usr/bin:$PATH"
+
+            # Garante que pnpm está disponível via corepack
+            corepack enable >/dev/null 2>&1 || true
 
             cd "${{ secrets.HOSTINGER_PATH }}"
 
-            echo "==> 1/5 Pull do branch main"
+            echo "==> [1/5] Pull do branch main"
             git fetch origin main
             git reset --hard origin/main
 
-            echo "==> 2/5 Instalando dependencias (pnpm install --frozen-lockfile)"
+            echo "==> [2/5] Instalando dependencias (pnpm install --frozen-lockfile)"
             pnpm install --frozen-lockfile
 
-            echo "==> 3/5 Build da aplicacao (pnpm build)"
+            echo "==> [3/5] Build da aplicacao (pnpm build)"
             pnpm build
 
-            echo "==> 4/5 Restart da aplicacao"
-            if command -v pm2 >/dev/null 2>&1 && pm2 describe total-quality >/dev/null 2>&1; then
-              echo "    -> Detectado PM2"
-              pm2 restart total-quality --update-env
-              pm2 save
-            elif systemctl list-units --type=service --all 2>/dev/null | grep -q total-quality; then
-              echo "    -> Detectado systemd"
-              sudo systemctl restart total-quality
-            else
-              echo "ERRO: Nem PM2 nem systemd service 'total-quality' encontrados."
-              echo "Configure um gerenciador de processo antes do proximo deploy."
-              echo "Sugestao: pm2 start dist/index.js --name total-quality && pm2 save"
-              exit 1
-            fi
+            echo "==> [4/5] Restart via Phusion Passenger"
+            mkdir -p tmp
+            touch tmp/restart.txt
 
-            echo "==> 5/5 Deploy concluido com sucesso em $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "==> [5/5] Deploy OK em $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "    Node:  $(node --version)"
+            echo "    pnpm:  $(pnpm --version)"
+            echo "    Path:  $(pwd)"
