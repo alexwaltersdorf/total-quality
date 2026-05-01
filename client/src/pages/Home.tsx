@@ -33,10 +33,10 @@ export default function Home() {
   const scrollRef = useScrollReveal();
 
   useEffect(() => {
-    document.title = "Laboratório em Caraguatatuba | Total Quality Diagnóstica";
+    document.title = "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", "Laboratório de análises clínicas em Caraguatatuba - SP. Mais de 3.000 exames: hemograma, tomografia, ultrassom e muito mais. Agende pelo WhatsApp!");
+      metaDesc.setAttribute("content", "Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba - SP há 21 anos. Mais de 3.000 exames: hemograma, glicemia, tomografia, ultrassom, raio-X e check-up. Agende pelo WhatsApp.");
     }
 
     // Initialize analytics capture for dashboard

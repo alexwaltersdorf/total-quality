@@ -64,11 +64,11 @@ export default function CheckUp() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "Check-Up Preventivo em Caraguatatuba - SP | Total Quality Medicina Diagnóstica";
+    document.title = "Check-Up Preventivo em Caraguatatuba | Laboratório Total Quality";
   }, []);
 
   // SEO: Meta description e canonical
-  useMetaDescription("Check-up preventivo completo em Caraguatatuba - SP. Pacotes básico, completo e premium com hemograma, glicemia, colesterol, tomografia, ecocardiograma e mais. Resultados em 48h. Agende na Total Quality.");
+  useMetaDescription("Check-up preventivo completo em Caraguatatuba - SP no Laboratório Total Quality. Pacotes Básico, Completo e Premium com hemograma, glicemia, colesterol, tomografia, ecocardiograma e mais. Resultados em até 48h. Agende pelo WhatsApp.");
   useCanonical("/checkup");
 
   useEffect(() => {
@@ -116,6 +116,9 @@ export default function CheckUp() {
                 CHECK-UP
                 <br />
                 <span className="text-brand">PREVENTIVO</span>
+                <span className="block text-base lg:text-lg text-text-light font-light tracking-wide mt-4 normal-case">
+                  Check-Up Preventivo em Caraguatatuba - SP | Laboratório e Medicina Diagnóstica
+                </span>
               </h1>
               <p className="reveal text-lg text-text-light leading-relaxed max-w-md mb-8" style={{ transitionDelay: "200ms" }}>
                 Cuide da sua saúde de forma completa. Nossos pacotes de check-up combinam exames laboratoriais, de imagem e cardiológicos para uma avaliação abrangente do seu estado de saúde.

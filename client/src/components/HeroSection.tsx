@@ -37,16 +37,16 @@ export default function HeroSection() {
               <span className="section-label mb-8 block">Laboratório e Medicina Diagnóstica Caraguatatuba - SP</span>
             </div>
 
-            <h1 className="reveal mb-8" style={{ transitionDelay: "100ms" }}>
-              <span className="heading-display text-[clamp(3.5rem,10vw,8rem)] leading-[0.85] block">
+            <div className="reveal mb-8" style={{ transitionDelay: "100ms" }}>
+              <span className="heading-display text-[clamp(3.5rem,10vw,8rem)] leading-[0.85] block" aria-hidden="true">
                 <span className="text-text">TOTAL</span>
                 <br />
                 <span className="text-brand">QUALITY</span>
               </span>
-              <span className="block text-lg lg:text-xl text-text-light font-light tracking-wide mt-4">
-                Laboratório de Análises Clínicas e Medicina Diagnóstica em Caraguatatuba - SP
-              </span>
-            </h1>
+              <h1 className="block text-lg lg:text-xl text-text-light font-light tracking-wide mt-4">
+                Laboratório de Análises Clínicas e Medicina Diagnóstica em Caraguatatuba
+              </h1>
+            </div>
 
             <p className="reveal text-lg text-text-light leading-relaxed max-w-md mb-10" style={{ transitionDelay: "200ms" }}>
               Desde 2003, mais de 30.000 famílias confiam no nosso laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba. Realizamos exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma e check-up preventivo com tecnologia de última geração.
