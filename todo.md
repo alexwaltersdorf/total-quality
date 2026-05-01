@@ -180,3 +180,10 @@
 ## Widget Soro na Página Blog
 - [x] Implementar widget Soro (embed HTML) na página Blog.tsx
 - [x] Adicionar script Soro no index.html
+
+
+## Correções de Erros SEO
+- [x] ERRO 1: Adicionar tag H1 faltante em todas as páginas (estruturado logicamente)
+  - [x] ComponentShowcase.tsx - Adicionado H1 "Shadcn/ui Component Library"
+  - [x] Home.tsx - H1 já existe em HeroSection.tsx ("TOTAL QUALITY")
+  - [x] Todas as outras páginas já possuem H1

@@ -1,0 +1,10 @@
+# Variáveis de ambiente (contém credenciais sensíveis)
+.env.backup
+.env
+
+# Logs
+*.log
+
+# Backups (não sincronizar com Git)
+backup-*.sql.gz
+*.sql.gz

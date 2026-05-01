@@ -230,9 +230,12 @@ export default function ComponentsShowcase() {
     <div className="min-h-screen bg-background text-foreground">
       <main className="container max-w-6xl mx-auto">
         <div className="space-y-2 justify-between flex">
-          <h2 className="text-3xl font-bold tracking-tight mb-6">
-            Shadcn/ui Component Library
-          </h2>
+          <div>
+            <h1 className="text-4xl font-bold tracking-tight mb-2">
+              Shadcn/ui Component Library
+            </h1>
+            <p className="text-muted-foreground mb-6">Showcase of all available UI components</p>
+          </div>
           <Button variant="outline" size="icon" onClick={toggleTheme}>
             {theme === "light" ? (
               <Moon className="h-5 w-5" />
