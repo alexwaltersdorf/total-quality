@@ -1,0 +1,55 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# Garante que dois deploys nunca rodam ao mesmo tempo
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy on Hostinger (CloudLinux + Passenger)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          port: ${{ secrets.HOSTINGER_PORT }}
+          command_timeout: 30m
+          script: |
+            set -e
+
+            # Hostinger Premium: Node 22 via CloudLinux Node Selector
+            export PATH="/opt/alt/alt-nodejs22/root/usr/bin:$PATH"
+
+            # Garante que pnpm está disponível via corepack
+            corepack enable >/dev/null 2>&1 || true
+
+            cd "${{ secrets.HOSTINGER_PATH }}"
+
+            echo "==> [1/5] Pull do branch main"
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo "==> [2/5] Instalando dependencias (pnpm install --frozen-lockfile)"
+            pnpm install --frozen-lockfile
+
+            echo "==> [3/5] Build da aplicacao (pnpm build)"
+            pnpm build
+
+            echo "==> [4/5] Restart via Phusion Passenger"
+            mkdir -p tmp
+            touch tmp/restart.txt
+
+            echo "==> [5/5] Deploy OK em $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "    Node:  $(node --version)"
+            echo "    pnpm:  $(pnpm --version)"
+            echo "    Path:  $(pwd)"

@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react";
 import { ArrowUpRight, ArrowLeft, Zap, TrendingUp, Droplets, Bone, Flame, Scale, Target, Users, BarChart3 } from "lucide-react";
 import { Link } from "wouter";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
-import { useCanonical, useMetaDescription } from "@/components/SEOHead";
+import { useCanonical, useMetaDescription, useFAQSchema, useMedicalTestSchema } from "@/components/SEOHead";
 
 const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/bioimpedancia-hero-JBi4rGhcubZh8PJVdKomAz.webp";
 const DETAIL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/bioimpedancia-detail-impYZJEExk9frRXt9avf3V.webp";
@@ -41,12 +41,20 @@ export default function Bioimpedancia() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "Bioimpedância em Caraguatatuba - SP | Total Quality Medicina Diagnóstica";
+    document.title = "Bioimpedância em Caraguatatuba | Total Quality Medicina Diagnóstica";
   }, []);
 
   // SEO: Meta description e canonical
-  useMetaDescription("Exame de bioimpedância corporal em Caraguatatuba - SP. Avaliação precisa de gordura corporal, massa muscular, água corporal e taxa metabólica basal. Rápido, indolor e sem preparo. Agende na Total Quality.");
+  useMetaDescription("Exame de bioimpedância em Caraguatatuba - SP na Total Quality Medicina Diagnóstica. Análise precisa de gordura corporal, massa muscular, água corporal, gordura visceral e taxa metabólica basal. Rápido e indolor. Agende pelo WhatsApp.");
   useCanonical("/bioimpedancia");
+
+  // SEO: Structured Data — FAQPage + MedicalTest
+  useFAQSchema(faqs);
+  useMedicalTestSchema({
+    name: "Bioimpedância",
+    description: "Exame de bioimpedância em Caraguatatuba - SP. Análise da composição corporal: gordura, músculo, água, gordura visceral e taxa metabólica basal.",
+    url: "/bioimpedancia",
+  });
 
   useEffect(() => {
     const root = wrapperRef.current;
@@ -93,6 +101,9 @@ export default function Bioimpedancia() {
                 BIO
                 <br />
                 <span className="text-brand">IMPEDÂNCIA</span>
+                <span className="block text-base lg:text-lg text-text-light font-light tracking-wide mt-4 normal-case">
+                  Bioimpedância em Caraguatatuba - SP | Total Quality Medicina Diagnóstica
+                </span>
               </h1>
               <p className="reveal text-lg text-text-light leading-relaxed max-w-md mb-8" style={{ transitionDelay: "200ms" }}>
                 Conheça seu corpo por dentro. A bioimpedância é o exame mais preciso e acessível para analisar sua composição corporal completa: gordura, músculo, água e muito mais.
