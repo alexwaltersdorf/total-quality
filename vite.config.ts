@@ -19,6 +19,23 @@ export default defineConfig({
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
     chunkSizeWarningLimit: 1500,
+    rollupOptions: {
+      output: {
+        // Code-splitting estrategico para reduzir bundle inicial e melhorar INP/LCP
+        manualChunks: {
+          "react-vendor": ["react", "react-dom", "wouter"],
+          "ui-radix": [
+            "@radix-ui/react-accordion",
+            "@radix-ui/react-dialog",
+            "@radix-ui/react-dropdown-menu",
+            "@radix-ui/react-tabs",
+            "@radix-ui/react-tooltip",
+          ],
+          "icons": ["lucide-react"],
+          "forms": ["react-hook-form", "zod"],
+        },
+      },
+    },
   },
   server: {
     host: true,

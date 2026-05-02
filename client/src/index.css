@@ -272,3 +272,46 @@
 .animate-bounce-gentle {
   animation: bounce-gentle 2s ease-in-out infinite;
 }
+
+
+/* CWV: Fallback font metrics para evitar CLS quando Bebas Neue carrega */
+@font-face {
+  font-family: 'Bebas Neue Fallback';
+  src: local('Arial Black'), local('Impact');
+  size-adjust: 86%;
+  ascent-override: 90%;
+  descent-override: 20%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'DM Sans Fallback';
+  src: local('Arial'), local('Helvetica');
+  size-adjust: 95%;
+  ascent-override: 95%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
+
+/* CWV: Aplica fallback antes da fonte real carregar — reduz CLS */
+.heading-display {
+  font-family: 'Bebas Neue', 'Bebas Neue Fallback', sans-serif;
+}
+
+body {
+  font-family: 'DM Sans', 'DM Sans Fallback', system-ui, -apple-system, sans-serif;
+}
+
+/* CWV: prefers-reduced-motion — desabilita animacoes para usuarios que preferem */
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-left, .reveal-right {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .animate-marquee {
+    animation: none !important;
+  }
+  html {
+    scroll-behavior: auto !important;
+  }
+}

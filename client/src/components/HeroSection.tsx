@@ -90,13 +90,15 @@ export default function HeroSection() {
           </div>
 
           {/* Right column - Hero image */}
-          <div className="lg:col-span-6 xl:col-span-7 reveal-right">
-            <div className="relative">
+          <div className="lg:col-span-6 xl:col-span-7">
+            <div className="relative aspect-[4/3] lg:aspect-auto lg:h-[80vh]">
               <img
                 src={HERO_IMAGE}
                 alt="Clínica Total Quality Medicina Diagnóstica em Caraguatatuba - SP - Interior moderno com equipamentos de tomografia e diagnóstico por imagem"
-                className="w-full h-[50vh] lg:h-[80vh] object-cover"
+                className="w-full h-full object-cover"
                 loading="eager"
+                fetchPriority="high"
+                decoding="async"
                 width="800"
                 height="600"
               />
