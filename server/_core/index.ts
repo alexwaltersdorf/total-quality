@@ -42,16 +42,19 @@ async function startServer() {
     if (process.env.NODE_ENV !== "production") return next();
 
     const host = (req.headers.host || "").toLowerCase();
-    const proto = req.protocol; // resolves correctly thanks to trust proxy
+    // Check for HTTPS: either proto is https OR X-Forwarded-Proto header is https
+    const isHttps = req.protocol === "https" || req.get("X-Forwarded-Proto") === "https";
 
     // Only enforce on the production domain — preview / staging hosts pass through
     const isProductionDomain =
       host === "totalquality.med.br" || host === "www.totalquality.med.br";
     if (!isProductionDomain) return next();
 
-    const isCanonical = host === "totalquality.med.br" && proto === "https";
+    // Check if already on canonical domain with HTTPS
+    const isCanonical = host === "totalquality.med.br" && isHttps;
     if (isCanonical) return next();
 
+    // Redirect to canonical domain (without www) and ensure HTTPS
     return res.redirect(
       301,
       `https://totalquality.med.br${req.originalUrl}`
