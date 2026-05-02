@@ -26,45 +26,37 @@ jobs:
           script: |
             set -e
 
-            # Hostinger Premium: Node 22 via CloudLinux Node Selector
             NODE_BIN="/opt/alt/alt-nodejs22/root/usr/bin"
             PNPM="/opt/alt/alt-nodejs22/root/usr/lib/node_modules/corepack/shims/pnpm"
             export PATH="$NODE_BIN:$PATH"
-
-            # CRITICO: CloudLinux LVE limita threads por usuario.
-            # Tailwind v4 (rayon) e lightningcss usam thread pools.
-            # Forca single-thread para evitar EAGAIN/WouldBlock.
             export RAYON_NUM_THREADS=1
             export UV_THREADPOOL_SIZE=1
             export NODE_OPTIONS="--max-old-space-size=1024"
 
-            # Sanity checks
-            if [ ! -x "$NODE_BIN/node" ]; then
-              echo "ERRO: Node nao encontrado em $NODE_BIN/node"
-              exit 1
-            fi
-            if [ ! -f "$PNPM" ]; then
-              echo "ERRO: pnpm shim nao encontrado em $PNPM"
-              exit 1
-            fi
+            if [ ! -x "$NODE_BIN/node" ]; then echo "ERRO: Node nao encontrado"; exit 1; fi
+            if [ ! -f "$PNPM" ]; then echo "ERRO: pnpm shim nao encontrado"; exit 1; fi
 
             cd "${{ secrets.HOSTINGER_PATH }}"
 
-            echo "==> [1/5] Pull do branch main"
+            echo "==> [1/6] Pull do branch main"
             git fetch origin main
             git reset --hard origin/main
 
-            echo "==> [2/5] Instalando dependencias (pnpm install --frozen-lockfile)"
+            echo "==> [2/6] Instalando dependencias (build scripts permitidos via package.json)"
             "$PNPM" install --frozen-lockfile
 
-            echo "==> [3/5] Build da aplicacao (single-threaded)"
+            echo "==> [3/6] Restaurando bit de execucao dos binarios (workaround CageFS)"
+            find node_modules -path "*/.bin/*" -type f -exec chmod +x {} \; 2>/dev/null || true
+            find node_modules/.pnpm -name "*.cjs" -path "*/bin/*" -exec chmod +x {} \; 2>/dev/null || true
+            find node_modules/.pnpm -name "*.js" -path "*/bin/*" -exec chmod +x {} \; 2>/dev/null || true
+
+            echo "==> [4/6] Build da aplicacao (single-threaded)"
             "$PNPM" build
 
-            echo "==> [4/5] Restart via Phusion Passenger"
+            echo "==> [5/6] Restart via Phusion Passenger"
             mkdir -p tmp
             touch tmp/restart.txt
 
-            echo "==> [5/5] Deploy OK em $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "==> [6/6] Deploy OK em $(date '+%Y-%m-%d %H:%M:%S')"
             echo "    Node:  $(node --version)"
             echo "    pnpm:  $("$PNPM" --version)"
-            echo "    Path:  $(pwd)"
