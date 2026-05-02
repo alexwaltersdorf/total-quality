@@ -5,7 +5,7 @@
  */
 import { useEffect } from "react";
 
-const SITE_URL = "https://www.totalquality.med.br";
+const SITE_URL = "https://totalquality.med.br";
 const ORG_NAME = "Total Quality Medicina Diagnóstica";
 
 // ── Breadcrumb Schema ──

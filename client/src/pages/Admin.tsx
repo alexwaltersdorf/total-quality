@@ -1817,7 +1817,7 @@ const UTM_PLATFORMS = [
 ];
 
 function UTMBuilderTab() {
-  const [baseUrl, setBaseUrl] = useState("https://www.totalquality.med.br");
+  const [baseUrl, setBaseUrl] = useState("https://totalquality.med.br");
   const [utmSource, setUtmSource] = useState("");
   const [utmMedium, setUtmMedium] = useState("");
   const [utmCampaign, setUtmCampaign] = useState("");
@@ -1907,7 +1907,7 @@ function UTMBuilderTab() {
             <Input
               value={baseUrl}
               onChange={(e) => setBaseUrl(e.target.value)}
-              placeholder="https://www.totalquality.med.br"
+              placeholder="https://totalquality.med.br"
             />
           </div>
 

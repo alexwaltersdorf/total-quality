@@ -30,9 +30,9 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 async function startServer() {
   const app = express();
   const server = createServer(app);
-  // Canonical host redirect — force https://www.totalquality.med.br
+  // Canonical host redirect — force https://totalquality.med.br (non-www)
   // Combines:
-  //   - apex → www (totalquality.med.br → www.totalquality.med.br)
+  //   - www → apex (www.totalquality.med.br → totalquality.med.br)
   //   - http → https (when behind a reverse proxy that forwards X-Forwarded-Proto)
   // Goal: consolidate all traffic on a single canonical host for analytics
   // (Google Analytics, Facebook/Meta Pixel, TikTok Pixel, Instagram, etc.)
@@ -49,12 +49,12 @@ async function startServer() {
       host === "totalquality.med.br" || host === "www.totalquality.med.br";
     if (!isProductionDomain) return next();
 
-    const isCanonical = host === "www.totalquality.med.br" && proto === "https";
+    const isCanonical = host === "totalquality.med.br" && proto === "https";
     if (isCanonical) return next();
 
     return res.redirect(
       301,
-      `https://www.totalquality.med.br${req.originalUrl}`
+      `https://totalquality.med.br${req.originalUrl}`
     );
   });
 

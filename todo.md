@@ -187,3 +187,9 @@
   - [x] ComponentShowcase.tsx - Adicionado H1 "Shadcn/ui Component Library"
   - [x] Home.tsx - H1 já existe em HeroSection.tsx ("TOTAL QUALITY")
   - [x] Todas as outras páginas já possuem H1
+
+
+## Consolidação de Domínio (www → sem www)
+- [x] Implementar Redirect 301 no Express (www.totalquality.med.br → totalquality.med.br)
+- [x] Implementar Redirect 301 no Express (HTTP → HTTPS)
+- [x] Adicionar Canonical Tag no index.html
