@@ -196,6 +196,17 @@
 
 
 ## Favicon
-- [ ] Converter imagem do coração com eletrocardiograma para favicon.ico
-- [ ] Adicionar favicon ao projeto em client/public/favicon.ico
-- [ ] Atualizar referência no index.html
+- [x] Converter imagem do coração com eletrocardiograma para favicon.ico
+- [x] Adicionar favicon ao projeto em client/public/favicon.ico
+- [x] Atualizar referência no index.html
+
+
+## Otimização de Core Web Vitals
+- [x] Reduzir LCP de 5,6s para <2,5s (otimizar imagem hero)
+- [x] Implementar lazy loading para imagens abaixo do fold
+- [x] Adicionar cache headers (Cache-Control, ETag)
+- [x] Otimizar bundle JavaScript (code splitting)
+- [x] Implementar preload para recursos críticos
+- [x] Reduzir Total Blocking Time (TBT) de 160ms
+- [x] Validar INP (Interaction to Next Paint)
+- [x] Testar com PageSpeed Insights após otimizações

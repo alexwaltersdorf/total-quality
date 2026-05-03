@@ -61,6 +61,36 @@ async function startServer() {
     );
   });
 
+  // CWV Optimization: Cache headers para assets estáticos
+  // Imagens, fonts, CSS, JS devem ser cacheados por longo tempo
+  app.use((req, res, next) => {
+    // Skip em desenvolvimento
+    if (process.env.NODE_ENV !== "production") return next();
+
+    // Cache imagens por 1 ano (assets imutáveis)
+    if (req.path.match(/\.(png|jpg|jpeg|gif|webp|svg|ico)$/i)) {
+      res.set("Cache-Control", "public, max-age=31536000, immutable");
+    }
+    // Cache fonts por 1 ano
+    else if (req.path.match(/\.(woff|woff2|ttf|eot)$/i)) {
+      res.set("Cache-Control", "public, max-age=31536000, immutable");
+    }
+    // Cache CSS/JS por 1 ano (vite adiciona hash no nome)
+    else if (req.path.match(/\.(css|js)$/i)) {
+      res.set("Cache-Control", "public, max-age=31536000, immutable");
+    }
+    // HTML: cache curto (5 minutos) para permitir atualizações
+    else if (req.path.endsWith(".html") || req.path === "/") {
+      res.set("Cache-Control", "public, max-age=300, must-revalidate");
+    }
+    // API: sem cache
+    else if (req.path.startsWith("/api/")) {
+      res.set("Cache-Control", "no-cache, no-store, must-revalidate");
+    }
+
+    next();
+  });
+
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
