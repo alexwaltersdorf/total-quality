@@ -217,3 +217,12 @@
 - [x] Atualizar todos os botões "Ligar" para usar formato +551238873535
 - [x] Atualizar todos os links de telefone (12 3887-3535) para +551238873535
 - [x] Validar links em todas as páginas
+
+
+## Página de Agradecimento Pós-Chamada
+- [x] Criar página ThankYouCall.tsx com mensagem de agradecimento
+- [x] Implementar redirecionamento automático para tel:+551238873535 após 3 segundos
+- [x] Adicionar rota /obrigado-chamada no App.tsx
+- [x] Atualizar CallRedirect.tsx para redirecionar para /obrigado-chamada primeiro
+- [x] Adicionar tracking de evento para Google Analytics
+- [x] Testar fluxo completo de clique em "Ligar" → página de agradecimento → chamada

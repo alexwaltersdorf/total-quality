@@ -14,6 +14,7 @@ import Admin from "./pages/Admin";
 import ExamePage from "./pages/ExamePage";
 import LaboratorioCaraguatatuba from "./pages/LaboratorioCaraguatatuba";
 import CallRedirect from "./pages/CallRedirect";
+import ThankYouCall from "./pages/ThankYouCall";
 
 function Router() {
   return (
@@ -29,6 +30,7 @@ function Router() {
       <Route path={"/admin"} component={Admin} />
       <Route path={"/admin/:tab"} component={Admin} />
       <Route path={"/ligar"} component={CallRedirect} />
+      <Route path={"/obrigado-chamada"} component={ThankYouCall} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
