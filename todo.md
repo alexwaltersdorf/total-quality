@@ -193,3 +193,9 @@
 - [x] Implementar Redirect 301 no Express (www.totalquality.med.br → totalquality.med.br)
 - [x] Implementar Redirect 301 no Express (HTTP → HTTPS)
 - [x] Adicionar Canonical Tag no index.html
+
+
+## Favicon
+- [ ] Converter imagem do coração com eletrocardiograma para favicon.ico
+- [ ] Adicionar favicon ao projeto em client/public/favicon.ico
+- [ ] Atualizar referência no index.html
