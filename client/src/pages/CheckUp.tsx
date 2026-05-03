@@ -16,30 +16,70 @@ const BENEFITS_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/J
 const checkupPackages = [
   {
     title: "Check-Up Básico",
-    subtitle: "Avaliação essencial",
+    subtitle: "19 Exames - Avaliação essencial",
     items: [
-      "Hemograma completo", "Glicemia de jejum", "Colesterol total e frações",
-      "Triglicerídeos", "Creatinina e Ureia", "TGO e TGP", "Urina tipo I", "Eletrocardiograma",
+      "Hemograma Completo",
+      "Glicemia",
+      "Hemoglobina Glicada",
+      "Insulina",
+      "Ferritina",
+      "Avaliação básica da Tiroíde: TSH",
+      "Perfil Lipídico (Colesterol Total, LDL, HDL, NÃO-HDL, VLDL, Triglicerídeos)",
+      "Avaliação da Função do Fígado: TGO, TGP, Gama GT",
+      "Avaliação da Função dos Rins: Ureia, Creatinina, Ácido Úrico, Urina Tipo I",
     ],
     highlight: false,
   },
   {
-    title: "Check-Up Completo",
-    subtitle: "Avaliação abrangente",
+    title: "Check-Up Select",
+    subtitle: "30 Exames - Avaliação abrangente",
     items: [
-      "Todos os exames do Básico", "TSH e T4 Livre", "PSA (homens) / Papanicolau (mulheres)",
-      "Ácido úrico", "Vitamina D", "Hemoglobina glicada", "Raio-X de tórax",
-      "Ultrassonografia abdominal", "Ecocardiograma", "Teste ergométrico",
+      "Avaliação Cardiológica: Eletrocardiograma, Espirometria, RX Tórax",
+      "Testosterona (Hormônio relacionado à massa muscular, saúde óssea e libido)",
+      "VHS (Avalia processo de inflamação no Organismo)",
+      "Sódio",
+      "Potássio",
+      "Fosfatase Alcalina",
+      "Vitamina B12",
+      "Vitamina D",
+      "Hemograma Completo",
+      "Glicemia",
+      "Hemoglobina Glicada",
+      "Insulina",
+      "Ferritina",
+      "Avaliação da Tiroíde: TSH, T3, T4 Livre",
+      "Perfil Lipídico (Colesterol Total, LDL, HDL, NÃO-HDL, VLDL, Triglicerídeos)",
+      "Avaliação da Função do Fígado: TGO, TGP, Gama GT",
+      "Avaliação da Função dos Rins: Ureia, Creatinina, Ácido Úrico, Urina Tipo I",
     ],
     highlight: true,
   },
   {
     title: "Check-Up Premium",
-    subtitle: "Avaliação completa + imagem",
+    subtitle: "39 Exames - Avaliação completa + imagem",
     items: [
-      "Todos os exames do Completo", "Tomografia de tórax", "Ressonância magnética",
-      "Doppler de carótidas", "Holter 24h", "MAPA 24h", "Densitometria óssea",
-      "Bioimpedância corporal", "Avaliação nutricional", "Consulta cardiológica",
+      "Avaliação Cerebral: Eletroencefalograma",
+      "Avaliação Pulmonar: Espirometria",
+      "Avaliação Cardiológica: MAPA, Holter, RX Tórax",
+      "Testosterona",
+      "VHS (Avalia processo de inflamação no Organismo)",
+      "Cortisol (Hormônio relacionado ao Estresse)",
+      "PCR",
+      "Sódio",
+      "Potássio",
+      "Vitamina B12",
+      "Vitamina D",
+      "Vitamina C",
+      "Hemograma Completo",
+      "Glicemia",
+      "Hemoglobina Glicada",
+      "Insulina",
+      "Ferritina",
+      "Avaliação da Tiroíde: TSH, T3, T4 Livre",
+      "Colesterol Total, LDL, HDL, NÃO-HDL, VLDL, Triglicerídeos",
+      "TGO, TGP, Gama GT, Fosfatase Alcalina",
+      "Ureia, Creatinina, Ácido Úrico, Urina Tipo I",
+      "CEA, CA 19-9, Sangue Oculto nas Fezes",
     ],
     highlight: false,
   },
@@ -68,7 +108,7 @@ export default function CheckUp() {
   }, []);
 
   // SEO: Meta description e canonical
-  useMetaDescription("Check-up preventivo completo em Caraguatatuba - SP no Laboratório Total Quality. Pacotes Básico, Completo e Premium com hemograma, glicemia, colesterol, tomografia, ecocardiograma e mais. Resultados em até 48h. Agende pelo WhatsApp.");
+  useMetaDescription("Check-up preventivo completo em Caraguatatuba - SP no Laboratório Total Quality. Pacotes Básico (19 exames), Select (30 exames) e Premium (39 exames) com hemograma, glicemia, colesterol, tomografia, ecocardiograma e mais. Resultados em até 48h. Agende pelo WhatsApp.");
   useCanonical("/checkup");
 
   useEffect(() => {
@@ -98,288 +138,191 @@ export default function CheckUp() {
             onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
             className="btn-pill"
           >
-            Agendar Check-Up
+            Agendar
             <ArrowUpRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-24 lg:pt-28">
-        <div className="container">
-          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-            <div className="lg:col-span-5 pt-8 lg:pt-16">
-              <div className="reveal">
-                <span className="section-label mb-6 block">Saúde Preventiva</span>
-              </div>
-              <h1 className="reveal heading-display text-[clamp(3rem,8vw,7rem)] text-text leading-[0.85] mb-6" style={{ transitionDelay: "100ms" }}>
-                CHECK-UP
-                <br />
-                <span className="text-brand">PREVENTIVO</span>
-                <span className="block text-base lg:text-lg text-text-light font-light tracking-wide mt-4 normal-case">
-                  Check-Up Preventivo em Caraguatatuba - SP | Laboratório e Medicina Diagnóstica
-                </span>
-              </h1>
-              <p className="reveal text-lg text-text-light leading-relaxed max-w-md mb-8" style={{ transitionDelay: "200ms" }}>
-                Cuide da sua saúde de forma completa. Nossos pacotes de check-up combinam exames laboratoriais, de imagem e cardiológicos para uma avaliação abrangente do seu estado de saúde.
-              </p>
-              <div className="reveal flex flex-wrap gap-4 mb-12" style={{ transitionDelay: "300ms" }}>
-                <button
-                  onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
-                  className="btn-pill-brand btn-pill"
-                >
-                  Agendar Agora
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  onClick={() => { const el = document.querySelector("#pacotes"); if (el) el.scrollIntoView({ behavior: "smooth" }); }}
-                  className="btn-pill bg-transparent !text-text border border-black/20 hover:!bg-black/5"
-                >
-                  Ver Pacotes
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-              <div className="reveal grid grid-cols-3 gap-6" style={{ transitionDelay: "400ms" }}>
-                {[
-                  { value: "48h", label: "Resultado\nem até" },
-                  { value: "30+", label: "Exames\nDisponíveis" },
-                  { value: "1", label: "Dia para\nTodos Exames" },
-                ].map((stat) => (
-                  <div key={stat.label}>
-                    <p className="heading-display text-4xl text-brand">{stat.value}</p>
-                    <p className="text-xs text-text-muted uppercase tracking-wider mt-1 whitespace-pre-line">{stat.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="lg:col-span-7 reveal-right">
-              <div className="relative">
-                <img src={HERO_IMG} alt="Check-Up Preventivo" className="w-full h-[50vh] lg:h-[75vh] object-cover" />
-                <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-5 max-w-xs shadow-sm">
-                  <p className="text-xs uppercase tracking-[0.15em] font-semibold text-brand mb-1">Tecnologia Avançada</p>
-                  <p className="text-sm text-text-light">Equipamentos de última geração para diagnósticos precisos</p>
-                </div>
-              </div>
+      <section className="pt-32 pb-16 lg:pb-24 px-4 bg-white">
+        <div className="container grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="reveal-left">
+            <p className="text-sm font-semibold text-brand mb-4 tracking-wide">SAÚDE PREVENTIVA</p>
+            <h1 className="heading-display text-5xl lg:text-6xl mb-6 leading-tight">
+              CHECK-UP <span className="text-brand">PREVENTIVO</span>
+            </h1>
+            <p className="text-lg text-text-muted mb-8 max-w-lg leading-relaxed">
+              Avaliação completa da sua saúde com exames laboratoriais e de imagem. Escolha o plano que melhor se adequa às suas necessidades.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
+                className="btn-pill !bg-brand !text-white hover:!bg-brand-dark"
+              >
+                Agendar Check-Up
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </button>
+              <a href="tel:+551238873535" className="btn-pill bg-transparent !text-text border border-black/20 hover:!bg-black/5">
+                Ligar: (12) 3887-3535
+              </a>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-24 lg:py-32">
-        <div className="container">
-          <div className="grid lg:grid-cols-12 gap-16 items-center">
-            <div className="lg:col-span-5 reveal-left">
-              <img src={BENEFITS_IMG} alt="Benefícios do check-up preventivo" className="w-full h-[400px] lg:h-[500px] object-cover" />
-            </div>
-            <div className="lg:col-span-7">
-              <div className="reveal">
-                <span className="section-label mb-6 block">Por que fazer?</span>
-                <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-4">
-                  BENEFÍCIOS DO<br /><span className="text-brand">CHECK-UP</span>
-                </h2>
-                <p className="text-text-light text-lg leading-relaxed max-w-lg mb-12">
-                  A medicina preventiva é a forma mais inteligente de cuidar da saúde. Descubra problemas antes que eles apareçam.
-                </p>
-              </div>
-              <div className="grid sm:grid-cols-2 gap-8">
-                {benefits.map((b, i) => (
-                  <div key={b.title} className="reveal" style={{ transitionDelay: `${i * 100}ms` }}>
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 flex items-center justify-center bg-surface-dark text-brand flex-shrink-0">
-                        <b.icon className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h3 className="heading-display text-xl text-text mb-2">{b.title}</h3>
-                        <p className="text-sm text-text-muted leading-relaxed">{b.desc}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+          <div className="reveal-right">
+            <img src={HERO_IMG} alt="Check-Up Preventivo" className="w-full rounded-lg shadow-lg" />
           </div>
         </div>
       </section>
 
       {/* Packages Section */}
-      <section id="pacotes" className="py-24 lg:py-32 bg-surface-dark">
+      <section className="py-20 px-4 bg-gray-50">
         <div className="container">
-          <div className="reveal text-center mb-16">
-            <span className="section-label mb-6 inline-block">Nossos Pacotes</span>
-            <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9]">
+          <div className="text-center mb-16 reveal">
+            <p className="text-sm font-semibold text-brand mb-4 tracking-wide">NOSSOS PACOTES</p>
+            <h2 className="heading-display text-4xl lg:text-5xl mb-6">
               ESCOLHA SEU <span className="text-brand">CHECK-UP</span>
             </h2>
+            <p className="text-lg text-text-muted max-w-2xl mx-auto">
+              Três opções de pacotes para atender diferentes necessidades de saúde e prevenção.
+            </p>
           </div>
-          <div className="grid lg:grid-cols-3 gap-8">
-            {checkupPackages.map((pkg, i) => (
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {checkupPackages.map((pkg, idx) => (
               <div
-                key={pkg.title}
-                className={`reveal p-8 lg:p-10 transition-all duration-300 ${
+                key={idx}
+                className={`reveal rounded-lg overflow-hidden transition-all ${
                   pkg.highlight
-                    ? "bg-brand text-white ring-2 ring-brand"
-                    : "bg-white border border-black/10 hover:border-brand/30"
+                    ? "md:scale-105 bg-brand text-white shadow-2xl"
+                    : "bg-white text-text shadow-lg hover:shadow-xl"
                 }`}
-                style={{ transitionDelay: `${i * 150}ms` }}
               >
                 {pkg.highlight && (
-                  <span className="inline-block text-[10px] uppercase tracking-[0.2em] font-semibold bg-white text-brand px-3 py-1 mb-6">
-                    Mais Popular
-                  </span>
+                  <div className="bg-white/20 px-4 py-2 text-center text-sm font-semibold tracking-wide">
+                    MAIS POPULAR
+                  </div>
                 )}
-                <h3 className={`heading-display text-3xl mb-1 ${pkg.highlight ? "text-white" : "text-text"}`}>{pkg.title}</h3>
-                <p className={`text-sm mb-8 ${pkg.highlight ? "text-white/70" : "text-text-muted"}`}>{pkg.subtitle}</p>
-                <ul className="space-y-3 mb-10">
-                  {pkg.items.map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <CheckCircle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${pkg.highlight ? "text-white/80" : "text-brand"}`} />
-                      <span className={`text-sm ${pkg.highlight ? "text-white/90" : "text-text-light"}`}>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  onClick={() => window.open(`https://wa.me/551238873535?text=Olá! Gostaria de agendar o ${pkg.title}.`, "_blank")}
-                  className={`w-full py-3.5 text-xs uppercase tracking-[0.15em] font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
-                    pkg.highlight
-                      ? "bg-white text-brand hover:bg-white/90"
-                      : "bg-brand text-white hover:bg-brand-dark"
-                  }`}
-                >
-                  Agendar {pkg.title}
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </button>
+                <div className="p-8">
+                  <h3 className={`text-2xl font-bold mb-2 ${pkg.highlight ? "text-white" : "text-brand"}`}>
+                    {pkg.title}
+                  </h3>
+                  <p className={`text-sm mb-6 ${pkg.highlight ? "text-white/80" : "text-text-muted"}`}>
+                    {pkg.subtitle}
+                  </p>
+
+                  <div className="space-y-3 mb-8">
+                    {pkg.items.map((item, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <CheckCircle className={`w-5 h-5 flex-shrink-0 mt-0.5 ${pkg.highlight ? "text-white" : "text-brand"}`} />
+                        <span className={`text-sm leading-relaxed ${pkg.highlight ? "text-white/90" : "text-text-muted"}`}>
+                          {item}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar o " + pkg.title + ".", "_blank")}
+                    className={`w-full py-3 px-4 rounded-lg font-semibold transition-all ${
+                      pkg.highlight
+                        ? "bg-white text-brand hover:bg-white/90"
+                        : "bg-brand text-white hover:bg-brand-dark"
+                    }`}
+                  >
+                    Agendar {pkg.title.split(" ")[1]}
+                    <ArrowUpRight className="w-3.5 h-3.5 inline ml-2" />
+                  </button>
+                </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className="py-20 px-4 bg-white">
+        <div className="container">
+          <div className="text-center mb-16 reveal">
+            <p className="text-sm font-semibold text-brand mb-4 tracking-wide">BENEFÍCIOS</p>
+            <h2 className="heading-display text-4xl lg:text-5xl mb-6">
+              POR QUE FAZER UM <span className="text-brand">CHECK-UP</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {benefits.map((benefit, idx) => {
+              const Icon = benefit.icon;
+              return (
+                <div key={idx} className="reveal bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-all">
+                  <Icon className="w-12 h-12 text-brand mb-4" />
+                  <h3 className="text-xl font-bold mb-3 text-text">{benefit.title}</h3>
+                  <p className="text-text-muted leading-relaxed">{benefit.desc}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* Process Section */}
-      <section className="py-24 lg:py-32 bg-white">
+      <section className="py-20 px-4 bg-gray-50">
         <div className="container">
-          <div className="grid lg:grid-cols-12 gap-16 items-start">
-            <div className="lg:col-span-6">
-              <div className="reveal">
-                <span className="section-label mb-6 block">Como Funciona</span>
-                <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-12">
-                  PROCESSO<br /><span className="text-brand">SIMPLIFICADO</span>
-                </h2>
-              </div>
-              <div className="space-y-0">
-                {processSteps.map((step, i) => (
-                  <div key={step.num} className="reveal flex gap-6 py-8 border-b border-black/10" style={{ transitionDelay: `${i * 100}ms` }}>
-                    <span className="number-outline text-6xl flex-shrink-0 w-20">{step.num}</span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="reveal-left">
+              <p className="text-sm font-semibold text-brand mb-4 tracking-wide">COMO FUNCIONA</p>
+              <h2 className="heading-display text-4xl lg:text-5xl mb-8">
+                PROCESSO <span className="text-brand">SIMPLES</span>
+              </h2>
+
+              <div className="space-y-6">
+                {processSteps.map((step, idx) => (
+                  <div key={idx} className="flex gap-6">
+                    <div className="flex-shrink-0">
+                      <div className="flex items-center justify-center h-12 w-12 rounded-full bg-brand text-white font-bold text-lg">
+                        {step.num}
+                      </div>
+                    </div>
                     <div>
-                      <h3 className="heading-display text-2xl text-text mb-2">{step.title}</h3>
-                      <p className="text-sm text-text-muted leading-relaxed">{step.desc}</p>
+                      <h3 className="text-xl font-bold text-text mb-2">{step.title}</h3>
+                      <p className="text-text-muted leading-relaxed">{step.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="lg:col-span-6 reveal-right lg:sticky lg:top-28">
-              <img src={PROCESS_IMG} alt="Laboratório moderno" className="w-full h-[400px] lg:h-[600px] object-cover" />
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Who Should Section */}
-      <section className="py-24 lg:py-32 bg-surface-dark">
-        <div className="container">
-          <div className="reveal text-center mb-16">
-            <span className="section-label mb-6 inline-block">Indicações</span>
-            <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-4">
-              QUEM DEVE FAZER <span className="text-brand">CHECK-UP?</span>
-            </h2>
-            <p className="text-text-light text-lg max-w-2xl mx-auto">
-              O check-up é recomendado para todas as idades, mas é especialmente importante em determinadas situações.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { icon: Heart, title: "Acima de 40 Anos", desc: "A partir desta idade, o risco de doenças cardiovasculares e metabólicas aumenta significativamente." },
-              { icon: Stethoscope, title: "Histórico Familiar", desc: "Se há casos de diabetes, hipertensão, câncer ou doenças cardíacas na família." },
-              { icon: Activity, title: "Sedentários", desc: "Pessoas com estilo de vida sedentário precisam monitorar indicadores metabólicos regularmente." },
-              { icon: FlaskConical, title: "Pré-Operatório", desc: "Avaliação completa antes de procedimentos cirúrgicos para garantir segurança." },
-              { icon: Brain, title: "Estresse Elevado", desc: "Profissionais com alta carga de estresse devem monitorar a saúde cardiovascular." },
-              { icon: Shield, title: "Prevenção Geral", desc: "Qualquer pessoa que deseja manter a saúde em dia e prevenir doenças silenciosas." },
-            ].map((item, i) => (
-              <div
-                key={item.title}
-                className="reveal bg-white p-8 border border-black/10 hover:border-brand/30 transition-all duration-300"
-                style={{ transitionDelay: `${i * 80}ms` }}
-              >
-                <item.icon className="w-6 h-6 text-brand mb-4" />
-                <h3 className="heading-display text-xl text-text mb-2">{item.title}</h3>
-                <p className="text-sm text-text-muted leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
+            <div className="reveal-right">
+              <img src={PROCESS_IMG} alt="Processo de Check-Up" className="w-full rounded-lg shadow-lg" />
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 lg:py-32 bg-brand text-white">
-        <div className="container">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="reveal">
-              <h2 className="heading-display text-[clamp(2.5rem,5vw,5rem)] leading-[0.85] mb-6">
-                AGENDE SEU<br /><span className="text-white/80">CHECK-UP HOJE</span>
-              </h2>
-              <p className="text-white/70 text-lg leading-relaxed max-w-md mb-8">
-                Não espere os sintomas aparecerem. A prevenção é o melhor caminho para uma vida longa e saudável.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <button
-                  onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
-                  className="btn-pill !bg-white !text-brand hover:!bg-white/90"
-                >
-                  Agendar pelo WhatsApp
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </button>
-                <a href="tel:+551238873535" className="btn-pill bg-transparent !text-white border border-white/30 hover:!bg-white/10">
-                  (12) 3887-3535
-                </a>
-              </div>
-            </div>
-            <div className="reveal-right">
-              <div className="bg-white/10 border border-white/20 p-8 lg:p-10">
-                <h3 className="heading-display text-2xl mb-6">INFORMAÇÕES IMPORTANTES</h3>
-                <div className="space-y-4">
-                  {[
-                    { label: "Horário", value: "Segunda a Sexta, 08h às 18h" },
-                    { label: "Local", value: "R. Padre Anchieta, 1010 - Centro, Caraguatatuba - SP" },
-                    { label: "Preparo", value: "Jejum de 12 horas para exames laboratoriais" },
-                    { label: "Resultados", value: "Disponíveis em até 48 horas úteis" },
-                    { label: "Convênios", value: "Aceitamos os principais convênios médicos" },
-                  ].map((info) => (
-                    <div key={info.label} className="flex justify-between items-start py-3 border-b border-white/20">
-                      <span className="text-xs uppercase tracking-[0.15em] font-semibold text-white/50">{info.label}</span>
-                      <span className="text-sm text-white/90 text-right max-w-[60%]">{info.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+      <section className="py-20 px-4 bg-brand text-white">
+        <div className="container text-center reveal">
+          <h2 className="heading-display text-4xl lg:text-5xl mb-6">
+            PRONTO PARA CUIDAR DA SUA SAÚDE?
+          </h2>
+          <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+            Agende seu check-up agora e comece sua jornada em direção a uma vida mais saudável e preventiva.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
+              className="btn-pill bg-white text-brand hover:bg-white/90"
+            >
+              Agendar pelo WhatsApp
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
+            <a href="tel:+551238873535" className="btn-pill bg-transparent text-white border border-white/30 hover:bg-white/10">
+              Ligar: (12) 3887-3535
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Back to Home */}
-      <section className="py-12 border-t border-black/10 bg-white">
-        <div className="container flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-sm text-text-muted hover:text-brand transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-            Voltar ao Início
-          </Link>
-          <Link href="/bioimpedancia" className="flex items-center gap-2 text-sm text-text-muted hover:text-brand transition-colors">
-            Bioimpedância
-            <ArrowUpRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </section>
-
+      {/* WhatsApp FAB */}
       <WhatsAppFAB />
     </div>
   );

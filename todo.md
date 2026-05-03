@@ -226,3 +226,11 @@
 - [x] Atualizar CallRedirect.tsx para redirecionar para /obrigado-chamada primeiro
 - [x] Adicionar tracking de evento para Google Analytics
 - [x] Testar fluxo completo de clique em "Ligar" → página de agradecimento → chamada
+
+
+## Atualização dos Planos de Check-up
+- [x] Atualizar Check-up Básico com 19 exames
+- [x] Atualizar Check-up Select/Completo com 30 exames
+- [x] Atualizar Check-up Premium com 39 exames
+- [x] Validar exibição dos planos na página
+- [x] Testar responsividade dos cards de check-up
