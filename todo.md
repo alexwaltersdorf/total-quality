@@ -210,3 +210,10 @@
 - [x] Reduzir Total Blocking Time (TBT) de 160ms
 - [x] Validar INP (Interaction to Next Paint)
 - [x] Testar com PageSpeed Insights após otimizações
+
+
+## Rota de Chamada Telefônica
+- [x] Criar rota /ligar que redireciona para tel:+551238873535
+- [x] Atualizar todos os botões "Ligar" para usar formato +551238873535
+- [x] Atualizar todos os links de telefone (12 3887-3535) para +551238873535
+- [x] Validar links em todas as páginas

@@ -96,7 +96,7 @@ export function useMedicalTestSchema(props: MedicalTestSchemaProps) {
         "@type": "MedicalBusiness",
         name: ORG_NAME,
         url: SITE_URL,
-        telephone: "+55-12-3887-3535",
+        telephone: "+551238873535",
         address: {
           "@type": "PostalAddress",
           streetAddress: "Rua Padre Anchieta, 1010",

@@ -323,7 +323,7 @@ export default function Bioimpedancia() {
                   Agendar pelo WhatsApp
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </button>
-                <a href="tel:1238873535" className="btn-pill bg-transparent !text-white border border-white/30 hover:!bg-white/10">
+                <a href="tel:+551238873535" className="btn-pill bg-transparent !text-white border border-white/30 hover:!bg-white/10">
                   (12) 3887-3535
                 </a>
               </div>

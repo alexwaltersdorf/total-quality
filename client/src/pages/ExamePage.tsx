@@ -140,7 +140,7 @@ export default function ExamePage() {
                 Agendar pelo WhatsApp
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
-              <a href="tel:1238873535" className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">
+              <a href="tel:+551238873535" className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">
                 Ligar: (12) 3887-3535
               </a>
             </div>
@@ -340,7 +340,7 @@ export default function ExamePage() {
               Agendar pelo WhatsApp
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
-            <a href="tel:1238873535" className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">
+            <a href="tel:+551238873535" className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">
               Ligar: (12) 3887-3535
             </a>
           </div>

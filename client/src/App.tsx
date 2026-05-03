@@ -13,6 +13,7 @@ import BlogPost from "./pages/BlogPost";
 import Admin from "./pages/Admin";
 import ExamePage from "./pages/ExamePage";
 import LaboratorioCaraguatatuba from "./pages/LaboratorioCaraguatatuba";
+import CallRedirect from "./pages/CallRedirect";
 
 function Router() {
   return (
@@ -27,6 +28,7 @@ function Router() {
       <Route path={"/exames/:slug"} component={ExamePage} />
       <Route path={"/admin"} component={Admin} />
       <Route path={"/admin/:tab"} component={Admin} />
+      <Route path={"/ligar"} component={CallRedirect} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
