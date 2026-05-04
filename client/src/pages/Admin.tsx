@@ -1,5 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
+import { CampaignsAnalyticsTab } from "./CampaignsAnalyticsTab";
 import { useLocation, useParams } from "wouter";
 import { useState, useMemo, useCallback } from "react";
 import { format, subDays, startOfDay, endOfDay, differenceInDays, isAfter, isBefore, startOfMonth, endOfMonth, subMonths } from "date-fns";
@@ -2237,6 +2238,7 @@ export default function Admin() {
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "leads", label: "Leads", icon: UserCheck },
     { id: "campanhas", label: "Campanhas", icon: Megaphone },
+    { id: "analytics", label: "Analytics (Looker)", icon: BarChart3 },
     { id: "engajamento", label: "Engajamento", icon: Activity },
     { id: "contatos", label: "Contatos", icon: MessageSquare },
     { id: "tags", label: "Tags", icon: Tags },
@@ -2280,6 +2282,7 @@ export default function Admin() {
           <TabsContent value="dashboard"><DashboardTab filter={dateFilter} /></TabsContent>
           <TabsContent value="leads"><LeadsTab filter={dateFilter} /></TabsContent>
           <TabsContent value="campanhas"><CampaignsTab filter={dateFilter} /></TabsContent>
+          <TabsContent value="analytics"><CampaignsAnalyticsTab filter={dateFilter} /></TabsContent>
           <TabsContent value="engajamento"><EngagementTab filter={dateFilter} /></TabsContent>
           <TabsContent value="contatos"><ContactsTab filter={dateFilter} /></TabsContent>
           <TabsContent value="tags"><TagsTab filter={dateFilter} /></TabsContent>
