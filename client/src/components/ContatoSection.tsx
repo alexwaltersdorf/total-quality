@@ -162,13 +162,11 @@ export default function ContatoSection() {
                     <span className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted">Telefones</span>
                   </div>
                   <div className="space-y-3">
-                    <a href="tel:+551238873535" className="flex items-center justify-between px-4 py-3 bg-brand text-white rounded-lg hover:bg-brand-dark transition-colors font-medium" onClick={() => trackPhoneClick("contato_section")}>
-                      <span>Ligar</span>
-                      <span>(12) 3887-3535</span>
+                    <a href="tel:+551238873535" className="flex items-center justify-center px-6 py-3 bg-[#4A4A4A] text-white rounded-full hover:bg-[#3A3A3A] transition-colors font-semibold text-center" onClick={() => trackPhoneClick("contato_section")}>
+                      LIGAR: (12) 3887-3535
                     </a>
-                    <a href="https://wa.me/551238873535?text=Olá! Gostaria de informações." className="flex items-center justify-between px-4 py-3 bg-[#25D366] text-white rounded-lg hover:bg-[#1da851] transition-colors font-medium" onClick={() => trackWhatsAppClick("contato_section")}>
-                      <span>WhatsApp</span>
-                      <span>(12) 3887-3535</span>
+                    <a href="https://wa.me/551238873535?text=Olá! Gostaria de informações." className="flex items-center justify-center px-6 py-3 bg-[#25D366] text-white rounded-full hover:bg-[#1da851] transition-colors font-semibold text-center" onClick={() => trackWhatsAppClick("contato_section")}>
+                      WHATSAPP: (12) 3887-3535
                     </a>
                   </div>
                 </div>
