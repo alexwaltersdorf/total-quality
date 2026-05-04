@@ -158,8 +158,16 @@ export default function ContatoSection() {
                     <Phone className="w-4 h-4 text-brand" />
                     <span className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted">Telefones</span>
                   </div>
-                  <a href="tel:1238873535" className="block text-text font-medium hover:text-brand transition-colors" onClick={() => trackPhoneClick("contato_section")}>(12) 3887-3535</a>
-                  <a href="https://wa.me/551238873535" className="block text-text font-medium hover:text-brand transition-colors" onClick={() => trackWhatsAppClick("contato_section")}>(12) 3887-3535</a>
+                  <div className="space-y-3">
+                    <a href="tel:+551238873535" className="flex items-center justify-between px-4 py-3 bg-brand text-white rounded-lg hover:bg-brand-dark transition-colors font-medium" onClick={() => trackPhoneClick("contato_section")}>
+                      <span>Ligar</span>
+                      <span>(12) 3887-3535</span>
+                    </a>
+                    <a href="https://wa.me/551238873535?text=Olá! Gostaria de informações." className="flex items-center justify-between px-4 py-3 bg-[#25D366] text-white rounded-lg hover:bg-[#1da851] transition-colors font-medium" onClick={() => trackWhatsAppClick("contato_section")}>
+                      <span>WhatsApp</span>
+                      <span>(12) 3887-3535</span>
+                    </a>
+                  </div>
                 </div>
 
                 <div className="border-t border-black/10 pt-8">

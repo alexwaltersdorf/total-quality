@@ -234,3 +234,10 @@
 - [x] Atualizar Check-up Premium com 39 exames
 - [x] Validar exibição dos planos na página
 - [x] Testar responsividade dos cards de check-up
+
+
+## Bot\u00f5es de Telefone e WhatsApp na Se\u00e7\u00## Botões de Telefone e WhatsApp na Seção "Telefones"
+- [x] Adicionar botão "Ligar" com número (12) 3887-3535
+- [x] Adicionar botão "WhatsApp" com número (12) 3887-3535
+- [x] Validar funcionalidade dos botões
+- [x] Testar responsividade em mobile
