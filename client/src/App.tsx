@@ -15,6 +15,7 @@ import ExamePage from "./pages/ExamePage";
 import LaboratorioCaraguatatuba from "./pages/LaboratorioCaraguatatuba";
 import CallRedirect from "./pages/CallRedirect";
 import ThankYouCall from "./pages/ThankYouCall";
+import FormSubmissionSuccess from "./pages/FormSubmissionSuccess";
 
 function Router() {
   return (
@@ -31,6 +32,7 @@ function Router() {
       <Route path={"/admin/:tab"} component={Admin} />
       <Route path={"/ligar"} component={CallRedirect} />
       <Route path={"/obrigado-chamada"} component={ThankYouCall} />
+      <Route path={"/formulario-sucesso"} component={FormSubmissionSuccess} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

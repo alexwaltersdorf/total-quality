@@ -4,6 +4,7 @@
  * Integração: tRPC para persistir contatos no banco de dados
  */
 import { useState, useRef } from "react";
+import { useLocation } from "wouter";
 import {
   MapPin,
   Phone,
@@ -32,30 +33,32 @@ export default function ContatoSection() {
   const mapRef = useRef<google.maps.Map | null>(null);
   const [formStarted, setFormStarted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [, setLocation] = useLocation();
 
   const contactMutation = trpc.contact.create.useMutation({
     onSuccess: () => {
-      toast.success("Mensagem enviada com sucesso! Redirecionando para o WhatsApp...");
-      // Redirecionar para WhatsApp após salvar no banco
-      const msg = `Olá! Meu nome é ${formData.nome}.%0A` +
-        `Telefone: ${formData.telefone}%0A` +
-        `E-mail: ${formData.email}%0A` +
-        (formData.tipoExame ? `Exame: ${formData.tipoExame}%0A` : "") +
-        (formData.mensagem ? `Mensagem: ${formData.mensagem}` : "");
-      window.open(`https://wa.me/551238873535?text=${msg}`, "_blank");
-      // Limpar formulário
+      toast.success("Mensagem enviada com sucesso!");
+      const params = new URLSearchParams({
+        nome: formData.nome,
+        telefone: formData.telefone,
+        email: formData.email,
+        tipoExame: formData.tipoExame,
+        mensagem: formData.mensagem,
+      });
+      setLocation(`/formulario-sucesso?${params.toString()}`);
       setFormData({ nome: "", telefone: "", email: "", tipoExame: "", mensagem: "" });
       setFormStarted(false);
     },
     onError: () => {
-      // Mesmo se falhar ao salvar, redireciona para WhatsApp
-      toast.info("Redirecionando para o WhatsApp...");
-      const msg = `Olá! Meu nome é ${formData.nome}.%0A` +
-        `Telefone: ${formData.telefone}%0A` +
-        `E-mail: ${formData.email}%0A` +
-        (formData.tipoExame ? `Exame: ${formData.tipoExame}%0A` : "") +
-        (formData.mensagem ? `Mensagem: ${formData.mensagem}` : "");
-      window.open(`https://wa.me/551238873535?text=${msg}`, "_blank");
+      toast.info("Redirecionando para confirmação...");
+      const params = new URLSearchParams({
+        nome: formData.nome,
+        telefone: formData.telefone,
+        email: formData.email,
+        tipoExame: formData.tipoExame,
+        mensagem: formData.mensagem,
+      });
+      setLocation(`/formulario-sucesso?${params.toString()}`);
     },
     onSettled: () => {
       setIsSubmitting(false);
