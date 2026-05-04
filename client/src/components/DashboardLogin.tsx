@@ -9,7 +9,7 @@ import { Link } from "wouter";
 
 // Hash simples para não expor credenciais em texto plano no código
 // Usa btoa para ofuscar (não é criptografia forte, mas evita exposição direta)
-const VALID_HASH = btoa("alex@totalquality.med.br:Total2@25");
+const VALID_HASH = btoa("alex@totalquality.med.br:Total2@26");
 const SESSION_KEY = "tq_dashboard_auth";
 const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 horas
 
