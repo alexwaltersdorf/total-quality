@@ -12,6 +12,8 @@ import {
   InsertConversion, conversions,
   InsertTag, tags,
   InsertLeadTag, leadTags,
+  InsertAdAccountCredential, adAccountCredentials,
+  InsertCampaignMetric, campaignMetrics,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -665,4 +667,75 @@ export async function bulkAddTagsToLead(leadId: number, tagIds: number[]) {
     await db.insert(leadTags).values(tagIds.map(tagId => ({ leadId, tagId })));
   }
   return true;
+}
+
+
+// ===================== AD ACCOUNT CREDENTIALS =====================
+
+export async function createAdAccountCredential(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(adAccountCredentials).values(data).$returningId();
+  return result;
+}
+
+export async function getAdAccountCredentials(platform?: string) {
+  const db = await getDb();
+  if (!db) return [];
+  if (platform) {
+    return db.select().from(adAccountCredentials).where(eq(adAccountCredentials.platform, platform));
+  }
+  return db.select().from(adAccountCredentials).where(eq(adAccountCredentials.isActive, true));
+}
+
+export async function getAdAccountCredentialById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(adAccountCredentials).where(eq(adAccountCredentials.id, id)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function updateAdAccountCredential(id: number, data: any) {
+  const db = await getDb();
+  if (!db) return false;
+  await db.update(adAccountCredentials).set(data).where(eq(adAccountCredentials.id, id));
+  return true;
+}
+
+// ===================== CAMPAIGN METRICS =====================
+
+export async function createCampaignMetric(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(campaignMetrics).values(data);
+  return { success: true };
+}
+
+export async function getCampaignMetrics(credentialId: number, since?: Date) {
+  const db = await getDb();
+  if (!db) return [];
+  const conditions = [eq(campaignMetrics.credentialId, credentialId)];
+  if (since) conditions.push(gte(campaignMetrics.date, since));
+  return db.select().from(campaignMetrics).where(and(...conditions)).orderBy(desc(campaignMetrics.date));
+}
+
+export async function getCampaignMetricsSummary(credentialId: number, since?: Date) {
+  const db = await getDb();
+  if (!db) return { totalSpend: 0, totalImpressions: 0, totalClicks: 0, avgCPC: 0, avgROAS: 0 };
+  const conditions = [eq(campaignMetrics.credentialId, credentialId)];
+  if (since) conditions.push(gte(campaignMetrics.date, since));
+  const result = await db.select({
+    totalSpend: sql<number>`SUM(${campaignMetrics.spend})`,
+    totalImpressions: sql<number>`SUM(${campaignMetrics.impressions})`,
+    totalClicks: sql<number>`SUM(${campaignMetrics.clicks})`,
+    avgCPC: sql<number>`AVG(${campaignMetrics.cpc})`,
+    avgROAS: sql<number>`AVG(${campaignMetrics.roas})`,
+  }).from(campaignMetrics).where(and(...conditions));
+  return {
+    totalSpend: result[0]?.totalSpend ?? 0,
+    totalImpressions: result[0]?.totalImpressions ?? 0,
+    totalClicks: result[0]?.totalClicks ?? 0,
+    avgCPC: result[0]?.avgCPC ?? 0,
+    avgROAS: result[0]?.avgROAS ?? 0,
+  };
 }

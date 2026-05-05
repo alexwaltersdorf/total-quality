@@ -21,6 +21,8 @@ import {
   getDashboardKPIs,
   createTag, getAllTags, getTagById, updateTag, deleteTag, getTagsByCategory,
   addTagToLead, removeTagFromLead, getTagsForLead, getLeadsByTag, getLeadCountByTag, bulkAddTagsToLead,
+  createAdAccountCredential, getAdAccountCredentials, getAdAccountCredentialById, updateAdAccountCredential,
+  createCampaignMetric, getCampaignMetrics, getCampaignMetricsSummary,
 } from "./db";
 
 // Shared date filter schema: accepts either dateFrom/dateTo or days (backward compatible)
@@ -520,6 +522,96 @@ export const appRouter = router({
         const { since, until } = resolveDateRange(input);
         return getDashboardKPIs(since, until);
       }),
+  }),
+  // ===================== AD CREDENTIALS & CAMPAIGN METRICS =====================
+  ads: router({
+    credentials: router({
+      create: adminProcedure
+        .input(z.object({
+          platform: z.enum(["google_ads", "meta_ads", "tiktok_ads"]),
+          accountName: z.string().min(1),
+          accountId: z.string().min(1),
+          accessToken: z.string().optional(),
+          refreshToken: z.string().optional(),
+          developerToken: z.string().optional(),
+        }))
+        .mutation(async ({ input }) => {
+          return createAdAccountCredential(input);
+        }),
+      getAll: adminProcedure
+        .input(z.object({ platform: z.enum(["google_ads", "meta_ads", "tiktok_ads"]).optional() }).optional())
+        .query(async ({ input }) => {
+          return getAdAccountCredentials(input?.platform);
+        }),
+      getById: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .query(async ({ input }) => {
+          return getAdAccountCredentialById(input.id);
+        }),
+      update: adminProcedure
+        .input(z.object({
+          id: z.number(),
+          platform: z.enum(["google_ads", "meta_ads", "tiktok_ads"]).optional(),
+          accountName: z.string().optional(),
+          accountId: z.string().optional(),
+          accessToken: z.string().optional(),
+          refreshToken: z.string().optional(),
+          developerToken: z.string().optional(),
+          isActive: z.boolean().optional(),
+        }))
+        .mutation(async ({ input }) => {
+          const { id, ...data } = input;
+          return updateAdAccountCredential(id, data);
+        }),
+    }),
+    metrics: router({
+      create: adminProcedure
+        .input(z.object({
+          credentialId: z.number(),
+          campaignId: z.string(),
+          campaignName: z.string(),
+          platform: z.enum(["google_ads", "meta_ads", "tiktok_ads"]),
+          spend: z.number(),
+          impressions: z.number(),
+          clicks: z.number(),
+          conversions: z.number(),
+          conversionValue: z.number().optional(),
+          cpc: z.number(),
+          ctr: z.number(),
+          roas: z.number(),
+          date: z.string(),
+        }))
+        .mutation(async ({ input }) => {
+          return createCampaignMetric({
+            ...input,
+            date: new Date(input.date),
+          });
+        }),
+      getByCredential: adminProcedure
+        .input(z.object({
+          credentialId: z.number(),
+          days: z.number().min(1).max(365).default(30).optional(),
+          dateFrom: z.string().optional(),
+          dateTo: z.string().optional(),
+        }))
+        .query(async ({ input }) => {
+          const { credentialId, ...rest } = input;
+          const { since } = resolveDateRange(rest);
+          return getCampaignMetrics(credentialId, since);
+        }),
+      getSummary: adminProcedure
+        .input(z.object({
+          credentialId: z.number(),
+          days: z.number().min(1).max(365).default(30).optional(),
+          dateFrom: z.string().optional(),
+          dateTo: z.string().optional(),
+        }))
+        .query(async ({ input }) => {
+          const { credentialId, ...rest } = input;
+          const { since } = resolveDateRange(rest);
+          return getCampaignMetricsSummary(credentialId, since);
+        }),
+    }),
   }),
 });
 

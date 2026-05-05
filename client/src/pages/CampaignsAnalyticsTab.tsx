@@ -1,11 +1,10 @@
-import { useMemo, useState, useCallback } from "react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { DateRange } from "react-day-picker";
 import {
   TrendingUp, TrendingDown, DollarSign, MousePointerClick, Eye,
   Target, Zap, Download, FileSpreadsheet, FileText, ArrowUpRight,
-  ArrowDownRight, Filter
+  ArrowDownRight, Filter, Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -21,165 +20,132 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { trpc } from "@/lib/trpc";
+import { useMemo, useCallback, useState } from "react";
 
-// Sample data for demo
-const SAMPLE_CAMPAIGNS = [
-  {
-    id: 1,
-    name: "Google Ads - Check-up Básico",
-    platform: "Google Ads",
-    status: "active",
-    spend: 1250.50,
-    impressions: 45230,
-    clicks: 1203,
-    conversions: 45,
-    revenue: 8100,
-    cpc: 1.04,
-    ctr: 2.66,
-    conversionRate: 3.74,
-    roas: 6.48,
-    avgPosition: 2.1,
-  },
-  {
-    id: 2,
-    name: "Meta Ads - Check-up Premium",
-    platform: "Meta Ads",
-    status: "active",
-    spend: 980.00,
-    impressions: 52100,
-    clicks: 1856,
-    conversions: 38,
-    revenue: 6840,
-    cpc: 0.53,
-    ctr: 3.56,
-    conversionRate: 2.05,
-    roas: 6.98,
-    avgPosition: 1.0,
-  },
-  {
-    id: 3,
-    name: "Google Ads - Exames de Sangue",
-    platform: "Google Ads",
-    status: "active",
-    spend: 750.25,
-    impressions: 28500,
-    clicks: 612,
-    conversions: 28,
-    revenue: 4480,
-    cpc: 1.23,
-    ctr: 2.15,
-    conversionRate: 4.58,
-    roas: 5.97,
-    avgPosition: 2.8,
-  },
-  {
-    id: 4,
-    name: "Meta Ads - Tomografia",
-    platform: "Meta Ads",
-    status: "active",
-    spend: 650.00,
-    impressions: 38200,
-    clicks: 892,
-    conversions: 22,
-    revenue: 3960,
-    cpc: 0.73,
-    ctr: 2.33,
-    conversionRate: 2.47,
-    roas: 6.09,
-    avgPosition: 1.0,
-  },
-  {
-    id: 5,
-    name: "Google Ads - Remarketing",
-    platform: "Google Ads",
-    status: "paused",
-    spend: 420.00,
-    impressions: 15600,
-    clicks: 234,
-    conversions: 18,
-    revenue: 3240,
-    cpc: 1.79,
-    ctr: 1.50,
-    conversionRate: 7.69,
-    roas: 7.71,
-    avgPosition: 3.2,
-  },
-];
+interface DateFilter {
+  mode: "preset" | "custom";
+  days?: number;
+  dateFrom?: string;
+  dateTo?: string;
+}
 
-const DAILY_PERFORMANCE = [
-  { date: "01/05", spend: 320, clicks: 245, conversions: 12, revenue: 1440 },
-  { date: "02/05", spend: 380, clicks: 312, conversions: 15, revenue: 1800 },
-  { date: "03/05", spend: 290, clicks: 198, conversions: 9, revenue: 1080 },
-  { date: "04/05", spend: 410, clicks: 356, conversions: 18, revenue: 2160 },
-  { date: "05/05", spend: 350, clicks: 278, conversions: 14, revenue: 1680 },
-  { date: "06/05", spend: 430, clicks: 402, conversions: 20, revenue: 2400 },
-  { date: "07/05", spend: 400, clicks: 330, conversions: 16, revenue: 1920 },
-];
-
-const PLATFORM_SUMMARY = [
-  { name: "Google Ads", value: 2420.75, fill: "#4285F4" },
-  { name: "Meta Ads", value: 1630.00, fill: "#1877F2" },
-];
+function dateFilterToQuery(filter: DateFilter): { days?: number; dateFrom?: string; dateTo?: string } {
+  if (filter.mode === "preset" && filter.days) {
+    return { days: filter.days };
+  }
+  return { dateFrom: filter.dateFrom, dateTo: filter.dateTo };
+}
 
 interface MetricCardProps {
   title: string;
   value: string | number;
-  change?: number;
   icon: React.ReactNode;
-  format?: "currency" | "percentage" | "number";
+  format?: "currency" | "number" | "percent";
+  change?: number;
 }
 
-function MetricCard({ title, value, change, icon, format: fmt }: MetricCardProps) {
-  const isPositive = change && change > 0;
-  const formattedValue = fmt === "currency" ? `R$ ${value}` : fmt === "percentage" ? `${value}%` : value;
-
+function MetricCard({ title, value, icon, format = "number", change }: MetricCardProps) {
+  const isPositive = change ? change >= 0 : true;
   return (
     <Card>
       <CardContent className="pt-6">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <p className="text-sm text-muted-foreground font-medium">{title}</p>
-            <p className="text-2xl font-bold mt-2">{formattedValue}</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-muted-foreground">{title}</p>
+            <p className="text-2xl font-bold mt-2">
+              {format === "currency" && "R$ "}
+              {value}
+              {format === "percent" && "%"}
+            </p>
             {change !== undefined && (
-              <div className="flex items-center gap-1 mt-2">
+              <div className="flex items-center gap-1 mt-2 text-xs">
                 {isPositive ? (
-                  <TrendingUp className="h-4 w-4 text-green-600" />
+                  <>
+                    <ArrowUpRight className="h-3 w-3 text-green-600" />
+                    <span className="text-green-600">+{change.toFixed(1)}%</span>
+                  </>
                 ) : (
-                  <TrendingDown className="h-4 w-4 text-red-600" />
+                  <>
+                    <ArrowDownRight className="h-3 w-3 text-red-600" />
+                    <span className="text-red-600">{change.toFixed(1)}%</span>
+                  </>
                 )}
-                <span className={isPositive ? "text-green-600 text-sm font-medium" : "text-red-600 text-sm font-medium"}>
-                  {isPositive ? "+" : ""}{change}% vs período anterior
-                </span>
               </div>
             )}
           </div>
-          <div className="text-muted-foreground ml-4">{icon}</div>
+          <div className="text-muted-foreground">{icon}</div>
         </div>
       </CardContent>
     </Card>
   );
 }
 
-export function CampaignsAnalyticsTab({ filter }: { filter: any }) {
+export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
   const [selectedPlatform, setSelectedPlatform] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("roas");
+  const [selectedCredentialId, setSelectedCredentialId] = useState<number | null>(null);
+
+  // Convert filter to query input
+  const queryInput = useMemo(() => dateFilterToQuery(filter), [filter]);
+
+  // Fetch credentials
+  const { data: credentials = [], isLoading: credentialsLoading } = trpc.ads.credentials.getAll.useQuery({});
+
+  // Auto-select first credential if available
+  const credentialId = useMemo(() => {
+    if (selectedCredentialId !== null) return selectedCredentialId;
+    if (credentials.length > 0) return credentials[0].id;
+    return null;
+  }, [selectedCredentialId, credentials]);
+
+  // Fetch metrics for selected credential
+  const { data: metrics = [], isLoading: metricsLoading } = trpc.ads.metrics.getByCredential.useQuery(
+    credentialId ? { credentialId, ...queryInput } : { credentialId: 0, ...queryInput },
+    { enabled: credentialId !== null }
+  );
+
+  // Fetch summary
+  const { data: summary } = trpc.ads.metrics.getSummary.useQuery(
+    credentialId ? { credentialId, ...queryInput } : { credentialId: 0, ...queryInput },
+    { enabled: credentialId !== null }
+  );
+
+  // Transform metrics to campaign format
+  const campaigns = useMemo(() => {
+    return metrics.map((m: any) => ({
+      id: m.id,
+      name: m.campaignName,
+      platform: m.platform === "google_ads" ? "Google Ads" : m.platform === "meta_ads" ? "Meta Ads" : "TikTok Ads",
+      status: "active",
+      spend: Number(m.spend) || 0,
+      impressions: m.impressions || 0,
+      clicks: m.clicks || 0,
+      conversions: m.conversions || 0,
+      revenue: Number(m.conversionValue) || 0,
+      cpc: Number(m.cpc) || 0,
+      ctr: Number(m.ctr) || 0,
+      conversionRate: m.clicks > 0 ? (m.conversions / m.clicks) * 100 : 0,
+      roas: Number(m.roas) || 0,
+      avgPosition: 1.0,
+    }));
+  }, [metrics]);
 
   // Filter campaigns by platform
   const filteredCampaigns = useMemo(() => {
-    let campaigns = SAMPLE_CAMPAIGNS;
+    let filtered = campaigns;
     if (selectedPlatform !== "all") {
-      campaigns = campaigns.filter(c => c.platform === selectedPlatform);
+      filtered = filtered.filter(c => c.platform === selectedPlatform);
     }
-    // Sort by selected metric
-    return campaigns.sort((a, b) => {
+    return filtered.sort((a, b) => {
       const aVal = a[sortBy as keyof typeof a] as number;
       const bVal = b[sortBy as keyof typeof b] as number;
       return bVal - aVal;
     });
-  }, [selectedPlatform, sortBy]);
+  }, [campaigns, selectedPlatform, sortBy]);
 
   // Calculate summary metrics
-  const summary = useMemo(() => {
+  const summaryMetrics = useMemo(() => {
     const total = filteredCampaigns.reduce((acc, c) => ({
       spend: acc.spend + c.spend,
       impressions: acc.impressions + c.impressions,
@@ -190,11 +156,38 @@ export function CampaignsAnalyticsTab({ filter }: { filter: any }) {
 
     return {
       ...total,
-      avgCPC: total.spend / total.clicks,
-      avgCTR: (total.clicks / total.impressions) * 100,
-      conversionRate: (total.conversions / total.clicks) * 100,
-      roas: total.revenue / total.spend,
+      avgCPC: total.clicks > 0 ? total.spend / total.clicks : 0,
+      avgCTR: total.impressions > 0 ? (total.clicks / total.impressions) * 100 : 0,
+      conversionRate: total.clicks > 0 ? (total.conversions / total.clicks) * 100 : 0,
+      roas: total.spend > 0 ? total.revenue / total.spend : 0,
     };
+  }, [filteredCampaigns]);
+
+  // Prepare daily performance data
+  const dailyPerformance = useMemo(() => {
+    const grouped: Record<string, any> = {};
+    metrics.forEach((m: any) => {
+      const date = m.date;
+      if (!grouped[date]) {
+        grouped[date] = { date, spend: 0, clicks: 0, conversions: 0 };
+      }
+      grouped[date].spend += Number(m.spend) || 0;
+      grouped[date].clicks += m.clicks || 0;
+      grouped[date].conversions += m.conversions || 0;
+    });
+    return Object.values(grouped).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  }, [metrics]);
+
+  // Prepare platform summary
+  const platformSummary = useMemo(() => {
+    const platforms: Record<string, any> = {};
+    filteredCampaigns.forEach(c => {
+      if (!platforms[c.platform]) {
+        platforms[c.platform] = { name: c.platform, value: 0, fill: c.platform === "Google Ads" ? "#4285F4" : "#1877F2" };
+      }
+      platforms[c.platform].value += c.spend;
+    });
+    return Object.values(platforms);
   }, [filteredCampaigns]);
 
   const exportCSV = useCallback(() => {
@@ -214,9 +207,25 @@ export function CampaignsAnalyticsTab({ filter }: { filter: any }) {
   }, [filteredCampaigns]);
 
   const exportExcel = useCallback(() => {
-    // Simple Excel export (CSV format)
     exportCSV();
   }, [exportCSV]);
+
+  if (credentialsLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (!credentialId) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-muted-foreground">Nenhuma credencial de Google Ads ou Meta Ads configurada.</p>
+        <p className="text-sm text-muted-foreground mt-2">Configure suas credenciais no painel de administração.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -245,13 +254,32 @@ export function CampaignsAnalyticsTab({ filter }: { filter: any }) {
         </Popover>
       </div>
 
+      {/* Credential Selector */}
+      {credentials.length > 1 && (
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium">Conta:</label>
+          <Select value={credentialId?.toString() || ""} onValueChange={(v) => setSelectedCredentialId(Number(v))}>
+            <SelectTrigger className="w-64">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {credentials.map((cred: any) => (
+                <SelectItem key={cred.id} value={cred.id.toString()}>
+                  {cred.accountName} ({cred.platform === "google_ads" ? "Google Ads" : "Meta Ads"})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
       {/* Summary Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <MetricCard title="Spend Total" value={summary.spend.toFixed(2)} icon={<DollarSign className="h-6 w-6" />} format="currency" change={12.5} />
-        <MetricCard title="Impressões" value={summary.impressions} icon={<Eye className="h-6 w-6" />} format="number" change={8.3} />
-        <MetricCard title="Cliques" value={summary.clicks} icon={<MousePointerClick className="h-6 w-6" />} format="number" change={15.2} />
-        <MetricCard title="CPC Médio" value={summary.avgCPC.toFixed(2)} icon={<TrendingDown className="h-6 w-6" />} format="currency" change={-5.1} />
-        <MetricCard title="ROAS" value={summary.roas.toFixed(2)} icon={<TrendingUp className="h-6 w-6" />} format="number" change={22.8} />
+        <MetricCard title="Spend Total" value={summaryMetrics.spend.toFixed(2)} icon={<DollarSign className="h-6 w-6" />} format="currency" change={12.5} />
+        <MetricCard title="Impressões" value={summaryMetrics.impressions} icon={<Eye className="h-6 w-6" />} format="number" change={8.3} />
+        <MetricCard title="Cliques" value={summaryMetrics.clicks} icon={<MousePointerClick className="h-6 w-6" />} format="number" change={15.2} />
+        <MetricCard title="CPC Médio" value={summaryMetrics.avgCPC.toFixed(2)} icon={<TrendingDown className="h-6 w-6" />} format="currency" change={-5.1} />
+        <MetricCard title="ROAS" value={summaryMetrics.roas.toFixed(2)} icon={<TrendingUp className="h-6 w-6" />} format="number" change={22.8} />
       </div>
 
       {/* Charts Row */}
@@ -263,21 +291,27 @@ export function CampaignsAnalyticsTab({ filter }: { filter: any }) {
             <CardDescription>Spend, Cliques e Conversões por dia</CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={DAILY_PERFORMANCE}>
-                <defs>
-                  <linearGradient id="colorSpend" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#9B212B" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="#9B212B" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="date" fontSize={11} />
-                <YAxis fontSize={11} />
-                <ReTooltip />
-                <Area type="monotone" dataKey="spend" stroke="#9B212B" fillOpacity={1} fill="url(#colorSpend)" name="Spend (R$)" />
-              </AreaChart>
-            </ResponsiveContainer>
+            {metricsLoading ? (
+              <div className="flex items-center justify-center h-80">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={dailyPerformance}>
+                  <defs>
+                    <linearGradient id="colorSpend" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#9B212B" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#9B212B" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="date" fontSize={11} />
+                  <YAxis fontSize={11} />
+                  <ReTooltip />
+                  <Area type="monotone" dataKey="spend" stroke="#9B212B" fillOpacity={1} fill="url(#colorSpend)" name="Spend (R$)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
 
@@ -288,16 +322,22 @@ export function CampaignsAnalyticsTab({ filter }: { filter: any }) {
             <CardDescription>Spend total por canal</CardDescription>
           </CardHeader>
           <CardContent className="flex items-center justify-center">
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie data={PLATFORM_SUMMARY} cx="50%" cy="50%" labelLine={false} label={({ name, value }) => `${name}: R$ ${value.toFixed(0)}`} outerRadius={80} fill="#8884d8" dataKey="value">
-                  {PLATFORM_SUMMARY.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <ReTooltip formatter={(value: any) => `R$ ${value.toFixed(2)}`} />
-              </PieChart>
-            </ResponsiveContainer>
+            {metricsLoading ? (
+              <div className="flex items-center justify-center h-80">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie data={platformSummary} cx="50%" cy="50%" labelLine={false} label={({ name, value }) => `${name}: R$ ${value.toFixed(0)}`} outerRadius={80} fill="#8884d8" dataKey="value">
+                    {platformSummary.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Pie>
+                  <ReTooltip formatter={(value: any) => `R$ ${value.toFixed(2)}`} />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -307,107 +347,111 @@ export function CampaignsAnalyticsTab({ filter }: { filter: any }) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-lg">Campanhas Ativas</CardTitle>
-              <CardDescription>{filteredCampaigns.length} campanhas</CardDescription>
+              <CardTitle>Campanhas</CardTitle>
+              <CardDescription>Detalhes de performance por campanha</CardDescription>
             </div>
             <div className="flex items-center gap-2">
               <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
-                <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="Plataforma" />
+                <SelectTrigger className="w-40">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todas</SelectItem>
+                  <SelectItem value="all">Todas as Plataformas</SelectItem>
                   <SelectItem value="Google Ads">Google Ads</SelectItem>
                   <SelectItem value="Meta Ads">Meta Ads</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="Ordenar por" />
+                <SelectTrigger className="w-40">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="roas">ROAS</SelectItem>
-                  <SelectItem value="spend">Spend</SelectItem>
-                  <SelectItem value="conversions">Conversões</SelectItem>
-                  <SelectItem value="cpc">CPC</SelectItem>
-                  <SelectItem value="revenue">Revenue</SelectItem>
+                  <SelectItem value="roas">Ordenar por ROAS</SelectItem>
+                  <SelectItem value="spend">Ordenar por Spend</SelectItem>
+                  <SelectItem value="clicks">Ordenar por Cliques</SelectItem>
+                  <SelectItem value="conversions">Ordenar por Conversões</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <ScrollArea className="h-[500px]">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Campanha</TableHead>
-                  <TableHead>Plataforma</TableHead>
-                  <TableHead className="text-right">Spend</TableHead>
-                  <TableHead className="text-right">Impressões</TableHead>
-                  <TableHead className="text-right">Cliques</TableHead>
-                  <TableHead className="text-right">Conv.</TableHead>
-                  <TableHead className="text-right">Revenue</TableHead>
-                  <TableHead className="text-right">CPC</TableHead>
-                  <TableHead className="text-right">CTR</TableHead>
-                  <TableHead className="text-right">Conv. Rate</TableHead>
-                  <TableHead className="text-right">ROAS</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredCampaigns.map((campaign) => (
-                  <TableRow key={campaign.id} className="hover:bg-muted/50">
-                    <TableCell className="font-medium max-w-[200px] truncate">{campaign.name}</TableCell>
-                    <TableCell>
-                      <Badge variant={campaign.platform === "Google Ads" ? "default" : "secondary"}>
-                        {campaign.platform}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">R$ {campaign.spend.toFixed(2)}</TableCell>
-                    <TableCell className="text-right">{campaign.impressions.toLocaleString()}</TableCell>
-                    <TableCell className="text-right">{campaign.clicks.toLocaleString()}</TableCell>
-                    <TableCell className="text-right font-medium">{campaign.conversions}</TableCell>
-                    <TableCell className="text-right">R$ {campaign.revenue.toFixed(2)}</TableCell>
-                    <TableCell className="text-right">R$ {campaign.cpc.toFixed(2)}</TableCell>
-                    <TableCell className="text-right">{campaign.ctr.toFixed(2)}%</TableCell>
-                    <TableCell className="text-right">{campaign.conversionRate.toFixed(2)}%</TableCell>
-                    <TableCell className="text-right font-bold text-green-600">{campaign.roas.toFixed(2)}</TableCell>
+          {metricsLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : filteredCampaigns.length === 0 ? (
+            <p className="text-muted-foreground text-center py-8">Nenhuma campanha encontrada.</p>
+          ) : (
+            <ScrollArea className="w-full">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Campanha</TableHead>
+                    <TableHead>Plataforma</TableHead>
+                    <TableHead className="text-right">Spend</TableHead>
+                    <TableHead className="text-right">Impressões</TableHead>
+                    <TableHead className="text-right">Cliques</TableHead>
+                    <TableHead className="text-right">Conversões</TableHead>
+                    <TableHead className="text-right">CPC</TableHead>
+                    <TableHead className="text-right">CTR</TableHead>
+                    <TableHead className="text-right">Conv. Rate</TableHead>
+                    <TableHead className="text-right">ROAS</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </ScrollArea>
+                </TableHeader>
+                <TableBody>
+                  {filteredCampaigns.map((campaign) => (
+                    <TableRow key={campaign.id}>
+                      <TableCell className="font-medium">{campaign.name}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{campaign.platform}</Badge>
+                      </TableCell>
+                      <TableCell className="text-right">R$ {campaign.spend.toFixed(2)}</TableCell>
+                      <TableCell className="text-right">{campaign.impressions.toLocaleString()}</TableCell>
+                      <TableCell className="text-right">{campaign.clicks.toLocaleString()}</TableCell>
+                      <TableCell className="text-right">{campaign.conversions}</TableCell>
+                      <TableCell className="text-right">R$ {campaign.cpc.toFixed(2)}</TableCell>
+                      <TableCell className="text-right">{campaign.ctr.toFixed(2)}%</TableCell>
+                      <TableCell className="text-right">{campaign.conversionRate.toFixed(2)}%</TableCell>
+                      <TableCell className="text-right font-semibold">{campaign.roas.toFixed(2)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </ScrollArea>
+          )}
         </CardContent>
       </Card>
 
-      {/* Key Insights */}
+      {/* Insights */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Insights Principais</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-green-50 border border-green-200">
-              <TrendingUp className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="font-medium text-sm">Melhor ROAS</p>
-                <p className="text-sm text-muted-foreground">Meta Ads - Check-up Premium com ROAS de 6.98</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 border border-blue-200">
-              <Zap className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="font-medium text-sm">Melhor CPC</p>
-                <p className="text-sm text-muted-foreground">Meta Ads - Check-up Premium com CPC de R$ 0.53</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-purple-50 border border-purple-200">
-              <Target className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="font-medium text-sm">Maior Taxa de Conversão</p>
-                <p className="text-sm text-muted-foreground">Google Ads - Remarketing com 7.69% de conversão</p>
-              </div>
-            </div>
+            {filteredCampaigns.length > 0 && (
+              <>
+                <div className="flex items-start gap-3 p-3 bg-accent rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-sm">Melhor ROAS</p>
+                    <p className="text-sm text-muted-foreground">
+                      {filteredCampaigns[0]?.name} com ROAS de {filteredCampaigns[0]?.roas.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-accent rounded-lg">
+                  <DollarSign className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-sm">Maior Investimento</p>
+                    <p className="text-sm text-muted-foreground">
+                      {filteredCampaigns.reduce((max, c) => c.spend > max.spend ? c : max).name} com R$ {filteredCampaigns.reduce((max, c) => c.spend > max.spend ? c : max).spend.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </CardContent>
       </Card>

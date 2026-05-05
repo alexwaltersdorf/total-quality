@@ -262,3 +262,26 @@
 - [ ] Integrar dados de Meta Ads API (simulado com dados de demo)
 - [ ] Criar exportação de relatórios em PDF/CSV
 - [ ] Testar dashboard com dados de exemplo
+
+
+## Integração de Credenciais Reais de Google Ads e Meta Ads
+- [ ] Adicionar tabela de configuração de credenciais no banco de dados
+- [ ] Criar interface para armazenar Google Ads Customer ID (920-715-3288)
+- [ ] Criar interface para armazenar Meta Ads Account ID (1536672876562340)
+- [ ] Integrar Google Ads API para trazer dados reais
+- [ ] Integrar Meta Ads API para trazer dados reais
+- [ ] Atualizar dashboard com dados em tempo real em vez de fictícios
+- [ ] Testar integração com contas reais
+
+
+## Integração de Credenciais Reais de Google Ads e Meta Ads - CONCLUÍDO
+- [x] Adicionar tabela de configuração de credenciais no banco de dados
+- [x] Criar interface para armazenar Google Ads Customer ID (920-715-3288)
+- [x] Criar interface para armazenar Meta Ads Account ID (1536672876562340)
+- [x] Criar tRPC procedures para CRUD de credenciais
+- [x] Criar tRPC procedures para CRUD de métricas de campanhas
+- [x] Atualizar CampaignsAnalyticsTab para usar dados reais da API
+- [x] Implementar seletor de credenciais no dashboard
+- [x] Testar integração com dados do banco de dados
+- [x] Escrever testes vitest para os novos procedimentos (9 testes passando)
+- [x] Total de 75 testes passando (66 anteriores + 9 novos)

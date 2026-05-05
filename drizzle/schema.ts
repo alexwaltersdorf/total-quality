@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, bigint, json, boolean, decimal } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, bigint, json, boolean, decimal, date } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -253,3 +253,53 @@ export const leadTags = mysqlTable("lead_tags", {
 
 export type LeadTag = typeof leadTags.$inferSelect;
 export type InsertLeadTag = typeof leadTags.$inferInsert;
+
+
+/**
+ * Credenciais de contas de publicidade (Google Ads, Meta Ads, etc).
+ * Armazena informações de autenticação e IDs de contas para integração com APIs.
+ */
+export const adAccountCredentials = mysqlTable("ad_account_credentials", {
+  id: int("id").autoincrement().primaryKey(),
+  platform: mysqlEnum("platform", ["google_ads", "meta_ads", "tiktok_ads"]).notNull(),
+  accountName: varchar("accountName", { length: 255 }).notNull(),
+  accountId: varchar("accountId", { length: 255 }).notNull(), // Google Ads: 920-715-3288, Meta: 1536672876562340
+  accessToken: text("accessToken"), // Para Meta Ads
+  refreshToken: text("refreshToken"), // Para Google Ads
+  developerToken: varchar("developerToken", { length: 255 }), // Para Google Ads
+  isActive: boolean("isActive").default(true).notNull(),
+  lastSyncedAt: timestamp("lastSyncedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AdAccountCredential = typeof adAccountCredentials.$inferSelect;
+export type InsertAdAccountCredential = typeof adAccountCredentials.$inferInsert;
+
+/**
+ * Dados de campanhas de publicidade sincronizados das APIs.
+ * Armazena métricas de performance (spend, impressões, cliques, conversões, etc).
+ */
+export const campaignMetrics = mysqlTable("campaign_metrics", {
+  id: int("id").autoincrement().primaryKey(),
+  credentialId: int("credentialId").notNull(),
+  campaignId: varchar("campaignId", { length: 255 }).notNull(),
+  campaignName: varchar("campaignName", { length: 500 }).notNull(),
+  platform: mysqlEnum("platform", ["google_ads", "meta_ads", "tiktok_ads"]).notNull(),
+  // Métricas
+  spend: decimal("spend", { precision: 12, scale: 2 }).notNull().default(0),
+  impressions: int("impressions").notNull().default(0),
+  clicks: int("clicks").notNull().default(0),
+  conversions: int("conversions").notNull().default(0),
+  conversionValue: decimal("conversionValue", { precision: 12, scale: 2 }).default(0),
+  cpc: decimal("cpc", { precision: 10, scale: 4 }).default(0), // Custo por clique
+  ctr: decimal("ctr", { precision: 5, scale: 2 }).default(0), // Taxa de cliques (%)
+  roas: decimal("roas", { precision: 10, scale: 2 }).default(0), // Retorno sobre investimento
+  // Data da métrica
+  date: date("date").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CampaignMetric = typeof campaignMetrics.$inferSelect;
+export type InsertCampaignMetric = typeof campaignMetrics.$inferInsert;
