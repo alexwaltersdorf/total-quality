@@ -285,3 +285,14 @@
 - [x] Testar integração com dados do banco de dados
 - [x] Escrever testes vitest para os novos procedimentos (9 testes passando)
 - [x] Total de 75 testes passando (66 anteriores + 9 novos)
+
+
+## Redesenho do Dashboard de Analytics (Modelo Google Ads)
+- [x] Redesenhar CampaignsAnalyticsTab com layout de cards por plataforma
+- [x] Criar cards de métricas para Google Ads, Meta Ads e TikTok Ads
+- [x] Exibir em cada card: Spend, Conversões, CPC, Sessions
+- [x] Adicionar indicadores visuais (alertas) para métricas ruins
+- [x] Criar gráfico de "Conversions (all campaigns)" com linha de tendência
+- [x] Criar gráfico de "Conversions by campaign source" com múltiplas linhas
+- [x] Aplicar tema dark mode com cores cyan/azul para gráficos
+- [x] Testar responsividade em mobile
