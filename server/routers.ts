@@ -612,6 +612,16 @@ export const appRouter = router({
           return getCampaignMetricsSummary(credentialId, since);
         }),
     }),
+    testMetaConnection: adminProcedure
+      .mutation(async () => {
+        try {
+          const { testMetaAdsConnection } = await import("./_core/meta-ads");
+          const isConnected = await testMetaAdsConnection();
+          return { success: isConnected, message: isConnected ? "Conexao com Meta Ads estabelecida!" : "Falha ao conectar" };
+        } catch (error) {
+          return { success: false, message: `Erro: ${error instanceof Error ? error.message : "Erro desconhecido"}` };
+        }
+      }),
   }),
 });
 

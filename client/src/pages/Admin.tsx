@@ -1,6 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { CampaignsAnalyticsTab } from "./CampaignsAnalyticsTab";
+import { AdsSyncTab } from "./AdsSyncTab";
 import { useLocation, useParams } from "wouter";
 import { useState, useMemo, useCallback } from "react";
 import { format, subDays, startOfDay, endOfDay, differenceInDays, isAfter, isBefore, startOfMonth, endOfMonth, subMonths } from "date-fns";
@@ -13,7 +14,7 @@ import {
   ChevronLeft, LogOut, MessageSquare, Phone, Mail, MapPin,
   ExternalLink, Video, ScrollText, CalendarDays, X, Tag, Plus,
   Pencil, Trash2, Check, Tags, Link, Copy, Clipboard, Info,
-  Globe, BookOpen, EyeOff, Loader2, Lock, Download, FileText, FileSpreadsheet
+  Globe, BookOpen, EyeOff, Loader2, Lock, Download, FileText, FileSpreadsheet, Zap
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -2239,6 +2240,7 @@ export default function Admin() {
     { id: "leads", label: "Leads", icon: UserCheck },
     { id: "campanhas", label: "Campanhas", icon: Megaphone },
     { id: "analytics", label: "Analytics (Looker)", icon: BarChart3 },
+    { id: "sync", label: "Sincronizar Ads", icon: Zap },
     { id: "engajamento", label: "Engajamento", icon: Activity },
     { id: "contatos", label: "Contatos", icon: MessageSquare },
     { id: "tags", label: "Tags", icon: Tags },
@@ -2283,6 +2285,7 @@ export default function Admin() {
           <TabsContent value="leads"><LeadsTab filter={dateFilter} /></TabsContent>
           <TabsContent value="campanhas"><CampaignsTab filter={dateFilter} /></TabsContent>
           <TabsContent value="analytics"><CampaignsAnalyticsTab filter={dateFilter} /></TabsContent>
+          <TabsContent value="sync"><AdsSyncTab /></TabsContent>
           <TabsContent value="engajamento"><EngagementTab filter={dateFilter} /></TabsContent>
           <TabsContent value="contatos"><ContactsTab filter={dateFilter} /></TabsContent>
           <TabsContent value="tags"><TagsTab filter={dateFilter} /></TabsContent>

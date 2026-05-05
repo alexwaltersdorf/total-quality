@@ -679,7 +679,7 @@ export async function createAdAccountCredential(data: any) {
   return result;
 }
 
-export async function getAdAccountCredentials(platform?: string) {
+export async function getAdAccountCredentials(platform?: "google_ads" | "meta_ads" | "tiktok_ads") {
   const db = await getDb();
   if (!db) return [];
   if (platform) {

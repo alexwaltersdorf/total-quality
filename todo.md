@@ -307,3 +307,22 @@
 - [x] Criar visualização de campanhas em cards (além da tabela)
 - [x] Adicionar comparação de período anterior (week-over-week, month-over-month)
 - [x] Testar com dados reais do banco de dados
+
+
+## Integração de APIs Reais - Google Ads e Meta Ads
+- [x] Configurar credenciais de Google Ads (Customer ID: 920-715-3288, Developer Token)
+- [x] Configurar credenciais de Meta Ads (Account ID: 1536672876562340, Access Token)
+- [x] Implementar autenticação OAuth2 para Google Ads API
+- [x] Implementar autenticação para Meta Ads API
+- [x] Criar função para sincronizar campanhas do Google Ads
+- [x] Criar função para sincronizar métricas do Google Ads
+- [x] Criar função para sincronizar campanhas do Meta Ads
+- [x] Criar função para sincronizar métricas do Meta Ads
+- [x] Implementar job de sincronização automática (diária/horária)
+- [x] Adicionar tratamento de erros e retry logic
+- [ ] Testar sincronização com dados reais (aguardando token válido do Facebook)
+- [ ] Validar nomes das campanhas no dashboard
+- [ ] Validar métricas (spend, conversões, CPC, etc.)
+- [x] Documentar processo de autenticação e sincronização
+- [x] Criar página de testes de conexão no admin (/admin/sync)
+- [x] Implementar procedimento tRPC para testar conexão com Meta Ads
