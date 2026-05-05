@@ -296,3 +296,14 @@
 - [x] Criar gráfico de "Conversions by campaign source" com múltiplas linhas
 - [x] Aplicar tema dark mode com cores cyan/azul para gráficos
 - [x] Testar responsividade em mobile
+
+
+## Melhoria do Dashboard de Analytics - Dados Reais e Filtro de Campanhas
+- [x] Adicionar dados de teste no banco de dados para campanhas (Google Ads, Meta Ads)
+- [x] Criar filtro de campanhas no dashboard (dropdown com lista de campanhas)
+- [x] Implementar filtro por campanha individual
+- [x] Expandir dashboard com mais informações: ROI, CPA, Impressões totais, CTR médio
+- [x] Adicionar cards adicionais com métricas de performance
+- [x] Criar visualização de campanhas em cards (além da tabela)
+- [x] Adicionar comparação de período anterior (week-over-week, month-over-month)
+- [x] Testar com dados reais do banco de dados

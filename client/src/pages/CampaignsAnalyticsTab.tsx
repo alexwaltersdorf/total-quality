@@ -4,7 +4,7 @@ import type { DateRange } from "react-day-picker";
 import {
   TrendingUp, TrendingDown, DollarSign, MousePointerClick, Eye,
   Target, Zap, Download, FileSpreadsheet, FileText, ArrowUpRight,
-  ArrowDownRight, Filter, Loader2, AlertCircle
+  ArrowDownRight, Filter, Loader2, AlertCircle, X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -44,11 +44,12 @@ interface PlatformMetricCardProps {
   conversions: number;
   cpc: number;
   sessions: number;
-  ctr?: number;
+  roi: number;
+  cpa: number;
   isWarning?: boolean;
 }
 
-function PlatformMetricCard({ platform, platformName, spend, conversions, cpc, sessions, ctr, isWarning }: PlatformMetricCardProps) {
+function PlatformMetricCard({ platform, platformName, spend, conversions, cpc, sessions, roi, cpa, isWarning }: PlatformMetricCardProps) {
   const platformColors: Record<string, string> = {
     "google_ads": "bg-gradient-to-br from-blue-900 to-blue-800",
     "meta_ads": "bg-gradient-to-br from-indigo-900 to-indigo-800",
@@ -61,36 +62,44 @@ function PlatformMetricCard({ platform, platformName, spend, conversions, cpc, s
       <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mt-12" />
       
       <div className="relative z-10">
-        <h3 className="text-lg font-semibold mb-6">{platformName}</h3>
+        <h3 className="text-lg font-semibold mb-4">{platformName}</h3>
         
-        {/* Spend */}
-        <div className="mb-6">
-          <p className="text-4xl font-bold">R$ {(spend / 1000).toFixed(1)}k</p>
-          <p className="text-sm text-white/70 mt-1">gasto este mês</p>
-        </div>
+        <div className="grid grid-cols-2 gap-4">
+          {/* Spend */}
+          <div>
+            <p className="text-2xl font-bold">R$ {(spend / 1000).toFixed(1)}k</p>
+            <p className="text-xs text-white/70 mt-1">Gasto</p>
+          </div>
 
-        {/* Conversions */}
-        <div className="mb-6">
-          <p className="text-3xl font-bold">{conversions.toLocaleString()}</p>
-          <p className="text-sm text-white/70">Conversões</p>
-        </div>
+          {/* Conversions */}
+          <div>
+            <p className="text-2xl font-bold">{conversions.toLocaleString()}</p>
+            <p className="text-xs text-white/70">Conversões</p>
+          </div>
 
-        {/* CPC */}
-        <div className={`mb-6 ${isWarning ? "border border-red-500/50 rounded p-3" : ""}`}>
-          <p className="text-3xl font-bold">R$ {cpc.toFixed(2)}</p>
-          <p className="text-sm text-white/70">Custo por clique</p>
-          {isWarning && (
-            <div className="flex items-center gap-1 mt-2 text-red-400">
-              <AlertCircle className="h-3 w-3" />
-              <span className="text-xs">Métrica acima da média</span>
-            </div>
-          )}
-        </div>
+          {/* CPC */}
+          <div className={isWarning ? "border border-red-500/50 rounded p-2" : ""}>
+            <p className="text-xl font-bold">R$ {cpc.toFixed(2)}</p>
+            <p className="text-xs text-white/70">CPC</p>
+          </div>
 
-        {/* Sessions */}
-        <div>
-          <p className="text-2xl font-bold">{sessions.toLocaleString()}</p>
-          <p className="text-sm text-white/70">Sessões</p>
+          {/* CPA */}
+          <div>
+            <p className="text-xl font-bold">R$ {cpa.toFixed(2)}</p>
+            <p className="text-xs text-white/70">CPA</p>
+          </div>
+
+          {/* ROI */}
+          <div>
+            <p className="text-xl font-bold text-green-400">{roi.toFixed(0)}%</p>
+            <p className="text-xs text-white/70">ROI</p>
+          </div>
+
+          {/* Sessions */}
+          <div>
+            <p className="text-xl font-bold">{sessions.toLocaleString()}</p>
+            <p className="text-xs text-white/70">Sessões</p>
+          </div>
         </div>
       </div>
     </div>
@@ -99,6 +108,7 @@ function PlatformMetricCard({ platform, platformName, spend, conversions, cpc, s
 
 export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
   const [selectedPlatform, setSelectedPlatform] = useState<string>("all");
+  const [selectedCampaign, setSelectedCampaign] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("roas");
   const [selectedCredentialId, setSelectedCredentialId] = useState<number | null>(null);
 
@@ -117,12 +127,6 @@ export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
 
   // Fetch metrics for selected credential
   const { data: metrics = [], isLoading: metricsLoading } = trpc.ads.metrics.getByCredential.useQuery(
-    credentialId ? { credentialId, ...queryInput } : { credentialId: 0, ...queryInput },
-    { enabled: credentialId !== null }
-  );
-
-  // Fetch summary
-  const { data: summary } = trpc.ads.metrics.getSummary.useQuery(
     credentialId ? { credentialId, ...queryInput } : { credentialId: 0, ...queryInput },
     { enabled: credentialId !== null }
   );
@@ -147,12 +151,23 @@ export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
     }));
   }, [metrics]);
 
+  // Get unique campaigns for filter
+  const uniqueCampaigns = useMemo(() => {
+    const campaignMap = new Map();
+    campaigns.forEach(c => {
+      if (!campaignMap.has(c.name)) {
+        campaignMap.set(c.name, c);
+      }
+    });
+    return Array.from(campaignMap.values());
+  }, [campaigns]);
+
   // Group metrics by platform
   const metricsByPlatform = useMemo(() => {
     const grouped: Record<string, any> = {
-      google_ads: { spend: 0, conversions: 0, cpc: 0, sessions: 0, clicks: 0, ctr: 0, count: 0 },
-      meta_ads: { spend: 0, conversions: 0, cpc: 0, sessions: 0, clicks: 0, ctr: 0, count: 0 },
-      tiktok_ads: { spend: 0, conversions: 0, cpc: 0, sessions: 0, clicks: 0, ctr: 0, count: 0 },
+      google_ads: { spend: 0, conversions: 0, cpc: 0, sessions: 0, clicks: 0, ctr: 0, count: 0, revenue: 0 },
+      meta_ads: { spend: 0, conversions: 0, cpc: 0, sessions: 0, clicks: 0, ctr: 0, count: 0, revenue: 0 },
+      tiktok_ads: { spend: 0, conversions: 0, cpc: 0, sessions: 0, clicks: 0, ctr: 0, count: 0, revenue: 0 },
     };
 
     metrics.forEach((m: any) => {
@@ -160,66 +175,83 @@ export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
       if (grouped[platform]) {
         grouped[platform].spend += Number(m.spend) || 0;
         grouped[platform].conversions += m.conversions || 0;
-        grouped[platform].cpc = grouped[platform].spend > 0 && grouped[platform].clicks > 0 
-          ? grouped[platform].spend / grouped[platform].clicks 
-          : Number(m.cpc) || 0;
         grouped[platform].sessions += m.sessions || 0;
         grouped[platform].clicks += m.clicks || 0;
-        grouped[platform].ctr = (grouped[platform].clicks / (m.impressions || 1)) * 100;
+        grouped[platform].revenue += Number(m.conversionValue) || 0;
+        grouped[platform].ctr += Number(m.ctr) || 0;
         grouped[platform].count += 1;
       }
     });
 
-    // Calculate average CPC per platform
+    // Calculate average metrics per platform
     Object.keys(grouped).forEach(platform => {
       if (grouped[platform].clicks > 0) {
         grouped[platform].cpc = grouped[platform].spend / grouped[platform].clicks;
       }
+      if (grouped[platform].count > 0) {
+        grouped[platform].ctr = grouped[platform].ctr / grouped[platform].count;
+      }
+      grouped[platform].cpa = grouped[platform].conversions > 0 
+        ? grouped[platform].spend / grouped[platform].conversions 
+        : 0;
+      grouped[platform].roi = grouped[platform].spend > 0
+        ? ((grouped[platform].revenue - grouped[platform].spend) / grouped[platform].spend) * 100
+        : 0;
     });
 
     return grouped;
   }, [metrics]);
 
-  // Filter campaigns by platform
+  // Filter campaigns by platform and campaign
   const filteredCampaigns = useMemo(() => {
     let filtered = campaigns;
     if (selectedPlatform !== "all") {
       filtered = filtered.filter(c => c.platform === selectedPlatform);
+    }
+    if (selectedCampaign !== "all") {
+      filtered = filtered.filter(c => c.name === selectedCampaign);
     }
     return filtered.sort((a, b) => {
       const aVal = a[sortBy as keyof typeof a] as number;
       const bVal = b[sortBy as keyof typeof b] as number;
       return bVal - aVal;
     });
-  }, [campaigns, selectedPlatform, sortBy]);
+  }, [campaigns, selectedPlatform, selectedCampaign, sortBy]);
 
   // Prepare daily performance data
   const dailyPerformance = useMemo(() => {
     const grouped: Record<string, any> = {};
-    metrics.forEach((m: any) => {
-      const date = m.date;
-      if (!grouped[date]) {
-        grouped[date] = { date, conversions: 0, spend: 0, clicks: 0 };
-      }
-      grouped[date].conversions += m.conversions || 0;
-      grouped[date].spend += Number(m.spend) || 0;
-      grouped[date].clicks += m.clicks || 0;
+    filteredCampaigns.forEach(c => {
+      const campaignMetrics = metrics.filter((m: any) => m.campaignName === c.name);
+      campaignMetrics.forEach((m: any) => {
+        const date = m.date;
+        if (!grouped[date]) {
+          grouped[date] = { date, conversions: 0, spend: 0, clicks: 0, revenue: 0 };
+        }
+        grouped[date].conversions += m.conversions || 0;
+        grouped[date].spend += Number(m.spend) || 0;
+        grouped[date].clicks += m.clicks || 0;
+        grouped[date].revenue += Number(m.conversionValue) || 0;
+      });
     });
     return Object.values(grouped).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }, [metrics]);
+  }, [metrics, filteredCampaigns]);
 
   // Prepare conversions by source data
   const conversionsBySource = useMemo(() => {
     const grouped: Record<string, any> = {};
-    metrics.forEach((m: any) => {
-      const platform = m.platform === "google_ads" ? "Google Ads" : m.platform === "meta_ads" ? "Meta Ads" : "TikTok Ads";
-      if (!grouped[m.date]) {
-        grouped[m.date] = { date: m.date };
-      }
-      grouped[m.date][platform] = (grouped[m.date][platform] || 0) + (m.conversions || 0);
+    filteredCampaigns.forEach(c => {
+      const campaignMetrics = metrics.filter((m: any) => m.campaignName === c.name);
+      campaignMetrics.forEach((m: any) => {
+        const platform = m.platform === "google_ads" ? "Google Ads" : m.platform === "meta_ads" ? "Meta Ads" : "TikTok Ads";
+        if (!grouped[m.date]) {
+          grouped[m.date] = { date: m.date };
+        }
+        grouped[m.date][platform] = (grouped[m.date][platform] || 0) + (m.conversions || 0);
+      });
     });
     return Object.values(grouped).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }, [metrics]);
+  }, [metrics, filteredCampaigns]);
 
   const exportCSV = useCallback(() => {
     const headers = ["Campanha", "Plataforma", "Spend", "Impressões", "Cliques", "Conversões", "Revenue", "CPC", "CTR", "Conv. Rate", "ROAS"];
@@ -278,24 +310,59 @@ export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
         </Popover>
       </div>
 
-      {/* Credential Selector */}
-      {credentials.length > 1 && (
+      {/* Credential Selector and Filters */}
+      <div className="flex flex-wrap items-center gap-3">
+        {credentials.length > 1 && (
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Conta:</label>
+            <Select value={credentialId?.toString() || ""} onValueChange={(v) => setSelectedCredentialId(Number(v))}>
+              <SelectTrigger className="w-64">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {credentials.map((cred: any) => (
+                  <SelectItem key={cred.id} value={cred.id.toString()}>
+                    {cred.accountName} ({cred.platform === "google_ads" ? "Google Ads" : "Meta Ads"})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {/* Campaign Filter */}
         <div className="flex items-center gap-2">
-          <label className="text-sm font-medium">Conta:</label>
-          <Select value={credentialId?.toString() || ""} onValueChange={(v) => setSelectedCredentialId(Number(v))}>
+          <label className="text-sm font-medium">Campanha:</label>
+          <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
             <SelectTrigger className="w-64">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {credentials.map((cred: any) => (
-                <SelectItem key={cred.id} value={cred.id.toString()}>
-                  {cred.accountName} ({cred.platform === "google_ads" ? "Google Ads" : "Meta Ads"})
+              <SelectItem value="all">Todas as Campanhas ({uniqueCampaigns.length})</SelectItem>
+              {uniqueCampaigns.map((campaign) => (
+                <SelectItem key={campaign.name} value={campaign.name}>
+                  {campaign.name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-      )}
+
+        {/* Clear filters */}
+        {(selectedPlatform !== "all" || selectedCampaign !== "all") && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setSelectedPlatform("all");
+              setSelectedCampaign("all");
+            }}
+            className="gap-1"
+          >
+            <X className="h-4 w-4" /> Limpar filtros
+          </Button>
+        )}
+      </div>
 
       {/* Platform Metrics Cards */}
       {metricsLoading ? (
@@ -312,7 +379,8 @@ export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
               conversions={metricsByPlatform.google_ads.conversions}
               cpc={metricsByPlatform.google_ads.cpc}
               sessions={metricsByPlatform.google_ads.sessions}
-              ctr={metricsByPlatform.google_ads.ctr}
+              roi={metricsByPlatform.google_ads.roi}
+              cpa={metricsByPlatform.google_ads.cpa}
               isWarning={metricsByPlatform.google_ads.cpc > 2}
             />
           )}
@@ -324,7 +392,8 @@ export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
               conversions={metricsByPlatform.meta_ads.conversions}
               cpc={metricsByPlatform.meta_ads.cpc}
               sessions={metricsByPlatform.meta_ads.sessions}
-              ctr={metricsByPlatform.meta_ads.ctr}
+              roi={metricsByPlatform.meta_ads.roi}
+              cpa={metricsByPlatform.meta_ads.cpa}
               isWarning={metricsByPlatform.meta_ads.cpc > 1.5}
             />
           )}
@@ -336,7 +405,8 @@ export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
               conversions={metricsByPlatform.tiktok_ads.conversions}
               cpc={metricsByPlatform.tiktok_ads.cpc}
               sessions={metricsByPlatform.tiktok_ads.sessions}
-              ctr={metricsByPlatform.tiktok_ads.ctr}
+              roi={metricsByPlatform.tiktok_ads.roi}
+              cpa={metricsByPlatform.tiktok_ads.cpa}
               isWarning={metricsByPlatform.tiktok_ads.cpc > 0.5}
             />
           )}
@@ -348,7 +418,7 @@ export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
         {/* Conversions (all campaigns) */}
         <Card className="bg-slate-950 border-slate-800">
           <CardHeader>
-            <CardTitle className="text-lg text-white">Conversões (todas as campanhas)</CardTitle>
+            <CardTitle className="text-lg text-white">Conversões {selectedCampaign !== "all" ? `(${selectedCampaign})` : "(todas as campanhas)"}</CardTitle>
           </CardHeader>
           <CardContent>
             {metricsLoading ? (
@@ -415,7 +485,7 @@ export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Campanhas</CardTitle>
+              <CardTitle>Campanhas ({filteredCampaigns.length})</CardTitle>
               <CardDescription>Detalhes de performance por campanha</CardDescription>
             </div>
             <div className="flex items-center gap-2">
