@@ -326,3 +326,32 @@
 - [x] Documentar processo de autenticação e sincronização
 - [x] Criar página de testes de conexão no admin (/admin/sync)
 - [x] Implementar procedimento tRPC para testar conexão com Meta Ads
+
+
+## Landing Page - Cartão Total Quality Care (/cartao)
+- [ ] Criar rota /cartao no projeto existente
+- [ ] Estruturar componentes base (Hero, Section, Card, Button, Modal)
+- [ ] Implementar seção 1 - Hero com vídeo background
+- [ ] Implementar seção 2 - Identificação da Dor (3 cards)
+- [ ] Implementar seção 3 - Apresentação da Solução
+- [ ] Implementar seção 4 - Como a mensalidade volta pro PIX
+- [ ] Implementar seção 5 - Simulador Interativo de Cashback
+- [ ] Implementar seção 6 - O que está incluso (Stack de valor)
+- [ ] Implementar seção 7 - Comparativo (tabela)
+- [ ] Implementar seção 8 - Por que confiar (Autoridade local)
+- [ ] Implementar seção 9 - Provas sociais (Depoimentos em vídeo)
+- [ ] Implementar seção 10 - Planos e preços (3 cards)
+- [ ] Implementar seção 11 - Garantias (4 selos)
+- [ ] Implementar seção 12 - FAQ (Accordion)
+- [ ] Implementar seção 13 - CTA Final + Footer
+- [ ] Criar modal de formulário de leads
+- [ ] Integrar WhatsApp com links pré-preenchidos
+- [ ] Integrar Google Tag Manager (GTM)
+- [ ] Integrar Meta Pixel
+- [ ] Integrar Google Ads Conversion
+- [ ] Implementar tracking de eventos (scroll depth, CTA clicks, form submit)
+- [ ] Otimizar performance (Lighthouse 90+)
+- [ ] Testar responsividade em mobile
+- [ ] Testar SEO local (meta tags, schema.org)
+- [ ] Testar formulário e webhook N8N
+- [ ] Deploy e validação final

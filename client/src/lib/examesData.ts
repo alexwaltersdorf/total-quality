@@ -160,6 +160,7 @@ export const examesData: ExamData[] = [
     metaTitle: "Ultrassonografia em Caraguatatuba | Total Quality Diagnóstica",
     metaDescription: "Ultrassonografia em Caraguatatuba - SP na Total Quality: abdominal, pélvica, obstétrica, tireoide, mama, próstata e Doppler vascular. Médicos radiologistas experientes. Agende.",
     heroDescription: "A ultrassonografia é um exame seguro e indolor que utiliza ondas sonoras para produzir imagens em tempo real dos órgãos internos. Na Total Quality, contamos com equipamentos de última geração para diagnósticos precisos.",
+    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "A Ultrassonografia (ecografia) é um exame de diagnóstico por imagem que utiliza ondas sonoras de alta frequência para criar imagens dos órgãos e estruturas internas do corpo. É um método seguro, indolor, não invasivo e que não utiliza radiação ionizante, sendo seguro inclusive para gestantes.",
     howItWorks: "Um transdutor (sonda) é colocado sobre a pele com gel condutor. O transdutor emite ondas sonoras que penetram no corpo e retornam ao encontrar diferentes tecidos, criando imagens em tempo real no monitor. O médico analisa as imagens durante o exame.",
     indications: [
@@ -196,6 +197,7 @@ export const examesData: ExamData[] = [
     metaTitle: "MAPA 24h - Pressão Arterial em Caraguatatuba | Total Quality",
     metaDescription: "MAPA 24h em Caraguatatuba - SP na Total Quality. Monitorização Ambulatorial da Pressão Arterial para diagnóstico preciso de hipertensão e variações diurnas/noturnas. Agende.",
     heroDescription: "O MAPA é um exame que monitora a pressão arterial continuamente durante 24 horas, registrando medições automáticas durante as atividades do dia a dia e durante o sono. É o exame mais preciso para diagnóstico e acompanhamento da hipertensão arterial.",
+    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "O MAPA (Monitorização Ambulatorial da Pressão Arterial) é um exame que registra a pressão arterial automaticamente a cada 15-20 minutos durante o dia e a cada 30 minutos durante a noite, ao longo de 24 horas. Permite avaliar o comportamento da pressão arterial em condições reais do cotidiano do paciente.",
     howItWorks: "Um aparelho portátil com manguito é instalado no braço do paciente. O equipamento realiza medições automáticas programadas ao longo de 24 horas. O paciente mantém suas atividades normais e registra em um diário os horários de sono, refeições e atividades. Após 24 horas, o aparelho é retirado e os dados são analisados por software especializado.",
     indications: [
@@ -232,6 +234,7 @@ export const examesData: ExamData[] = [
     metaTitle: "Holter 24h em Caraguatatuba | Total Quality Diagnóstica",
     metaDescription: "Holter 24h em Caraguatatuba - SP na Total Quality. Monitorização cardíaca contínua para detectar arritmias, palpitações e alterações no ritmo cardíaco. Agende pelo WhatsApp.",
     heroDescription: "O Holter é um exame que registra continuamente a atividade elétrica do coração durante 24 horas, permitindo detectar arritmias e alterações que podem não aparecer em um eletrocardiograma convencional.",
+    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "O Holter é um exame de monitorização eletrocardiográfica contínua por 24 horas. Um pequeno gravador portátil registra todos os batimentos cardíacos durante as atividades diárias e o sono, permitindo identificar arritmias, isquemias e outras alterações do ritmo cardíaco que podem ser intermitentes.",
     howItWorks: "Eletrodos adesivos são colocados no tórax do paciente e conectados a um pequeno gravador digital portátil. O aparelho registra continuamente o eletrocardiograma durante 24 horas. O paciente mantém suas atividades normais e registra sintomas em um diário. Após 24 horas, o aparelho é retirado e os dados são analisados.",
     indications: [
@@ -268,6 +271,7 @@ export const examesData: ExamData[] = [
     metaTitle: "Espirometria em Caraguatatuba | Total Quality Diagnóstica",
     metaDescription: "Espirometria em Caraguatatuba - SP na Total Quality. Prova de função pulmonar para diagnóstico de asma, DPOC, bronquite e enfisema. Avaliação pré-operatória e ocupacional.",
     heroDescription: "A espirometria é o exame padrão-ouro para avaliação da função pulmonar. Mede volumes e fluxos de ar nos pulmões, sendo essencial para diagnóstico e acompanhamento de doenças respiratórias como asma e DPOC.",
+    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "A Espirometria (prova de função pulmonar) é um exame que mede a quantidade e a velocidade do ar que entra e sai dos pulmões. Avalia a capacidade pulmonar e detecta obstruções ou restrições nas vias aéreas. É fundamental para diagnóstico de asma, DPOC, fibrose pulmonar e outras doenças respiratórias.",
     howItWorks: "O paciente sopra com força máxima em um bocal conectado ao espirômetro. O aparelho mede o volume de ar expirado e a velocidade do fluxo. São realizadas várias manobras para garantir resultados confiáveis. O exame pode incluir teste com broncodilatador para avaliar a reversibilidade de obstruções.",
     indications: [
@@ -304,6 +308,7 @@ export const examesData: ExamData[] = [
     metaTitle: "Eletrocardiograma (ECG) em Caraguatatuba | Total Quality",
     metaDescription: "Eletrocardiograma (ECG) em Caraguatatuba - SP na Total Quality. Avaliação cardíaca rápida e indolor para diagnóstico de arritmias, infarto e doenças do coração. Agende já.",
     heroDescription: "O Eletrocardiograma (ECG) é um exame rápido, indolor e fundamental para avaliação da saúde do coração. Registra a atividade elétrica cardíaca e permite diagnosticar arritmias, isquemias e outras condições cardíacas.",
+    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "O Eletrocardiograma (ECG) é um exame que registra a atividade elétrica do coração através de eletrodos colocados na pele. Produz um traçado gráfico que mostra o ritmo cardíaco, a frequência dos batimentos e possíveis alterações na condução elétrica do coração. É um dos exames mais realizados na cardiologia.",
     howItWorks: "Eletrodos adesivos são colocados no tórax, braços e pernas do paciente. Esses eletrodos captam os sinais elétricos do coração e os transmitem ao aparelho, que produz um traçado em papel ou digital. O exame é rápido, durando apenas 5 a 10 minutos, e é completamente indolor.",
     indications: [
@@ -340,6 +345,7 @@ export const examesData: ExamData[] = [
     metaTitle: "Eletroencefalograma (EEG) em Caraguatatuba | Total Quality",
     metaDescription: "Eletroencefalograma (EEG) em Caraguatatuba - SP na Total Quality. Avaliação neurológica para diagnóstico de epilepsia, convulsões, distúrbios do sono e enxaquecas. Agende.",
     heroDescription: "O Eletroencefalograma (EEG) é um exame que registra a atividade elétrica do cérebro, sendo fundamental para diagnóstico de epilepsia, convulsões e outros distúrbios neurológicos. Na Total Quality, realizamos o exame com equipamento digital de alta sensibilidade.",
+    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "O Eletroencefalograma (EEG) é um exame neurofisiológico que registra a atividade elétrica do cérebro através de eletrodos colocados no couro cabeludo. Produz um traçado que mostra padrões de ondas cerebrais, permitindo identificar alterações associadas a epilepsia, distúrbios do sono, encefalopatias e outras condições neurológicas.",
     howItWorks: "Eletrodos são posicionados no couro cabeludo com pasta condutora. O paciente permanece deitado ou sentado confortavelmente enquanto o aparelho registra a atividade elétrica cerebral. Durante o exame, podem ser realizadas estimulações como hiperventilação e fotoestimulação para provocar respostas cerebrais específicas.",
     indications: [
@@ -376,6 +382,7 @@ export const examesData: ExamData[] = [
     metaTitle: "Exame Toxicológico em Caraguatatuba | Laboratório Total Quality",
     metaDescription: "Exame toxicológico em Caraguatatuba - SP no Laboratório Total Quality. Para CNH categorias C, D, E, admissional e demissional. Detecção em janela de até 180 dias. Resultado rápido.",
     heroDescription: "O exame toxicológico é obrigatório para motoristas profissionais (categorias C, D e E) e pode ser solicitado em processos admissionais e demissionais. Na Total Quality, realizamos o exame com laboratório credenciado e resultados rápidos.",
+    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "O Exame Toxicológico é uma análise laboratorial que detecta o uso de substâncias psicoativas (drogas) através de amostras de cabelo, pelo ou unha. Possui janela de detecção de até 90 a 180 dias, sendo muito mais abrangente que o exame de urina. É obrigatório por lei para motoristas profissionais das categorias C, D e E.",
     howItWorks: "Uma pequena amostra de cabelo (ou pelo corporal) é coletada e enviada ao laboratório credenciado. A análise identifica metabólitos de substâncias como maconha, cocaína, anfetaminas, metanfetaminas, opiáceos e outras drogas. O resultado é emitido em formato padronizado e aceito pelo DETRAN.",
     indications: [
