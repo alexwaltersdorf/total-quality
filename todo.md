@@ -355,3 +355,14 @@
 - [ ] Testar SEO local (meta tags, schema.org)
 - [ ] Testar formulário e webhook N8N
 - [ ] Deploy e validação final
+
+
+## Página do Cartão Total Quality Care
+- [x] Criar página CartaoPage.tsx com 3 planos (Quality Plus, Quality Select, Premium)
+- [x] Criar componente PricingCard para exibir planos
+- [x] Criar componente BenefitsList para listar benefícios
+- [x] Integrar página no App.tsx com rota /cartao
+- [x] Adicionar link "CARTÃO" na Navbar
+- [ ] Substituir seção de Contato pela seção de Cartão na Home
+- [ ] Testar responsividade e conversão
+- [ ] Otimizar SEO da página de cartão

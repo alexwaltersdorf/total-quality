@@ -16,6 +16,7 @@ import LaboratorioCaraguatatuba from "./pages/LaboratorioCaraguatatuba";
 import CallRedirect from "./pages/CallRedirect";
 import ThankYouCall from "./pages/ThankYouCall";
 import FormSubmissionSuccess from "./pages/FormSubmissionSuccess";
+import CartaoPage from "./pages/CartaoPage";
 
 function Router() {
   return (
@@ -33,6 +34,7 @@ function Router() {
       <Route path={"/ligar"} component={CallRedirect} />
       <Route path={"/obrigado-chamada"} component={ThankYouCall} />
       <Route path={"/formulario-sucesso"} component={FormSubmissionSuccess} />
+      <Route path={"/cartao"} component={CartaoPage} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

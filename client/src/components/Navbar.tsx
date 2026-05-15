@@ -13,6 +13,7 @@ const navLinks = [
   { label: "Diferenciais", href: "#diferenciais" },
   { label: "Exames", href: "#exames" },
   { label: "Sobre", href: "#sobre" },
+  { label: "Cartão", href: "/cartao" },
   { label: "Contato", href: "#contato" },
 ];
 
@@ -112,15 +113,29 @@ export default function Navbar() {
 
         {/* Desktop nav links */}
         <div className="hidden lg:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <button
-              key={link.href}
-              onClick={() => scrollTo(link.href)}
-              className="text-xs font-semibold uppercase tracking-[0.15em] text-text-light hover:text-brand transition-colors duration-300"
-            >
-              {link.label}
-            </button>
-          ))}
+          {navLinks.map((link) => {
+            if (link.href === "/cartao") {
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-xs font-semibold uppercase tracking-[0.15em] text-brand hover:text-brand-dark transition-colors duration-300"
+                  onClick={() => trackNavClick(link.label.toLowerCase())}
+                >
+                  {link.label}
+                </Link>
+              );
+            }
+            return (
+              <button
+                key={link.href}
+                onClick={() => scrollTo(link.href)}
+                className="text-xs font-semibold uppercase tracking-[0.15em] text-text-light hover:text-brand transition-colors duration-300"
+              >
+                {link.label}
+              </button>
+            );
+          })}
 
           {/* Exames Dropdown */}
           <div
@@ -222,18 +237,35 @@ export default function Navbar() {
       >
         <div className="container pt-24 pb-8">
           <div className="space-y-1">
-            {navLinks.map((link, i) => (
-              <button
-                key={link.href}
-                onClick={() => scrollTo(link.href)}
-                className="block w-full text-left py-4 border-b border-black/10"
-                style={{ animationDelay: `${i * 50}ms` }}
-              >
-                <span className="heading-display text-4xl text-text hover:text-brand transition-colors">
-                  {link.label.toUpperCase()}
-                </span>
-              </button>
-            ))}
+            {navLinks.map((link, i) => {
+              if (link.href === "/cartao") {
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="block w-full text-left py-4 border-b border-black/10"
+                    onClick={() => { setMobileOpen(false); trackNavClick(link.label.toLowerCase()); }}
+                    style={{ animationDelay: `${i * 50}ms` }}
+                  >
+                    <span className="heading-display text-4xl text-brand hover:text-brand-dark transition-colors">
+                      {link.label.toUpperCase()}
+                    </span>
+                  </Link>
+                );
+              }
+              return (
+                <button
+                  key={link.href}
+                  onClick={() => scrollTo(link.href)}
+                  className="block w-full text-left py-4 border-b border-black/10"
+                  style={{ animationDelay: `${i * 50}ms` }}
+                >
+                  <span className="heading-display text-4xl text-text hover:text-brand transition-colors">
+                    {link.label.toUpperCase()}
+                  </span>
+                </button>
+              );
+            })}
 
             {/* Mobile Exames Accordion */}
             <div className="border-b border-black/10">
