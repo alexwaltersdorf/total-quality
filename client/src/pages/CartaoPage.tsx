@@ -36,20 +36,26 @@ export default function CartaoPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-red-700 to-red-800 text-white py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 font-bebas-neue tracking-wide">
+      <section className="relative h-screen bg-cover bg-center flex items-center justify-center" style={{
+        backgroundImage: 'url(https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/familia-feliz-cartao-eU6gbFymHQy5EPdc6okx6r.webp)',
+        backgroundAttachment: 'fixed'
+      }}>
+        {/* Overlay com gradiente */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/40"></div>
+        
+        <div className="relative max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 z-10">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 font-bebas-neue tracking-wide text-white">
             TOTAL QUALITY CARE
           </h1>
-          <p className="text-xl sm:text-2xl mb-4 font-light">
+          <p className="text-xl sm:text-2xl mb-4 font-light text-white">
             Proteção Completa para Sua Saúde e Bem-estar
           </p>
-          <p className="text-lg text-red-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-100 mb-8 max-w-2xl mx-auto">
             Acesso a telemedicina, descontos em exames, cashback em PIX e muito mais.
             Escolha o plano perfeito para você e sua família.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-white text-red-700 hover:bg-gray-100 px-8 py-6 text-lg font-bold">
+            <Button className="bg-brand hover:bg-brand-dark text-white px-8 py-6 text-lg font-bold">
               Começar Agora
             </Button>
             <Button
@@ -128,7 +134,7 @@ export default function CartaoPage() {
           <div className="overflow-x-auto">
             <table className="w-full bg-white rounded-lg shadow-sm">
               <thead>
-                <tr className="border-b-2 border-red-700">
+                <tr className="border-b-2 border-brand">
                   <th className="px-6 py-4 text-left font-bold text-gray-900">Benefício</th>
                   {cartaoPlanos.map((plan) => (
                     <th
@@ -240,15 +246,15 @@ export default function CartaoPage() {
       </section>
 
       {/* CTA Final */}
-      <section className="bg-gradient-to-r from-red-700 to-red-800 text-white py-16 px-4 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-r from-brand to-brand-dark text-white py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6">
             Pronto para Proteger Sua Saúde?
           </h2>
-          <p className="text-lg text-red-100 mb-8">
+          <p className="text-lg text-white/90 mb-8">
             Escolha seu plano agora e comece a aproveitar todos os benefícios do Total Quality Care.
           </p>
-          <Button className="bg-white text-red-700 hover:bg-gray-100 px-12 py-6 text-lg font-bold">
+          <Button className="bg-white text-brand hover:bg-gray-100 px-12 py-6 text-lg font-bold">
             Contratar Agora
           </Button>
         </div>

@@ -12,12 +12,12 @@ export default function CartaoPricingCard({ plan, onSelect }: PricingCardProps) 
     <div
       className={`relative flex flex-col rounded-lg border-2 transition-all duration-300 ${
         plan.highlighted
-          ? "border-red-700 bg-gradient-to-b from-red-50 to-white shadow-xl scale-105"
+          ? "border-brand bg-gradient-to-b from-brand/5 to-white shadow-xl scale-105"
           : "border-gray-200 bg-white hover:shadow-lg"
       }`}
     >
       {plan.highlighted && (
-        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-red-700 text-white px-4 py-1 rounded-full text-sm font-bold">
+        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-brand text-white px-4 py-1 rounded-full text-sm font-bold">
           MAIS POPULAR
         </div>
       )}
@@ -32,7 +32,7 @@ export default function CartaoPricingCard({ plan, onSelect }: PricingCardProps) 
         {/* Preço */}
         <div className="mb-6">
           <div className="flex items-baseline gap-1">
-            <span className="text-4xl font-bold text-red-700">{plan.price}</span>
+            <span className="text-4xl font-bold text-brand">{plan.price}</span>
             <span className="text-gray-600">{plan.period}</span>
           </div>
           <p className="text-sm text-gray-600 mt-2">{plan.description}</p>
@@ -43,8 +43,8 @@ export default function CartaoPricingCard({ plan, onSelect }: PricingCardProps) 
           onClick={() => onSelect(plan.id)}
           className={`w-full mb-8 py-6 text-lg font-bold transition-all ${
             plan.highlighted
-              ? "bg-red-700 hover:bg-red-800 text-white"
-              : "bg-gray-200 hover:bg-gray-300 text-gray-900"
+              ? "bg-brand hover:bg-brand-dark text-white"
+              : "border-2 border-brand text-brand hover:bg-brand/5"
           }`}
         >
           {plan.cta}
