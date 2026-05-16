@@ -80,7 +80,7 @@ export const cartaoPlanos: Plan[] = [
   },
   {
     id: "quality-premium",
-    name: "Premium",
+    name: "Quality Premium",
     subtitle: "Proteção Premium",
     price: "R$ 99,90",
     period: "/mês",
