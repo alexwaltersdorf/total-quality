@@ -10,7 +10,12 @@ export default function CartaoPage() {
 
   const handleSelectPlan = (planId: string) => {
     setSelectedPlan(planId);
-    const message = `Olá! Gostaria de contratar o plano ${cartaoPlanos.find(p => p.id === planId)?.name}.`;
+    const planMessages: Record<string, string> = {
+      "quality-plus": "Quero Proteção Essencial, R$ 29,90",
+      "quality-select": "Quero Proteção Completa, R$ 69,90",
+      "quality-premium": "Quero Proteção Premium, R$ 99,90"
+    };
+    const message = planMessages[planId] || `Olá! Gostaria de contratar o plano ${cartaoPlanos.find(p => p.id === planId)?.name}.`;
     window.location.href = `https://wa.me/5512988735350?text=${encodeURIComponent(message)}`;
   };
 

@@ -39,16 +39,12 @@ export default function CartaoPricingCard({ plan, onSelect }: PricingCardProps) 
         </div>
 
         {/* CTA Button */}
-        <Button
+        <button
           onClick={() => onSelect(plan.id)}
-          className={`w-full mb-8 py-6 text-lg font-bold transition-all ${
-            plan.highlighted
-              ? "bg-brand hover:bg-brand-dark text-white"
-              : "border-2 border-brand text-brand hover:bg-brand/5"
-          }`}
+          className="w-full mb-8 py-3 px-6 text-lg font-bold rounded-lg transition-all bg-brand hover:bg-brand-dark text-white"
         >
           {plan.cta}
-        </Button>
+        </button>
 
         {/* Benefícios */}
         <div className="space-y-4">
