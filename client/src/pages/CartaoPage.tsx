@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, Zap, Smartphone, Heart, Dumbbell, Pill } from "lucide-react";
+import { ChevronDown, Zap, Smartphone, Heart, Dumbbell, Pill, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CartaoPricingCard from "@/components/CartaoPricingCard";
 import { cartaoPlanos, mainBenefitsData, faqs } from "@/lib/cartaoPlanos";
@@ -10,13 +10,12 @@ export default function CartaoPage() {
 
   const handleSelectPlan = (planId: string) => {
     setSelectedPlan(planId);
-    // Redirecionar para WhatsApp ou página de checkout
     const message = `Olá! Gostaria de contratar o plano ${cartaoPlanos.find(p => p.id === planId)?.name}.`;
     window.location.href = `https://wa.me/5512988735350?text=${encodeURIComponent(message)}`;
   };
 
   const getIconComponent = (iconName: string) => {
-    const iconClass = "w-8 h-8 text-red-700";
+    const iconClass = "w-8 h-8 text-brand";
     switch (iconName) {
       case "zap":
         return <Zap className={iconClass} />;
@@ -40,7 +39,6 @@ export default function CartaoPage() {
         backgroundImage: 'url(https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/familia-feliz-cartao-eU6gbFymHQy5EPdc6okx6r.webp)',
         backgroundAttachment: 'fixed'
       }}>
-        {/* Overlay com gradiente */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/40"></div>
         
         <div className="relative max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 z-10">
@@ -68,40 +66,59 @@ export default function CartaoPage() {
         </div>
       </section>
 
-      {/* Benefícios Principais */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      {/* Por que escolher Total Quality Care */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-gray-900">
-            Por que escolher Total Quality Care?
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {mainBenefitsData.map((benefit, idx) => (
-              <div key={idx} className="flex gap-4 p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex-shrink-0">
-                  {getIconComponent(benefit.icon)}
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
-                    {benefit.title}
-                  </h3>
-                  <p className="text-gray-600">{benefit.description}</p>
-                </div>
+          <div className="mb-16">
+            <p className="text-sm font-semibold text-text-light uppercase tracking-widest mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand"></span>
+              Proteção e Benefícios
+            </p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight mb-6">
+                  <span className="text-text-light block">POR QUE</span>
+                  <span className="text-brand block">ESCOLHER TOTAL</span>
+                  <span className="text-brand block">QUALITY CARE?</span>
+                </h2>
+                <p className="text-lg text-text-light leading-relaxed">
+                  Nossos planos em Medicina Diagnóstica e Telemedicina fazem toda a diferença no cuidado com sua saúde. Proteção completa para você e sua família com benefícios exclusivos.
+                </p>
               </div>
-            ))}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {mainBenefitsData.slice(0, 4).map((benefit, idx) => (
+                  <div key={idx} className="flex gap-4">
+                    <div className="flex-shrink-0 mt-1">
+                      {getIconComponent(benefit.icon)}
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-text-light mb-2">
+                        {benefit.title}
+                      </h3>
+                      <p className="text-sm text-text-light">{benefit.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Planos */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      {/* Escolha Seu Plano */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-gray-900">
-              Escolha Seu Plano
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold text-text-light uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand"></span>
+              Planos de Proteção
+            </p>
+            <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight mb-6">
+              <span className="text-text-light block">ESCOLHA SEU</span>
+              <span className="text-brand block">PLANO</span>
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Todos os planos incluem acesso ao aplicativo Total Quality Care com cashback em PIX
-              e benefícios em milhares de marcas parceiras.
+            <p className="text-lg text-text-light max-w-2xl mx-auto">
+              Todos os planos incluem acesso ao aplicativo Total Quality Care com cashback em PIX e benefícios em milhares de marcas parceiras.
             </p>
           </div>
 
@@ -116,7 +133,7 @@ export default function CartaoPage() {
           </div>
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-text-light">
               * Check-up anual gratuito para os 100 primeiros adquirentes dos planos Select e Premium.
               Consulte os termos e condições.
             </p>
@@ -125,21 +142,28 @@ export default function CartaoPage() {
       </section>
 
       {/* Comparação Detalhada */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-gray-900">
-            Comparação Completa de Benefícios
-          </h2>
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold text-text-light uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand"></span>
+              Comparação
+            </p>
+            <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
+              <span className="text-text-light block">COMPARAÇÃO</span>
+              <span className="text-brand block">COMPLETA</span>
+            </h2>
+          </div>
 
           <div className="overflow-x-auto">
             <table className="w-full bg-white rounded-lg shadow-sm">
               <thead>
                 <tr className="border-b-2 border-brand">
-                  <th className="px-6 py-4 text-left font-bold text-gray-900">Benefício</th>
+                  <th className="px-6 py-4 text-left font-bold text-text-light">Benefício</th>
                   {cartaoPlanos.map((plan) => (
                     <th
                       key={plan.id}
-                      className="px-6 py-4 text-center font-bold text-gray-900"
+                      className="px-6 py-4 text-center font-bold text-text-light"
                     >
                       {plan.name}
                     </th>
@@ -148,7 +172,7 @@ export default function CartaoPage() {
               </thead>
               <tbody>
                 <tr className="border-b">
-                  <td className="px-6 py-4 font-semibold text-gray-900">
+                  <td className="px-6 py-4 font-semibold text-text-light">
                     Teleconsultas Clínico Geral/mês
                   </td>
                   <td className="px-6 py-4 text-center">5</td>
@@ -156,7 +180,7 @@ export default function CartaoPage() {
                   <td className="px-6 py-4 text-center">5</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="px-6 py-4 font-semibold text-gray-900">
+                  <td className="px-6 py-4 font-semibold text-text-light">
                     Teleconsultas Especialista/mês
                   </td>
                   <td className="px-6 py-4 text-center">1</td>
@@ -164,7 +188,7 @@ export default function CartaoPage() {
                   <td className="px-6 py-4 text-center">1</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="px-6 py-4 font-semibold text-gray-900">
+                  <td className="px-6 py-4 font-semibold text-text-light">
                     Uber Voucher/mês
                   </td>
                   <td className="px-6 py-4 text-center">-</td>
@@ -172,7 +196,7 @@ export default function CartaoPage() {
                   <td className="px-6 py-4 text-center">R$ 25</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="px-6 py-4 font-semibold text-gray-900">
+                  <td className="px-6 py-4 font-semibold text-text-light">
                     Check-up Anual
                   </td>
                   <td className="px-6 py-4 text-center">-</td>
@@ -180,7 +204,7 @@ export default function CartaoPage() {
                   <td className="px-6 py-4 text-center">Gratuito*</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="px-6 py-4 font-semibold text-gray-900">
+                  <td className="px-6 py-4 font-semibold text-text-light">
                     Acesso LecuponFit
                   </td>
                   <td className="px-6 py-4 text-center">-</td>
@@ -188,7 +212,7 @@ export default function CartaoPage() {
                   <td className="px-6 py-4 text-center">✓</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="px-6 py-4 font-semibold text-gray-900">
+                  <td className="px-6 py-4 font-semibold text-text-light">
                     Desconto Exames Laboratoriais
                   </td>
                   <td className="px-6 py-4 text-center">até 20%</td>
@@ -196,7 +220,7 @@ export default function CartaoPage() {
                   <td className="px-6 py-4 text-center">até 70%</td>
                 </tr>
                 <tr>
-                  <td className="px-6 py-4 font-semibold text-gray-900">
+                  <td className="px-6 py-4 font-semibold text-text-light">
                     Desconto Exames de Imagem
                   </td>
                   <td className="px-6 py-4 text-center">até 10%</td>
@@ -210,33 +234,40 @@ export default function CartaoPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-gray-900">
-            Perguntas Frequentes
-          </h2>
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold text-text-light uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand"></span>
+              Dúvidas
+            </p>
+            <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
+              <span className="text-text-light block">PERGUNTAS</span>
+              <span className="text-brand block">FREQUENTES</span>
+            </h2>
+          </div>
 
           <div className="space-y-4">
             {faqs.map((faq, idx) => (
-              <div key={idx} className="border border-gray-200 rounded-lg overflow-hidden">
+              <div key={idx} className="border border-gray-300 rounded-lg overflow-hidden bg-white">
                 <button
                   onClick={() =>
                     setExpandedFaq(expandedFaq === idx ? null : idx)
                   }
                   className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
                 >
-                  <h3 className="font-bold text-gray-900 text-left">
+                  <h3 className="font-bold text-text-light text-left">
                     {faq.question}
                   </h3>
                   <ChevronDown
-                    className={`w-5 h-5 text-gray-600 transition-transform ${
+                    className={`w-5 h-5 text-brand transition-transform flex-shrink-0 ${
                       expandedFaq === idx ? "rotate-180" : ""
                     }`}
                   />
                 </button>
                 {expandedFaq === idx && (
                   <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-                    <p className="text-gray-700">{faq.answer}</p>
+                    <p className="text-text-light">{faq.answer}</p>
                   </div>
                 )}
               </div>
@@ -246,10 +277,10 @@ export default function CartaoPage() {
       </section>
 
       {/* CTA Final */}
-      <section className="bg-gradient-to-r from-brand to-brand-dark text-white py-16 px-4 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-r from-brand to-brand-dark text-white py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-            Pronto para Proteger Sua Saúde?
+          <h2 className="text-4xl sm:text-5xl font-bebas-neue tracking-wide mb-6">
+            PRONTO PARA PROTEGER SUA SAÚDE?
           </h2>
           <p className="text-lg text-white/90 mb-8">
             Escolha seu plano agora e comece a aproveitar todos os benefícios do Total Quality Care.
