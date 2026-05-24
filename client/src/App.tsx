@@ -17,6 +17,7 @@ import CallRedirect from "./pages/CallRedirect";
 import ThankYouCall from "./pages/ThankYouCall";
 import FormSubmissionSuccess from "./pages/FormSubmissionSuccess";
 import CartaoPage from "./pages/CartaoPage";
+import AutoSeoArticle from "./pages/AutoSeoArticle";
 
 function Router() {
   return (
@@ -26,6 +27,7 @@ function Router() {
       <Route path={"/bioimpedancia"} component={Bioimpedancia} />
       <Route path={"/blog"} component={Blog} />
       <Route path={"/blog/:slug"} component={BlogPost} />
+      <Route path={"/:slug"} component={AutoSeoArticle} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/laboratorio-caraguatatuba"} component={LaboratorioCaraguatatuba} />
       <Route path={"/exames/:slug"} component={ExamePage} />
