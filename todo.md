@@ -366,3 +366,12 @@
 - [ ] Substituir seção de Contato pela seção de Cartão na Home
 - [ ] Testar responsividade e conversão
 - [ ] Otimizar SEO da página de cartão
+
+
+## Integração AutoSEO - Sincronização de Artigos
+- [x] Criar tabela de artigos do AutoSEO no banco de dados
+- [x] Implementar endpoints tRPC para sincronizar artigos
+- [x] Configurar sincronização automática diária (cron job)
+- [x] Integrar artigos do AutoSEO na página de blog existente
+- [ ] Testar sincronização e publicação automática
+- [ ] Validar exibição de artigos na página de blog

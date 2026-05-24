@@ -23,7 +23,9 @@ import {
   addTagToLead, removeTagFromLead, getTagsForLead, getLeadsByTag, getLeadCountByTag, bulkAddTagsToLead,
   createAdAccountCredential, getAdAccountCredentials, getAdAccountCredentialById, updateAdAccountCredential,
   createCampaignMetric, getCampaignMetrics, getCampaignMetricsSummary,
+  getPublishedAutoSeoArticles, getAutoSeoArticleBySlug, incrementAutoSeoArticleViewCount,
 } from "./db";
+import { syncAutoSeoArticles } from "./_core/syncAutoSeo";
 
 // Shared date filter schema: accepts either dateFrom/dateTo or days (backward compatible)
 const dateFilterSchema = z.object({
@@ -621,6 +623,35 @@ export const appRouter = router({
         } catch (error) {
           return { success: false, message: `Erro: ${error instanceof Error ? error.message : "Erro desconhecido"}` };
         }
+      }),
+  }),
+
+  // ===================== AUTO SEO =====================
+  autoSeo: router({
+    sync: adminProcedure
+      .mutation(async () => {
+        return syncAutoSeoArticles();
+      }),
+
+    getArticles: publicProcedure
+      .input(z.object({
+        limit: z.number().min(1).max(100).default(50),
+        offset: z.number().min(0).default(0),
+      }).optional())
+      .query(async ({ input }) => {
+        const limit = input?.limit ?? 50;
+        const offset = input?.offset ?? 0;
+        return getPublishedAutoSeoArticles(limit, offset);
+      }),
+
+    getArticleBySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const article = await getAutoSeoArticleBySlug(input.slug);
+        if (article) {
+          await incrementAutoSeoArticleViewCount(article.id);
+        }
+        return article;
       }),
   }),
 });

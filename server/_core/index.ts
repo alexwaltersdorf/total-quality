@@ -7,6 +7,7 @@ import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { syncAutoSeoArticles } from "./syncAutoSeo";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -25,6 +26,45 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
     }
   }
   throw new Error(`No available port found starting from ${startPort}`);
+}
+
+/**
+ * Configura sincronização automática de artigos do AutoSEO
+ * Executa 1x ao dia às 2:00 AM (horário do servidor)
+ */
+function setupAutoSeoSync() {
+  // Calcular tempo até a próxima execução (2:00 AM)
+  const now = new Date();
+  const nextRun = new Date();
+  nextRun.setHours(2, 0, 0, 0);
+
+  // Se já passou das 2:00 AM hoje, agendar para amanhã
+  if (nextRun <= now) {
+    nextRun.setDate(nextRun.getDate() + 1);
+  }
+
+  const delayMs = nextRun.getTime() - now.getTime();
+  console.log(`[AutoSEO] Próxima sincronização agendada para ${nextRun.toISOString()}`);
+
+  // Agendar primeira sincronização
+  setTimeout(() => {
+    console.log("[AutoSEO] Iniciando sincronização automática...");
+    syncAutoSeoArticles().then(result => {
+      console.log(`[AutoSEO] Sincronização concluída:`, result);
+    }).catch(error => {
+      console.error("[AutoSEO] Erro na sincronização:", error);
+    });
+
+    // Agendar sincronizações subsequentes a cada 24 horas
+    setInterval(() => {
+      console.log("[AutoSEO] Iniciando sincronização automática...");
+      syncAutoSeoArticles().then(result => {
+        console.log(`[AutoSEO] Sincronização concluída:`, result);
+      }).catch(error => {
+        console.error("[AutoSEO] Erro na sincronização:", error);
+      });
+    }, 24 * 60 * 60 * 1000); // 24 horas em ms
+  }, delayMs);
 }
 
 async function startServer() {
@@ -121,6 +161,9 @@ async function startServer() {
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
   });
+
+  // Configurar sincronização automática de AutoSEO
+  setupAutoSeoSync();
 }
 
 startServer().catch(console.error);

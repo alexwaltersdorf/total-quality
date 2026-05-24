@@ -14,6 +14,7 @@ import {
   InsertLeadTag, leadTags,
   InsertAdAccountCredential, adAccountCredentials,
   InsertCampaignMetric, campaignMetrics,
+  InsertAutoSeoArticle, autoSeoArticles,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -738,4 +739,95 @@ export async function getCampaignMetricsSummary(credentialId: number, since?: Da
     avgCPC: result[0]?.avgCPC ?? 0,
     avgROAS: result[0]?.avgROAS ?? 0,
   };
+}
+
+
+// ===================== AUTO SEO ARTICLES =====================
+
+export async function createAutoSeoArticle(data: InsertAutoSeoArticle) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(autoSeoArticles).values(data).$returningId();
+  return result;
+}
+
+export async function getAutoSeoArticleByAutoSeoId(autoSeoId: string) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(autoSeoArticles).where(eq(autoSeoArticles.autoSeoId, autoSeoId)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function getAutoSeoArticleBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(autoSeoArticles).where(eq(autoSeoArticles.slug, slug)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function getPublishedAutoSeoArticles(limit = 50, offset = 0) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(autoSeoArticles)
+    .where(eq(autoSeoArticles.status, "published"))
+    .orderBy(desc(autoSeoArticles.publishedAt))
+    .limit(limit)
+    .offset(offset);
+}
+
+export async function getAllAutoSeoArticles(limit = 50, offset = 0) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(autoSeoArticles)
+    .orderBy(desc(autoSeoArticles.syncedAt))
+    .limit(limit)
+    .offset(offset);
+}
+
+export async function updateAutoSeoArticle(id: number, data: Partial<InsertAutoSeoArticle>) {
+  const db = await getDb();
+  if (!db) return false;
+  await db.update(autoSeoArticles).set(data).where(eq(autoSeoArticles.id, id));
+  return true;
+}
+
+export async function publishAutoSeoArticle(id: number) {
+  const db = await getDb();
+  if (!db) return false;
+  await db.update(autoSeoArticles).set({
+    status: "published",
+    publishedAt: new Date(),
+  }).where(eq(autoSeoArticles.id, id));
+  return true;
+}
+
+export async function getAutoSeoArticlesCount() {
+  const db = await getDb();
+  if (!db) return 0;
+  const result = await db.select({ total: count() }).from(autoSeoArticles);
+  return result[0]?.total ?? 0;
+}
+
+export async function getPublishedAutoSeoArticlesCount() {
+  const db = await getDb();
+  if (!db) return 0;
+  const result = await db.select({ total: count() }).from(autoSeoArticles).where(eq(autoSeoArticles.status, "published"));
+  return result[0]?.total ?? 0;
+}
+
+export async function incrementAutoSeoArticleViewCount(id: number) {
+  const db = await getDb();
+  if (!db) return false;
+  const article = await db.select().from(autoSeoArticles).where(eq(autoSeoArticles.id, id)).limit(1);
+  if (article.length === 0) return false;
+  const newCount = (article[0].viewCount ?? 0) + 1;
+  await db.update(autoSeoArticles).set({ viewCount: newCount }).where(eq(autoSeoArticles.id, id));
+  return true;
+}
+
+export async function deleteAutoSeoArticle(id: number) {
+  const db = await getDb();
+  if (!db) return false;
+  await db.delete(autoSeoArticles).where(eq(autoSeoArticles.id, id));
+  return true;
 }

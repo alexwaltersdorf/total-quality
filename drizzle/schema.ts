@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, bigint, json, boolean, decimal, date } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, bigint, json, boolean, decimal, date, longtext } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -303,3 +303,43 @@ export const campaignMetrics = mysqlTable("campaign_metrics", {
 
 export type CampaignMetric = typeof campaignMetrics.$inferSelect;
 export type InsertCampaignMetric = typeof campaignMetrics.$inferInsert;
+
+/**
+ * Artigos sincronizados da API do AutoSEO.
+ * Armazena artigos gerados por IA e publicados automaticamente no blog.
+ */
+export const autoSeoArticles = mysqlTable("auto_seo_articles", {
+  id: int("id").autoincrement().primaryKey(),
+  // Identificadores do AutoSEO
+  autoSeoId: varchar("autoSeoId", { length: 255 }).notNull().unique(), // ID único do artigo no AutoSEO
+  // Conteúdo do artigo
+  title: varchar("title", { length: 500 }).notNull(),
+  slug: varchar("slug", { length: 500 }).notNull().unique(),
+  excerpt: text("excerpt"),
+  content: longtext("content").notNull(), // Conteúdo HTML completo
+  contentMarkdown: longtext("contentMarkdown"), // Conteúdo em Markdown
+  // Metadados SEO
+  metaDescription: varchar("metaDescription", { length: 160 }),
+  metaKeywords: varchar("metaKeywords", { length: 500 }),
+  searchTerms: varchar("searchTerms", { length: 500 }), // Termos-alvo do AutoSEO
+  // Imagens
+  heroImage: varchar("heroImage", { length: 1000 }), // URL da imagem principal
+  infographic: varchar("infographic", { length: 1000 }), // URL da infografia
+  // Metadados do artigo
+  category: varchar("category", { length: 100 }).default("Saúde").notNull(), // Categoria (ex: Saúde)
+  author: varchar("author", { length: 255 }).default("Total Quality"),
+  authorRole: varchar("authorRole", { length: 255 }).default("Equipe Médica"),
+  readTime: varchar("readTime", { length: 50 }).default("5 min"), // Tempo de leitura
+  // Status de publicação
+  status: mysqlEnum("status", ["synced", "published", "archived", "draft"]).default("synced").notNull(),
+  publishedAt: timestamp("publishedAt"),
+  // Rastreamento
+  viewCount: int("viewCount").default(0),
+  // Timestamps
+  syncedAt: timestamp("syncedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AutoSeoArticle = typeof autoSeoArticles.$inferSelect;
+export type InsertAutoSeoArticle = typeof autoSeoArticles.$inferInsert;

@@ -11,6 +11,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
+import { trpc } from "@/lib/trpc";
+import { Loader2 } from "lucide-react";
 
 function BlogCard({ post, featured = false }: { post: BlogPost; featured?: boolean }) {
   if (featured) {
@@ -86,6 +88,12 @@ function BlogCard({ post, featured = false }: { post: BlogPost; featured?: boole
 export default function Blog() {
   const [activeCategory, setActiveCategory] = useState("Todos");
   const [searchQuery, setSearchQuery] = useState("");
+  
+  // Carregar artigos do AutoSEO
+  const { data: autoSeoArticles = [], isLoading: isLoadingAutoSeo } = trpc.autoSeo.getArticles.useQuery(
+    { limit: 100, offset: 0 },
+    { staleTime: 60000 }
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -96,7 +104,24 @@ export default function Blog() {
   useMetaDescription("Blog da Total Quality Medicina Diagnóstica em Caraguatatuba - SP. Artigos sobre saúde preventiva, exames laboratoriais, cardiologia, nutrição e bem-estar. Dicas de especialistas para cuidar da sua saúde.");
   useCanonical("/blog");
 
-  const filteredPosts = blogPosts.filter((post) => {
+  // Combinar artigos estáticos com artigos do AutoSEO
+  const allPosts = [...blogPosts, ...autoSeoArticles.map((article: any) => ({
+    id: `autoseo-${article.id}`,
+    slug: article.slug,
+    title: article.title,
+    subtitle: article.category,
+    excerpt: article.excerpt || "",
+    category: article.category || "Saúde",
+    author: article.author || "Total Quality",
+    authorRole: article.authorRole || "Equipe Médica",
+    date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString("pt-BR") : new Date().toLocaleDateString("pt-BR"),
+    readTime: article.readTime || "5 min",
+    image: article.heroImage || "https://images.unsplash.com/photo-1576091160550-112173f7f869?w=800&h=500&fit=crop",
+    tags: [],
+    content: [],
+  }))].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  const filteredPosts = allPosts.filter((post) => {
     const matchesCategory = activeCategory === "Todos" || post.category === activeCategory;
     const matchesSearch =
       searchQuery === "" ||
