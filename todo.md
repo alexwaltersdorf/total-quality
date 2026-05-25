@@ -383,3 +383,12 @@
 - [x] Criar guia de configuração (GISCUS_SETUP.md)
 - [ ] Criar repositório GitHub e habilitar Discussions
 - [ ] Configurar Giscus com Repository ID e Category ID
+
+## Webhook do AutoSEO - Sincronização em Tempo Real
+- [x] Criar arquivo autoseoWebhook.ts com lógica de processamento
+- [x] Implementar validação de Bearer Token
+- [x] Criar endpoint POST /api/webhooks/autoseo
+- [x] Adicionar armazenamento de token em variável de ambiente
+- [x] Criar testes vitest para validação de token
+- [x] Criar documentação de configuração (AUTOSEO_WEBHOOK_SETUP.md)
+- [ ] Testar webhook com requisição POST real

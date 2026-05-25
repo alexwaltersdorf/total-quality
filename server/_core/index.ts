@@ -8,6 +8,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { syncAutoSeoArticles } from "./syncAutoSeo";
+import { validateWebhookToken, processAutoSeoWebhook, processAutoSeoWebhookBatch } from "./autoseoWebhook";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -136,6 +137,55 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+
+  // AutoSEO Webhook endpoint
+  app.post("/api/webhooks/autoseo", express.json(), async (req, res) => {
+    try {
+      // Validar Bearer Token
+      const authHeader = req.headers.authorization;
+      if (!validateWebhookToken(authHeader)) {
+        return res.status(401).json({
+          success: false,
+          message: "Token de autorizacao invalido ou ausente",
+        });
+      }
+
+      // Processar webhook
+      const { articles } = req.body;
+
+      if (!articles || !Array.isArray(articles)) {
+        return res.status(400).json({
+          success: false,
+          message: "Campo 'articles' eh obrigatorio e deve ser um array",
+        });
+      }
+
+      // Se eh um unico artigo, converter para array
+      const articlesToProcess = Array.isArray(articles) ? articles : [articles];
+
+      // Processar em batch
+      const result = await processAutoSeoWebhookBatch(articlesToProcess);
+
+      console.log(`[AutoSEO Webhook] Processados ${result.processed} artigos, ${result.failed} falharam`);
+
+      return res.status(result.success ? 200 : 207).json({
+        success: result.success,
+        processed: result.processed,
+        failed: result.failed,
+        errors: result.errors.length > 0 ? result.errors : undefined,
+        message: result.success
+          ? `${result.processed} artigo(s) sincronizado(s) com sucesso`
+          : `${result.processed} artigo(s) sincronizado(s), ${result.failed} falharam`,
+      });
+    } catch (error) {
+      console.error("[AutoSEO Webhook] Erro ao processar webhook:", error);
+      return res.status(500).json({
+        success: false,
+        message: `Erro ao processar webhook: ${error instanceof Error ? error.message : "Erro desconhecido"}`,
+      });
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",
