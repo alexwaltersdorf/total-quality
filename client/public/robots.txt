@@ -1,5 +1,5 @@
 # robots.txt — Total Quality Medicina Diagnóstica
-# https://www.totalquality.med.br
+# https://totalquality.med.br
 
 User-agent: *
 Allow: /
@@ -8,7 +8,7 @@ Disallow: /admin
 Disallow: /api/
 
 # Sitemap
-Sitemap: https://www.totalquality.med.br/sitemap.xml
+Sitemap: https://totalquality.med.br/sitemap.xml
 
 # Crawl-delay (opcional, para bots que respeitam)
 Crawl-delay: 5
