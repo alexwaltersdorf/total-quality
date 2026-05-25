@@ -375,3 +375,11 @@
 - [x] Integrar artigos do AutoSEO na página de blog existente
 - [x] Criar página individual para artigos do AutoSEO (/blog/:slug)
 - [ ] Testar sincronização e publicação automática
+
+## Sistema de Comentários - Giscus
+- [x] Criar componente GiscusComments.tsx reutilizável
+- [x] Integrar comentários em BlogPost.tsx
+- [x] Integrar comentários em AutoSeoArticle.tsx
+- [x] Criar guia de configuração (GISCUS_SETUP.md)
+- [ ] Criar repositório GitHub e habilitar Discussions
+- [ ] Configurar Giscus com Repository ID e Category ID

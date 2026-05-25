@@ -13,6 +13,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useBreadcrumbSchema, useBlogPostingSchema, useCanonical, useMetaDescription } from "@/components/SEOHead";
+import GiscusComments from "@/components/GiscusComments";
 
 export default function BlogPost() {
   const params = useParams<{ slug: string }>();
@@ -214,6 +215,14 @@ export default function BlogPost() {
           </div>
         </div>
       </article>
+
+      {/* Comments Section */}
+      <section className="py-16 bg-surface-light/50">
+        <div className="container max-w-3xl mx-auto">
+          <h2 className="heading-display text-3xl text-text mb-8">DEIXE SEU COMENTÁRIO</h2>
+          <GiscusComments articleId={post.slug} articleTitle={post.title} />
+        </div>
+      </section>
 
       {/* Related Posts */}
       {relatedPosts.length > 0 && (

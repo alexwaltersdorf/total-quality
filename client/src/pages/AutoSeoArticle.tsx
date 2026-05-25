@@ -13,6 +13,7 @@ import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useBreadcrumbSchema, useBlogPostingSchema, useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { Streamdown } from "streamdown";
+import GiscusComments from "@/components/GiscusComments";
 
 export default function AutoSeoArticle() {
   const params = useParams<{ slug: string }>();
@@ -237,6 +238,14 @@ export default function AutoSeoArticle() {
           </div>
         </div>
       </article>
+
+      {/* Comments Section */}
+      <section className="py-16 bg-surface-light/50">
+        <div className="container max-w-3xl mx-auto">
+          <h2 className="heading-display text-3xl text-text mb-8">DEIXE SEU COMENTÁRIO</h2>
+          <GiscusComments articleId={article.slug} articleTitle={article.title} />
+        </div>
+      </section>
 
       {/* Related Articles */}
       {relatedArticles.length > 0 && (
