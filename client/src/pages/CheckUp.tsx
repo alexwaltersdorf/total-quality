@@ -108,7 +108,7 @@ export default function CheckUp() {
   }, []);
 
   // SEO: Meta description e canonical
-  useMetaDescription("Check-up preventivo completo em Caraguatatuba - SP no Laboratório Total Quality. Pacotes Básico (19 exames), Select (30 exames) e Premium (39 exames) com hemograma, glicemia, colesterol, tomografia, ecocardiograma e mais. Resultados em até 48h. Agende pelo WhatsApp.");
+  useMetaDescription("Check-up preventivo em Caraguatatuba - SP na Total Quality. Pacotes Básico, Select e Premium com hemograma, colesterol, tomografia e ecocardiograma. Agende.");
   useCanonical("/checkup");
 
   useEffect(() => {

@@ -71,6 +71,30 @@ export default function AutoSeoArticle() {
     imageUrl: article?.heroImage,
   });
 
+  // SEO: quando o artigo nao existe, marcar a pagina como noindex
+  // para o Google nao indexar este soft-404 (status 200 com "ARTIGO NAO ENCONTRADO").
+  useEffect(() => {
+    const meta = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
+    const notFound = !isLoading && !article;
+    if (meta) {
+      meta.setAttribute(
+        "content",
+        notFound
+          ? "noindex, follow"
+          : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      );
+    }
+    return () => {
+      const m = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
+      if (m) {
+        m.setAttribute(
+          "content",
+          "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        );
+      }
+    };
+  }, [isLoading, article]);
+
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
