@@ -27,7 +27,6 @@ function Router() {
       <Route path={"/bioimpedancia"} component={Bioimpedancia} />
       <Route path={"/blog"} component={Blog} />
       <Route path={"/blog/:slug"} component={BlogPost} />
-      <Route path={"/:slug"} component={AutoSeoArticle} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/laboratorio-caraguatatuba"} component={LaboratorioCaraguatatuba} />
       <Route path={"/exames/:slug"} component={ExamePage} />
@@ -37,6 +36,9 @@ function Router() {
       <Route path={"/obrigado-chamada"} component={ThankYouCall} />
       <Route path={"/formulario-sucesso"} component={FormSubmissionSuccess} />
       <Route path={"/cartao"} component={CartaoPage} />
+      {/* Catch-all de artigos AutoSEO: DEVE ficar por ultimo, depois das rotas estaticas,
+          para nao interceptar /laboratorio-caraguatatuba, /cartao, /dashboard, etc. */}
+      <Route path={"/:slug"} component={AutoSeoArticle} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
