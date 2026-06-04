@@ -174,8 +174,8 @@
 - [x] Gerar imagem fundo: Cardiologia (coração, ECG, estetoscópio)
 - [x] Gerar imagem fundo: Neurologia (cérebro, EEG, neurônios)
 - [x] Upload das 4 imagens para CDN (URLs comprimidas webp)
-- [ ] Adicionar backgroundImage para cada exame conforme categoria
-- [ ] Testar todas as 10 páginas de exames
+- [x] Adicionar backgroundImage para cada exame conforme categoria
+- [x] Testar todas as 10 páginas de exames
 
 ## Navbar e Footer Padronizados em Todas as Páginas
 - [x] Adicionar Navbar em CartaoPage.tsx
