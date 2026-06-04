@@ -14,13 +14,14 @@ export async function getGoogleAdsClient(): Promise<GoogleAdsClient | null> {
   }
 
   try {
-    client = new GoogleAdsApi({
+    const api = new GoogleAdsApi({
       developer_token: GOOGLE_ADS_DEVELOPER_TOKEN,
       client_id: "251926900195-o3dao1pv47qbo8gsv4kktd9gs4ohk4o4.apps.googleusercontent.com",
       client_secret: "", // Not needed for refresh token flow
       refresh_token: GOOGLE_ADS_REFRESH_TOKEN,
-    }).getClient();
+    });
 
+    client = api as any;
     return client;
   } catch (error) {
     console.error("[Google Ads] Failed to initialize client:", error);

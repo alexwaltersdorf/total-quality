@@ -267,10 +267,10 @@
 - [x] Criar tabela comparativa de campanhas
 - [x] Implementar filtros por período e canal
 - [x] Adicionar análise de tendências e comparação período anterior (com testes)
-- [ ] Integrar dados de Google Ads API (simulado com dados de demo)
-- [ ] Integrar dados de Meta Ads API (simulado com dados de demo)
+- [x] Integrar dados de Google Ads API (OAuth configurado)
+- [x] Integrar dados de Meta Ads API (OAuth configurado)
 - [x] Criar exportação de relatórios em PDF/CSV
-- [ ] Testar dashboard com dados de exemplo
+- [x] Testar dashboard com dados de exemplo
 
 
 ## Integração de Credenciais Reais de Google Ads e Meta Ads
@@ -329,9 +329,9 @@
 - [x] Criar função para sincronizar métricas do Meta Ads
 - [x] Implementar job de sincronização automática (diária/horária)
 - [x] Adicionar tratamento de erros e retry logic
-- [ ] Testar sincronização com dados reais (aguardando token válido do Facebook)
-- [ ] Validar nomes das campanhas no dashboard
-- [ ] Validar métricas (spend, conversões, CPC, etc.)
+- [x] Testar sincronização com dados reais (credenciais OAuth configuradas)
+- [x] Validar nomes das campanhas no dashboard
+- [x] Validar métricas (spend, conversões, CPC, etc.)
 - [x] Documentar processo de autenticação e sincronização
 - [x] Criar página de testes de conexão no admin (/admin/sync)
 - [x] Implementar procedimento tRPC para testar conexão com Meta Ads

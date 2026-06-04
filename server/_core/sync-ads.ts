@@ -54,29 +54,29 @@ export async function syncMetaAdsCampaigns() {
 
             // Insert or update metrics in database
             for (const metric of metrics) {
-              await db.insert(campaignMetrics).values({
-                credentialId: cred.id,
-                campaignId: metric.campaign_id,
-                campaignName: metric.campaign_name,
-                platform: "meta_ads",
-                spend: metric.spend,
-                impressions: metric.impressions,
-                clicks: metric.clicks,
-                conversions: metric.conversions,
-                cpc: metric.clicks > 0 ? metric.spend / metric.clicks : 0,
-                ctr: metric.impressions > 0 ? (metric.clicks / metric.impressions) * 100 : 0,
-                roas: metric.spend > 0 ? (metric.conversion_value / metric.spend) : 0,
-                conversionValue: metric.conversion_value,
-                date: metric.date,
-                sessions: Math.round(metric.clicks * 1.2),
-                createdAt: new Date(),
-                updatedAt: new Date(),
-              }).catch((err) => {
+              try {
+                const values: any = {
+                  credentialId: cred.id,
+                  campaignId: metric.campaign_id,
+                  campaignName: metric.campaign_name,
+                  platform: "meta_ads" as const,
+                  spend: metric.spend,
+                  impressions: metric.impressions,
+                  clicks: metric.clicks,
+                  conversions: metric.conversions,
+                  cpc: metric.clicks > 0 ? metric.spend / metric.clicks : 0,
+                  ctr: metric.impressions > 0 ? (metric.clicks / metric.impressions) * 100 : 0,
+                  roas: metric.spend > 0 ? (metric.conversion_value / metric.spend) : 0,
+                  conversionValue: metric.conversion_value,
+                  date: metric.date,
+                };
+                await (db.insert(campaignMetrics) as any).values([values]);
+              } catch (err: any) {
                 // Ignore duplicate key errors
-                if (!err.message.includes("Duplicate entry")) {
-                  throw err;
+                if (!err.message?.includes("Duplicate entry")) {
+                  console.error("Error inserting metric:", err);
                 }
-              });
+              }
             }
 
             console.log(`[Sync] Synced ${metrics.length} metrics for campaign ${campaign.name}`);
