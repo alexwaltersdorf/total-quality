@@ -344,11 +344,11 @@
 - [x] Implementar seção 2 - Identificação da Dor (3 cards)
 - [x] Implementar seção 3 - Apresentação da Solução
 - [x] Implementar seção 4 - Como a mensalidade volta pro PIX
-- [ ] Implementar seção 5 - Simulador Interativo de Cashback
-- [ ] Implementar seção 6 - O que está incluso (Stack de valor)
+- [x] Implementar seção 5 - Simulador Interativo de Cashback
+- [x] Implementar seção 6 - O que está incluso (Stack de valor)
 - [ ] Implementar seção 7 - Comparativo (tabela)
-- [ ] Implementar seção 8 - Por que confiar (Autoridade local)
-- [ ] Implementar seção 9 - Provas sociais (Depoimentos em vídeo)
+- [x] Implementar seção 8 - Por que confiar (Autoridade local)
+- [x] Implementar seção 9 - Provas sociais (Depoimentos em vídeo)
 - [ ] Implementar seção 10 - Planos e preços (3 cards)
 - [ ] Implementar seção 11 - Garantias (4 selos)
 - [ ] Implementar seção 12 - FAQ (Accordion)

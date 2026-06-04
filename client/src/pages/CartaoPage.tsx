@@ -291,6 +291,182 @@ export default function CartaoPage() {
         </div>
       </section>
 
+      {/* Seção 5 - Simulador Interativo de Cashback */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold text-text-light uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand"></span>
+              Simule Seu Ganho
+            </p>
+            <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
+              <span className="text-text-light block">QUANTO VOCÊ VAI</span>
+              <span className="text-brand block">GANHAR EM CASHBACK?</span>
+            </h2>
+          </div>
+
+          <div className="bg-gray-50 rounded-lg p-8 max-w-2xl mx-auto">
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-bold text-text-light mb-2">
+                  Gasto Médio Mensal em Compras (R$)
+                </label>
+                <input
+                  type="number"
+                  placeholder="Ex: 1000"
+                  defaultValue="1000"
+                  onChange={(e) => {
+                    const valor = parseFloat(e.target.value) || 0;
+                    const cashback = valor * 0.1;
+                    const planoSelect = 69.9;
+                    const lucro = cashback - planoSelect;
+                    const resultEl = document.getElementById('cashback-result');
+                    const lucroEl = document.getElementById('lucro-result');
+                    if (resultEl) resultEl.textContent = `R$ ${cashback.toFixed(2)}`;
+                    if (lucroEl) lucroEl.textContent = `R$ ${Math.max(0, lucro).toFixed(2)}`;
+                  }}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-brand"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white p-4 rounded-lg">
+                  <p className="text-sm text-text-light mb-2">Cashback Médio (10%)</p>
+                  <p id="cashback-result" className="text-3xl font-bold text-brand">R$ 100,00</p>
+                </div>
+                <div className="bg-white p-4 rounded-lg">
+                  <p className="text-sm text-text-light mb-2">Lucro Líquido</p>
+                  <p id="lucro-result" className="text-3xl font-bold text-green-600">R$ 30,10</p>
+                </div>
+              </div>
+
+              <div className="bg-brand/10 p-4 rounded-lg">
+                <p className="text-sm text-text-light">
+                  🌟 Com apenas 3-4 compras por mês, sua mensalidade se paga!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Seção 6 - O que está incluso */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold text-text-light uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand"></span>
+              Stack de Valor
+            </p>
+            <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
+              <span className="text-text-light block">O QUE ESTÁ</span>
+              <span className="text-brand block">INCLUSO NO SEU PLANO</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { icon: "24/7", title: "Telemedicina 24/7", desc: "Acesso imediato a médicos especialistas" },
+              { icon: "📊", title: "Descontos em Medicamentos", desc: "Até 40% em farmácias parceiras" },
+              { icon: "🏥", title: "Descontos em Exames", desc: "Até 70% em laboratórios credenciados" },
+              { icon: "💳", title: "Cashback em PIX", desc: "Até 10% de volta em compras" },
+              { icon: "🏄", title: "Academia Inclusa", desc: "Acesso a rede LecuponFit (Premium)" },
+              { icon: "✏️", title: "Descontos em Viagens", desc: "Passagens aéreas e hospedagem" }
+            ].map((item, idx) => (
+              <div key={idx} className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="text-4xl mb-4">{item.icon}</div>
+                <h3 className="text-lg font-bold text-text-light mb-2">{item.title}</h3>
+                <p className="text-text-light text-sm">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Seção 7 - Por que Confiar */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold text-text-light uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand"></span>
+              Autoridade Local
+            </p>
+            <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
+              <span className="text-text-light block">POR QUE CONFIAR</span>
+              <span className="text-brand block">NA TOTAL QUALITY?</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { badge: "20+", label: "Anos de Experiência" },
+              { badge: "30K+", label: "Clientes Ativos" },
+              { badge: "100%", label: "Satisfação" },
+              { badge: "24/7", label: "Suporte Ativo" }
+            ].map((item, idx) => (
+              <div key={idx} className="text-center">
+                <div className="bg-brand/10 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl font-bold text-brand">{item.badge}</span>
+                </div>
+                <p className="font-bold text-text-light">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Seção 8 - Provas Sociais */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold text-text-light uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand"></span>
+              Depoimentos
+            </p>
+            <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
+              <span className="text-text-light block">O QUE NOSSOS</span>
+              <span className="text-brand block">CLIENTES DIZEM</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Maria Silva",
+                role: "Empresária",
+                text: "Economizei mais de R$ 500 por mês com os descontos em exames. Recomendo!",
+                rating: 5
+              },
+              {
+                name: "João Santos",
+                role: "Executivo",
+                text: "A telemedicina 24/7 é incrível. Nunca mais fiquei sem atendimento médico.",
+                rating: 5
+              },
+              {
+                name: "Ana Costa",
+                role: "Mãe de 2 filhos",
+                text: "O cashback em PIX é real! Minha mensalidade se paga com as compras do mês.",
+                rating: 5
+              }
+            ].map((testimonial, idx) => (
+              <div key={idx} className="bg-white rounded-lg p-6 shadow-sm">
+                <div className="flex gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <span key={i} className="text-yellow-400">⭐</span>
+                  ))}
+                </div>
+                <p className="text-text-light mb-4 italic">\"{testimonial.text}\"</p>
+                <div>
+                  <p className="font-bold text-text-light">{testimonial.name}</p>
+                  <p className="text-sm text-text-light">{testimonial.role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Comparação Detalhada */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
