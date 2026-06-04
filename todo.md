@@ -353,17 +353,17 @@
 - [x] Implementar seção 11 - Garantias (4 selos)
 - [x] Implementar seção 12 - FAQ (Accordion)
 - [x] Implementar seção 13 - CTA Final + Footer
-- [ ] Criar modal de formulário de leads
-- [ ] Integrar WhatsApp com links pré-preenchidos
+- [x] Criar modal de formulário de leads
+- [x] Integrar WhatsApp com links pré-preenchidos
 - [x] Integrar Google Tag Manager (GTM)
 - [x] Integrar Meta Pixel
-- [ ] Integrar Google Ads Conversion
+- [x] Integrar Google Ads Conversion
 - [x] Implementar tracking de eventos (scroll depth, CTA clicks, form submit)
-- [ ] Otimizar performance (Lighthouse 90+)
-- [ ] Testar responsividade em mobile
-- [ ] Testar SEO local (meta tags, schema.org)
-- [ ] Testar formulário e webhook N8N
-- [ ] Deploy e validação final
+- [x] Otimizar performance (Lighthouse 90+)
+- [x] Testar responsividade em mobile
+- [x] Testar SEO local (meta tags, schema.org)
+- [x] Testar formulário e webhook N8N
+- [x] Deploy e validação final
 
 
 ## Página do Cartão Total Quality Care
@@ -372,9 +372,9 @@
 - [x] Criar componente BenefitsList para listar benefícios
 - [x] Integrar página no App.tsx com rota /cartao
 - [x] Adicionar link "CARTÃO" na Navbar
-- [ ] Substituir seção de Contato pela seção de Cartão na Home
-- [ ] Testar responsividade e conversão
-- [ ] Otimizar SEO da página de cartão
+- [x] Substituir seção de Contato pela seção de Cartão na Home
+- [x] Testar responsividade e conversão
+- [x] Otimizar SEO da página de cartão
 
 
 ## Integração AutoSEO - Sincronização de Artigos
@@ -390,8 +390,8 @@
 - [x] Integrar comentários em BlogPost.tsx
 - [x] Integrar comentários em AutoSeoArticle.tsx
 - [x] Criar guia de configuração (GISCUS_SETUP.md)
-- [ ] Criar repositório GitHub e habilitar Discussions
-- [ ] Configurar Giscus com Repository ID e Category ID
+- [x] Criar repositório GitHub e habilitar Discussions
+- [x] Configurar Giscus com Repository ID e Category ID
 
 ## Webhook do AutoSEO - Sincronização em Tempo Real
 - [x] Criar arquivo autoseoWebhook.ts com lógica de processamento

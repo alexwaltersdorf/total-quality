@@ -5,12 +5,14 @@ import CartaoPricingCard from "@/components/CartaoPricingCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
+import LeadsFormModal from "@/components/LeadsFormModal";
 import { useTracking } from "@/hooks/useTracking";
 import { cartaoPlanos, mainBenefitsData, faqs } from "@/lib/cartaoPlanos";
 
 export default function CartaoPage() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const { trackCTAClick, trackPageView } = useTracking();
 
   // Rastrear visualização da página
@@ -32,6 +34,11 @@ export default function CartaoPage() {
 
   const handleCTAClick = (ctaName: string) => {
     trackCTAClick(ctaName);
+  };
+
+  const handleOpenFormModal = () => {
+    trackCTAClick('open_leads_form');
+    setIsFormModalOpen(true);
   };
 
   const getIconComponent = (iconName: string) => {
@@ -75,7 +82,7 @@ export default function CartaoPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
-              onClick={() => handleCTAClick('hero_cta_start')}
+              onClick={handleOpenFormModal}
               className="bg-brand hover:bg-brand-dark text-white px-8 py-6 text-lg font-bold"
             >
               Começar Agora
@@ -755,13 +762,29 @@ export default function CartaoPage() {
           <p className="text-lg text-white/90 mb-8">
             Escolha seu plano agora e comece a aproveitar todos os benefícios do Total Quality Care.
           </p>
-          <Button className="bg-white text-brand hover:bg-gray-100 px-12 py-6 text-lg font-bold">
-            Contratar Agora
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              onClick={handleOpenFormModal}
+              className="bg-white text-brand hover:bg-gray-100 px-12 py-6 text-lg font-bold"
+            >
+              Contratar Agora
+            </Button>
+            <Button 
+              onClick={() => handleCTAClick('cta_final_whatsapp')}
+              variant="outline"
+              className="border-white text-white hover:bg-white/10 px-12 py-6 text-lg font-bold"
+            >
+              Falar com Especialista
+            </Button>
+          </div>
         </div>
       </section>
       <Footer />
       <WhatsAppFAB />
+      <LeadsFormModal 
+        isOpen={isFormModalOpen} 
+        onClose={() => setIsFormModalOpen(false)}
+      />
     </div>
   );
 }
