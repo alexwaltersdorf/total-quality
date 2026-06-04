@@ -16,7 +16,7 @@ export default function CartaoPage() {
       "quality-premium": "Quero Proteção Premium, R$ 99,90"
     };
     const message = planMessages[planId] || `Olá! Gostaria de contratar o plano ${cartaoPlanos.find(p => p.id === planId)?.name}.`;
-    window.location.href = `https://wa.me/5512988735350?text=${encodeURIComponent(message)}`;
+    window.location.href = `https://wa.me/551238873535?text=${encodeURIComponent(message)}`;
   };
 
   const getIconComponent = (iconName: string) => {
