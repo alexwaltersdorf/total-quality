@@ -177,6 +177,15 @@
 - [ ] Adicionar backgroundImage para cada exame conforme categoria
 - [ ] Testar todas as 10 páginas de exames
 
+## Navbar e Footer Padronizados em Todas as Páginas
+- [x] Adicionar Navbar em CartaoPage.tsx
+- [x] Adicionar Navbar em ExamePage.tsx (páginas dinâmicas)
+- [x] Adicionar Navbar em CheckUp.tsx
+- [x] Adicionar Footer em CartaoPage.tsx
+- [x] Adicionar Footer em ExamePage.tsx
+- [x] Adicionar Footer em CheckUp.tsx
+- [x] Testar Navbar em mobile (responsividade)
+
 ## Widget Soro na Página Blog
 - [x] Implementar widget Soro (embed HTML) na página Blog.tsx
 - [x] Adicionar script Soro no index.html

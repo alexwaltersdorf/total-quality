@@ -5,7 +5,7 @@
  */
 import { useEffect, useRef, useMemo, lazy, Suspense } from "react";
 import { ArrowUpRight, ChevronRight, CheckCircle } from "lucide-react";
-import { useParams, useLocation } from "wouter";
+import { useParams, useLocation, Link } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
