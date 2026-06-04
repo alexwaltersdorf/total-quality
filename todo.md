@@ -383,7 +383,7 @@
 - [x] Configurar sincronização automática diária (cron job)
 - [x] Integrar artigos do AutoSEO na página de blog existente
 - [x] Criar página individual para artigos do AutoSEO (/blog/:slug)
-- [ ] Testar sincronização e publicação automática
+- [x] Testar sincronização e publicação automática
 
 ## Sistema de Comentários - Giscus
 - [x] Criar componente GiscusComments.tsx reutilizável
@@ -400,4 +400,4 @@
 - [x] Adicionar armazenamento de token em variável de ambiente
 - [x] Criar testes vitest para validação de token
 - [x] Criar documentação de configuração (AUTOSEO_WEBHOOK_SETUP.md)
-- [ ] Testar webhook com requisição POST real
+- [x] Testar webhook com requisição POST real
