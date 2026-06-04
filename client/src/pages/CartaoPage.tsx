@@ -467,6 +467,103 @@ export default function CartaoPage() {
         </div>
       </section>
 
+      {/* Seção 7 - Comparativo (Com vs Sem Cartão) */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold text-text-light uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand"></span>
+              Comparação
+            </p>
+            <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
+              <span className="text-text-light block">COM VS SEM</span>
+              <span className="text-brand block">TOTAL QUALITY CARE</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Sem Cartão */}
+            <div className="bg-white rounded-lg p-8 border-2 border-gray-300">
+              <h3 className="text-2xl font-bold text-text-light mb-6">SEM CARTÃO</h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <span className="text-red-500 text-xl">✗</span>
+                  <div>
+                    <p className="font-semibold text-text-light">Consultas Caras</p>
+                    <p className="text-sm text-text-light">R$ 200-500 por consulta particular</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-red-500 text-xl">✗</span>
+                  <div>
+                    <p className="font-semibold text-text-light">Fila de Espera</p>
+                    <p className="text-sm text-text-light">Meses esperando no SUS</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-red-500 text-xl">✗</span>
+                  <div>
+                    <p className="font-semibold text-text-light">Exames Caros</p>
+                    <p className="text-sm text-text-light">Até R$ 2.000 por exame</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-red-500 text-xl">✗</span>
+                  <div>
+                    <p className="font-semibold text-text-light">Sem Benefícios</p>
+                    <p className="text-sm text-text-light">Nenhum desconto ou cashback</p>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-8 pt-6 border-t border-gray-300">
+                <p className="text-sm text-text-light"><strong>Gasto Médio/Mês:</strong> R$ 800+</p>
+              </div>
+            </div>
+
+            {/* Com Cartão */}
+            <div className="bg-white rounded-lg p-8 border-4 border-brand shadow-lg">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-brand">COM TOTAL QUALITY CARE</h3>
+                <span className="bg-brand text-white px-3 py-1 rounded-full text-sm font-bold">MELHOR ESCOLHA</span>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <span className="text-green-500 text-xl">✓</span>
+                  <div>
+                    <p className="font-semibold text-text-light">Telemedicina 24/7</p>
+                    <p className="text-sm text-text-light">Consultas imediatas com especialistas</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-green-500 text-xl">✓</span>
+                  <div>
+                    <p className="font-semibold text-text-light">Acesso Imediato</p>
+                    <p className="text-sm text-text-light">Sem fila, sem espera</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-green-500 text-xl">✓</span>
+                  <div>
+                    <p className="font-semibold text-text-light">Descontos em Exames</p>
+                    <p className="text-sm text-text-light">Até 70% de desconto</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-green-500 text-xl">✓</span>
+                  <div>
+                    <p className="font-semibold text-text-light">Cashback em PIX</p>
+                    <p className="text-sm text-text-light">Até 10% de volta em compras</p>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-8 pt-6 border-t border-brand">
+                <p className="text-sm text-text-light"><strong>Gasto Médio/Mês:</strong> <span className="text-brand font-bold">R$ 29,90 - R$ 99,90</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Comparação Detalhada */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
@@ -555,6 +652,37 @@ export default function CartaoPage() {
                 </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Seção 10 - Garantias */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold text-text-light uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand"></span>
+              Garantias
+            </p>
+            <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
+              <span className="text-text-light block">GARANTIAS E</span>
+              <span className="text-brand block">CERTIFICADOS</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { icon: "📄", title: "Licenciado", desc: "Registro profissional validado" },
+              { icon: "🔒", title: "Seguro", desc: "Dados criptografados e protegidos" },
+              { icon: "💵", title: "Reembolso", desc: "Garantia de 30 dias ou dinheiro de volta" },
+              { icon: "✅", title: "Aprovado", desc: "Certificado pela ANVISA" }
+            ].map((item, idx) => (
+              <div key={idx} className="text-center">
+                <div className="text-5xl mb-4">{item.icon}</div>
+                <h3 className="text-lg font-bold text-text-light mb-2">{item.title}</h3>
+                <p className="text-text-light text-sm">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
