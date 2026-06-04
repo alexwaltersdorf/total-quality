@@ -4,7 +4,7 @@
  * Valida Bearer Token para segurança
  */
 
-import { db } from "../db";
+import { getDb } from "../db";
 import { autoSeoArticles } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 
@@ -69,15 +69,24 @@ export async function processAutoSeoWebhook(
       };
     }
 
+    const db = await getDb();
+    if (!db) {
+      return {
+        success: false,
+        message: "Banco de dados não disponível",
+      };
+    }
+
     // Verificar se artigo já existe
     const existingArticle = await db
       .select()
       .from(autoSeoArticles)
-      .where(eq(autoSeoArticles.externalId, payload.id))
+      .where(eq(autoSeoArticles.autoSeoId, payload.id))
       .limit(1);
 
     const now = new Date();
     const publishedAt = payload.publishedAt ? new Date(payload.publishedAt) : now;
+    const status = payload.status === "published" ? "published" : "synced";
 
     if (existingArticle.length > 0) {
       // Atualizar artigo existente
@@ -91,22 +100,22 @@ export async function processAutoSeoWebhook(
           heroImage: payload.heroImage || null,
           category: payload.category || "Saúde",
           publishedAt,
+          status,
           updatedAt: now,
-          isPublished: payload.status === "published",
         })
-        .where(eq(autoSeoArticles.externalId, payload.id));
+        .where(eq(autoSeoArticles.autoSeoId, payload.id));
 
       console.log(`[AutoSEO Webhook] Artigo atualizado: ${payload.slug}`);
 
       return {
         success: true,
         message: "Artigo atualizado com sucesso",
-        articleId: existingArticle[0].id,
+        articleId: existingArticle[0].id.toString(),
       };
     } else {
       // Criar novo artigo
       const result = await db.insert(autoSeoArticles).values({
-        externalId: payload.id,
+        autoSeoId: payload.id,
         title: payload.title,
         slug: payload.slug,
         content: payload.content,
@@ -114,8 +123,7 @@ export async function processAutoSeoWebhook(
         heroImage: payload.heroImage || null,
         category: payload.category || "Saúde",
         publishedAt,
-        updatedAt: now,
-        isPublished: payload.status === "published",
+        status,
       });
 
       console.log(`[AutoSEO Webhook] Novo artigo criado: ${payload.slug}`);
@@ -123,7 +131,7 @@ export async function processAutoSeoWebhook(
       return {
         success: true,
         message: "Artigo criado com sucesso",
-        articleId: result[0].insertId?.toString(),
+        articleId: result.insertId?.toString(),
       };
     }
   } catch (error) {

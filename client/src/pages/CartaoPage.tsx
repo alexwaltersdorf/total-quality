@@ -2,6 +2,9 @@ import { useState } from "react";
 import { ChevronDown, Zap, Smartphone, Heart, Dumbbell, Pill, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CartaoPricingCard from "@/components/CartaoPricingCard";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { cartaoPlanos, mainBenefitsData, faqs } from "@/lib/cartaoPlanos";
 
 export default function CartaoPage() {
@@ -39,6 +42,7 @@ export default function CartaoPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <Navbar />
       {/* Hero Section */}
       <section className="relative h-screen bg-cover bg-center flex items-center justify-center" style={{
         backgroundImage: 'url(https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/familia-feliz-cartao-eU6gbFymHQy5EPdc6okx6r.webp)',
@@ -295,6 +299,8 @@ export default function CartaoPage() {
           </Button>
         </div>
       </section>
+      <Footer />
+      <WhatsAppFAB />
     </div>
   );
 }

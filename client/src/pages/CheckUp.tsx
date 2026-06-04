@@ -4,8 +4,9 @@
  * Page: Check-Up Preventivo
  */
 import { useEffect, useRef } from "react";
-import { ArrowUpRight, ArrowLeft, Heart, Shield, Activity, Clock, CheckCircle, Stethoscope, FlaskConical, Brain } from "lucide-react";
-import { Link } from "wouter";
+import { ArrowUpRight, Heart, Shield, Activity, Clock, CheckCircle, Stethoscope, FlaskConical, Brain } from "lucide-react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 
@@ -125,24 +126,7 @@ export default function CheckUp() {
 
   return (
     <div ref={wrapperRef} className="min-h-screen bg-white">
-      {/* Sticky top bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-black/10">
-        <div className="container flex items-center justify-between py-4">
-          <Link href="/" className="flex items-center gap-3 group">
-            <ArrowLeft className="w-5 h-5 text-text-muted group-hover:text-brand transition-colors" />
-            <span className="heading-display text-2xl tracking-tight text-text group-hover:text-brand transition-colors">
-              TOTAL QUALITY
-            </span>
-          </Link>
-          <button
-            onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
-            className="btn-pill"
-          >
-            Agendar
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Section */}
       <section className="pt-32 pb-16 lg:pb-24 px-4 bg-white">
@@ -322,7 +306,7 @@ export default function CheckUp() {
         </div>
       </section>
 
-      {/* WhatsApp FAB */}
+      <Footer />
       <WhatsAppFAB />
     </div>
   );

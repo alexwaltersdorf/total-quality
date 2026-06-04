@@ -4,8 +4,10 @@
  * Page: Dynamic Exam Page (reusable for all exams)
  */
 import { useEffect, useRef, useMemo, lazy, Suspense } from "react";
-import { ArrowUpRight, ArrowLeft, ChevronRight, CheckCircle } from "lucide-react";
-import { Link, useParams, useLocation } from "wouter";
+import { ArrowUpRight, ChevronRight, CheckCircle } from "lucide-react";
+import { useParams, useLocation } from "wouter";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { getExamBySlug, examesData } from "@/lib/examesData";
 import { useBreadcrumbSchema, useFAQSchema, useMedicalTestSchema, useCanonical } from "@/components/SEOHead";
@@ -71,24 +73,7 @@ export default function ExamePage() {
 
   return (
     <div ref={wrapperRef} className="min-h-screen bg-white">
-      {/* Sticky top bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-black/10">
-        <div className="container flex items-center justify-between py-4">
-          <Link href="/" className="flex items-center gap-3 group">
-            <ArrowLeft className="w-5 h-5 text-text-muted group-hover:text-brand transition-colors" />
-            <span className="heading-display text-2xl tracking-tight text-text group-hover:text-brand transition-colors">
-              TOTAL QUALITY
-            </span>
-          </Link>
-          <button
-            onClick={() => window.open(`https://wa.me/551238873535?text=${encodeURIComponent(exam.whatsappMessage)}`, "_blank")}
-            className="btn-pill"
-          >
-            Agendar Exame
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Section */}
       <section className="pt-24 lg:pt-28 relative overflow-hidden">
@@ -347,19 +332,7 @@ export default function ExamePage() {
         </div>
       </section>
 
-      {/* SEO Footer */}
-      <footer className="py-8 border-t border-black/10">
-        <div className="container">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <Link href="/" className="heading-display text-xl text-text hover:text-brand transition-colors">
-              TOTAL QUALITY
-            </Link>
-            <p className="text-text-muted text-xs text-center">
-              {exam.keywords.join(" • ")}
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
       <WhatsAppFAB />
     </div>
