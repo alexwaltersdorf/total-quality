@@ -338,12 +338,12 @@
 
 
 ## Landing Page - Cartão Total Quality Care (/cartao)
-- [ ] Criar rota /cartao no projeto existente
-- [ ] Estruturar componentes base (Hero, Section, Card, Button, Modal)
-- [ ] Implementar seção 1 - Hero com vídeo background
-- [ ] Implementar seção 2 - Identificação da Dor (3 cards)
-- [ ] Implementar seção 3 - Apresentação da Solução
-- [ ] Implementar seção 4 - Como a mensalidade volta pro PIX
+- [x] Criar rota /cartao no projeto existente
+- [x] Estruturar componentes base (Hero, Section, Card, Button, Modal)
+- [x] Implementar seção 1 - Hero com vídeo background
+- [x] Implementar seção 2 - Identificação da Dor (3 cards)
+- [x] Implementar seção 3 - Apresentação da Solução
+- [x] Implementar seção 4 - Como a mensalidade volta pro PIX
 - [ ] Implementar seção 5 - Simulador Interativo de Cashback
 - [ ] Implementar seção 6 - O que está incluso (Stack de valor)
 - [ ] Implementar seção 7 - Comparativo (tabela)

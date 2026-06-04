@@ -150,6 +150,147 @@ export default function CartaoPage() {
         </div>
       </section>
 
+      {/* Seção 2 - Identificação da Dor */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold text-text-light uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand"></span>
+              Seus Desafios
+            </p>
+            <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
+              <span className="text-text-light block">VOCÊ ENFRENTA</span>
+              <span className="text-brand block">ESSES PROBLEMAS?</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: "💰",
+                title: "Gastos Altos com Saúde",
+                description: "Exames caros, consultas particulares e medicamentos consomem seu orçamento mensal"
+              },
+              {
+                icon: "⏱️",
+                title: "Fila de Espera",
+                description: "Meses esperando por consultas e exames no sistema público de saúde"
+              },
+              {
+                icon: "😟",
+                title: "Falta de Acesso",
+                description: "Dificuldade para encontrar bons médicos e especialistas na sua região"
+              }
+            ].map((problem, idx) => (
+              <div key={idx} className="bg-white rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow">
+                <div className="text-5xl mb-4">{problem.icon}</div>
+                <h3 className="text-2xl font-bold text-text-light mb-3">{problem.title}</h3>
+                <p className="text-text-light">{problem.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Seção 3 - Apresentação da Solução */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <p className="text-sm font-semibold text-text-light uppercase tracking-widest mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-brand"></span>
+                A Solução
+              </p>
+              <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight mb-6">
+                <span className="text-text-light block">TOTAL QUALITY</span>
+                <span className="text-brand block">CARE</span>
+              </h2>
+              <p className="text-lg text-text-light mb-6 leading-relaxed">
+                Um cartão que oferece acesso completo a telemedicina, descontos em exames, cashback em PIX e benefícios exclusivos. Tudo em um único lugar, por uma mensalidade acessível.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "✓ Acesso imediato a telemedicina 24/7",
+                  "✓ Descontos de até 70% em exames",
+                  "✓ Cashback em PIX para suas compras",
+                  "✓ Rede de parceiros em todo Brasil"
+                ].map((item, idx) => (
+                  <li key={idx} className="flex items-center gap-3 text-text-light">
+                    <span className="text-brand font-bold">{item.split(" ")[0]}</span>
+                    <span>{item.substring(2)}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="bg-gradient-to-br from-brand/10 to-brand/5 rounded-lg p-8 flex items-center justify-center h-96">
+              <div className="text-center">
+                <div className="text-6xl mb-4">💳</div>
+                <p className="text-text-light font-semibold">Seu Cartão de Proteção</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Seção 4 - Como a Mensalidade Volta pro PIX */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold text-text-light uppercase tracking-widest mb-4 flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand"></span>
+              Cashback
+            </p>
+            <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
+              <span className="text-text-light block">SUA MENSALIDADE</span>
+              <span className="text-brand block">VOLTA EM CASHBACK</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              {[
+                {
+                  step: "1",
+                  title: "Contrate seu plano",
+                  desc: "Escolha entre Quality Plus (R$ 29,90), Select (R$ 69,90) ou Premium (R$ 99,90)"
+                },
+                {
+                  step: "2",
+                  title: "Use o app Total Quality",
+                  desc: "Faça compras em milhares de estabelecimentos parceiros"
+                },
+                {
+                  step: "3",
+                  title: "Receba cashback",
+                  desc: "Até 10% de volta em PIX nas suas compras do dia a dia"
+                },
+                {
+                  step: "4",
+                  title: "Sua mensalidade se paga",
+                  desc: "Com apenas 3-4 compras por mês, você recupera o valor investido"
+                }
+              ].map((item, idx) => (
+                <div key={idx} className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-brand text-white flex items-center justify-center font-bold text-lg">
+                    {item.step}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-text-light mb-1">{item.title}</h3>
+                    <p className="text-text-light">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="bg-gradient-to-br from-brand/10 to-brand/5 rounded-lg p-8 flex items-center justify-center h-96">
+              <div className="text-center">
+                <div className="text-6xl mb-4">💸</div>
+                <p className="text-text-light font-semibold">Cashback Automático</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Comparação Detalhada */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
