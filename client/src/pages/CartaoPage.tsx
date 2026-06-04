@@ -1,18 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, Zap, Smartphone, Heart, Dumbbell, Pill, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CartaoPricingCard from "@/components/CartaoPricingCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
+import { useTracking } from "@/hooks/useTracking";
 import { cartaoPlanos, mainBenefitsData, faqs } from "@/lib/cartaoPlanos";
 
 export default function CartaoPage() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const { trackCTAClick, trackPageView } = useTracking();
+
+  // Rastrear visualização da página
+  useEffect(() => {
+    trackPageView('CartaoPage');
+  }, [trackPageView]);
 
   const handleSelectPlan = (planId: string) => {
     setSelectedPlan(planId);
+    trackCTAClick(`select_plan_${planId}`);
     const planMessages: Record<string, string> = {
       "quality-plus": "Quero Proteção Essencial, R$ 29,90",
       "quality-select": "Quero Proteção Completa, R$ 69,90",
@@ -20,6 +28,10 @@ export default function CartaoPage() {
     };
     const message = planMessages[planId] || `Olá! Gostaria de contratar o plano ${cartaoPlanos.find(p => p.id === planId)?.name}.`;
     window.location.href = `https://wa.me/551238873535?text=${encodeURIComponent(message)}`;
+  };
+
+  const handleCTAClick = (ctaName: string) => {
+    trackCTAClick(ctaName);
   };
 
   const getIconComponent = (iconName: string) => {
@@ -62,10 +74,14 @@ export default function CartaoPage() {
             Escolha o plano perfeito para você e sua família.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-brand hover:bg-brand-dark text-white px-8 py-6 text-lg font-bold">
+            <Button 
+              onClick={() => handleCTAClick('hero_cta_start')}
+              className="bg-brand hover:bg-brand-dark text-white px-8 py-6 text-lg font-bold"
+            >
               Começar Agora
             </Button>
             <Button
+              onClick={() => handleCTAClick('hero_cta_learn_more')}
               variant="outline"
               className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg font-bold"
             >

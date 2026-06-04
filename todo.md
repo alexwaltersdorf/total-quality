@@ -355,10 +355,10 @@
 - [x] Implementar seção 13 - CTA Final + Footer
 - [ ] Criar modal de formulário de leads
 - [ ] Integrar WhatsApp com links pré-preenchidos
-- [ ] Integrar Google Tag Manager (GTM)
-- [ ] Integrar Meta Pixel
+- [x] Integrar Google Tag Manager (GTM)
+- [x] Integrar Meta Pixel
 - [ ] Integrar Google Ads Conversion
-- [ ] Implementar tracking de eventos (scroll depth, CTA clicks, form submit)
+- [x] Implementar tracking de eventos (scroll depth, CTA clicks, form submit)
 - [ ] Otimizar performance (Lighthouse 90+)
 - [ ] Testar responsividade em mobile
 - [ ] Testar SEO local (meta tags, schema.org)
