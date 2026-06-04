@@ -274,13 +274,13 @@
 
 
 ## Integração de Credenciais Reais de Google Ads e Meta Ads
-- [ ] Adicionar tabela de configuração de credenciais no banco de dados
-- [ ] Criar interface para armazenar Google Ads Customer ID (920-715-3288)
-- [ ] Criar interface para armazenar Meta Ads Account ID (1536672876562340)
-- [ ] Integrar Google Ads API para trazer dados reais
-- [ ] Integrar Meta Ads API para trazer dados reais
-- [ ] Atualizar dashboard com dados em tempo real em vez de fictícios
-- [ ] Testar integração com contas reais
+- [x] Adicionar tabela de configuração de credenciais no banco de dados
+- [x] Criar interface para armazenar Google Ads Customer ID (920-715-3288)
+- [x] Criar interface para armazenar Meta Ads Account ID (1536672876562340)
+- [x] Integrar Google Ads API para trazer dados reais
+- [x] Integrar Meta Ads API para trazer dados reais
+- [x] Atualizar dashboard com dados em tempo real em vez de fictícios
+- [x] Testar integração com contas reais
 
 
 ## Integração de Credenciais Reais de Google Ads e Meta Ads - CONCLUÍDO
@@ -401,3 +401,13 @@
 - [x] Criar testes vitest para validação de token
 - [x] Criar documentação de configuração (AUTOSEO_WEBHOOK_SETUP.md)
 - [x] Testar webhook com requisição POST real
+
+
+## Monitoramento Semanal de Desempenho em Produção
+- [x] Criar handler em /api/scheduled/weekly-monitoring
+- [x] Implementar coleta de métricas (performance, uptime, erros)
+- [x] Implementar análise comparativa com semana anterior
+- [x] Criar job de agendamento semanal (segunda-feira 09:00 UTC) - Task UID: 9dDvhzCAouptSNiNNp29Az
+- [x] Implementar notificação ao proprietário com relatório
+- [x] Testar execução do job
+- [x] Validar relatório semanal enviado

@@ -9,6 +9,7 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { syncAutoSeoArticles } from "./syncAutoSeo";
 import { validateWebhookToken, processAutoSeoWebhook, processAutoSeoWebhookBatch } from "./autoseoWebhook";
+import { weeklyMonitoringHandler } from "./monitoring-handler";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -185,6 +186,9 @@ async function startServer() {
       });
     }
   });
+
+  // Weekly Monitoring endpoint
+  app.post("/api/scheduled/weekly-monitoring", weeklyMonitoringHandler);
 
   // tRPC API
   app.use(
