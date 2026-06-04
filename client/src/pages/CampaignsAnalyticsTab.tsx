@@ -1,5 +1,7 @@
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import type { DateRange } from "react-day-picker";
 import {
   TrendingUp, TrendingDown, DollarSign, MousePointerClick, Eye,
@@ -22,6 +24,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { trpc } from "@/lib/trpc";
 import { useMemo, useCallback, useState } from "react";
+import { subDays, parseISO } from "date-fns";
 
 interface DateFilter {
   mode: "preset" | "custom";
@@ -35,6 +38,62 @@ function dateFilterToQuery(filter: DateFilter): { days?: number; dateFrom?: stri
     return { days: filter.days };
   }
   return { dateFrom: filter.dateFrom, dateTo: filter.dateTo };
+}
+
+function getPreviousPeriodFilter(filter: DateFilter): { days?: number; dateFrom?: string; dateTo?: string } {
+  if (filter.mode === "preset" && filter.days) {
+    return { days: filter.days };
+  }
+  if (filter.dateFrom && filter.dateTo) {
+    const from = parseISO(filter.dateFrom);
+    const to = parseISO(filter.dateTo);
+    const daysDiff = Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
+    const prevTo = subDays(from, 1);
+    const prevFrom = subDays(prevTo, daysDiff);
+    return {
+      dateFrom: prevFrom.toISOString().split('T')[0],
+      dateTo: prevTo.toISOString().split('T')[0]
+    };
+  }
+  return { days: 7 };
+}
+
+function calculateDelta(current: number, previous: number): { delta: number; percentage: number; isPositive: boolean } {
+  if (previous === 0) return { delta: 0, percentage: 0, isPositive: current >= 0 };
+  const delta = current - previous;
+  const percentage = (delta / previous) * 100;
+  return { delta, percentage, isPositive: delta >= 0 };
+}
+
+interface TrendMetricCardProps {
+  label: string;
+  currentValue: number;
+  previousValue: number;
+  format?: (val: number) => string;
+  isNegativeBetter?: boolean;
+}
+
+function TrendMetricCard({ label, currentValue, previousValue, format, isNegativeBetter }: TrendMetricCardProps) {
+  const { delta, percentage, isPositive } = calculateDelta(currentValue, previousValue);
+  const shouldShowGreen = isNegativeBetter ? !isPositive : isPositive;
+  const displayValue = format ? format(currentValue) : currentValue.toFixed(2);
+  const displayDelta = format ? format(Math.abs(delta)) : Math.abs(delta).toFixed(2);
+
+  return (
+    <div className="flex items-center justify-between p-3 bg-slate-900 rounded-lg border border-slate-800">
+      <div>
+        <p className="text-sm text-muted-foreground">{label}</p>
+        <p className="text-lg font-bold mt-1">{displayValue}</p>
+      </div>
+      <div className="text-right">
+        <div className={`flex items-center gap-1 ${shouldShowGreen ? 'text-green-500' : 'text-red-500'}`}>
+          {shouldShowGreen ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
+          <span className="text-sm font-semibold">{Math.abs(percentage).toFixed(1)}%</span>
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">vs período anterior</p>
+      </div>
+    </div>
+  );
 }
 
 interface PlatformMetricCardProps {
@@ -114,6 +173,7 @@ export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
 
   // Convert filter to query input
   const queryInput = useMemo(() => dateFilterToQuery(filter), [filter]);
+  const previousQueryInput = useMemo(() => getPreviousPeriodFilter(filter), [filter]);
 
   // Fetch credentials
   const { data: credentials = [], isLoading: credentialsLoading } = trpc.ads.credentials.getAll.useQuery({});
@@ -128,6 +188,12 @@ export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
   // Fetch metrics for selected credential
   const { data: metrics = [], isLoading: metricsLoading } = trpc.ads.metrics.getByCredential.useQuery(
     credentialId ? { credentialId, ...queryInput } : { credentialId: 0, ...queryInput },
+    { enabled: credentialId !== null }
+  );
+
+  // Fetch metrics for previous period
+  const { data: previousMetrics = [] } = trpc.ads.metrics.getByCredential.useQuery(
+    credentialId ? { credentialId, ...previousQueryInput } : { credentialId: 0, ...previousQueryInput },
     { enabled: credentialId !== null }
   );
 
@@ -269,6 +335,65 @@ export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
     a.click();
   }, [filteredCampaigns]);
 
+  const exportPDF = useCallback(() => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 10;
+    let yPos = margin;
+
+    // Title
+    doc.setFontSize(16);
+    doc.text("Relatório de Campanhas", margin, yPos);
+    yPos += 10;
+
+    // Date range
+    doc.setFontSize(10);
+    doc.text(`Gerado em: ${format(new Date(), "dd/MM/yyyy HH:mm", { locale: ptBR })}`, margin, yPos);
+    yPos += 8;
+
+    // Summary metrics
+    const totalSpend = filteredCampaigns.reduce((sum, c) => sum + c.spend, 0);
+    const totalConversions = filteredCampaigns.reduce((sum, c) => sum + c.conversions, 0);
+    const avgROAS = filteredCampaigns.length > 0 
+      ? filteredCampaigns.reduce((sum, c) => sum + c.roas, 0) / filteredCampaigns.length 
+      : 0;
+
+    doc.setFontSize(11);
+    doc.text("Resumo de Performance", margin, yPos);
+    yPos += 6;
+    doc.setFontSize(9);
+    doc.text(`Total de Gasto: R$ ${totalSpend.toFixed(2)}`, margin, yPos);
+    yPos += 4;
+    doc.text(`Total de Conversões: ${totalConversions}`, margin, yPos);
+    yPos += 4;
+    doc.text(`ROAS Médio: ${avgROAS.toFixed(2)}`, margin, yPos);
+    yPos += 8;
+
+    // Table
+    const headers = [["Campanha", "Plataforma", "Spend", "Conversões", "CPC", "ROAS"]];
+    const rows = filteredCampaigns.map(c => [
+      c.name.substring(0, 20),
+      c.platform,
+      `R$ ${c.spend.toFixed(2)}`,
+      c.conversions.toString(),
+      `R$ ${c.cpc.toFixed(2)}`,
+      c.roas.toFixed(2)
+    ]);
+
+    (doc as any).autoTable({
+      head: headers,
+      body: rows,
+      startY: yPos,
+      margin: { left: margin, right: margin },
+      theme: 'grid',
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [41, 128, 185], textColor: 255 },
+    });
+
+    doc.save(`campanhas-${format(new Date(), "yyyy-MM-dd")}.pdf`);
+  }, [filteredCampaigns]);
+
   if (credentialsLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -304,6 +429,9 @@ export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
             <div className="space-y-1">
               <button onClick={exportCSV} className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-accent">
                 <FileSpreadsheet className="h-4 w-4 text-green-600" /> CSV
+              </button>
+              <button onClick={exportPDF} className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-accent">
+                <FileText className="h-4 w-4 text-red-600" /> PDF
               </button>
             </div>
           </PopoverContent>
@@ -411,6 +539,76 @@ export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
             />
           )}
         </div>
+      )}
+
+      {/* Trend Analysis with Period Comparison */}
+      {filteredCampaigns.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Análise de Tendências - Comparação com Período Anterior</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {(() => {
+                const currentSpend = filteredCampaigns.reduce((sum, c) => sum + c.spend, 0);
+                const currentConversions = filteredCampaigns.reduce((sum, c) => sum + c.conversions, 0);
+                const currentCPC = filteredCampaigns.length > 0 ? filteredCampaigns.reduce((sum, c) => sum + c.cpc, 0) / filteredCampaigns.length : 0;
+                const currentCTR = filteredCampaigns.length > 0 ? filteredCampaigns.reduce((sum, c) => sum + c.ctr, 0) / filteredCampaigns.length : 0;
+                const currentROAS = filteredCampaigns.length > 0 ? filteredCampaigns.reduce((sum, c) => sum + c.roas, 0) / filteredCampaigns.length : 0;
+
+                const previousCampaigns = previousMetrics.map((m: any) => ({
+                  spend: Number(m.spend) || 0,
+                  conversions: m.conversions || 0,
+                  cpc: Number(m.cpc) || 0,
+                  ctr: Number(m.ctr) || 0,
+                  roas: Number(m.roas) || 0,
+                }));
+
+                const previousSpend = previousCampaigns.reduce((sum, c) => sum + c.spend, 0);
+                const previousConversions = previousCampaigns.reduce((sum, c) => sum + c.conversions, 0);
+                const previousCPC = previousCampaigns.length > 0 ? previousCampaigns.reduce((sum, c) => sum + c.cpc, 0) / previousCampaigns.length : 0;
+                const previousCTR = previousCampaigns.length > 0 ? previousCampaigns.reduce((sum, c) => sum + c.ctr, 0) / previousCampaigns.length : 0;
+                const previousROAS = previousCampaigns.length > 0 ? previousCampaigns.reduce((sum, c) => sum + c.roas, 0) / previousCampaigns.length : 0;
+
+                return (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+                    <TrendMetricCard
+                      label="Gasto Total"
+                      currentValue={currentSpend}
+                      previousValue={previousSpend}
+                      format={(val) => `R$ ${(val / 1000).toFixed(1)}k`}
+                    />
+                    <TrendMetricCard
+                      label="Conversões"
+                      currentValue={currentConversions}
+                      previousValue={previousConversions}
+                      format={(val) => val.toFixed(0)}
+                    />
+                    <TrendMetricCard
+                      label="CPC Médio"
+                      currentValue={currentCPC}
+                      previousValue={previousCPC}
+                      format={(val) => `R$ ${val.toFixed(2)}`}
+                      isNegativeBetter={true}
+                    />
+                    <TrendMetricCard
+                      label="CTR Médio"
+                      currentValue={currentCTR}
+                      previousValue={previousCTR}
+                      format={(val) => `${val.toFixed(2)}%`}
+                    />
+                    <TrendMetricCard
+                      label="ROAS Médio"
+                      currentValue={currentROAS}
+                      previousValue={previousROAS}
+                      format={(val) => val.toFixed(2)}
+                    />
+                  </div>
+                );
+              })()}
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Charts Row */}

@@ -261,15 +261,15 @@
 
 
 ## Dashboard de Campanhas (Google Ads + Meta Ads + Analytics)
-- [ ] Criar componente de dashboard para análise de campanhas
-- [ ] Implementar métricas principais: CPC, ROAS, CTR, Conversões, Spend
-- [ ] Adicionar gráficos de performance por canal (Google Ads, Meta Ads)
-- [ ] Criar tabela comparativa de campanhas
-- [ ] Implementar filtros por período e canal
-- [ ] Adicionar análise de tendências e comparação período anterior
+- [x] Criar componente de dashboard para análise de campanhas
+- [x] Implementar métricas principais: CPC, ROAS, CTR, Conversões, Spend
+- [x] Adicionar gráficos de performance por canal (Google Ads, Meta Ads)
+- [x] Criar tabela comparativa de campanhas
+- [x] Implementar filtros por período e canal
+- [x] Adicionar análise de tendências e comparação período anterior (com testes)
 - [ ] Integrar dados de Google Ads API (simulado com dados de demo)
 - [ ] Integrar dados de Meta Ads API (simulado com dados de demo)
-- [ ] Criar exportação de relatórios em PDF/CSV
+- [x] Criar exportação de relatórios em PDF/CSV
 - [ ] Testar dashboard com dados de exemplo
 
 
