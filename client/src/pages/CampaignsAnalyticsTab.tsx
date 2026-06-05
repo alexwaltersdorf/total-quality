@@ -25,6 +25,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { trpc } from "@/lib/trpc";
 import { useMemo, useCallback, useState } from "react";
 import { subDays, parseISO } from "date-fns";
+import {
+  SkeletonCard,
+  SkeletonChart,
+  SkeletonTable,
+  SkeletonFilterBar,
+  SkeletonMetricCard,
+  SkeletonLineChart,
+} from "@/components/SkeletonLoaders";
 
 interface DateFilter {
   mode: "preset" | "custom";
@@ -396,8 +404,18 @@ export function CampaignsAnalyticsTab({ filter }: { filter: DateFilter }) {
 
   if (credentialsLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      <div className="space-y-6">
+        <SkeletonFilterBar />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <SkeletonMetricCard key={i} />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <SkeletonLineChart />
+          <SkeletonChart />
+        </div>
+        <SkeletonTable rows={8} />
       </div>
     );
   }
