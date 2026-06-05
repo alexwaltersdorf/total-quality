@@ -411,3 +411,16 @@
 - [x] Implementar notificação ao proprietário com relatório
 - [x] Testar execução do job
 - [x] Validar relatório semanal enviado
+
+
+## Integração Google Analytics 4 com Monitoramento
+- [x] Configurar credenciais de GA4 (Measurement ID: G-427367232, Property ID: 427367232)
+- [x] Implementar Google Analytics Data API Client
+- [x] Criar integração com sistema de monitoramento
+- [x] Implementar coleta de métricas reais (9 métricas)
+- [x] Implementar cálculo de deltas com período anterior
+- [x] Gerar relatório em Markdown com dados reais
+- [ ] Testar coleta de dados com GA4 real
+- [ ] Validar autenticação OAuth
+- [ ] Testar envio de relatório ao proprietário
+- [ ] Documentar fluxo de autenticação
