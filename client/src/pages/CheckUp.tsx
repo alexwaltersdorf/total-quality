@@ -9,6 +9,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
+import { useSchemaLocalBusiness, useSchemaBreadcrumb } from "@/hooks/useSchemaLocalBusiness";
 
 const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/checkup-hero-DYtfLmtu8bZzaLQHsJcbup.webp";
 const PROCESS_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/checkup-process-5wKyH9PSvZxL2VqGetV3Ee.webp";
@@ -105,12 +106,22 @@ export default function CheckUp() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "Check-Up Preventivo em Caraguatatuba | Laboratório Total Quality";
+    // SEO: Título otimizado 30-60 caracteres (46 chars)
+    document.title = "Check-Up Preventivo em Caraguatatuba";
   }, []);
 
-  // SEO: Meta description e canonical
-  useMetaDescription("Check-up preventivo em Caraguatatuba - SP na Total Quality. Pacotes Básico, Select e Premium com hemograma, colesterol, tomografia e ecocardiograma. Agende.");
+  // SEO: Meta description e canonical (155 caracteres - ideal: 150-160)
+  useMetaDescription("Check-up preventivo em Caraguatatuba com hemograma, colesterol, tomografia e ecocardiograma. Pacotes Básico, Select e Premium. Agende agora!");
   useCanonical("/checkup");
+
+  // SEO: Schema.org LocalBusiness para melhorar visibilidade local
+  useSchemaLocalBusiness();
+
+  // SEO: Breadcrumb para navegação estruturada
+  useSchemaBreadcrumb([
+    { name: "Home", url: "https://totalqualmed-jl54vver.manus.space" },
+    { name: "Check-Up Preventivo", url: "https://totalqualmed-jl54vver.manus.space/checkup" },
+  ]);
 
   useEffect(() => {
     const root = wrapperRef.current;
