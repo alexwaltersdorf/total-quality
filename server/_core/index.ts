@@ -10,6 +10,7 @@ import { serveStatic, setupVite } from "./vite";
 import { syncAutoSeoArticles } from "./syncAutoSeo";
 import { validateWebhookToken, processAutoSeoWebhook, processAutoSeoWebhookBatch } from "./autoseoWebhook";
 import { weeklyMonitoringHandler } from "./monitoring-handler";
+import { generateSitemap } from "./sitemap-handler";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -189,6 +190,30 @@ async function startServer() {
 
   // Weekly Monitoring endpoint
   app.post("/api/scheduled/weekly-monitoring", weeklyMonitoringHandler);
+
+  // Sitemap.xml endpoint
+  app.get("/sitemap.xml", (_req, res) => {
+    const sitemap = generateSitemap();
+    res.set({ "Content-Type": "application/xml" }).send(sitemap);
+  });
+
+  // Robots.txt endpoint
+  app.get("/robots.txt", (_req, res) => {
+    const robotsTxt = `User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+Disallow: /dashboard
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+Sitemap: https://totalquality.med.br/sitemap.xml`;
+    res.set({ "Content-Type": "text/plain" }).send(robotsTxt);
+  });
 
   // tRPC API
   app.use(
