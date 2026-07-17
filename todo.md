@@ -437,16 +437,17 @@
 
 
 ## FASE CRÍTICA: Correção de Meta Tags Dinâmicas (SEO Duplication Issue)
-- [x] Implementar meta tags dinâmicas por rota (title, description, canonical, og:url)
+- [x] Implementar meta tags dinâmicos por rota (title, description, canonical, og:url)
 - [x] Criar arquivo de configuração de rotas com meta tags (routes-metadata.ts)
 - [x] Implementar middleware Express para injetar meta tags no HTML antes de enviar ao cliente
 - [x] Gerar sitemap.xml dinâmico com todas as 26+ URLs e prioridades
 - [x] Testar cada rota (/checkup, /exames/*, /blog/*, /cartao, etc) para validar meta tags corretos
 - [x] Validar canonical URLs apontando para URL correta (não para home)
 - [x] Validar og:url apontando para URL correta
-- [x] Validar title tags únicas por página (30-60 chars)
-- [x] Validar meta descriptions únicas por página (120-160 chars)
+- [x] Validar title tags únicos por página (30-60 chars)
+- [x] Validar meta descriptions únicos por página (120-160 chars)
 - [x] Testar com curl/curl-i para confirmar HTML correto no servidor
+- [x] Criar SEO_STANDARDS.md com padrões obrigatórios para futuras alterações
 - [ ] Submeter sitemap.xml atualizado ao Google Search Console
 - [ ] Monitorar GSC "Indexação → Páginas" para confirmar que "Duplicada, Google escolheu diferente" desaparece
 - [ ] Implementar blog dinâmico com meta tags por artigo
@@ -454,3 +455,13 @@
 - [ ] Criar rota /blog/:slug para cada artigo com meta tags dinâmicas
 - [ ] Integrar AutoSEO webhook para sincronizar novos artigos automaticamente
 - [ ] Adicionar comentários Giscus em cada post do blog
+
+## PADRÃO OBRIGATÓRIO: Checklist de SEO para Novas Páginas
+**Sempre consulte SEO_STANDARDS.md ANTES de criar/modificar página**
+- [ ] Registrar rota em `server/_core/routes-metadata.ts`
+- [ ] Criar página React com `useCanonical()` e `useMetaDescription()`
+- [ ] Registrar rota em `client/src/App.tsx`
+- [ ] Testar com curl: title, canonical, description, og:url
+- [ ] Validar sitemap.xml atualizado
+- [ ] Atualizar todo.md com novo item
+- [ ] Fazer checkpoint ANTES de publicar
