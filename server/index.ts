@@ -14,6 +14,14 @@ async function startServer() {
   app.set("trust proxy", true);
   app.disable("x-powered-by");
 
+    // Redireciona www -> dominio principal (301) para consolidar SEO/indexacao no Google
+    app.use((req, res, next) => {
+          if (req.hostname === "www.totalquality.med.br") {
+                  return res.redirect(301, `https://totalquality.med.br${req.originalUrl}`);
+          }
+          next();
+    });
+
   // Serve static files from dist/public in production
   const staticPath =
     process.env.NODE_ENV === "production"
