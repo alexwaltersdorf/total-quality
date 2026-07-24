@@ -113,6 +113,8 @@ Hemograma, Glicemia, Colesterol, Hormônios, Vitaminas, Tomografia Computadoriza
               src={data.image}
               alt={`Exame de ${categories.find(c => c.id === active)?.label} na Total Quality Medicina Diagnóstica Caraguatatuba`}
               className="w-full h-[400px] lg:h-[600px] object-cover transition-transform duration-700 group-hover:scale-105"
+              loading="lazy"
+              decoding="async"
             />
             <div className="absolute top-6 left-6">
               <span className="inline-block bg-white/90 backdrop-blur-sm text-text text-xs font-semibold uppercase tracking-[0.12em] px-4 py-2">

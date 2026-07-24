@@ -261,8 +261,8 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/favicon-kMQsdmGbgGnMBKEvfxvRGD.webp" />
 
-    <!-- Meta Pixel -->
-    <script>
+    <!-- Meta Pixel (defer para não bloquear renderização) -->
+    <script defer>
       !function(f,b,e,v,n,t,s)
       {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
       n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -279,9 +279,9 @@
     /></noscript>
     <!-- End Meta Pixel -->
 
-    <!-- Google Ads Conversion Tracking -->
+    <!-- Google Ads Conversion Tracking (defer para não bloquear renderização) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-16697936154"></script>
-    <script>
+    <script defer>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());

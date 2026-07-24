@@ -44,6 +44,8 @@ export default function SobreSection() {
               src={TEAM_IMG}
               alt="Recepção e sala de espera da Total Quality Medicina Diagnóstica em Caraguatatuba - SP - Ambiente moderno e acolhedor com parede verde e estrutura de madeira"
               className="w-full h-[400px] lg:h-[550px] object-cover"
+              loading="lazy"
+              decoding="async"
             />
             {/* Floating experience card */}
             <div className="absolute -bottom-8 right-4 lg:right-8 bg-brand text-white p-6">
