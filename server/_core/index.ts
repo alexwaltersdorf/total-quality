@@ -3,6 +3,7 @@ import express from "express";
 import { createServer } from "http";
 import net from "net";
 import compression from "compression";
+import type { Request, Response, NextFunction } from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
@@ -139,7 +140,7 @@ async function startServer() {
   app.use(compression({
     level: 6,
     threshold: 1024,
-    filter: (req, res) => {
+    filter: (req: Request, res: Response) => {
       if (req.headers['x-no-compression']) {
         return false;
       }

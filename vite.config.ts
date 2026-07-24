@@ -19,13 +19,6 @@ export default defineConfig({
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
     chunkSizeWarningLimit: 1500,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
-    },
     rollupOptions: {
       output: {
         // Code-splitting estrategico para reduzir bundle inicial e melhorar INP/LCP
