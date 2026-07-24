@@ -5,8 +5,8 @@
 import { Target, Eye, Heart, ShieldCheck, Leaf, GraduationCap } from "lucide-react";
 import { ArrowUpRight } from "lucide-react";
 
-const TEAM_IMG = "/manus-storage/contato_bd9cb392.webp";
-const CLINIC_IMG = "/manus-storage/fachada_bc98d97c.webp";
+const TEAM_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/IMG-20251112-WA0022_e9b2d95e.jpg";
+const CLINIC_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/tq-fachada-caraguatatuba_56be3e3d.jpg";
 
 const values = [
   {

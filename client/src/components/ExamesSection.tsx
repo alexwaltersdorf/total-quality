@@ -13,8 +13,8 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 
-const DIAGNOSTIC_IMG = "/manus-storage/lab_9bf5b650.webp";
-const CARDIOLOGY_IMG = "/manus-storage/cardiology_e69b4052.webp";
+const DIAGNOSTIC_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-lab_848f61cd.png";
+const CARDIOLOGY_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-cardiology_f4f4a6c3.png";
 const LAB_IMG = "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=800&q=80";
 
 type Category = "imagem" | "cardiologia" | "laboratorio";
