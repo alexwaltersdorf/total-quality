@@ -465,3 +465,15 @@
 - [ ] Validar sitemap.xml atualizado
 - [ ] Atualizar todo.md com novo item
 - [ ] Fazer checkpoint ANTES de publicar
+
+
+## OTIMIZAÇÃO DE IMAGENS - Home (Performance)
+- [x] Auditar todas as imagens da Home
+- [x] Converter 5 imagens para WebP (hero, lab, cardiology, fachada, contato)
+- [x] Redimensionar para 900-1000px mantendo proporcao
+- [x] Comprimir de 17.17 MB para 0.31 MB (98.2% de reducao)
+- [x] Reenviar via integracao Manus S3/CloudFront
+- [x] Atualizar URLs em HeroSection.tsx, ExamesSection.tsx, SobreSection.tsx
+- [x] Validar que imagens estao carregando corretamente
+- [ ] Testar novo score de performance no PageSpeed Insights
+- [ ] Confirmar melhoria de 53 para 90+

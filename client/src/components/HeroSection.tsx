@@ -8,7 +8,7 @@ import { ArrowUpRight } from "lucide-react";
 import { trackScheduleExam } from "@/lib/tracking";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 
-const HERO_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png";
+const HERO_IMAGE = "/manus-storage/hero_50d90bd5.webp";
 
 const marqueeItems = [
   "TOMOGRAFIA", "EXAMES DE SANGUE", "HEMOGRAMA",
