@@ -9,7 +9,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { useCanonical, useMetaDescription } from "@/components/SEOHead";
+import { useCanonical, useMetaDescription, useFAQSchema } from "@/components/SEOHead";
 import { trackScheduleExam } from "@/lib/tracking";
 
 const HERO_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png";
@@ -23,17 +23,36 @@ const examesLaboratoriais = [
   "Exame toxicológico", "Sorologias", "Parasitológico de fezes",
 ];
 
-const examesImagem = [
-  { icon: Microscope, name: "Tomografia Computadorizada Multislice" },
-  { icon: Stethoscope, name: "Ultrassonografia Geral e Doppler" },
-  { icon: Shield, name: "Mamografia Digital" },
-  { icon: Microscope, name: "Raio-X Digital" },
-  { icon: Heart, name: "Ecocardiograma" },
-  { icon: Heart, name: "Holter 24h e MAPA 24h" },
-  { icon: Heart, name: "Eletrocardiograma" },
-  { icon: Brain, name: "Eletroencefalograma" },
-  { icon: Stethoscope, name: "Espirometria" },
-  { icon: Stethoscope, name: "Bioimpedância" },
+const examesImagem: { icon: typeof Microscope; name: string; href?: string }[] = [
+  { icon: Microscope, name: "Tomografia Computadorizada Multislice", href: "/exames/tomografia-computadorizada" },
+  { icon: Stethoscope, name: "Ultrassom Geral e Doppler", href: "/exames/ultrassonografia" },
+  { icon: Shield, name: "Mamografia Digital", href: "/exames/mamografia" },
+  { icon: Microscope, name: "Raio-X Digital", href: "/exames/raio-x" },
+  { icon: Heart, name: "Teste Ergométrico", href: "/exames/teste-ergometrico" },
+  { icon: Heart, name: "Holter 24h", href: "/exames/holter" },
+  { icon: Heart, name: "MAPA 24h", href: "/exames/mapa" },
+  { icon: Heart, name: "Eletrocardiograma", href: "/exames/eletrocardiograma" },
+  { icon: Brain, name: "Eletroencefalograma", href: "/exames/eletroencefalograma" },
+  { icon: Stethoscope, name: "Espirometria", href: "/exames/espirometria" },
+  { icon: Stethoscope, name: "Bioimpedância", href: "/bioimpedancia" },
+  { icon: Shield, name: "Exames Ocupacionais e Admissionais", href: "/exames/exame-admissional" },
+];
+
+const faqsLaboratorio = [
+  { q: "Qual o telefone do laboratório Total Quality em Caraguatatuba?", a: "O telefone e WhatsApp são (12) 3887-3535. Você pode agendar exames, tirar dúvidas sobre preparo e verificar convênios por telefone ou WhatsApp." },
+  { q: "Onde fica o laboratório em Caraguatatuba?", a: "A Total Quality fica na Rua Padre Anchieta, 1010, Centro, Caraguatatuba - SP, CEP 11660-010. Localização central, com fácil acesso." },
+  { q: "Preciso agendar para fazer exame de sangue?", a: "A coleta laboratorial é realizada de segunda a sexta das 06h30 às 16h e aos sábados das 06h30 às 11h. Para exames de imagem (tomografia, ultrassom, mamografia), é necessário agendamento prévio pelo WhatsApp (12) 3887-3535." },
+  { q: "Como acesso os resultados dos meus exames?", a: "Os resultados ficam disponíveis online, com acesso pelo site. A maioria dos exames de sangue fica pronta em até 24 horas. Exames específicos podem levar mais tempo." },
+  { q: "Quais convênios o laboratório aceita?", a: "Aceitamos os principais convênios de saúde, como Unimed, Bradesco Saúde, SulAmérica, Amil, Porto Seguro, NotreDame Intermédica e outros. Confirme a cobertura do seu plano pelo WhatsApp (12) 3887-3535." },
+  { q: "O laboratório atende aos sábados?", a: "Sim. A coleta laboratorial funciona aos sábados das 06h30 às 11h. Os exames de imagem são realizados de segunda a sexta, das 08h às 18h, com agendamento." },
+];
+
+const guiasBlog = [
+  { title: "Onde fazer exame de sangue em Caraguatatuba", href: "/blog/exame-de-sangue-caraguatatuba" },
+  { title: "Hemograma: o que é e por que fazer", href: "/blog/hemograma-caraguatatuba" },
+  { title: "Convênios aceitos no laboratório", href: "/blog/convenios-laboratorio-caraguatatuba" },
+  { title: "Ultrassonografia: guia completo", href: "/blog/ultrassonografia-caraguatatuba" },
+  { title: "Tomografia: tudo que você precisa saber", href: "/blog/tomografia-caraguatatuba" },
 ];
 
 const convenios = [
@@ -50,6 +69,7 @@ export default function LaboratorioCaraguatatuba() {
 
   useCanonical("https://totalquality.med.br/laboratorio-caraguatatuba");
   useMetaDescription("Laboratório de análises clínicas e diagnósticos em Caraguatatuba - SP. Hemograma, tomografia, ultrassom, mamografia e mais de 3.000 exames. Agende agora!");
+  useFAQSchema(faqsLaboratorio);
 
   // Inject BreadcrumbList schema
   useEffect(() => {
@@ -177,16 +197,29 @@ export default function LaboratorioCaraguatatuba() {
             </p>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {examesImagem.map((exame, i) => (
-                <div
-                  key={exame.name}
-                  className="reveal flex items-center gap-4 bg-neutral-50 rounded-xl px-6 py-5 border border-black/5 hover:shadow-md transition-shadow"
-                  style={{ transitionDelay: `${i * 50}ms` }}
-                >
-                  <exame.icon className="w-6 h-6 text-brand flex-shrink-0" />
-                  <span className="text-text font-medium">{exame.name}</span>
-                </div>
-              ))}
+              {examesImagem.map((exame, i) =>
+                exame.href ? (
+                  <a
+                    key={exame.name}
+                    href={exame.href}
+                    className="reveal flex items-center gap-4 bg-neutral-50 rounded-xl px-6 py-5 border border-black/5 hover:shadow-md hover:border-brand/30 transition-all"
+                    style={{ transitionDelay: `${i * 50}ms` }}
+                  >
+                    <exame.icon className="w-6 h-6 text-brand flex-shrink-0" />
+                    <span className="text-text font-medium">{exame.name}</span>
+                    <ArrowUpRight className="w-4 h-4 text-brand ml-auto flex-shrink-0" />
+                  </a>
+                ) : (
+                  <div
+                    key={exame.name}
+                    className="reveal flex items-center gap-4 bg-neutral-50 rounded-xl px-6 py-5 border border-black/5 hover:shadow-md transition-shadow"
+                    style={{ transitionDelay: `${i * 50}ms` }}
+                  >
+                    <exame.icon className="w-6 h-6 text-brand flex-shrink-0" />
+                    <span className="text-text font-medium">{exame.name}</span>
+                  </div>
+                )
+              )}
             </div>
           </div>
         </section>
@@ -308,6 +341,60 @@ export default function LaboratorioCaraguatatuba() {
                   <p className="text-sm italic">Agendamento prévio necessário</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="py-16 lg:py-24">
+          <div className="container">
+            <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-4">
+              PERGUNTAS FREQUENTES SOBRE O LABORATÓRIO EM <span className="text-brand">CARAGUATATUBA</span>
+            </h2>
+            <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
+              Tire suas dúvidas sobre telefone, endereço, horários, convênios e resultados de exames
+              do laboratório Total Quality em Caraguatatuba - SP.
+            </p>
+            <div className="max-w-3xl space-y-4">
+              {faqsLaboratorio.map((faq, i) => (
+                <details
+                  key={faq.q}
+                  className="reveal group bg-neutral-50 rounded-xl border border-black/5 overflow-hidden"
+                  style={{ transitionDelay: `${i * 50}ms` }}
+                >
+                  <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+                    <span className="font-semibold text-text pr-4">{faq.q}</span>
+                    <ArrowUpRight className="w-5 h-5 text-text-light shrink-0 transition-transform group-open:rotate-90" />
+                  </summary>
+                  <div className="px-6 pb-6 text-text-light leading-relaxed">{faq.a}</div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Guias do Blog */}
+        <section className="py-16 lg:py-24 bg-neutral-50">
+          <div className="container">
+            <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-4">
+              GUIAS SOBRE EXAMES EM <span className="text-brand">CARAGUATATUBA</span>
+            </h2>
+            <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
+              Conteúdos preparados pela nossa equipe para você entender melhor cada exame,
+              o preparo necessário e como agendar no nosso laboratório.
+            </p>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {guiasBlog.map((guia, i) => (
+                <a
+                  key={guia.href}
+                  href={guia.href}
+                  className="reveal flex items-center justify-between gap-4 bg-white rounded-xl px-6 py-5 border border-black/5 hover:shadow-md hover:border-brand/30 transition-all"
+                  style={{ transitionDelay: `${i * 50}ms` }}
+                >
+                  <span className="text-text font-medium">{guia.title}</span>
+                  <ArrowUpRight className="w-4 h-4 text-brand flex-shrink-0" />
+                </a>
+              ))}
             </div>
           </div>
         </section>

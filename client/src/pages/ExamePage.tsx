@@ -197,6 +197,39 @@ export default function ExamePage() {
       {/* Divider */}
       <div className="container"><div className="border-t border-black/10" /></div>
 
+      {/* Sub-exams (tipos de exame) */}
+      {exam.subExams && exam.subExams.length > 0 && (
+        <>
+          <section className="py-16 lg:py-24">
+            <div className="container">
+              <h2 className="reveal heading-display text-4xl lg:text-5xl text-text mb-4">
+                {(exam.subExamsTitle || "TIPOS DE EXAME").split(" ").map((word, i, arr) => (
+                  <span key={i} className={i === arr.length - 1 ? "text-brand" : "text-text"}>
+                    {word}{" "}
+                  </span>
+                ))}
+              </h2>
+              <p className="reveal text-text-muted mb-12">
+                Realizados em Caraguatatuba - SP, na Total Quality Medicina Diagnóstica.
+              </p>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {exam.subExams.map((sub, i) => (
+                  <div
+                    key={sub.name}
+                    className="reveal p-6 bg-surface rounded-xl border border-black/5"
+                    style={{ transitionDelay: `${i * 50}ms` }}
+                  >
+                    <h3 className="font-semibold text-text mb-2">{sub.name}</h3>
+                    <p className="text-text-muted text-sm leading-relaxed">{sub.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+          <div className="container"><div className="border-t border-black/10" /></div>
+        </>
+      )}
+
       {/* Indications */}
       <section className="py-16 lg:py-24 bg-surface">
         <div className="container">
