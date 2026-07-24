@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
 import net from "net";
+import compression from "compression";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
@@ -133,6 +134,18 @@ async function startServer() {
 
     next();
   });
+
+  // Adicionar compressão gzip/brotli para melhorar performance
+  app.use(compression({
+    level: 6,
+    threshold: 1024,
+    filter: (req, res) => {
+      if (req.headers['x-no-compression']) {
+        return false;
+      }
+      return compression.filter(req, res);
+    },
+  }));
 
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));

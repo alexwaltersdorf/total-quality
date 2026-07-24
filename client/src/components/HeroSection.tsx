@@ -99,8 +99,8 @@ export default function HeroSection() {
                 loading="eager"
                 fetchPriority="high"
                 decoding="async"
-                width="800"
-                height="600"
+                width="2752"
+                height="1536"
               />
               {/* Floating info card */}
               <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-5 max-w-xs shadow-lg">

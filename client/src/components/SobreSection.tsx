@@ -46,6 +46,8 @@ export default function SobreSection() {
               className="w-full h-[400px] lg:h-[550px] object-cover"
               loading="lazy"
               decoding="async"
+              width="1280"
+              height="720"
             />
             {/* Floating experience card */}
             <div className="absolute -bottom-8 right-4 lg:right-8 bg-brand text-white p-6">
