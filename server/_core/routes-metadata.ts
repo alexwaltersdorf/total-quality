@@ -130,16 +130,6 @@ const examesMetadata: Record<string, RouteMetadata> = {
     priority: 0.9,
     changefreq: "monthly",
   },
-  "bioimpedancia": {
-    title: "Bioimpedância - Análise de Composição Corporal em Caraguatatuba",
-    description: "Bioimpedância em Caraguatatuba - SP. Análise de composição corporal (gordura, músculo, água). Agende seu exame.",
-    keywords: "bioimpedância, composição corporal, gordura corporal, análise de corpo, Caraguatatuba",
-    ogTitle: "Bioimpedância | Total Quality",
-    ogDescription: "Análise de composição corporal com tecnologia de bioimpedância.",
-    canonical: "https://totalquality.med.br/bioimpedancia",
-    priority: 0.8,
-    changefreq: "monthly",
-  },
 };
 
 // Dados dos artigos de blog
@@ -182,16 +172,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
     ogDescription: "Guia completo sobre tomografia: indicações, preparo e como funciona.",
     canonical: "https://totalquality.med.br/blog/tomografia-caraguatatuba",
     priority: 0.7,
-    changefreq: "monthly",
-  },
-  "convênios-laboratório-caraguatatuba": {
-    title: "Convênios Aceitos no Laboratório em Caraguatatuba | Total Quality",
-    description: "Veja todos os convênios de saúde aceitos no laboratório Total Quality em Caraguatatuba. Cobertura completa de planos.",
-    keywords: "convênios, planos de saúde, laboratório, Caraguatatuba",
-    ogTitle: "Convênios Aceitos | Total Quality",
-    ogDescription: "Confira todos os convênios de saúde aceitos no laboratório Total Quality.",
-    canonical: "https://totalquality.med.br/blog/convênios-laboratório-caraguatatuba",
-    priority: 0.6,
     changefreq: "monthly",
   },
   "exame-de-sangue-caraguatatuba": {
