@@ -49,6 +49,7 @@ export default function WhatsAppFAB() {
       {/* FAB Button */}
       <button
         onClick={() => { if (!expanded) { trackWhatsAppClick("fab_open"); } setExpanded(!expanded); }}
+        aria-label={expanded ? "Fechar opções de WhatsApp" : "Agendar exame pelo WhatsApp"}
         className={`w-14 h-14 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 ${
           expanded
             ? "bg-text hover:bg-text-light"
