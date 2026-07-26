@@ -12,7 +12,7 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { trackScheduleExam } from "@/lib/tracking";
 
-const HERO_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png";
+const HERO_IMAGE = "/images/optik-hero-900.webp";
 
 const examesLaboratoriais = [
   "Hemograma completo", "Glicemia em jejum", "Colesterol total e frações",

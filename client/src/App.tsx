@@ -1,26 +1,31 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
+import { lazy, Suspense } from "react";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
-import CheckUp from "./pages/CheckUp";
-import Bioimpedancia from "./pages/Bioimpedancia";
-import Dashboard from "./pages/Dashboard";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import Admin from "./pages/Admin";
-import ExamePage from "./pages/ExamePage";
-import LaboratorioCaraguatatuba from "./pages/LaboratorioCaraguatatuba";
-import CallRedirect from "./pages/CallRedirect";
-import ThankYouCall from "./pages/ThankYouCall";
-import FormSubmissionSuccess from "./pages/FormSubmissionSuccess";
-import CartaoPage from "./pages/CartaoPage";
-import AutoSeoArticle from "./pages/AutoSeoArticle";
+
+// Rotas secundarias em lazy loading: mantem Admin/Dashboard (recharts etc.)
+// fora do bundle inicial que o paciente baixa na home.
+const CheckUp = lazy(() => import("./pages/CheckUp"));
+const Bioimpedancia = lazy(() => import("./pages/Bioimpedancia"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const Admin = lazy(() => import("./pages/Admin"));
+const ExamePage = lazy(() => import("./pages/ExamePage"));
+const LaboratorioCaraguatatuba = lazy(() => import("./pages/LaboratorioCaraguatatuba"));
+const CallRedirect = lazy(() => import("./pages/CallRedirect"));
+const ThankYouCall = lazy(() => import("./pages/ThankYouCall"));
+const FormSubmissionSuccess = lazy(() => import("./pages/FormSubmissionSuccess"));
+const CartaoPage = lazy(() => import("./pages/CartaoPage"));
+const AutoSeoArticle = lazy(() => import("./pages/AutoSeoArticle"));
 
 function Router() {
   return (
+    <Suspense fallback={null}>
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/checkup"} component={CheckUp} />
@@ -42,6 +47,7 @@ function Router() {
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
+    </Suspense>
   );
 }
 

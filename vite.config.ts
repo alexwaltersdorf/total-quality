@@ -19,23 +19,10 @@ export default defineConfig({
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
     chunkSizeWarningLimit: 1500,
-    rollupOptions: {
-      output: {
-        // Code-splitting estrategico para reduzir bundle inicial e melhorar INP/LCP
-        manualChunks: {
-          "react-vendor": ["react", "react-dom", "wouter"],
-          "ui-radix": [
-            "@radix-ui/react-accordion",
-            "@radix-ui/react-dialog",
-            "@radix-ui/react-dropdown-menu",
-            "@radix-ui/react-tabs",
-            "@radix-ui/react-tooltip",
-          ],
-          "icons": ["lucide-react"],
-          "forms": ["react-hook-form", "zod"],
-        },
-      },
-    },
+    // Sem manualChunks: com as rotas em React.lazy (App.tsx), o Rollup divide o
+    // bundle pelos proprios dynamic imports — Admin/Dashboard/recharts saem do
+    // chunk inicial. O manualChunks anterior nao surtia efeito (react-vendor ~5KB)
+    // porque todas as paginas eram importadas estaticamente no entry.
   },
   server: {
     host: true,

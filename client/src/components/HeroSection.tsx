@@ -8,7 +8,8 @@ import { ArrowUpRight } from "lucide-react";
 import { trackScheduleExam } from "@/lib/tracking";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 
-const HERO_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png";
+const HERO_IMAGE = "/images/optik-hero-1600.webp";
+const HERO_IMAGE_SMALL = "/images/optik-hero-900.webp";
 
 const marqueeItems = [
   "TOMOGRAFIA", "EXAMES DE SANGUE", "HEMOGRAMA",
@@ -94,13 +95,15 @@ export default function HeroSection() {
             <div className="relative aspect-[4/3] lg:aspect-auto lg:h-[80vh]">
               <img
                 src={HERO_IMAGE}
+                srcSet={`${HERO_IMAGE_SMALL} 900w, ${HERO_IMAGE} 1600w`}
+                sizes="(max-width: 1024px) 100vw, 55vw"
                 alt="Clínica Total Quality Medicina Diagnóstica em Caraguatatuba - SP - Interior moderno com equipamentos de tomografia e diagnóstico por imagem"
                 className="w-full h-full object-cover"
                 loading="eager"
                 fetchPriority="high"
                 decoding="async"
-                width="2752"
-                height="1536"
+                width="1600"
+                height="893"
               />
               {/* Floating info card */}
               <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-5 max-w-xs shadow-lg">

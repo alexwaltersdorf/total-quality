@@ -247,9 +247,8 @@
     }
     </script>
 
-    <!-- LCP: Preconnect + preload do hero image (CloudFront CDN) -->
-    <link rel="preconnect" href="https://d2xsxph8kpxj0f.cloudfront.net" crossorigin />
-    <link rel="preload" as="image" href="https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png" fetchpriority="high" />
+    <!-- LCP: preload do hero image (WebP local, servido pelo proprio dominio/CDN Hostinger) -->
+    <link rel="preload" as="image" href="/images/optik-hero-1600.webp" imagesrcset="/images/optik-hero-900.webp 900w, /images/optik-hero-1600.webp 1600w" imagesizes="(max-width: 1024px) 100vw, 55vw" fetchpriority="high" />
 
     <!-- Google Fonts — load assincrono (nao bloqueia render) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -261,36 +260,52 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/favicon-kMQsdmGbgGnMBKEvfxvRGD.webp" />
 
-    <!-- Meta Pixel (defer para não bloquear renderização) -->
-    <script defer>
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '1536672876562340');
-      fbq('track', 'PageView');
+    <!-- Terceiros (Meta Pixel + Google Ads gtag + Soro) carregados apos idle ou primeira
+         interacao: tira ~900 KB de JS de terceiros do caminho critico (TBT/LCP).
+         O GTM continua carregando imediatamente para nao perder atribuicao de conversao. -->
+    <script>
+      (function () {
+        var loaded = false;
+        function loadThirdParty() {
+          if (loaded) return;
+          loaded = true;
+          !function(f,b,e,v,n,t,s)
+          {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+          n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+          if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+          n.queue=[];t=b.createElement(e);t.async=!0;
+          t.src=v;s=b.getElementsByTagName(e)[0];
+          s.parentNode.insertBefore(t,s)}(window, document,'script',
+          'https://connect.facebook.net/en_US/fbevents.js');
+          fbq('init', '1536672876562340');
+          fbq('track', 'PageView');
+          var g = document.createElement('script');
+          g.src = 'https://www.googletagmanager.com/gtag/js?id=AW-16697936154';
+          g.async = true;
+          document.head.appendChild(g);
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = window.gtag || function () { dataLayer.push(arguments); };
+          gtag('js', new Date());
+          gtag('config', 'AW-16697936154');
+          var w = document.createElement('script');
+          w.src = 'https://app.trysoro.com/api/embed/b285a81e-b387-4c17-9c9a-a93bebb4d786';
+          w.defer = true;
+          document.body.appendChild(w);
+        }
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(loadThirdParty, { timeout: 5000 });
+        } else {
+          setTimeout(loadThirdParty, 4000);
+        }
+        ['scroll', 'click', 'touchstart', 'keydown'].forEach(function (ev) {
+          addEventListener(ev, loadThirdParty, { once: true, passive: true });
+        });
+      })();
     </script>
     <noscript><img height="1" width="1" style="display:none"
       src="https://www.facebook.com/tr?id=1536672876562340&ev=PageView&noscript=1"
     /></noscript>
-    <!-- End Meta Pixel -->
 
-    <!-- Google Ads Conversion Tracking (defer para não bloquear renderização) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-16697936154"></script>
-    <script defer>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'AW-16697936154');
-    </script>
-    <!-- End Google Ads Conversion Tracking -->
-
-    <!-- Soro Widget — defer ja evita blocking -->
-    <script src="https://app.trysoro.com/api/embed/b285a81e-b387-4c17-9c9a-a93bebb4d786" defer></script>
   </head>
 
   <body>
