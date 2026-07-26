@@ -336,6 +336,13 @@ export function getRouteMetadata(pathname: string): RouteMetadata | null {
 }
 
 /**
+ * Slugs de blog com metadata conhecida (usado na resolução de 404)
+ */
+export function getKnownBlogSlugs(): Set<string> {
+  return new Set(Object.keys(blogMetadata));
+}
+
+/**
  * Gerar lista de todas as rotas para sitemap.xml
  */
 export function getAllRoutes(): RouteMetadata[] {
