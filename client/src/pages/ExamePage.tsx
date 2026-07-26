@@ -108,10 +108,10 @@ export default function ExamePage() {
                   {word}{" "}
                 </span>
               ))}
-              <span className="block text-base lg:text-lg text-text-light font-light tracking-wide mt-4 normal-case">
-                {exam.shortTitle} em Caraguatatuba - SP | Total Quality Medicina Diagnóstica
-              </span>
             </h1>
+            <p className="reveal block text-base lg:text-lg text-text-light font-light tracking-wide mt-4 normal-case">
+              {exam.shortTitle} em Caraguatatuba - SP | Total Quality Medicina Diagnóstica
+            </p>
 
             <p className="reveal text-text-light text-lg lg:text-xl leading-relaxed max-w-3xl mb-10" style={{ transitionDelay: "200ms" }}>
               {exam.heroDescription}

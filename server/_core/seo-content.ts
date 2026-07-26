@@ -14,17 +14,7 @@
  */
 
 import { examesData, type ExamData } from "../../client/src/lib/examesData";
-
-// Rotas de exames priorizadas para pré-renderização
-const PRIORITY_EXAM_SLUGS = [
-  "exames-de-sangue",
-  "tomografia-computadorizada",
-  "ultrassonografia",
-  "mapa",
-  "holter",
-  "exame-toxicologico",
-  "espirometria",
-];
+import { blogPosts, type BlogPost } from "../../client/src/lib/blogData";
 
 const NAP = {
   name: "Total Quality Laboratório e Medicina Diagnóstica",
@@ -194,13 +184,100 @@ export function getSeoContentForPath(pathname: string): string | null {
   if (path === "/laboratorio-caraguatatuba") return wrap(laboratorioHtml);
   if (path === "/bioimpedancia") return wrap(bioimpedanciaHtml);
 
+  if (path === "/checkup") return wrap(checkupHtml);
+  if (path === "/exames") return wrap(examesHubHtml());
+
   const examMatch = path.match(/^\/exames\/([a-z0-9\-]+)$/);
-  if (examMatch && PRIORITY_EXAM_SLUGS.includes(examMatch[1])) {
+  if (examMatch) {
     const exam = examesData.find((e) => e.slug === examMatch[1]);
     if (exam) return wrap(renderExamHtml(exam));
   }
 
+  if (path === "/blog") return wrap(blogIndexHtml());
+
+  const blogMatch = path.match(/^\/blog\/([a-z0-9\-]+)$/);
+  if (blogMatch) {
+    const post = blogPosts.find((b) => b.slug === blogMatch[1]);
+    if (post) return wrap(renderBlogHtml(post));
+  }
+
   return null;
+}
+
+const checkupHtml = `
+    <h1>Check-up Preventivo em Caraguatatuba</h1>
+    <p>O check-up preventivo da Total Quality reúne exames laboratoriais, cardiológicos e de imagem em pacotes por faixa etária — Básico, Select e Premium — realizados em um só lugar, no Centro de Caraguatatuba, com resultados rápidos e orientação da nossa equipe.</p>
+    <h2>O que os pacotes incluem</h2>
+    <ul>
+      <li>Exames de sangue: hemograma completo, glicemia, perfil lipídico (colesterol e triglicerídeos), função renal e hepática</li>
+      <li>Hormônios: TSH e T4 livre para avaliação da tireoide</li>
+      <li>Vitamina D e vitamina B12</li>
+      <li>Avaliação cardiológica: eletrocardiograma e, nos pacotes completos, ecocardiograma</li>
+      <li>PSA para homens e exames específicos por faixa etária</li>
+      <li>Exame de urina e outros conforme o pacote escolhido</li>
+    </ul>
+    <h2>Para quem é indicado</h2>
+    <ul>
+      <li>Adultos de 20 a 35 anos: check-up a cada dois anos</li>
+      <li>A partir dos 40 anos: check-up anual com marcadores adicionais</li>
+      <li>A partir dos 50 anos: protocolo ampliado com rastreamentos específicos</li>
+    </ul>
+    <h2>Perguntas frequentes</h2>
+    <h3>Preciso de pedido médico para fazer check-up?</h3>
+    <p>Para os pacotes de check-up da Total Quality não é necessário pedido médico — nossa equipe orienta o pacote mais adequado ao seu perfil e histórico.</p>
+    <h3>Quanto tempo demoram os resultados?</h3>
+    <p>A maioria dos exames laboratoriais fica pronta em até 24 horas, com acesso online. Exames de imagem têm laudo rápido, geralmente em poucos dias.</p>
+    ${napHtml("Invista na sua saúde: agende seu check-up preventivo pelo WhatsApp e faça tudo em uma única visita.")}
+    ${internalLinksHtml("/checkup")}`;
+
+function examesHubHtml(): string {
+  const categorias: Array<[string, string]> = [
+    ["laboratorio", "Exames laboratoriais e análises clínicas"],
+    ["imagem", "Diagnóstico por imagem"],
+    ["cardiologia", "Exames cardiológicos"],
+    ["neurologia", "Neurologia"],
+    ["outros", "Medicina ocupacional e outros"],
+  ];
+  const sections = categorias
+    .map(([cat, label]) => {
+      const items = examesData
+        .filter((e) => e.category === cat)
+        .map((e) => `<li><a href="/exames/${e.slug}">${escapeHtml(e.shortTitle)}</a> — ${escapeHtml(e.description)}</li>`)
+        .join("");
+      return items ? `<h2>${escapeHtml(label)}</h2><ul>${items}</ul>` : "";
+    })
+    .join("");
+  return `
+    <h1>Exames Laboratoriais e de Imagem em Caraguatatuba</h1>
+    <p>A Total Quality reúne em um só endereço, no Centro de Caraguatatuba, mais de 3.000 tipos de exames laboratoriais, exames de imagem, cardiológicos e ocupacionais — com resultados online em até 24 horas para a maioria dos exames laboratoriais e equipe especializada há mais de 23 anos no Litoral Norte.</p>
+    ${sections}
+    <p><a href="/bioimpedancia">Bioimpedância</a> — análise completa de composição corporal.</p>
+    <p><a href="/checkup">Check-up preventivo</a> — pacotes completos por faixa etária.</p>
+    ${napHtml("Não encontrou o exame que procura? Fale com a gente pelo WhatsApp — realizamos mais de 3.000 tipos de exames.")}`;
+}
+
+function blogIndexHtml(): string {
+  const items = blogPosts
+    .map((b) => `<li><a href="/blog/${b.slug}">${escapeHtml(b.title)}</a> — ${escapeHtml(b.excerpt)}</li>`)
+    .join("");
+  return `
+    <h1>Blog Total Quality — Saúde e Diagnóstico</h1>
+    <p>Artigos escritos pela equipe da Total Quality Medicina Diagnóstica sobre exames, prevenção e saúde no Litoral Norte.</p>
+    <ul>${items}</ul>
+    ${internalLinksHtml("/blog")}`;
+}
+
+function renderBlogHtml(post: BlogPost): string {
+  const paragraphs = post.content.map((par) => `<p>${escapeHtml(par)}</p>`).join("");
+  return `
+    <article>
+      <h1>${escapeHtml(post.title)}</h1>
+      <p><em>${escapeHtml(post.subtitle)}</em></p>
+      <p>${escapeHtml(post.author)} · ${escapeHtml(post.authorRole)} · ${escapeHtml(post.date)} · ${escapeHtml(post.readTime)} de leitura</p>
+      ${paragraphs}
+    </article>
+    ${napHtml("Precisa fazer seus exames? Agende pelo WhatsApp e tenha resultados online em até 24 horas.")}
+    ${internalLinksHtml("/blog/" + post.slug)}`;
 }
 
 function wrap(inner: string): string {
@@ -221,6 +298,7 @@ export function injectSeoContent(html: string, content: string): string {
 // Rotas exatas registradas no router do cliente (App.tsx)
 const CLIENT_ROUTES = new Set([
   "/",
+  "/exames",
   "/checkup",
   "/bioimpedancia",
   "/blog",

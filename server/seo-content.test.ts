@@ -4,7 +4,7 @@ import {
   injectSeoContent,
   resolveHttpStatus,
 } from "./_core/seo-content";
-import { getKnownBlogSlugs } from "./_core/routes-metadata";
+import { getAllRoutes, getKnownBlogSlugs } from "./_core/routes-metadata";
 
 const PRIORITY_ROUTES = [
   "/",
@@ -86,5 +86,34 @@ describe("resolveHttpStatus", () => {
 
   it("mantém 200 para slugs de primeiro nível (artigos AutoSEO dinâmicos)", () => {
     expect(resolveHttpStatus("/algum-artigo-autoseo", blogSlugs)).toBe(200);
+  });
+});
+
+describe("GUARD-RAIL: cobertura do sitemap (nao remover)", () => {
+  // Regra permanente (auditoria SEMrush jul/2026): o site e uma SPA e o Google
+  // precisa receber conteudo no HTML inicial. TODA rota publicada no sitemap
+  // deve entregar conteudo pre-renderizado com H1. Se este teste falhar, uma
+  // rota nova foi adicionada ao sitemap sem cobertura em seo-content.ts —
+  // adicione o conteudo antes de publicar, nao delete o teste.
+  const PATHS_SEM_PRERENDER_PERMITIDOS = new Set([
+    "https://totalquality.med.br/cartao", // pagina de produto, baixa prioridade SEO
+  ]);
+
+  it.each(
+    getAllRoutes()
+      .filter((r) => !PATHS_SEM_PRERENDER_PERMITIDOS.has(r.canonical))
+      .map((r) => new URL(r.canonical).pathname)
+  )("rota do sitemap %s entrega conteudo pre-renderizado com H1", (pathname) => {
+    const html = getSeoContentForPath(pathname);
+    expect(html, `Rota ${pathname} esta no sitemap mas nao tem conteudo pre-renderizado em seo-content.ts`).toBeTruthy();
+    expect(html).toContain("<h1>");
+  });
+
+  it("novas paginas do hub e blog estao cobertas", () => {
+    expect(getSeoContentForPath("/exames")).toContain("Exames Laboratoriais");
+    expect(getSeoContentForPath("/exames/hemograma")).toContain("jejum");
+    expect(getSeoContentForPath("/exames/exame-admissional")).toContain("ASO");
+    expect(getSeoContentForPath("/blog/hemograma-caraguatatuba")).toContain("<article>");
+    expect(getSeoContentForPath("/blog")).toContain("<h1>");
   });
 });

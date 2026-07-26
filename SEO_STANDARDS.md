@@ -357,3 +357,34 @@ curl -s http://localhost:3000/sua-rota | grep -E "<title>|canonical|og:url|name=
 **Versão:** 1.0  
 **Criado:** 16 de Julho de 2026  
 **Próxima revisão:** Quando adicionar nova categoria de páginas
+
+---
+
+## Regras permanentes de SEO técnico (auditorias jul/2026 — NÃO regredir)
+
+Estas regras vieram das auditorias PageSpeed/SEMrush de jul/2026 e estão protegidas
+por testes em `server/seo-content.test.ts`:
+
+1. **Toda rota do sitemap DEVE ter conteúdo pré-renderizado.** O site é uma SPA;
+   sem o bloco injetado por `server/_core/seo-content.ts` dentro do `#root`, o
+   Google recebe HTML vazio e a página não rankeia. Ao criar uma página nova:
+   metadata em `routes-metadata.ts` + conteúdo em `seo-content.ts` (o teste
+   guard-rail falha se esquecer).
+2. **Uma intenção de busca por página (sem canibalização).** Home = "laboratório
+   em caraguatatuba"; `/laboratorio-caraguatatuba` = "laboratório de análises
+   clínicas"; cada `/exames/:slug` = o nome do exame. Não repetir o mesmo
+   título-alvo em duas páginas.
+3. **H1 limpo, sem marca empilhada.** A marca vai no `<title>` (após o pipe),
+   nunca dentro do `<h1>`.
+4. **robots.txt não bloqueia crawlers de IA** (GPTBot/CCBot liberados — o site já
+   aparece em respostas de LLMs). Mudar isso só com decisão explícita do negócio.
+5. **Rotas inexistentes retornam HTTP 404 real** (`resolveHttpStatus`), nunca 200
+   com a homepage.
+6. **Imagens de LCP**: WebP, tamanho máximo 1600px, servidas do próprio domínio
+   (nunca PNG multi-MB de CDN externo). Scripts de terceiros carregam no idle ou
+   na primeira interação — nunca no caminho crítico.
+7. **Domínio canônico**: `https://totalquality.med.br` (sem www) — o middleware
+   301 em `server/_core/index.ts` consolida; manter.
+8. **Silo de análises clínicas**: hub `/exames` organiza as páginas de exame e
+   distribui links internos. Novos exames entram em `client/src/lib/examesData.ts`
+   (o hub, a página, o sitemap e a pré-renderização são gerados automaticamente).

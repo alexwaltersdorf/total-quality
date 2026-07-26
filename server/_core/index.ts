@@ -213,17 +213,14 @@ async function startServer() {
 
   // Robots.txt endpoint
   app.get("/robots.txt", (_req, res) => {
+    // GPTBot/CCBot liberados de propósito: a clínica já aparece em respostas de
+    // LLMs (3 prompts registrados no SEMrush) e esse canal só cresce. Não voltar
+    // a bloquear crawlers de IA sem decisão explícita do negócio.
     const robotsTxt = `User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api
 Disallow: /dashboard
-
-User-agent: GPTBot
-Disallow: /
-
-User-agent: CCBot
-Disallow: /
 
 Sitemap: https://totalquality.med.br/sitemap.xml`;
     res.set({ "Content-Type": "text/plain" }).send(robotsTxt);
