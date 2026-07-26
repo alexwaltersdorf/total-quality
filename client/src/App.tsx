@@ -1,7 +1,5 @@
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -53,14 +51,41 @@ function Router() {
   );
 }
 
+const Toaster = lazy(() => import("@/components/ui/sonner").then((m) => ({ default: m.Toaster })));
+
+/**
+ * Carrega o Toaster (sonner) apos o navegador ficar ocioso. Toasts sempre
+ * partem de uma acao do usuario (envio de formulario), que ocorre bem depois
+ * do carregamento inicial — manter sonner fora do caminho critico reduz o TBT.
+ */
+function DeferredToaster() {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const show = () => setReady(true);
+    const idle = typeof window.requestIdleCallback === "function" ? window.requestIdleCallback : null;
+    if (idle) {
+      const id = idle(show, { timeout: 3000 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const id = window.setTimeout(show, 2000);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  if (!ready) return null;
+  return (
+    <Suspense fallback={null}>
+      <Toaster />
+    </Suspense>
+  );
+}
+
 function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+        <DeferredToaster />
+        <Router />
       </ThemeProvider>
     </ErrorBoundary>
   );

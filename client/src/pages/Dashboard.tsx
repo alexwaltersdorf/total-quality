@@ -1,3 +1,4 @@
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 /*
  * Style: Optik Editorial Dashboard — Dark theme analytics panel
  * Theme: Dark background #1A1A1A, white text, brand #9B212B accent
@@ -731,10 +732,21 @@ function getEventColor(event: string): string {
 // ============================================================
 // EXPORT COM PROTEÇÃO DE LOGIN
 // ============================================================
-export default function Dashboard() {
+function DashboardPage() {
   return (
     <DashboardLogin>
       <DashboardContent />
     </DashboardLogin>
+  );
+}
+
+// O TooltipProvider fica aqui (e nao no App) para que o Radix Tooltip e o
+// floating-ui (~100KB) carreguem apenas nesta rota, que e lazy — as paginas
+// publicas nao usam tooltip e nao devem pagar por ele no chunk inicial.
+export default function Dashboard() {
+  return (
+    <TooltipProvider>
+      <DashboardPage />
+    </TooltipProvider>
   );
 }

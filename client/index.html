@@ -247,6 +247,26 @@
     }
     </script>
 
+    <!-- Estilo minimo do bloco pre-renderizado (server/_core/seo-content.ts).
+         Fica visivel entre o primeiro paint e a montagem do React; sem isso o
+         usuario ve texto cru. Nao ocultar: o conteudo precisa ser rastreavel. -->
+    <style>
+      .seo-prerender {
+        max-width: 68ch;
+        margin: 0 auto;
+        padding: 6rem 1.5rem 4rem;
+        font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+        color: #5a5a5a;
+        line-height: 1.7;
+      }
+      .seo-prerender h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.1; color: #1a1a1a; margin-bottom: 1rem; }
+      .seo-prerender h2 { font-size: 1.5rem; color: #1a1a1a; margin: 2.5rem 0 0.75rem; }
+      .seo-prerender h3 { font-size: 1.125rem; color: #1a1a1a; margin: 1.5rem 0 0.5rem; }
+      .seo-prerender p, .seo-prerender ul, .seo-prerender address { margin-bottom: 1rem; }
+      .seo-prerender ul { padding-left: 1.25rem; }
+      .seo-prerender a { color: #9b212b; }
+    </style>
+
     <!-- LCP: preload do hero image (WebP local, servido pelo proprio dominio/CDN Hostinger) -->
     <link rel="preload" as="image" href="/images/optik-hero-1600.webp" imagesrcset="/images/optik-hero-900.webp 900w, /images/optik-hero-1600.webp 1600w" imagesizes="(max-width: 1024px) 100vw, 55vw" fetchpriority="high" />
 

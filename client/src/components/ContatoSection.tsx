@@ -16,7 +16,13 @@ import {
   Loader2,
   Mail,
 } from "lucide-react";
-import { toast } from "sonner";
+// Import dinamico: o sonner (~64KB) so entra no bundle quando o usuario envia o
+// formulario, em vez de pesar no chunk inicial de todas as paginas publicas.
+const toast = {
+  success: (msg: string) => import("sonner").then((m) => m.toast.success(msg)),
+  info: (msg: string) => import("sonner").then((m) => m.toast.info(msg)),
+  error: (msg: string) => import("sonner").then((m) => m.toast.error(msg)),
+};
 import { MapView } from "@/components/Map";
 import { trpc } from "@/lib/trpc";
 import { trackFormStart, trackFormSubmit, trackPhoneClick, trackWhatsAppClick, trackExternalLink, trackMapInteraction } from "@/lib/tracking";

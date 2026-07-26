@@ -1,3 +1,4 @@
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 import {
   Accordion,
   AccordionContent,
@@ -173,7 +174,7 @@ import { useState } from "react";
 import { toast as sonnerToast } from "sonner";
 import { AIChatBox, type Message } from "@/components/AIChatBox";
 
-export default function ComponentsShowcase() {
+function ComponentsShowcaseContent() {
   const { theme, toggleTheme } = useTheme();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [datePickerDate, setDatePickerDate] = useState<Date>();
@@ -1436,5 +1437,16 @@ export default function ComponentsShowcase() {
         </div>
       </footer>
     </div>
+  );
+}
+
+// O TooltipProvider fica aqui (e nao no App) para que o Radix Tooltip e o
+// floating-ui (~100KB) carreguem apenas nesta rota, que e lazy — as paginas
+// publicas nao usam tooltip e nao devem pagar por ele no chunk inicial.
+export default function ComponentsShowcase() {
+  return (
+    <TooltipProvider>
+      <ComponentsShowcaseContent />
+    </TooltipProvider>
   );
 }

@@ -1,3 +1,4 @@
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { CampaignsAnalyticsTab } from "./CampaignsAnalyticsTab";
@@ -2108,7 +2109,7 @@ function DashboardSkeleton() {
 }
 
 // ===================== MAIN ADMIN PAGE =====================
-export default function Admin() {
+function AdminContent() {
   const { user, loading, isAuthenticated, logout } = useAuth();
   const [, navigate] = useLocation();
   const params = useParams<{ tab?: string }>();
@@ -2293,5 +2294,16 @@ export default function Admin() {
         </Tabs>
       </main>
     </div>
+  );
+}
+
+// O TooltipProvider fica aqui (e nao no App) para que o Radix Tooltip e o
+// floating-ui (~100KB) carreguem apenas nesta rota, que e lazy — as paginas
+// publicas nao usam tooltip e nao devem pagar por ele no chunk inicial.
+export default function Admin() {
+  return (
+    <TooltipProvider>
+      <AdminContent />
+    </TooltipProvider>
   );
 }
