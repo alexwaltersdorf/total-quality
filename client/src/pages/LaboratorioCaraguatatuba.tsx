@@ -3,6 +3,7 @@
  * URL: /laboratorio-caraguatatuba
  * SEO: H1 + H2s geolocalizados, 800-1000 palavras, schema BreadcrumbList
  */
+import ResponsiveImage from "@/components/ResponsiveImage";
 import { useEffect } from "react";
 import { ArrowUpRight, MapPin, Phone, Clock, CheckCircle, Stethoscope, Microscope, Heart, Brain, Shield } from "lucide-react";
 import Navbar from "@/components/Navbar";
@@ -12,7 +13,6 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { trackScheduleExam } from "@/lib/tracking";
 
-const HERO_IMAGE = "/images/optik-hero-900.webp";
 
 const examesLaboratoriais = [
   "Hemograma completo", "Glicemia em jejum", "Colesterol total e frações",
@@ -125,11 +125,15 @@ export default function LaboratorioCaraguatatuba() {
               </div>
 
               <div className="lg:col-span-5">
-                <img
-                  src={HERO_IMAGE}
+                <ResponsiveImage
+                  slug="hero-clinica"
+                  widths={[480, 768, 1024]}
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  width={1024}
+                  height={572}
                   alt="Laboratório Total Quality em Caraguatatuba - SP - Interior da clínica"
                   className="reveal w-full rounded-2xl shadow-lg"
-                  loading="eager"
+                  priority
                 />
               </div>
             </div>

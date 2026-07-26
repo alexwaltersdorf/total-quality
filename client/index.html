@@ -268,7 +268,14 @@
     </style>
 
     <!-- LCP: preload do hero image (WebP local, servido pelo proprio dominio/CDN Hostinger) -->
-    <link rel="preload" as="image" href="/images/optik-hero-1600.webp" imagesrcset="/images/optik-hero-900.webp 900w, /images/optik-hero-1600.webp 1600w" imagesizes="(max-width: 1024px) 100vw, 55vw" fetchpriority="high" />
+    <link
+      rel="preload"
+      as="image"
+      type="image/avif"
+      href="/images/hero-clinica-1440.avif"
+      imagesrcset="/images/hero-clinica-480.avif 480w, /images/hero-clinica-768.avif 768w, /images/hero-clinica-1024.avif 1024w, /images/hero-clinica-1440.avif 1440w, /images/hero-clinica-1920.avif 1920w"
+      imagesizes="(max-width: 1024px) 100vw, 55vw"
+      fetchpriority="high" />
 
     <!-- Google Fonts — load assincrono (nao bloqueia render) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

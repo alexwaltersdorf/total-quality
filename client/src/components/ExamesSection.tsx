@@ -2,6 +2,7 @@
  * Style: Optik Editorial — Large image panels, minimal tabs
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  */
+import ResponsiveImage from "@/components/ResponsiveImage";
 import { useState } from "react";
 import { trackExamCategorySelect, trackScheduleExam } from "@/lib/tracking";
 import {
@@ -13,9 +14,9 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 
-const DIAGNOSTIC_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-lab_848f61cd.png";
-const CARDIOLOGY_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-cardiology_f4f4a6c3.png";
-const LAB_IMG = "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=800&q=80";
+const DIAGNOSTIC_IMG = "laboratorio";
+const CARDIOLOGY_IMG = "cardiologia";
+const LAB_IMG = "tomografia";
 
 type Category = "imagem" | "cardiologia" | "laboratorio";
 
@@ -109,14 +110,14 @@ Hemograma, Glicemia, Colesterol, Hormônios, Vitaminas, Tomografia Computadoriza
         <div className="reveal grid lg:grid-cols-12 gap-8 items-stretch" style={{ transitionDelay: "400ms" }}>
           {/* Image panel */}
           <div className="lg:col-span-7 relative overflow-hidden group">
-            <img
-              src={data.image}
+            <ResponsiveImage
+              slug={data.image}
+              widths={[480, 768, 1024, 1440]}
+              sizes="(max-width: 1024px) 100vw, 58vw"
+              width={1440}
+              height={1075}
               alt={`Exame de ${categories.find(c => c.id === active)?.label} na Total Quality Medicina Diagnóstica Caraguatatuba`}
               className="w-full h-[400px] lg:h-[600px] object-cover transition-transform duration-700 group-hover:scale-105"
-              loading="lazy"
-              decoding="async"
-              width="2400"
-              height="1792"
             />
             <div className="absolute top-6 left-6">
               <span className="inline-block bg-white/90 backdrop-blur-sm text-text text-xs font-semibold uppercase tracking-[0.12em] px-4 py-2">

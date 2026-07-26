@@ -123,11 +123,19 @@ export default function Navbar() {
           className="flex items-center gap-3 group"
           onClick={(e) => { e.preventDefault(); scrollTo("#inicio"); }}
         >
-          <img
-            src="https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/total-quality-logo_ce648054.png"
-            alt="Total Quality Medicina Diagnóstica"
-            className="h-10 md:h-12 w-auto object-contain"
-          />
+          <picture>
+            <source type="image/avif" srcSet="/images/logo-276.avif 276w, /images/logo-414.avif 414w" sizes="138px" />
+            <source type="image/webp" srcSet="/images/logo-276.webp 276w, /images/logo-414.webp 414w" sizes="138px" />
+            <img
+              src="/images/logo-276.webp"
+              alt="Total Quality Medicina Diagnóstica"
+              className="h-10 md:h-12 w-auto object-contain"
+              width={276}
+              height={96}
+              fetchPriority="high"
+              decoding="sync"
+            />
+          </picture>
         </a>
 
         {/* Desktop nav links */}

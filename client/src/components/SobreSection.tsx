@@ -2,11 +2,10 @@
  * Style: Optik Editorial — Asymmetric layout, large type, editorial images
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  */
+import ResponsiveImage from "@/components/ResponsiveImage";
 import { Target, Eye, Heart, ShieldCheck, Leaf, GraduationCap } from "lucide-react";
 import { ArrowUpRight } from "lucide-react";
 
-const TEAM_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/IMG-20251112-WA0022_e9b2d95e.jpg";
-const CLINIC_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/tq-fachada-caraguatatuba_56be3e3d.jpg";
 
 const values = [
   {
@@ -40,14 +39,14 @@ export default function SobreSection() {
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start mb-24">
           {/* Image side */}
           <div className="lg:col-span-6 reveal-left relative">
-            <img
-              src={TEAM_IMG}
+            <ResponsiveImage
+              slug="recepcao"
+              widths={[480, 768, 1024]}
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              width={1024}
+              height={576}
               alt="Recepção e sala de espera da Total Quality Medicina Diagnóstica em Caraguatatuba - SP - Ambiente moderno e acolhedor com parede verde e estrutura de madeira"
               className="w-full h-[400px] lg:h-[550px] object-cover"
-              loading="lazy"
-              decoding="async"
-              width="1280"
-              height="720"
             />
             {/* Floating experience card */}
             <div className="absolute -bottom-8 right-4 lg:right-8 bg-brand text-white p-6">
@@ -143,8 +142,12 @@ export default function SobreSection() {
             </div>
           </div>
           <div className="lg:col-span-7 reveal-right">
-            <img
-              src={CLINIC_IMG}
+            <ResponsiveImage
+              slug="fachada"
+              widths={[480, 768, 1024]}
+              sizes="(max-width: 1024px) 100vw, 58vw"
+              width={1024}
+              height={843}
               alt="Clínica Total Quality Medicina Diagnóstica em Caraguatatuba - SP - Estrutura moderna com equipamentos de tomografia e diagnóstico por imagem"
               className="w-full h-[350px] lg:h-[450px] object-cover"
             />

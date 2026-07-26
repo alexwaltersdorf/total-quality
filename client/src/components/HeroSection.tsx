@@ -4,12 +4,11 @@
  * SEO: Keywords in headings, alt texts, and semantic HTML
  * Tracking: CTA clicks → generate_lead, nav clicks
  */
+import ResponsiveImage from "@/components/ResponsiveImage";
 import { ArrowUpRight } from "lucide-react";
 import { trackScheduleExam } from "@/lib/tracking";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 
-const HERO_IMAGE = "/images/optik-hero-1600.webp";
-const HERO_IMAGE_SMALL = "/images/optik-hero-900.webp";
 
 const marqueeItems = [
   "TOMOGRAFIA", "EXAMES DE SANGUE", "HEMOGRAMA",
@@ -93,17 +92,15 @@ export default function HeroSection() {
           {/* Right column - Hero image */}
           <div className="lg:col-span-6 xl:col-span-7">
             <div className="relative aspect-[4/3] lg:aspect-auto lg:h-[80vh]">
-              <img
-                src={HERO_IMAGE}
-                srcSet={`${HERO_IMAGE_SMALL} 900w, ${HERO_IMAGE} 1600w`}
+              <ResponsiveImage
+                slug="hero-clinica"
+                widths={[480, 768, 1024, 1440, 1920]}
                 sizes="(max-width: 1024px) 100vw, 55vw"
+                width={1920}
+                height={1072}
                 alt="Clínica Total Quality Medicina Diagnóstica em Caraguatatuba - SP - Interior moderno com equipamentos de tomografia e diagnóstico por imagem"
                 className="w-full h-full object-cover"
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                width="1600"
-                height="893"
+                priority
               />
               {/* Floating info card */}
               <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-5 max-w-xs shadow-lg">

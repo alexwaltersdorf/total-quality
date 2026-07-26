@@ -380,9 +380,15 @@ por testes em `server/seo-content.test.ts`:
    aparece em respostas de LLMs). Mudar isso só com decisão explícita do negócio.
 5. **Rotas inexistentes retornam HTTP 404 real** (`resolveHttpStatus`), nunca 200
    com a homepage.
-6. **Imagens de LCP**: WebP, tamanho máximo 1600px, servidas do próprio domínio
-   (nunca PNG multi-MB de CDN externo). Scripts de terceiros carregam no idle ou
-   na primeira interação — nunca no caminho crítico.
+6. **Imagens**: toda imagem passa por `scripts/optimize-images.mjs` (AVIF + WebP,
+   variantes 480/768/1024/1440/1920) e é exibida pelo componente
+   `<ResponsiveImage>`, que emite `<picture>` com `srcset`, `sizes` e
+   `width`/`height` explícitos. Servidas de `/public/images` no próprio domínio —
+   **nunca** referenciar PNG/JPG de CDN externo: os objetos do bucket S3 voltam
+   como `application/octet-stream` e sem `Cache-Control`. Só o LCP usa
+   `priority` (eager + fetchpriority=high); todo o resto é lazy.
+   Scripts de terceiros carregam no idle ou na primeira interação — nunca no
+   caminho crítico.
 7. **Domínio canônico**: `https://totalquality.med.br` (sem www) — o middleware
    301 em `server/_core/index.ts` consolida; manter.
 8. **Silo de análises clínicas**: hub `/exames` organiza as páginas de exame e
