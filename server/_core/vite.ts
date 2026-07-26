@@ -5,7 +5,8 @@ import { nanoid } from "nanoid";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import viteConfig from "../../vite.config";
-import { getRouteMetadata, injectMetaTags } from "./routes-metadata";
+import { getKnownBlogSlugs, getRouteMetadata, injectMetaTags } from "./routes-metadata";
+import { getSeoContentForPath, injectSeoContent, resolveHttpStatus } from "./seo-content";
 
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
@@ -47,8 +48,15 @@ export async function setupVite(app: Express, server: Server) {
         template = injectMetaTags(template, metadata);
       }
 
+      // Injetar conteúdo SEO pré-renderizado dentro do #root
+      const seoContent = getSeoContentForPath(pathname);
+      if (seoContent) {
+        template = injectSeoContent(template, seoContent);
+      }
+
       const page = await vite.transformIndexHtml(url, template);
-      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+      const status = resolveHttpStatus(pathname, getKnownBlogSlugs());
+      res.status(status).set({ "Content-Type": "text/html" }).end(page);
     } catch (e) {
       vite.ssrFixStacktrace(e as Error);
       next(e);
@@ -81,6 +89,14 @@ export function serveStatic(app: Express) {
       html = injectMetaTags(html, metadata);
     }
 
-    res.set({ "Content-Type": "text/html" }).send(html);
+    // Injetar conteúdo SEO pré-renderizado dentro do #root
+    const seoContent = getSeoContentForPath(pathname);
+    if (seoContent) {
+      html = injectSeoContent(html, seoContent);
+    }
+
+    // Rotas inexistentes devolvem 404 real (corrige soft-404)
+    const status = resolveHttpStatus(pathname, getKnownBlogSlugs());
+    res.status(status).set({ "Content-Type": "text/html" }).send(html);
   });
 }
