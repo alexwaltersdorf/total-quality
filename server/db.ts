@@ -1,4 +1,4 @@
-import { eq, desc, sql, and, gte, lte, count, asc } from "drizzle-orm";
+import { eq, desc, sql, and, gte, lte, count, asc, like, or } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser, users,
@@ -15,6 +15,8 @@ import {
   InsertAdAccountCredential, adAccountCredentials,
   InsertCampaignMetric, campaignMetrics,
   InsertAutoSeoArticle, autoSeoArticles,
+  InsertExpense, expenses,
+  InsertBudget, budgets,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -830,4 +832,247 @@ export async function deleteAutoSeoArticle(id: number) {
   if (!db) return false;
   await db.delete(autoSeoArticles).where(eq(autoSeoArticles.id, id));
   return true;
+}
+
+// ===================== EXPENSES (Controle Financeiro Pessoal) =====================
+
+type ExpenseFilters = {
+  since?: Date;
+  until?: Date;
+  category?: string;
+  paymentMethod?: string;
+  search?: string;
+};
+
+/** MySQL decimal columns come back as strings — normalize to a JS number. */
+function toNum(value: unknown): number {
+  if (value === null || value === undefined) return 0;
+  const n = typeof value === "number" ? value : parseFloat(String(value));
+  return Number.isFinite(n) ? n : 0;
+}
+
+/** Maps a raw expense row to a client-friendly shape (numeric amount, ISO date). */
+function mapExpense(row: typeof expenses.$inferSelect) {
+  return {
+    ...row,
+    amount: toNum(row.amount),
+    expenseDate:
+      row.expenseDate instanceof Date
+        ? row.expenseDate.toISOString().slice(0, 10)
+        : String(row.expenseDate),
+  };
+}
+
+export type ExpenseDTO = ReturnType<typeof mapExpense>;
+
+function buildExpenseConditions(filters: ExpenseFilters): any[] {
+  const conditions: any[] = [];
+  if (filters.since) conditions.push(gte(expenses.expenseDate, filters.since));
+  if (filters.until) conditions.push(lte(expenses.expenseDate, filters.until));
+  if (filters.category) conditions.push(eq(expenses.category, filters.category));
+  if (filters.paymentMethod) conditions.push(eq(expenses.paymentMethod, filters.paymentMethod));
+  if (filters.search) {
+    const term = `%${filters.search}%`;
+    conditions.push(or(like(expenses.description, term), like(expenses.merchant, term)));
+  }
+  return conditions;
+}
+
+export async function createExpense(data: InsertExpense) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(expenses).values(data).$returningId();
+  return { success: true, id: result?.id };
+}
+
+export async function updateExpense(id: number, data: Partial<InsertExpense>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(expenses).set(data).where(eq(expenses.id, id));
+  return { success: true };
+}
+
+export async function deleteExpense(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(expenses).where(eq(expenses.id, id));
+  return { success: true };
+}
+
+export async function getExpenseById(id: number): Promise<ExpenseDTO | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(expenses).where(eq(expenses.id, id)).limit(1);
+  return result.length > 0 ? mapExpense(result[0]) : null;
+}
+
+export async function getExpenses(
+  filters: ExpenseFilters = {},
+  limit = 100,
+  offset = 0
+): Promise<ExpenseDTO[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const conditions = buildExpenseConditions(filters);
+  const base = db.select().from(expenses);
+  const query = conditions.length > 0 ? base.where(and(...conditions)) : base;
+  const rows = await query
+    .orderBy(desc(expenses.expenseDate), desc(expenses.id))
+    .limit(limit)
+    .offset(offset);
+  return rows.map(mapExpense);
+}
+
+export async function getExpensesCount(filters: ExpenseFilters = {}): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const conditions = buildExpenseConditions(filters);
+  const base = db.select({ total: count() }).from(expenses);
+  const query = conditions.length > 0 ? base.where(and(...conditions)) : base;
+  const result = await query;
+  return result[0]?.total ?? 0;
+}
+
+/** Totais gerais do período: valor total, nº de lançamentos, ticket médio. */
+export async function getExpenseSummary(since?: Date, until?: Date) {
+  const db = await getDb();
+  if (!db) return { total: 0, count: 0, avgTicket: 0 };
+  const conditions = buildExpenseConditions({ since, until });
+  const base = db
+    .select({
+      total: sql<number>`COALESCE(SUM(${expenses.amount}), 0)`,
+      cnt: sql<number>`COUNT(*)`,
+    })
+    .from(expenses);
+  const query = conditions.length > 0 ? base.where(and(...conditions)) : base;
+  const result = await query;
+  const total = toNum(result[0]?.total);
+  const cnt = Number(result[0]?.cnt ?? 0);
+  return { total, count: cnt, avgTicket: cnt > 0 ? total / cnt : 0 };
+}
+
+export async function getExpensesByCategory(since?: Date, until?: Date) {
+  const db = await getDb();
+  if (!db) return [] as { category: string; total: number; count: number }[];
+  const conditions = buildExpenseConditions({ since, until });
+  const base = db
+    .select({
+      category: expenses.category,
+      total: sql<number>`COALESCE(SUM(${expenses.amount}), 0)`,
+      cnt: sql<number>`COUNT(*)`,
+    })
+    .from(expenses);
+  const query = conditions.length > 0 ? base.where(and(...conditions)) : base;
+  const rows = await query.groupBy(expenses.category).orderBy(desc(sql`SUM(${expenses.amount})`));
+  return rows.map(r => ({ category: r.category, total: toNum(r.total), count: Number(r.cnt) }));
+}
+
+export async function getExpensesByDay(since?: Date, until?: Date) {
+  const db = await getDb();
+  if (!db) return [] as { day: string; total: number; count: number }[];
+  const conditions = buildExpenseConditions({ since, until });
+  const dayExpr = sql<string>`DATE_FORMAT(${expenses.expenseDate}, '%Y-%m-%d')`;
+  const base = db
+    .select({
+      day: dayExpr,
+      total: sql<number>`COALESCE(SUM(${expenses.amount}), 0)`,
+      cnt: sql<number>`COUNT(*)`,
+    })
+    .from(expenses);
+  const query = conditions.length > 0 ? base.where(and(...conditions)) : base;
+  const rows = await query.groupBy(dayExpr).orderBy(asc(dayExpr));
+  return rows.map(r => ({ day: String(r.day), total: toNum(r.total), count: Number(r.cnt) }));
+}
+
+export async function getExpensesByPaymentMethod(since?: Date, until?: Date) {
+  const db = await getDb();
+  if (!db) return [] as { paymentMethod: string; total: number; count: number }[];
+  const conditions = buildExpenseConditions({ since, until });
+  const base = db
+    .select({
+      paymentMethod: expenses.paymentMethod,
+      total: sql<number>`COALESCE(SUM(${expenses.amount}), 0)`,
+      cnt: sql<number>`COUNT(*)`,
+    })
+    .from(expenses);
+  const query = conditions.length > 0 ? base.where(and(...conditions)) : base;
+  const rows = await query.groupBy(expenses.paymentMethod).orderBy(desc(sql`SUM(${expenses.amount})`));
+  return rows.map(r => ({
+    paymentMethod: r.paymentMethod ?? "Outro",
+    total: toNum(r.total),
+    count: Number(r.cnt),
+  }));
+}
+
+export async function getTopMerchants(since?: Date, until?: Date, limit = 10) {
+  const db = await getDb();
+  if (!db) return [] as { merchant: string; total: number; count: number }[];
+  const conditions = buildExpenseConditions({ since, until });
+  conditions.push(sql`${expenses.merchant} IS NOT NULL AND ${expenses.merchant} <> ''`);
+  const base = db
+    .select({
+      merchant: expenses.merchant,
+      total: sql<number>`COALESCE(SUM(${expenses.amount}), 0)`,
+      cnt: sql<number>`COUNT(*)`,
+    })
+    .from(expenses);
+  const rows = await base
+    .where(and(...conditions))
+    .groupBy(expenses.merchant)
+    .orderBy(desc(sql`SUM(${expenses.amount})`))
+    .limit(limit);
+  return rows.map(r => ({ merchant: r.merchant ?? "—", total: toNum(r.total), count: Number(r.cnt) }));
+}
+
+/** Evolução mensal dos últimos N meses: [{ month: '2026-07', total, count }]. */
+export async function getExpensesByMonth(months = 12) {
+  const db = await getDb();
+  if (!db) return [] as { month: string; total: number; count: number }[];
+  const since = new Date();
+  since.setMonth(since.getMonth() - (months - 1));
+  since.setDate(1);
+  since.setHours(0, 0, 0, 0);
+  const monthExpr = sql<string>`DATE_FORMAT(${expenses.expenseDate}, '%Y-%m')`;
+  const rows = await db
+    .select({
+      month: monthExpr,
+      total: sql<number>`COALESCE(SUM(${expenses.amount}), 0)`,
+      cnt: sql<number>`COUNT(*)`,
+    })
+    .from(expenses)
+    .where(gte(expenses.expenseDate, since))
+    .groupBy(monthExpr)
+    .orderBy(asc(monthExpr));
+  return rows.map(r => ({ month: String(r.month), total: toNum(r.total), count: Number(r.cnt) }));
+}
+
+// ===================== BUDGETS (Orçamentos por categoria) =====================
+
+export async function getBudgets() {
+  const db = await getDb();
+  if (!db) return [] as { id: number; category: string; monthlyLimit: number }[];
+  const rows = await db.select().from(budgets).orderBy(asc(budgets.category));
+  return rows.map(r => ({ id: r.id, category: r.category, monthlyLimit: toNum(r.monthlyLimit) }));
+}
+
+export async function upsertBudget(category: string, monthlyLimit: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const existing = await db.select().from(budgets).where(eq(budgets.category, category)).limit(1);
+  if (existing.length > 0) {
+    await db
+      .update(budgets)
+      .set({ monthlyLimit: String(monthlyLimit) })
+      .where(eq(budgets.category, category));
+  } else {
+    await db.insert(budgets).values({ category, monthlyLimit: String(monthlyLimit) });
+  }
+  return { success: true };
+}
+
+export async function deleteBudget(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(budgets).where(eq(budgets.id, id));
+  return { success: true };
 }

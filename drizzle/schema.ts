@@ -343,3 +343,49 @@ export const autoSeoArticles = mysqlTable("auto_seo_articles", {
 
 export type AutoSeoArticle = typeof autoSeoArticles.$inferSelect;
 export type InsertAutoSeoArticle = typeof autoSeoArticles.$inferInsert;
+
+/**
+ * Gastos pessoais — controle financeiro pessoal.
+ * Cada registro é uma despesa, lançada manualmente ou extraída de uma foto de
+ * comprovante/nota via IA (OCR).
+ */
+export const expenses = mysqlTable("expenses", {
+  id: int("id").autoincrement().primaryKey(),
+  // Descrição e origem do gasto
+  description: varchar("description", { length: 500 }).notNull(), // "Almoço", "Compra no mercado"
+  merchant: varchar("merchant", { length: 255 }), // Estabelecimento: "Supermercado Extra"
+  amount: decimal("amount", { precision: 12, scale: 2 }).notNull(), // Valor total em R$
+  category: varchar("category", { length: 100 }).notNull().default("Outros"), // Alimentação, Transporte, etc.
+  paymentMethod: varchar("paymentMethod", { length: 50 }).default("Outro"), // Dinheiro, Débito, Crédito, Pix, Boleto
+  // Data do gasto (dia em que a despesa ocorreu)
+  expenseDate: date("expenseDate").notNull(),
+  // Detalhes adicionais
+  notes: text("notes"),
+  // Itens individuais extraídos da nota (json: [{ name, quantity, unitPrice, total }])
+  items: json("items"),
+  // Comprovante
+  receiptImageUrl: varchar("receiptImageUrl", { length: 1000 }), // URL da foto do comprovante
+  // Como o gasto foi registrado
+  source: mysqlEnum("source", ["manual", "photo"]).default("manual").notNull(),
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Expense = typeof expenses.$inferSelect;
+export type InsertExpense = typeof expenses.$inferInsert;
+
+/**
+ * Orçamentos mensais por categoria — limites de gasto que o usuário define
+ * para acompanhar no dashboard e no fechamento do mês.
+ */
+export const budgets = mysqlTable("budgets", {
+  id: int("id").autoincrement().primaryKey(),
+  category: varchar("category", { length: 100 }).notNull().unique(),
+  monthlyLimit: decimal("monthlyLimit", { precision: 12, scale: 2 }).notNull().default("0"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Budget = typeof budgets.$inferSelect;
+export type InsertBudget = typeof budgets.$inferInsert;

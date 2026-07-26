@@ -18,6 +18,7 @@ import ThankYouCall from "./pages/ThankYouCall";
 import FormSubmissionSuccess from "./pages/FormSubmissionSuccess";
 import CartaoPage from "./pages/CartaoPage";
 import AutoSeoArticle from "./pages/AutoSeoArticle";
+import Financas from "./pages/Financas";
 
 function Router() {
   return (
@@ -32,6 +33,8 @@ function Router() {
       <Route path={"/exames/:slug"} component={ExamePage} />
       <Route path={"/admin"} component={Admin} />
       <Route path={"/admin/:tab"} component={Admin} />
+      <Route path={"/financas"} component={Financas} />
+      <Route path={"/financas/:tab"} component={Financas} />
       <Route path={"/ligar"} component={CallRedirect} />
       <Route path={"/obrigado-chamada"} component={ThankYouCall} />
       <Route path={"/formulario-sucesso"} component={FormSubmissionSuccess} />
