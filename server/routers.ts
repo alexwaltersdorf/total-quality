@@ -24,8 +24,13 @@ import {
   createAdAccountCredential, getAdAccountCredentials, getAdAccountCredentialById, updateAdAccountCredential,
   createCampaignMetric, getCampaignMetrics, getCampaignMetricsSummary,
   getPublishedAutoSeoArticles, getAutoSeoArticleBySlug, incrementAutoSeoArticleViewCount,
+  createExpense, updateExpense, deleteExpense, getExpenseById, getExpenses, getExpensesCount,
+  getExpenseSummary, getExpensesByCategory, getExpensesByDay, getExpensesByPaymentMethod,
+  getTopMerchants, getExpensesByMonth, getBudgets, upsertBudget, deleteBudget,
 } from "./db";
 import { syncAutoSeoArticles } from "./_core/syncAutoSeo";
+import { analyzeReceipt } from "./_core/receiptAnalysis";
+import { EXPENSE_CATEGORIES, PAYMENT_METHODS, normalizeCategory, normalizePaymentMethod } from "@shared/finance";
 
 // Shared date filter schema: accepts either dateFrom/dateTo or days (backward compatible)
 const dateFilterSchema = z.object({
@@ -653,6 +658,175 @@ export const appRouter = router({
         }
         return article;
       }),
+  }),
+
+  // ===================== FINANÇAS (Controle Financeiro Pessoal) =====================
+  finance: router({
+    // Analisa a foto de um comprovante e retorna os dados extraídos (não salva).
+    analyzeReceipt: adminProcedure
+      .input(z.object({ imageBase64: z.string().min(10) }))
+      .mutation(async ({ input }) => {
+        return analyzeReceipt(input.imageBase64);
+      }),
+
+    // Cria um gasto (manual ou a partir de foto).
+    create: adminProcedure
+      .input(z.object({
+        description: z.string().min(1).max(500),
+        merchant: z.string().max(255).optional().nullable(),
+        amount: z.number().nonnegative(),
+        category: z.string().max(100).default("Outros"),
+        paymentMethod: z.string().max(50).default("Outro"),
+        expenseDate: z.string(), // YYYY-MM-DD
+        notes: z.string().max(2000).optional().nullable(),
+        items: z.array(z.object({
+          name: z.string(),
+          quantity: z.number().optional().nullable(),
+          total: z.number().optional().nullable(),
+        })).optional().nullable(),
+        receiptImageUrl: z.string().max(1000).optional().nullable(),
+        source: z.enum(["manual", "photo"]).default("manual"),
+      }))
+      .mutation(async ({ input }) => {
+        return createExpense({
+          description: input.description,
+          merchant: input.merchant ?? null,
+          amount: String(input.amount),
+          category: normalizeCategory(input.category),
+          paymentMethod: normalizePaymentMethod(input.paymentMethod),
+          expenseDate: new Date(input.expenseDate),
+          notes: input.notes ?? null,
+          items: input.items ?? null,
+          receiptImageUrl: input.receiptImageUrl ?? null,
+          source: input.source,
+        });
+      }),
+
+    update: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        description: z.string().min(1).max(500).optional(),
+        merchant: z.string().max(255).optional().nullable(),
+        amount: z.number().nonnegative().optional(),
+        category: z.string().max(100).optional(),
+        paymentMethod: z.string().max(50).optional(),
+        expenseDate: z.string().optional(),
+        notes: z.string().max(2000).optional().nullable(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...rest } = input;
+        const data: Record<string, unknown> = {};
+        if (rest.description !== undefined) data.description = rest.description;
+        if (rest.merchant !== undefined) data.merchant = rest.merchant;
+        if (rest.amount !== undefined) data.amount = String(rest.amount);
+        if (rest.category !== undefined) data.category = normalizeCategory(rest.category);
+        if (rest.paymentMethod !== undefined) data.paymentMethod = normalizePaymentMethod(rest.paymentMethod);
+        if (rest.expenseDate !== undefined) data.expenseDate = new Date(rest.expenseDate);
+        if (rest.notes !== undefined) data.notes = rest.notes;
+        return updateExpense(id, data as any);
+      }),
+
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => deleteExpense(input.id)),
+
+    getById: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => getExpenseById(input.id)),
+
+    list: adminProcedure
+      .input(z.object({
+        limit: z.number().min(1).max(500).default(50),
+        offset: z.number().min(0).default(0),
+        category: z.string().optional(),
+        paymentMethod: z.string().optional(),
+        search: z.string().optional(),
+        dateFrom: z.string().optional(),
+        dateTo: z.string().optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const { limit = 50, offset = 0, category, paymentMethod, search } = input ?? {};
+        const { since, until } = resolveDateRange(input);
+        const hasDates = Boolean(input?.dateFrom || input?.dateTo);
+        const filters = {
+          since: hasDates ? since : undefined,
+          until: hasDates ? until : undefined,
+          category: category || undefined,
+          paymentMethod: paymentMethod || undefined,
+          search: search || undefined,
+        };
+        const [items, total] = await Promise.all([
+          getExpenses(filters, limit, offset),
+          getExpensesCount(filters),
+        ]);
+        return { items, total };
+      }),
+
+    // Dados agregados do dashboard para o período selecionado.
+    dashboard: adminProcedure
+      .input(dateFilterSchema)
+      .query(async ({ input }) => {
+        const { since, until } = resolveDateRange(input);
+        const [summary, byCategory, byDay, byPaymentMethod, topMerchants, byMonth, budgetsList] = await Promise.all([
+          getExpenseSummary(since, until),
+          getExpensesByCategory(since, until),
+          getExpensesByDay(since, until),
+          getExpensesByPaymentMethod(since, until),
+          getTopMerchants(since, until, 8),
+          getExpensesByMonth(12),
+          getBudgets(),
+        ]);
+        return { summary, byCategory, byDay, byPaymentMethod, topMerchants, byMonth, budgets: budgetsList };
+      }),
+
+    // Fechamento do mês: totais, quebra por categoria, comparação com mês anterior e orçamentos.
+    monthlyClosing: adminProcedure
+      .input(z.object({ month: z.string().regex(/^\d{4}-\d{2}$/) })) // "2026-07"
+      .query(async ({ input }) => {
+        const [year, month] = input.month.split("-").map(Number);
+        const start = new Date(year, month - 1, 1, 0, 0, 0, 0);
+        const end = new Date(year, month, 0, 23, 59, 59, 999);
+        const prevStart = new Date(year, month - 2, 1, 0, 0, 0, 0);
+        const prevEnd = new Date(year, month - 1, 0, 23, 59, 59, 999);
+
+        const [summary, prevSummary, byCategory, byDay, byPaymentMethod, topMerchants, budgetsList] = await Promise.all([
+          getExpenseSummary(start, end),
+          getExpenseSummary(prevStart, prevEnd),
+          getExpensesByCategory(start, end),
+          getExpensesByDay(start, end),
+          getExpensesByPaymentMethod(start, end),
+          getTopMerchants(start, end, 10),
+          getBudgets(),
+        ]);
+
+        return {
+          month: input.month,
+          summary,
+          previous: prevSummary,
+          byCategory,
+          byDay,
+          byPaymentMethod,
+          topMerchants,
+          budgets: budgetsList,
+          daysInMonth: end.getDate(),
+        };
+      }),
+
+    // Lista de categorias e formas de pagamento disponíveis.
+    categories: adminProcedure.query(() => ({
+      categories: [...EXPENSE_CATEGORIES],
+      paymentMethods: [...PAYMENT_METHODS],
+    })),
+
+    budgets: router({
+      list: adminProcedure.query(async () => getBudgets()),
+      set: adminProcedure
+        .input(z.object({ category: z.string().min(1).max(100), monthlyLimit: z.number().nonnegative() }))
+        .mutation(async ({ input }) => upsertBudget(normalizeCategory(input.category), input.monthlyLimit)),
+      delete: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => deleteBudget(input.id)),
+    }),
   }),
 });
 
