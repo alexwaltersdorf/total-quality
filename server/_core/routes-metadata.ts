@@ -299,6 +299,16 @@ const staticRoutes: Record<string, RouteMetadata> = {
     priority: 0.8,
     changefreq: "weekly",
   },
+  "/privacidade": {
+    title: "Política de Privacidade | Total Quality Medicina Diagnóstica",
+    description: "Como a Total Quality coleta, usa e protege seus dados pessoais e de saúde, conforme a LGPD. Seus direitos e como exercê-los.",
+    keywords: "política de privacidade, LGPD, proteção de dados, dados de saúde",
+    ogTitle: "Política de Privacidade | Total Quality",
+    ogDescription: "Tratamento de dados pessoais e de saúde na Total Quality, conforme a LGPD.",
+    canonical: "https://totalquality.med.br/privacidade",
+    priority: 0.3,
+    changefreq: "yearly",
+  },
   "/exames": {
     title: "Exames Laboratoriais e de Imagem em Caraguatatuba | Total Quality",
     description: "Todos os exames da Total Quality em Caraguatatuba: exames laboratoriais, hemograma, ultrassom, tomografia, cardiológicos, ocupacionais e mais. Veja a lista completa.",

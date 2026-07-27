@@ -403,3 +403,11 @@ por testes em `server/seo-content.test.ts`:
     Maps JS API por proxy de terceiros — a anterior
     (`forge.butterfly-effect.dev`) saiu do ar e deixou o mapa quebrado em
     produção.
+11. **URLs legadas**: toda URL que o Google já conhece e que deixou de existir
+    entra em `server/_core/legacy-redirects.ts` — 301 para o equivalente atual,
+    410 para artefato de link quebrado. Nunca deixar cair no catch-all da SPA:
+    era a origem de 13 soft 404 (auditoria do Search Console, jul/2026).
+12. **Schema.org sem placeholder**: não declarar `SearchAction`/`potentialAction`
+    sem um endpoint de busca real. O `target` com `{search_term_string}` foi
+    rastreado literalmente e a URL-fantasma `/blog?q=%7Bsearch_term_string%7D`
+    acabou indexada no lugar do hub `/blog`. `robots.txt` bloqueia `/*?q=`.

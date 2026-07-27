@@ -5,6 +5,7 @@ import {
   resolveHttpStatus,
 } from "./_core/seo-content";
 import { getAllRoutes, getKnownBlogSlugs } from "./_core/routes-metadata";
+import { getLegacyRedirect, isGone } from "./_core/legacy-redirects";
 
 const PRIORITY_ROUTES = [
   "/",
@@ -122,5 +123,40 @@ describe("GUARD-RAIL: cobertura do sitemap (nao remover)", () => {
     expect(getSeoContentForPath("/exames/exame-admissional")).toContain("ASO");
     expect(getSeoContentForPath("/blog/hemograma-caraguatatuba")).toContain("<article>");
     expect(getSeoContentForPath("/blog")).toContain("<h1>");
+  });
+});
+
+describe("Redirecionamentos legados (auditoria Search Console jul/2026)", () => {
+  it("mapeia as URLs legadas conhecidas pelo Google para o destino atual", () => {
+    expect(getLegacyRedirect("/index")).toBe("/");
+    expect(getLegacyRedirect("/sobre")).toBe("/#sobre");
+    expect(getLegacyRedirect("/contato")).toBe("/#contato");
+    expect(getLegacyRedirect("/mapa")).toBe("/exames/mapa");
+    expect(getLegacyRedirect("/cartao-desconto")).toBe("/cartao");
+    expect(getLegacyRedirect("/blog/index")).toBe("/blog");
+    expect(getLegacyRedirect("/medicos")).toBe("/");
+  });
+
+  it("normaliza barra final", () => {
+    expect(getLegacyRedirect("/index/")).toBe("/");
+  });
+
+  it("não redireciona rotas válidas", () => {
+    expect(getLegacyRedirect("/checkup")).toBeNull();
+    expect(getLegacyRedirect("/exames/holter")).toBeNull();
+    expect(getLegacyRedirect("/")).toBeNull();
+  });
+
+  it("marca artefatos de link quebrado como 410 Gone", () => {
+    expect(isGone("/$")).toBe(true);
+    expect(isGone("/undefined")).toBe(true);
+    expect(isGone("/checkup")).toBe(false);
+  });
+
+  it("a página de privacidade existe e é pré-renderizada (LGPD)", () => {
+    const html = getSeoContentForPath("/privacidade");
+    expect(html).toContain("<h1>Política de Privacidade</h1>");
+    expect(html).toContain("LGPD");
+    expect(resolveHttpStatus("/privacidade", getKnownBlogSlugs())).toBe(200);
   });
 });

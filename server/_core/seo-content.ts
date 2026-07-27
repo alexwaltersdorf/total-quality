@@ -88,6 +88,10 @@ function internalLinksHtml(currentPath: string): string {
     ["/exames/espirometria", "Espirometria"],
     ["/bioimpedancia", "Bioimpedância"],
     ["/checkup", "Check-up preventivo"],
+    // Estas duas o Google conhecia mas nunca rastreou (auditoria do Search
+    // Console): recebiam pouquissimos links internos.
+    ["/exames/eletrocardiograma", "Eletrocardiograma (ECG)"],
+    ["/blog", "Blog: saúde e diagnóstico"],
   ];
   const items = links
     .filter(([href]) => href !== currentPath)
@@ -209,6 +213,7 @@ export function getSeoContentForPath(pathname: string): string | null {
   if (path === "/laboratorio-caraguatatuba") return wrap(laboratorioHtml);
   if (path === "/bioimpedancia") return wrap(bioimpedanciaHtml);
 
+  if (path === "/privacidade") return wrap(privacidadeHtml);
   if (path === "/checkup") return wrap(checkupHtml);
   if (path === "/exames") return wrap(examesHubHtml());
 
@@ -228,6 +233,21 @@ export function getSeoContentForPath(pathname: string): string | null {
 
   return null;
 }
+
+const privacidadeHtml = `
+    <h1>Política de Privacidade</h1>
+    <p>A Total Quality Medicina Diagnóstica trata dados pessoais e dados de saúde conforme a LGPD — Lei Geral de Proteção de Dados (Lei 13.709/2018). Esta página explica quais dados coletamos, como usamos, por quanto tempo guardamos e como você exerce seus direitos.</p>
+    <h2>Quais dados coletamos</h2>
+    <ul>
+      <li>Dados de contato informados no formulário do site ou pelo WhatsApp: nome, telefone, e-mail e exame de interesse.</li>
+      <li>Dados de navegação: páginas visitadas, origem do acesso e dispositivo, por meio de cookies e ferramentas de análise.</li>
+      <li>Dados de saúde: coletados apenas no atendimento presencial. O site não coleta nem armazena resultados de exames.</li>
+    </ul>
+    <h2>Dados de saúde e sigilo profissional</h2>
+    <p>Resultados de exames são dados pessoais sensíveis, protegidos pelo sigilo profissional, e entregues somente ao paciente, ao seu representante legal ou ao médico solicitante, mediante identificação.</p>
+    <h2>Seus direitos</h2>
+    <p>Você pode confirmar a existência de tratamento, acessar, corrigir, anonimizar ou excluir seus dados, revogar consentimento e solicitar portabilidade. Para exercer qualquer desses direitos, fale com a gente pelo telefone (12) 3887-3535 ou pelo e-mail contato@totalquality.med.br.</p>
+    ${napHtml("Dúvidas sobre o tratamento dos seus dados? Fale com a nossa equipe.")}`;
 
 const checkupHtml = `
     <h1>Check-up Preventivo em Caraguatatuba</h1>
@@ -325,6 +345,7 @@ const CLIENT_ROUTES = new Set([
   "/",
   "/exames",
   "/checkup",
+  "/privacidade",
   "/bioimpedancia",
   "/blog",
   "/laboratorio-caraguatatuba",

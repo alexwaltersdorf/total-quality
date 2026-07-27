@@ -13,6 +13,7 @@ import { syncAutoSeoArticles } from "./syncAutoSeo";
 import { validateWebhookToken, processAutoSeoWebhook, processAutoSeoWebhookBatch } from "./autoseoWebhook";
 import { weeklyMonitoringHandler } from "./monitoring-handler";
 import { generateSitemap } from "./sitemap-handler";
+import { getLegacyRedirect, isGone } from "./legacy-redirects";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -104,6 +105,25 @@ async function startServer() {
       301,
       `https://totalquality.med.br${req.originalUrl}`
     );
+  });
+
+  // Redirecionamentos de URLs legadas conhecidas pelo Google (auditoria do
+  // Search Console): 301 para o equivalente atual, 410 para artefatos de link
+  // quebrado. Precisa vir antes do catch-all da SPA, senao viram soft 404.
+  app.use((req, res, next) => {
+    const pathname = req.path;
+
+    if (isGone(pathname)) {
+      return res.status(410).type("text/plain").send("Gone");
+    }
+
+    const destination = getLegacyRedirect(pathname);
+    if (destination) {
+      const query = req.originalUrl.slice(req.path.length);
+      return res.redirect(301, `${destination}${destination.includes("#") ? "" : query}`);
+    }
+
+    next();
   });
 
   // CWV Optimization: Cache headers para assets estáticos
@@ -221,6 +241,7 @@ Allow: /
 Disallow: /admin
 Disallow: /api
 Disallow: /dashboard
+Disallow: /*?q=
 
 Sitemap: https://totalquality.med.br/sitemap.xml`;
     res.set({ "Content-Type": "text/plain" }).send(robotsTxt);
