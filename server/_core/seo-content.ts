@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import nodePath from "node:path";
 /**
  * Conteúdo SEO pré-renderizado por rota.
  *
@@ -14,7 +16,30 @@
  */
 
 import { examesData, type ExamData } from "../../client/src/lib/examesData";
-import { blogPosts, type BlogPost } from "../../client/src/lib/blogData";
+import blogIndex from "../../client/src/content/blog/index.json";
+
+type BlogPost = (typeof blogIndex)[number] & { content: string[] };
+
+/**
+ * Corpo dos artigos lido do disco: os JSONs em client/src/content/blog sao a
+ * fonte unica (o cliente carrega os mesmos arquivos sob demanda).
+ */
+function loadBlogPostFromDisk(slug: string): BlogPost | null {
+  const meta = blogIndex.find((b) => b.slug === slug);
+  if (!meta) return null;
+  const file = nodePath.resolve(
+    import.meta.dirname,
+    "../../client/src/content/blog",
+    `${slug}.json`
+  );
+  try {
+    return JSON.parse(fs.readFileSync(file, "utf-8")) as BlogPost;
+  } catch {
+    return { ...meta, content: [] } as BlogPost;
+  }
+}
+
+const blogPosts = blogIndex;
 
 const NAP = {
   name: "Total Quality Laboratório e Medicina Diagnóstica",
@@ -197,7 +222,7 @@ export function getSeoContentForPath(pathname: string): string | null {
 
   const blogMatch = path.match(/^\/blog\/([a-z0-9\-]+)$/);
   if (blogMatch) {
-    const post = blogPosts.find((b) => b.slug === blogMatch[1]);
+    const post = loadBlogPostFromDisk(blogMatch[1]);
     if (post) return wrap(renderBlogHtml(post));
   }
 
@@ -302,9 +327,7 @@ const CLIENT_ROUTES = new Set([
   "/checkup",
   "/bioimpedancia",
   "/blog",
-  "/dashboard",
   "/laboratorio-caraguatatuba",
-  "/admin",
   "/ligar",
   "/obrigado-chamada",
   "/formulario-sucesso",
@@ -330,8 +353,13 @@ export function resolveHttpStatus(
 ): number {
   const path = pathname.split("?")[0].replace(/\/$/, "") || "/";
 
+  // Rotas do painel administrativo removido: 404 explicito, senao caem na regra
+  // de slug de primeiro nivel (artigos AutoSEO) e voltariam 200.
+  if (path === "/admin" || path.startsWith("/admin/") || path === "/dashboard") {
+    return 404;
+  }
+
   if (CLIENT_ROUTES.has(path)) return 200;
-  if (path.startsWith("/admin/")) return 200;
 
   const examMatch = path.match(/^\/exames\/([a-z0-9\-]+)$/);
   if (examMatch) return VALID_EXAM_SLUGS.has(examMatch[1]) ? 200 : 404;

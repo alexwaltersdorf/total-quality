@@ -3,10 +3,10 @@
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  * Layout: Editorial article with large hero image and clean typography
  */
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, ArrowUpRight, Clock, Calendar, Tag, Share2 } from "lucide-react";
-import { blogPosts } from "@/lib/blogData";
+import { blogPosts, loadBlogPost } from "@/lib/blogData";
 import { trpc } from "@/lib/trpc";
 import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
 import Navbar from "@/components/Navbar";
@@ -19,7 +19,26 @@ export default function BlogPost() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
 
-  const post = useMemo(() => blogPosts.find((p) => p.slug === slug), [slug]);
+  const meta = useMemo(() => blogPosts.find((p) => p.slug === slug), [slug]);
+  const [content, setContent] = useState<string[] | null>(null);
+
+  // O corpo do artigo vive em client/src/content/blog/<slug>.json e vira um
+  // chunk proprio — nao pesa no bundle de quem nunca abre o blog.
+  useEffect(() => {
+    let cancelled = false;
+    if (!slug) return;
+    loadBlogPost(slug).then((full) => {
+      if (!cancelled) setContent(full?.content ?? []);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
+
+  const post = useMemo(
+    () => (meta ? { ...meta, content: content ?? [] } : undefined),
+    [meta, content]
+  );
 
   const relatedPosts = useMemo(() => {
     if (!post) return [];

@@ -72,10 +72,17 @@ describe("resolveHttpStatus", () => {
     expect(resolveHttpStatus("/", blogSlugs)).toBe(200);
     expect(resolveHttpStatus("/checkup", blogSlugs)).toBe(200);
     expect(resolveHttpStatus("/exames/holter", blogSlugs)).toBe(200);
-    expect(resolveHttpStatus("/admin/leads", blogSlugs)).toBe(200);
     expect(
       resolveHttpStatus("/blog/hemograma-caraguatatuba", blogSlugs)
     ).toBe(200);
+  });
+
+  it("retorna 404 para as rotas do admin removido", () => {
+    // O painel administrativo foi removido (decisao do Alex, jul/2026): as rotas
+    // devem devolver 404 real em vez de servir a SPA.
+    expect(resolveHttpStatus("/admin", blogSlugs)).toBe(404);
+    expect(resolveHttpStatus("/admin/leads", blogSlugs)).toBe(404);
+    expect(resolveHttpStatus("/dashboard", blogSlugs)).toBe(404);
   });
 
   it("retorna 404 para exames e posts inexistentes (corrige soft-404)", () => {

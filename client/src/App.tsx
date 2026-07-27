@@ -5,14 +5,12 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 
-// Rotas secundarias em lazy loading: mantem Admin/Dashboard (recharts etc.)
+// Rotas secundarias em lazy loading: cada pagina vira um chunk proprio,
 // fora do bundle inicial que o paciente baixa na home.
 const CheckUp = lazy(() => import("./pages/CheckUp"));
 const Bioimpedancia = lazy(() => import("./pages/Bioimpedancia"));
-const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
-const Admin = lazy(() => import("./pages/Admin"));
 const ExamesHub = lazy(() => import("./pages/ExamesHub"));
 const ExamePage = lazy(() => import("./pages/ExamePage"));
 const LaboratorioCaraguatatuba = lazy(() => import("./pages/LaboratorioCaraguatatuba"));
@@ -31,12 +29,9 @@ function Router() {
       <Route path={"/bioimpedancia"} component={Bioimpedancia} />
       <Route path={"/blog"} component={Blog} />
       <Route path={"/blog/:slug"} component={BlogPost} />
-      <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/laboratorio-caraguatatuba"} component={LaboratorioCaraguatatuba} />
       <Route path={"/exames"} component={ExamesHub} />
       <Route path={"/exames/:slug"} component={ExamePage} />
-      <Route path={"/admin"} component={Admin} />
-      <Route path={"/admin/:tab"} component={Admin} />
       <Route path={"/ligar"} component={CallRedirect} />
       <Route path={"/obrigado-chamada"} component={ThankYouCall} />
       <Route path={"/formulario-sucesso"} component={FormSubmissionSuccess} />

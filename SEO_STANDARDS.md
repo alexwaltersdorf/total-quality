@@ -394,3 +394,12 @@ por testes em `server/seo-content.test.ts`:
 8. **Silo de análises clínicas**: hub `/exames` organiza as páginas de exame e
    distribui links internos. Novos exames entram em `client/src/lib/examesData.ts`
    (o hub, a página, o sitemap e a pré-renderização são gerados automaticamente).
+9. **Artigos de blog em JSON**: o corpo dos artigos fica em
+   `client/src/content/blog/<slug>.json` (um arquivo por artigo) e os metadados
+   em `index.json`. O corpo é carregado sob demanda via `loadBlogPost()` — nunca
+   voltar a embutir texto de artigo em `.ts`, era ~33 KB no chunk inicial de
+   todas as páginas. O servidor lê os mesmos JSONs para pré-renderizar.
+10. **Mapa**: iframe estático com `loading="lazy"`. Não reintroduzir a Google
+    Maps JS API por proxy de terceiros — a anterior
+    (`forge.butterfly-effect.dev`) saiu do ar e deixou o mapa quebrado em
+    produção.

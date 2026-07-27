@@ -3,7 +3,7 @@
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  * Integração: tRPC para persistir contatos no banco de dados
  */
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import {
   MapPin,
@@ -23,7 +23,6 @@ const toast = {
   info: (msg: string) => import("sonner").then((m) => m.toast.info(msg)),
   error: (msg: string) => import("sonner").then((m) => m.toast.error(msg)),
 };
-import { MapView } from "@/components/Map";
 import { trpc } from "@/lib/trpc";
 import { trackFormStart, trackFormSubmit, trackPhoneClick, trackWhatsAppClick, trackExternalLink, trackMapInteraction } from "@/lib/tracking";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
@@ -36,7 +35,6 @@ export default function ContatoSection() {
     tipoExame: "",
     mensagem: "",
   });
-  const mapRef = useRef<google.maps.Map | null>(null);
   const [formStarted, setFormStarted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [, setLocation] = useLocation();
@@ -104,19 +102,6 @@ export default function ContatoSection() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleMapReady = (map: google.maps.Map) => {
-    mapRef.current = map;
-    const position = { lat: -23.6225, lng: -45.4132 };
-    map.setCenter(position);
-    map.setZoom(16);
-
-    new google.maps.marker.AdvancedMarkerElement({
-      map,
-      position,
-      title: "Total Quality Medicina Diagnóstica",
-    });
-  };
-
   return (
     <section id="contato" className="py-24 lg:py-32 bg-surface-dark" aria-label="Contato e agendamento de exames de sangue e laboratoriais na Total Quality Caraguatatuba">
       <div className="container">
@@ -137,13 +122,22 @@ export default function ContatoSection() {
 
         <div className="divider-line mb-16" />
 
-        {/* Google Maps */}
+        {/* Mapa: iframe estatico com lazy loading.
+            Substitui a Google Maps JS API, que carregava por um proxy de
+            terceiros (forge.butterfly-effect.dev) fora do ar — o mapa estava
+            quebrado em producao com ERR_FAILED/CORS. O iframe nao executa
+            JavaScript nosso, so carrega quando entra no viewport e nao pesa
+            no TBT. */}
         <div className="reveal mb-16">
-          <MapView
-            className="w-full h-[350px] lg:h-[450px]"
-            initialCenter={{ lat: -23.6225, lng: -45.4132 }}
-            initialZoom={16}
-            onMapReady={handleMapReady}
+          <iframe
+            title="Localização da Total Quality Medicina Diagnóstica em Caraguatatuba - SP"
+            src="https://www.google.com/maps?q=R.+Padre+Anchieta,+1010+-+Centro,+Caraguatatuba+-+SP,+11660-010&z=16&output=embed"
+            className="w-full h-[350px] lg:h-[450px] border-0"
+            width={1200}
+            height={450}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
           />
         </div>
 

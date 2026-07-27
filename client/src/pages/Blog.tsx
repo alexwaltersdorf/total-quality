@@ -6,7 +6,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { ArrowUpRight, ArrowLeft, Clock, Search } from "lucide-react";
-import { blogPosts, blogCategories, type BlogPost } from "@/lib/blogData";
+import { blogPosts, blogCategories, type BlogPostMeta } from "@/lib/blogData";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
@@ -14,7 +14,7 @@ import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { trpc } from "@/lib/trpc";
 import { Loader2 } from "lucide-react";
 
-function BlogCard({ post, featured = false }: { post: BlogPost; featured?: boolean }) {
+function BlogCard({ post, featured = false }: { post: BlogPostMeta; featured?: boolean }) {
   if (featured) {
     return (
       <Link href={`/blog/${post.slug}`} className="group block">
