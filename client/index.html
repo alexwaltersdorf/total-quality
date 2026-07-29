@@ -242,10 +242,20 @@
     }
     </script>
 
-    <!-- Estilo minimo do bloco pre-renderizado (server/_core/seo-content.ts).
-         Fica visivel entre o primeiro paint e a montagem do React; sem isso o
-         usuario ve texto cru. Nao ocultar: o conteudo precisa ser rastreavel. -->
+    <!-- CSS critico. O bloco pre-renderizado (server/_core/seo-content.ts) e o
+         primeiro paint da pagina, e desde a P1.2 a folha principal nao bloqueia
+         mais a renderizacao (ver nonBlockingCss em vite.config.ts) — entao tudo
+         que esse bloco precisa para aparecer certo tem que estar aqui.
+         Nao ocultar o bloco: o conteudo precisa ser rastreavel. -->
     <style>
+      /* Reset minimo: a preflight do Tailwind chega junto com a folha principal,
+         que agora e assincrona. Sem isto o body teria a margem de 8px do
+         navegador no primeiro paint e o texto saltaria quando o CSS chegasse. */
+      *, *::before, *::after { box-sizing: border-box; }
+      body { margin: 0; background: #fff; }
+      .seo-prerender h1, .seo-prerender h2, .seo-prerender h3 { font-weight: 600; }
+      .seo-prerender ul { list-style: disc; }
+      .seo-prerender a { text-decoration: none; }
       .seo-prerender {
         max-width: 68ch;
         margin: 0 auto;
