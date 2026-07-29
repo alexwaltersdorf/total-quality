@@ -411,3 +411,28 @@ por testes em `server/seo-content.test.ts`:
     sem um endpoint de busca real. O `target` com `{search_term_string}` foi
     rastreado literalmente e a URL-fantasma `/blog?q=%7Bsearch_term_string%7D`
     acabou indexada no lugar do hub `/blog`. `robots.txt` bloqueia `/*?q=`.
+13. **Fontes self-hosted**: Bebas Neue e DM Sans vêm de `/public/fonts`, com
+    `@font-face` em `client/src/index.css`. Nunca voltar a apontar para
+    `fonts.googleapis.com`/`fonts.gstatic.com` — eram dois `preconnect`, duas
+    conexões TLS e uma folha de terceiro no caminho crítico. DM Sans é variável
+    (300..700) e cobre todos os pesos usados; só o subset `latin` recebe
+    `preload`. Para atualizar, baixar de novo os `.woff2` apontados pela API do
+    Google Fonts e manter os `unicode-range` originais.
+14. **CSS não bloqueante**: o plugin `nonBlockingCss` (vite.config.ts) converte o
+    `<link rel=stylesheet>` do Vite em `preload as=style` + promoção no `onload`,
+    com fallback em `<noscript>`. Consequência: **tudo que o bloco
+    pré-renderizado precisa para pintar certo tem que estar no `<style>` inline
+    do `client/index.html`** — a preflight do Tailwind chega depois. Ao mexer no
+    HTML pré-renderizado, conferir se o estilo correspondente está inline.
+15. **Contraste WCAG AA**: os tokens `text`, `text-light` e `text-muted` estão
+    calibrados para passar 4,5:1 sobre os três fundos do site (branco,
+    `surface-light` 0.97 e `surface-dark` 0.94, que é o rodapé). Não clarear:
+    `text-muted` já foi `#8f8f8f` (3,23:1) e reprovava na auditoria. Os cálculos
+    estão no comentário do bloco em `client/src/index.css`.
+16. **`aria-label` contém o texto visível**: em qualquer botão ou link com texto,
+    o nome acessível precisa começar pelo texto visível, senão o Lighthouse
+    acusa `label-content-name-mismatch` e o controle por voz não alcança o
+    elemento. Rótulo só descritivo vale apenas para controle com ícone puro.
+17. **Nada de `<img>` ou `<iframe>` dentro do `<head>`**: os `noscript` de pixel
+    e de tag manager vão no início do `<body>`. Dentro do head o parser fecha a
+    seção implicitamente e joga as tags seguintes para o body.
