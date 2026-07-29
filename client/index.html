@@ -324,10 +324,6 @@
         });
       })();
     </script>
-    <noscript><img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=1536672876562340&ev=PageView&noscript=1"
-    /></noscript>
-
   </head>
 
   <body>
@@ -335,6 +331,14 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WLR7JD57"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
+
+    <!-- Meta Pixel (noscript) — estava dentro do <head>, onde <img> nao e
+         permitido: o parser fechava o head implicitamente e jogava o resto das
+         tags para o body. Aqui o pixel de fallback funciona igual, com o HTML
+         valido. Mesmo ID (1536672876562340), nenhum evento perdido. -->
+    <noscript><img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=1536672876562340&ev=PageView&noscript=1"
+      alt="" /></noscript>
 
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

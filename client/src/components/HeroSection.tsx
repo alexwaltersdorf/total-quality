@@ -67,7 +67,10 @@ export default function HeroSection() {
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
                 className="btn-pill !bg-transparent !text-text border border-black/15 hover:!bg-black/5"
-                aria-label="Ver lista de exames disponíveis"
+                // O nome acessivel precisa conter o texto visivel: sem isso o
+                // Lighthouse acusa `label-content-name-mismatch` e quem usa
+                // controle por voz nao consegue dizer "clicar em Ver Exames".
+                aria-label="Ver Exames disponíveis na Total Quality"
               >
                 Ver Exames
                 <ArrowUpRight className="w-3.5 h-3.5" />

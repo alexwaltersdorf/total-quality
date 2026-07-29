@@ -104,10 +104,25 @@
   --color-surface-light: oklch(0.97 0 0);
   --color-surface-dark: oklch(0.94 0 0);
 
-  /* Text color — dark gray #5A5A5A */
+  /* Escala de texto — contraste WCAG AA (auditoria PageSpeed jul/2026).
+   *
+   * `text-muted` era oklch(0.65) = #8f8f8f, que da apenas 3,23:1 sobre branco e
+   * reprovava no AA (minimo 4,5:1 para texto normal — inclui os `text-xs` dos
+   * cards do blog, das legendas do rodape e dos rotulos do hero).
+   * `text-light` era oklch(0.55): passava sobre branco (4,85:1), mas caia para
+   * 4,07:1 sobre `surface-dark`, que e o fundo do rodape.
+   *
+   * A escala foi escurecida mantendo a hierarquia (text < light < muted em
+   * claridade). Os valores abaixo passam 4,5:1 sobre os tres fundos usados no
+   * site — branco, surface-light (0.97) e surface-dark (0.94):
+   *
+   *   text        #4d4d4d   8,46:1 / 7,76:1 / 7,10:1
+   *   text-light  #5d5d5d   6,54:1 / 5,99:1 / 5,48:1
+   *   text-muted  #696969   5,51:1 / 5,05:1 / 4,62:1
+   */
   --color-text: oklch(0.42 0 0);
-  --color-text-light: oklch(0.55 0 0);
-  --color-text-muted: oklch(0.65 0 0);
+  --color-text-light: oklch(0.48 0 0);
+  --color-text-muted: oklch(0.52 0 0);
 
   --font-display: 'Bebas Neue', sans-serif;
   --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
