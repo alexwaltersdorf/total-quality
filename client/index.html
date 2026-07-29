@@ -272,12 +272,12 @@
       imagesizes="(max-width: 1024px) 100vw, 55vw"
       fetchpriority="high" />
 
-    <!-- Google Fonts — load assincrono (nao bloqueia render) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" />
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet" /></noscript>
+    <!-- Fontes self-hosted: @font-face em client/src/index.css, arquivos em
+         client/public/fonts. Sem preconnect e sem folha de estilo de terceiro.
+         Preload apenas do subset latin, o unico usado em toda pagina; o latin-ext
+         o navegador busca so quando algum caractere daquele intervalo aparece. -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/dm-sans-latin.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/bebas-neue-latin.woff2" crossorigin />
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/favicon-kMQsdmGbgGnMBKEvfxvRGD.webp" />
