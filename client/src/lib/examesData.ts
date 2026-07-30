@@ -15,6 +15,11 @@ export interface ExamPrep {
   text: string;
 }
 
+export interface SubExam {
+  name: string;
+  description: string;
+}
+
 export interface ExamData {
   slug: string;
   title: string;
@@ -27,6 +32,8 @@ export interface ExamData {
   whatIs: string;
   howItWorks: string;
   indications: string[];
+  subExamsTitle?: string;
+  subExams?: SubExam[];
   preparations: ExamPrep[];
   faqs: ExamFAQ[];
   whatsappMessage: string;
@@ -153,13 +160,13 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "ultrassonografia",
-    title: "ULTRASSONOGRAFIA",
-    shortTitle: "Ultrassonografia",
+    title: "ULTRASSOM",
+    shortTitle: "Ultrassom",
     subtitle: "Diagnóstico por Imagem",
-    description: "Exame de imagem por ultrassom para avaliação de órgãos e tecidos.",
-    metaTitle: "Ultrassonografia em Caraguatatuba | Total Quality Diagnóstica",
-    metaDescription: "Ultrassonografia em Caraguatatuba - SP na Total Quality: abdominal, pélvica, obstétrica, tireoide, mama e Doppler. Radiologistas experientes. Agende.",
-    heroDescription: "A ultrassonografia é um exame seguro e indolor que utiliza ondas sonoras para produzir imagens em tempo real dos órgãos internos. Na Total Quality, contamos com equipamentos de última geração para diagnósticos precisos.",
+    description: "Ultrassom em Caraguatatuba: abdominal, obstétrico, morfológico, transvaginal, mama, tireoide e Doppler.",
+    metaTitle: "Ultrassom em Caraguatatuba | Ultrassonografia | Total Quality",
+    metaDescription: "Ultrassom em Caraguatatuba - SP na Total Quality: abdominal, obstétrico, morfológico, transvaginal, mama, tireoide e Doppler. Agende pelo WhatsApp.",
+    heroDescription: "O ultrassom (ultrassonografia) é um exame seguro e indolor que utiliza ondas sonoras para produzir imagens em tempo real dos órgãos internos. Na Total Quality, realizamos todos os principais tipos de ultrassom em Caraguatatuba — abdominal, obstétrico com morfológico, transvaginal, mama, tireoide e Doppler vascular — com equipamentos de última geração e médicos experientes.",
     backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "A Ultrassonografia (ecografia) é um exame de diagnóstico por imagem que utiliza ondas sonoras de alta frequência para criar imagens dos órgãos e estruturas internas do corpo. É um método seguro, indolor, não invasivo e que não utiliza radiação ionizante, sendo seguro inclusive para gestantes.",
     howItWorks: "Um transdutor (sonda) é colocado sobre a pele com gel condutor. O transdutor emite ondas sonoras que penetram no corpo e retornam ao encontrar diferentes tecidos, criando imagens em tempo real no monitor. O médico analisa as imagens durante o exame.",
@@ -172,6 +179,17 @@ export const examesData: ExamData[] = [
       "Ultrassom de próstata",
       "Avaliação vascular (Doppler)",
     ],
+    subExamsTitle: "TIPOS DE ULTRASSOM",
+    subExams: [
+      { name: "Ultrassom Abdominal Total", description: "Avalia fígado, vesícula, pâncreas, rins, baço e bexiga. Indicado para dores abdominais, alterações em exames de sangue e check-up." },
+      { name: "Ultrassom Obstétrico", description: "Acompanhamento completo da gravidez: idade gestacional, desenvolvimento do bebê e avaliação com Doppler." },
+      { name: "Ultrassom Morfológico", description: "Realizado no 1º e 2º trimestre da gestação, avalia detalhadamente a formação dos órgãos do bebê e rastreia malformações." },
+      { name: "Ultrassom Transvaginal", description: "Avaliação detalhada de útero, ovários e endométrio. Indicado para investigação de cólicas, sangramentos e acompanhamento ginecológico." },
+      { name: "Ultrassom de Mama", description: "Complementa a mamografia na avaliação de nódulos e alterações mamárias. Bilateral ou unilateral." },
+      { name: "Ultrassom de Tireoide", description: "Avalia nódulos, cistos e alterações da glândula tireoide, com ou sem estudo de linfonodos." },
+      { name: "Ultrassom Doppler Vascular", description: "Estuda o fluxo sanguíneo de artérias e veias dos membros superiores e inferiores. Indicado para varizes e tromboses." },
+      { name: "Ultrassom Pélvico e de Próstata", description: "Avaliação de útero, ovários e bexiga (via abdominal) e da próstata. Também realizamos partes moles e vias urinárias." },
+    ],
     preparations: [
       { icon: Droplets, text: "Ultrassom pélvico: bexiga cheia (beber 4 copos de água 1h antes)" },
       { icon: Clock, text: "Ultrassom abdominal: jejum de 6 a 8 horas" },
@@ -179,14 +197,16 @@ export const examesData: ExamData[] = [
       { icon: FileText, text: "Traga exames anteriores para comparação" },
     ],
     faqs: [
-      { q: "A ultrassonografia dói?", a: "Não. O exame é completamente indolor. Você sentirá apenas a pressão leve do transdutor sobre a pele com gel." },
-      { q: "É seguro para gestantes?", a: "Sim! A ultrassonografia não utiliza radiação e é o principal exame para acompanhamento da gravidez, sendo totalmente seguro para mãe e bebê." },
+      { q: "Onde fazer ultrassom em Caraguatatuba?", a: "Na Total Quality Medicina Diagnóstica, na Rua Padre Anchieta, 1010, Centro de Caraguatatuba. Realizamos ultrassom abdominal, obstétrico, morfológico, transvaginal, mama, tireoide, Doppler vascular e outros. Agende pelo WhatsApp (12) 3887-3535." },
+      { q: "O ultrassom dói?", a: "Não. O exame é completamente indolor. Você sentirá apenas a pressão leve do transdutor sobre a pele com gel." },
+      { q: "É seguro para gestantes?", a: "Sim! O ultrassom não utiliza radiação e é o principal exame para acompanhamento da gravidez, sendo totalmente seguro para mãe e bebê." },
+      { q: "Quando fazer o ultrassom morfológico?", a: "O morfológico do 1º trimestre é feito entre 11 e 14 semanas de gestação, e o do 2º trimestre entre 20 e 24 semanas. É o principal exame para avaliar a formação dos órgãos do bebê." },
       { q: "Preciso de preparo?", a: "Depende do tipo de ultrassom. Abdominal requer jejum de 6-8h. Pélvico requer bexiga cheia. Tireoide e mama não necessitam preparo." },
       { q: "Quanto tempo dura o exame?", a: "Em média, 20 a 30 minutos, dependendo da região examinada e da complexidade do caso." },
     ],
-    whatsappMessage: "Olá! Gostaria de agendar uma ultrassonografia.",
+    whatsappMessage: "Olá! Gostaria de agendar um ultrassom.",
     category: "imagem",
-    keywords: ["ultrassonografia", "ecografia", "ultrassom", "ultrassom abdominal", "ultrassom obstétrico", "diagnóstico por imagem", "Caraguatatuba"],
+    keywords: ["ultrassom", "ultrassom Caraguatatuba", "ultrassonografia", "ecografia", "ultrassom abdominal", "ultrassom obstétrico", "ultrassom morfológico", "ultrassom transvaginal", "doppler", "diagnóstico por imagem", "Caraguatatuba"],
   },
   {
     slug: "mamografia",
@@ -408,6 +428,92 @@ export const examesData: ExamData[] = [
     whatsappMessage: "Olá! Gostaria de agendar um eletroencefalograma.",
     category: "neurologia",
     keywords: ["eletroencefalograma", "EEG", "epilepsia", "convulsão", "neurologia", "exame cerebral", "Caraguatatuba"],
+  },
+  {
+    slug: "teste-ergometrico",
+    title: "TESTE ERGOMÉTRICO",
+    shortTitle: "Teste Ergométrico",
+    subtitle: "Teste de Esforço Cardíaco",
+    description: "Avaliação do coração durante o esforço físico na esteira.",
+    metaTitle: "Teste Ergométrico em Caraguatatuba | Total Quality",
+    metaDescription: "Teste ergométrico (teste de esforço) em Caraguatatuba - SP na Total Quality. Avaliação do coração durante exercício na esteira. Agende pelo WhatsApp.",
+    heroDescription: "O teste ergométrico, também conhecido como teste de esforço ou teste da esteira, avalia o comportamento do coração durante o exercício físico. É fundamental para investigar dores no peito, avaliar o condicionamento cardiovascular e liberar a prática de atividades físicas com segurança.",
+    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
+    whatIs: "O Teste Ergométrico é um exame que registra o eletrocardiograma, a pressão arterial e os sintomas do paciente enquanto ele caminha em uma esteira com velocidade e inclinação progressivas. Permite avaliar como o coração responde ao esforço físico, identificando alterações que não aparecem no eletrocardiograma de repouso, como isquemia (falta de irrigação do coração) e arritmias induzidas pelo exercício.",
+    howItWorks: "Eletrodos são fixados no tórax do paciente, que caminha na esteira seguindo um protocolo com aumento gradual de velocidade e inclinação. Durante todo o exame, o médico acompanha o traçado do eletrocardiograma, a pressão arterial e os sintomas. O exame dura entre 45 e 60 minutos, incluindo preparo e recuperação.",
+    indications: [
+      "Investigação de dor no peito durante esforço",
+      "Avaliação de doença arterial coronariana",
+      "Liberação para prática de atividade física e esportes",
+      "Avaliação de arritmias induzidas por exercício",
+      "Acompanhamento pós-infarto ou pós-angioplastia",
+      "Avaliação da capacidade funcional cardiovascular",
+      "Check-up cardiológico em pessoas com fatores de risco",
+    ],
+    preparations: [
+      { icon: CheckCircle, text: "Use roupas leves e confortáveis e tênis para caminhar" },
+      { icon: Clock, text: "Faça uma refeição leve até 2 horas antes do exame" },
+      { icon: AlertTriangle, text: "Evite café, chá preto, energéticos e cigarro no dia do exame" },
+      { icon: Stethoscope, text: "Consulte seu médico sobre a suspensão de medicamentos cardíacos" },
+      { icon: FileText, text: "Traga o pedido médico e exames cardiológicos anteriores" },
+    ],
+    faqs: [
+      { q: "O teste ergométrico é perigoso?", a: "O exame é seguro e realizado com acompanhamento médico contínuo. O esforço é aumentado gradualmente e o exame é interrompido imediatamente se surgir qualquer alteração significativa." },
+      { q: "Quanto tempo dura o teste ergométrico?", a: "O exame completo dura entre 45 e 60 minutos, incluindo o preparo com eletrodos, a fase de esforço na esteira (em média 8 a 12 minutos) e a recuperação." },
+      { q: "Preciso suspender meus remédios?", a: "Depende do objetivo do exame. Alguns medicamentos cardíacos, como betabloqueadores, podem interferir no resultado. Siga sempre a orientação do médico que solicitou o exame — nunca suspenda por conta própria." },
+      { q: "Qual a diferença entre eletrocardiograma e teste ergométrico?", a: "O eletrocardiograma avalia o coração em repouso, em poucos minutos. O teste ergométrico avalia o coração durante o esforço físico, revelando alterações que só aparecem quando o coração é exigido." },
+    ],
+    whatsappMessage: "Olá! Gostaria de agendar um teste ergométrico.",
+    category: "cardiologia",
+    keywords: ["teste ergométrico", "teste de esforço", "teste da esteira", "avaliação cardíaca", "cardiologia", "Caraguatatuba"],
+  },
+  {
+    slug: "exame-admissional",
+    title: "EXAMES OCUPACIONAIS",
+    shortTitle: "Exames Ocupacionais",
+    subtitle: "Saúde Ocupacional para Empresas",
+    description: "Exames admissionais, periódicos e demissionais para o PCMSO da sua empresa.",
+    metaTitle: "Exame Admissional em Caraguatatuba | Exames Ocupacionais",
+    metaDescription: "Exame admissional em Caraguatatuba - SP na Total Quality: exames laboratoriais, toxicológico e complementares para PCMSO. Atendimento ágil a empresas.",
+    heroDescription: "A Total Quality realiza os exames laboratoriais e complementares exigidos pelos programas de saúde ocupacional (PCMSO) das empresas de Caraguatatuba e região: admissionais, periódicos, demissionais, de retorno ao trabalho e mudança de função. Atendimento ágil, resultados rápidos e condições especiais para empresas.",
+    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
+    whatIs: "Os exames ocupacionais são avaliações exigidas pela legislação trabalhista (NR-7) para admissão, acompanhamento periódico, mudança de função, retorno ao trabalho e demissão de colaboradores. O PCMSO de cada empresa define quais exames laboratoriais e complementares são necessários para cada cargo, conforme os riscos da função. A Total Quality realiza esses exames com agilidade e emite resultados em formato adequado para o médico do trabalho responsável pela empresa.",
+    howItWorks: "A empresa ou o colaborador agenda pelo WhatsApp informando os exames solicitados pelo PCMSO. A coleta laboratorial é feita de segunda a sexta das 06h30 às 16h e aos sábados das 06h30 às 11h; os exames complementares (eletrocardiograma, raio-x, espirometria, entre outros) são agendados conforme disponibilidade. Os resultados ficam prontos rapidamente e são entregues ao colaborador ou diretamente à empresa, conforme combinado.",
+    indications: [
+      "Exame admissional de novos colaboradores",
+      "Exames periódicos anuais ou semestrais do PCMSO",
+      "Exame demissional",
+      "Exame de retorno ao trabalho após afastamento",
+      "Exame de mudança de função ou de risco",
+      "Exame toxicológico para motoristas profissionais (CNH C, D e E)",
+      "Painéis laboratoriais definidos pelo médico do trabalho",
+    ],
+    subExamsTitle: "EXAMES PARA O SEU PCMSO",
+    subExams: [
+      { name: "Exames Laboratoriais", description: "Hemograma completo, glicemia, colesterol, urina tipo I, parasitológico e todos os painéis exigidos pelo PCMSO." },
+      { name: "Exame Toxicológico", description: "Painel de drogas com janela de até 180 dias, obrigatório para motoristas das categorias C, D e E (admissional, periódico e demissional)." },
+      { name: "Eletrocardiograma (ECG)", description: "Avaliação cardíaca em repouso, frequentemente exigida para funções de esforço físico ou trabalho em altura." },
+      { name: "Raio-X de Tórax", description: "Radiografia digital exigida em funções com exposição a poeiras e agentes químicos." },
+      { name: "Espirometria", description: "Prova de função pulmonar para funções com exposição respiratória, com ou sem broncodilatador." },
+      { name: "Eletroencefalograma (EEG)", description: "Avaliação neurológica exigida para funções como trabalho em altura, eletricistas e operadores de máquinas." },
+      { name: "Teste Ergométrico", description: "Avaliação do coração sob esforço, solicitada para funções de alta exigência física." },
+      { name: "Audiometria e Acuidade Visual", description: "Consulte nossa equipe sobre a disponibilidade dos demais exames complementares do seu PCMSO." },
+    ],
+    preparations: [
+      { icon: FileText, text: "Traga a guia ou pedido da empresa com os exames do PCMSO" },
+      { icon: Clock, text: "Jejum de 8 a 12 horas para exames de sangue, se solicitados" },
+      { icon: CheckCircle, text: "Traga documento com foto (RG ou CNH)" },
+      { icon: Users, text: "Empresas: fale conosco para condições e faturamento corporativo" },
+    ],
+    faqs: [
+      { q: "Vocês emitem o ASO (Atestado de Saúde Ocupacional)?", a: "O ASO é emitido pelo médico do trabalho responsável pelo PCMSO da empresa. A Total Quality realiza os exames laboratoriais e complementares exigidos pelo programa e entrega os resultados para a avaliação do médico do trabalho." },
+      { q: "Quais exames ocupacionais vocês realizam em Caraguatatuba?", a: "Realizamos os exames laboratoriais (hemograma, glicemia, urina e painéis completos), exame toxicológico para CNH C, D e E, eletrocardiograma, raio-x, espirometria, eletroencefalograma e teste ergométrico, entre outros exames complementares do PCMSO." },
+      { q: "Empresas têm condições especiais?", a: "Sim. Atendemos empresas de Caraguatatuba e região com agilidade no agendamento, resultados rápidos e condições comerciais para volume. Entre em contato pelo WhatsApp (12) 3887-3535." },
+      { q: "Quanto tempo demoram os resultados?", a: "A maioria dos exames laboratoriais fica pronta em até 24 horas. O exame toxicológico leva de 5 a 10 dias úteis. Exames complementares como ECG e espirometria têm resultado rápido após a realização." },
+    ],
+    whatsappMessage: "Olá! Gostaria de informações sobre exames ocupacionais (admissional/periódico/demissional).",
+    category: "outros",
+    keywords: ["exame admissional", "exames ocupacionais", "exame periódico", "exame demissional", "PCMSO", "medicina do trabalho", "Caraguatatuba"],
   },
   {
     slug: "exame-toxicologico",

@@ -28,14 +28,16 @@ const examSitelinks = [
   { label: "Exames de Sangue", href: "/exames/exames-de-sangue" },
   { label: "Tomografia Computadorizada", href: "/exames/tomografia-computadorizada" },
   { label: "Raio-X", href: "/exames/raio-x" },
-  { label: "Ultrassonografia", href: "/exames/ultrassonografia" },
+  { label: "Ultrassom", href: "/exames/ultrassonografia" },
   { label: "Mamografia Digital", href: "/exames/mamografia" },
   { label: "MAPA", href: "/exames/mapa" },
   { label: "Holter", href: "/exames/holter" },
   { label: "Espirometria", href: "/exames/espirometria" },
   { label: "Eletrocardiograma", href: "/exames/eletrocardiograma" },
+  { label: "Teste Ergométrico", href: "/exames/teste-ergometrico" },
   { label: "Eletroencefalograma", href: "/exames/eletroencefalograma" },
   { label: "Exame Toxicológico", href: "/exames/exame-toxicologico" },
+  { label: "Exames Ocupacionais", href: "/exames/exame-admissional" },
 ];
 
 export default function Navbar() {
