@@ -348,8 +348,8 @@ export default function LaboratorioCaraguatatuba() {
               >
                 lista completa de convênios aceitos
               </Link>{" "}
-              ou entre em contato pelo WhatsApp para verificar se o seu plano é aceito e agendar seus exames
-              com praticidade.
+              ou entre em contato pelo WhatsApp para verificar se o seu plano é aceito e tirar
+              suas dúvidas com praticidade.
             </p>
 
             <div className="flex flex-wrap gap-3 mb-10">
@@ -383,6 +383,7 @@ export default function LaboratorioCaraguatatuba() {
                 <div className="space-y-2 text-text-light">
                   <p>Segunda a Sexta: <strong className="text-text">07h30 às 18h</strong></p>
                   <p>Sábado e Domingo: <strong className="text-text">fechado</strong></p>
+                  <p className="text-sm italic">Sem agendamento — atendimento por ordem de chegada</p>
                 </div>
               </div>
               <div className="reveal bg-white rounded-2xl p-8 border border-black/5">
@@ -400,11 +401,12 @@ export default function LaboratorioCaraguatatuba() {
         <section className="py-16 lg:py-24 bg-brand text-white">
           <div className="container text-center">
             <h2 className="reveal heading-display text-3xl lg:text-4xl mb-6">
-              AGENDE SEU EXAME NO LABORATÓRIO EM CARAGUATATUBA
+              FAÇA SEUS EXAMES SEM AGENDAMENTO NO LABORATÓRIO EM CARAGUATATUBA
             </h2>
             <p className="reveal text-white/80 text-lg max-w-2xl mx-auto mb-10">
-              Entre em contato conosco para agendar seu exame. Atendimento rápido e humanizado,
-              com resultados online e equipe especializada.
+              A coleta é por ordem de chegada, de segunda a sexta, das 07h30 às 18h — basta trazer
+              o pedido médico e um documento com foto. Atendimento rápido e humanizado, com
+              resultados online e equipe especializada.
             </p>
             <div className="reveal flex flex-wrap gap-4 justify-center">
               <button

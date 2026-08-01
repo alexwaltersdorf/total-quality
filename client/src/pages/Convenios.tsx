@@ -125,7 +125,8 @@ export default function Convenios() {
               </h2>
               <p className="mb-4">
                 R. Padre Anchieta, 1010 – Centro, Caraguatatuba – SP. Atendimento de segunda a
-                sexta, das 7h30 às 18h.
+                sexta, das 7h30 às 18h. A coleta laboratorial é sem agendamento, por ordem de
+                chegada; exames de imagem são agendados pelo WhatsApp.
               </p>
               <a
                 href={WHATSAPP_HREF}

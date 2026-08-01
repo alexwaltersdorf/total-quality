@@ -312,17 +312,23 @@ export default function ExamePage() {
       <section className="py-16 lg:py-24 bg-surface-dark">
         <div className="container text-center">
           <h2 className="reveal heading-display text-4xl sm:text-5xl lg:text-6xl text-text mb-6">
-            AGENDE SEU <span className="text-brand">{exam.shortTitle.toUpperCase()}</span>
+            {exam.category === "laboratorio" ? (
+              <>FAÇA SEU <span className="text-brand">{exam.shortTitle.toUpperCase()}</span> SEM AGENDAMENTO</>
+            ) : (
+              <>AGENDE SEU <span className="text-brand">{exam.shortTitle.toUpperCase()}</span></>
+            )}
           </h2>
           <p className="reveal text-text-muted text-lg mb-10 max-w-2xl mx-auto" style={{ transitionDelay: "100ms" }}>
-            Entre em contato conosco para agendar seu exame. Atendemos de segunda a sexta, das 07h30 às 18h.
+            {exam.category === "laboratorio"
+              ? "A coleta é por ordem de chegada, sem agendamento: basta trazer o pedido médico e um documento com foto, de segunda a sexta, das 07h30 às 18h."
+              : "Entre em contato conosco para agendar seu exame. Atendemos de segunda a sexta, das 07h30 às 18h."}
           </p>
           <div className="reveal flex flex-wrap gap-4 justify-center" style={{ transitionDelay: "200ms" }}>
             <button
               onClick={() => window.open(`https://wa.me/551238873535?text=${encodeURIComponent(exam.whatsappMessage)}`, "_blank")}
               className="btn-pill"
             >
-              Agendar pelo WhatsApp
+              {exam.category === "laboratorio" ? "Tirar dúvidas no WhatsApp" : "Agendar pelo WhatsApp"}
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
             <a href="tel:+551238873535" className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">

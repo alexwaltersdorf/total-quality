@@ -196,7 +196,11 @@ function renderExamHtml(exam: ExamData): string {
     <h2>Preparo para o exame</h2>
     <ul>${preparations}</ul>
     ${faqSectionHtml(exam.faqs)}
-    ${napHtml(`Agende seu exame de ${exam.shortTitle.toLowerCase()} pelo WhatsApp ou telefone e faça em um só lugar todos os seus exames laboratoriais e de imagem.`)}
+    ${napHtml(
+      exam.category === "laboratorio"
+        ? `Faça seu exame de ${exam.shortTitle.toLowerCase()} sem agendamento: a coleta é por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Dúvidas de preparo e convênio pelo WhatsApp.`
+        : `Agende seu exame de ${exam.shortTitle.toLowerCase()} pelo WhatsApp ou telefone e faça em um só lugar todos os seus exames laboratoriais e de imagem.`
+    )}
     ${internalLinksHtml(`/exames/${exam.slug}`)}
     ${jsonLd([
       pageLd,
@@ -353,7 +357,7 @@ function conveniosHtml(): string {
     <ul>${lista}<li>Outros planos regionais e nacionais — consulte o seu</li></ul>
     <p>A lista é atualizada periodicamente. Confirme a aceitação do seu plano pelo WhatsApp <a href="${NAP.whatsappHref}">(12) 3887-3535</a> antes de agendar.</p>
     ${faqSectionHtml(CONVENIOS_FAQS)}
-    ${napHtml("Confirme seu convênio e agende seus exames pelo WhatsApp — atendimento de segunda a sexta, das 7h30 às 18h.")}
+    ${napHtml("Confirme seu convênio pelo WhatsApp — a coleta laboratorial é sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h; exames de imagem com hora marcada.")}
     ${internalLinksHtml("/convenios")}
     ${jsonLd([
       breadcrumbLd([

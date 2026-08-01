@@ -362,3 +362,16 @@ describe("GUARD-RAIL: pagina /convenios (auditoria ago/2026, fila C6)", () => {
     }
   });
 });
+
+describe("GUARD-RAIL: coleta sem agendamento (confirmado pelo Alex em 01/08/2026)", () => {
+  // A coleta laboratorial e por ordem de chegada — argumento de desempate nas
+  // buscas locais ("exame de sangue sem agendamento"). As paginas de exames de
+  // LABORATORIO devem afirmar isso; exames de imagem seguem com agendamento.
+  it.each(["/", "/laboratorio-caraguatatuba", "/exames/exames-de-sangue", "/exames/hemograma", "/convenios"])(
+    "%s afirma o atendimento por ordem de chegada",
+    (route) => {
+      const html = getSeoContentForPath(route)!;
+      expect(html).toMatch(/ordem de chegada|sem agendamento|n[ãa]o [ée] necess[áa]rio agendamento/i);
+    }
+  );
+});
