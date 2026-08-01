@@ -47,18 +47,20 @@ describe("Schema.org Hooks", () => {
 
       expect(data.openingHoursSpecification).toBeDefined();
       expect(data.openingHoursSpecification.length).toBeGreaterThan(0);
-      expect(data.openingHoursSpecification[0].opens).toBe("08:00");
+      // Horário oficial confirmado pelo Alex: seg-sex 07h30-18h
+      expect(data.openingHoursSpecification[0].opens).toBe("07:30");
     });
 
-    it("deve conter informações de rating", () => {
+    it("não inventa aggregateRating", () => {
+      // O rating fabricado (4.8/127) foi removido na auditoria de ago/2026:
+      // nota autodeclarada sem fonte é conteúdo inverídico (CFM 2.336/2023).
+      // A nota real (via perfil do Google) vive no LocalBusiness do index.html.
       renderHook(() => useSchemaLocalBusiness());
 
       const script = document.querySelector("#schema-local-business");
       const data = JSON.parse(script?.textContent || "{}");
 
-      expect(data.aggregateRating).toBeDefined();
-      expect(data.aggregateRating.ratingValue).toBe(4.8);
-      expect(data.aggregateRating.ratingCount).toBe(127);
+      expect(data.aggregateRating).toBeUndefined();
     });
 
     it("deve conter ofertas de serviços", () => {
