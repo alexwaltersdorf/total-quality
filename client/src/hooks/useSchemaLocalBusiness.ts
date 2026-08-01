@@ -1,8 +1,15 @@
 import { useEffect } from "react";
 
 /**
- * Hook para adicionar Schema.org LocalBusiness estruturado em JSON-LD
- * Melhora SEO local e exibição em resultados de busca
+ * Hook para adicionar Schema.org LocalBusiness estruturado em JSON-LD.
+ *
+ * Auditoria de ago/2026: este hook carregava um aggregateRating FABRICADO
+ * (4.8 com 127 avaliacoes — o real e 4,5 com 348), @id/url do dominio de
+ * staging da Manus, CEP e geo errados e perfis sociais inexistentes. Alem de
+ * conteudo inveridico (vedado pela CFM 2.336/2023), criava uma SEGUNDA
+ * entidade conflitante com o MedicalBusiness do index.html. Corrigido para a
+ * mesma entidade canonica (@id #medicalbusiness) e sem nota autodeclarada —
+ * autoavaliacao de rating nao gera estrelas no Google desde 2019.
  */
 export function useSchemaLocalBusiness(options?: {
   name?: string;
@@ -19,30 +26,24 @@ export function useSchemaLocalBusiness(options?: {
   };
   image?: string;
   priceRange?: string;
-  ratingValue?: number;
-  ratingCount?: number;
-  reviewCount?: number;
 }) {
   useEffect(() => {
     // Dados padrão para Total Quality
     const defaultData = {
       name: "Total Quality Medicina Diagnóstica",
       description: "Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba",
-      url: "https://totalqualmed-jl54vver.manus.space",
+      url: "https://totalquality.med.br/",
       phone: "+55 (12) 3887-3535",
       email: "contato@totalquality.med.br",
       address: {
         streetAddress: "R. Padre Anchieta, 1010",
         addressLocality: "Caraguatatuba",
         addressRegion: "SP",
-        postalCode: "11660-000",
+        postalCode: "11660-010",
         addressCountry: "BR",
       },
       image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/checkup-hero-DYtfLmtu8bZzaLQHsJcbup.webp",
       priceRange: "$$",
-      ratingValue: 4.8,
-      ratingCount: 127,
-      reviewCount: 45,
     };
 
     // Mesclar opções fornecidas com dados padrão
@@ -52,7 +53,7 @@ export function useSchemaLocalBusiness(options?: {
     const schema = {
       "@context": "https://schema.org",
       "@type": "MedicalBusiness",
-      "@id": "https://totalqualmed-jl54vver.manus.space",
+      "@id": "https://totalquality.med.br/#medicalbusiness",
       name: data.name,
       description: data.description,
       url: data.url,
@@ -70,14 +71,8 @@ export function useSchemaLocalBusiness(options?: {
       },
       geo: {
         "@type": "GeoCoordinates",
-        latitude: "-23.6545",
-        longitude: "-45.4035",
-      },
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: data.ratingValue,
-        ratingCount: data.ratingCount,
-        reviewCount: data.reviewCount,
+        latitude: "-23.6225",
+        longitude: "-45.4132",
       },
       openingHoursSpecification: [
         {
@@ -86,17 +81,9 @@ export function useSchemaLocalBusiness(options?: {
           opens: "08:00",
           closes: "18:00",
         },
-        {
-          "@type": "OpeningHoursSpecification",
-          dayOfWeek: "Saturday",
-          opens: "08:00",
-          closes: "12:00",
-        },
       ],
       sameAs: [
-        "https://www.facebook.com/totalqualitycaraguatatuba",
-        "https://www.instagram.com/totalqualitycaraguatatuba",
-        "https://www.google.com/maps/place/Total+Quality",
+        "https://www.instagram.com/totalqualitymedicina/",
       ],
       knowsAbout: [
         "Hemograma",
@@ -180,15 +167,14 @@ export function useSchemaOrganization(options?: any) {
   useEffect(() => {
     const defaultData = {
       name: "Total Quality Medicina Diagnóstica",
-      url: "https://totalqualmed-jl54vver.manus.space",
+      url: "https://totalquality.med.br/",
       logo: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/logo.png",
       description: "Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba",
       foundingDate: "2003",
       telephone: "+55 (12) 3887-3535",
       email: "contato@totalquality.med.br",
       sameAs: [
-        "https://www.facebook.com/totalqualitycaraguatatuba",
-        "https://www.instagram.com/totalqualitycaraguatatuba",
+        "https://www.instagram.com/totalqualitymedicina/",
       ],
     };
 
@@ -210,7 +196,7 @@ export function useSchemaOrganization(options?: any) {
         streetAddress: "R. Padre Anchieta, 1010",
         addressLocality: "Caraguatatuba",
         addressRegion: "SP",
-        postalCode: "11660-000",
+        postalCode: "11660-010",
         addressCountry: "BR",
       },
     };

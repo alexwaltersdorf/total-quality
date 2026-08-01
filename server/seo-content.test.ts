@@ -143,6 +143,30 @@ describe("GUARD-RAIL: nunca anunciar servico nao prestado (nao remover)", () => 
       expect(html, `${pathname} menciona ${termo}`).not.toMatch(termo);
     }
   });
+
+  it("client/index.html (JSON-LD global) nao anuncia servico nao prestado", async () => {
+    // A auditoria de 01/08/2026 achou "Ecocardiograma" 3x no JSON-LD do
+    // index.html DEPOIS da limpeza das paginas: o arquivo fica fora de
+    // client/src e escapou do grep. Este teste le o template servido em toda
+    // rota — se o termo voltar aqui, volta em todas as paginas de uma vez.
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const indexHtml = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "../client/index.html"),
+      "utf-8"
+    );
+    for (const termo of NAO_OFERECIDOS) {
+      expect(indexHtml, `client/index.html menciona ${termo}`).not.toMatch(termo);
+    }
+    // O dominio de staging da Manus tambem nao pode voltar a nenhum schema
+    const hook = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "../client/src/hooks/useSchemaLocalBusiness.ts"),
+      "utf-8"
+    );
+    expect(hook).not.toContain("manus.space");
+    // O campo (nao a palavra em comentario): nota autodeclarada e fabricada
+    expect(hook).not.toContain("ratingValue");
+  });
 });
 
 describe("GUARD-RAIL: links internos em todas as rotas (nao remover)", () => {
