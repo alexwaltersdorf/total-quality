@@ -20,6 +20,12 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   "/index": "/",
   "/home": "/",
 
+  // Página placeholder de um WordPress antigo ("Add custom text here"),
+  // encontrada INDEXADA via site:totalquality.med.br em 01/08/2026 — o
+  // soft-404 do build antigo respondia 200 e o Google guardou o título
+  // placeholder "Total Quality – TotalQuality".
+  "/total-quality": "/",
+
   // Eram âncoras da home em uma versão antiga do site, nunca rotas próprias
   "/sobre": "/#sobre",
   "/contato": "/#contato",

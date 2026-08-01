@@ -327,6 +327,9 @@ describe("Redirecionamentos legados (auditoria Search Console jul/2026)", () => 
     expect(getLegacyRedirect("/cartao-desconto")).toBe("/cartao");
     expect(getLegacyRedirect("/blog/index")).toBe("/blog");
     expect(getLegacyRedirect("/medicos")).toBe("/");
+    // Placeholder WordPress indexado, achado via site: em 01/08/2026
+    expect(getLegacyRedirect("/total-quality")).toBe("/");
+    expect(getLegacyRedirect("/total-quality/")).toBe("/");
   });
 
   it("normaliza barra final", () => {
