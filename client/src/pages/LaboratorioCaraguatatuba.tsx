@@ -155,12 +155,12 @@ export default function LaboratorioCaraguatatuba() {
 
               <div className="lg:col-span-5">
                 <ResponsiveImage
-                  slug="hero-clinica"
+                  slug="recepcao"
                   widths={[480, 768, 1024]}
                   sizes="(max-width: 1024px) 100vw, 40vw"
                   width={1024}
-                  height={572}
-                  alt="Laboratório Total Quality em Caraguatatuba - SP - Interior da clínica"
+                  height={576}
+                  alt="Recepção do laboratório Total Quality em Caraguatatuba - SP"
                   className="reveal w-full rounded-2xl shadow-lg"
                   priority
                 />

@@ -126,13 +126,16 @@ export default function HeroSection() {
           {/* Right column - Hero image */}
           <div className="lg:col-span-6 xl:col-span-7">
             <div className="relative aspect-[4/3] lg:aspect-auto lg:h-[80vh]">
+              {/* Foto REAL da recepcao. A antiga "hero-clinica" era banco de
+                  imagens e mostrava uma RESSONANCIA — exame que a clinica nao
+                  oferece; imagem removida das paginas em 01/08/2026. */}
               <ResponsiveImage
-                slug="hero-clinica"
-                widths={[480, 768, 1024, 1440, 1920]}
+                slug="recepcao"
+                widths={[480, 768, 1024]}
                 sizes="(max-width: 1024px) 100vw, 55vw"
-                width={1920}
-                height={1072}
-                alt="Clínica Total Quality Medicina Diagnóstica em Caraguatatuba - SP - Interior moderno com equipamentos de tomografia e diagnóstico por imagem"
+                width={1024}
+                height={576}
+                alt="Recepção da clínica Total Quality Medicina Diagnóstica em Caraguatatuba - SP"
                 className="w-full h-full object-cover"
                 priority
               />
