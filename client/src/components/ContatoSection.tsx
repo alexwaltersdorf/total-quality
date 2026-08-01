@@ -4,7 +4,7 @@
  * Integração: tRPC para persistir contatos no banco de dados
  */
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { Link, useLocation } from "wouter";
 import {
   MapPin,
   Phone,
@@ -116,7 +116,31 @@ export default function ContatoSection() {
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
-            Agende seu exame de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma ou check-up na Total Quality em Caraguatatuba - SP. Atendemos de segunda a sexta, das 08h às 18h.
+            Agende seu{" "}
+            <Link href="/exames/exames-de-sangue" className="text-brand hover:underline">
+              exame de sangue
+            </Link>
+            ,{" "}
+            <Link href="/exames/hemograma" className="text-brand hover:underline">
+              hemograma
+            </Link>
+            , glicemia, colesterol, hormônios,{" "}
+            <Link href="/exames/tomografia-computadorizada" className="text-brand hover:underline">
+              tomografia
+            </Link>
+            ,{" "}
+            <Link href="/exames/ultrassonografia" className="text-brand hover:underline">
+              ultrassonografia
+            </Link>
+            ,{" "}
+            <Link href="/exames/mamografia" className="text-brand hover:underline">
+              mamografia
+            </Link>{" "}
+            ou{" "}
+            <Link href="/checkup" className="text-brand hover:underline">
+              check-up
+            </Link>{" "}
+            na Total Quality em Caraguatatuba - SP. Atendemos de segunda a sexta, das 08h às 18h.
           </p>
         </div>
 

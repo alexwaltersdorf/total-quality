@@ -227,7 +227,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
   "saude-do-coracao-prevencao": {
     title: "Saúde do Coração: 7 Hábitos Que Podem Salvar Sua Vida | Total Quality",
     description: "Doenças cardiovasculares são a principal causa de morte no Brasil. Conheça os 7 hábitos comprovados que protegem seu coração.",
-    keywords: "cardiologia, saúde do coração, prevenção, ecocardiograma",
+    keywords: "cardiologia, saúde do coração, prevenção, eletrocardiograma",
     ogTitle: "Saúde do Coração: 7 Hábitos",
     ogDescription: "Descubra os 7 hábitos que podem salvar sua vida e proteger seu coração.",
     canonical: "https://totalquality.med.br/blog/saude-do-coracao-prevencao",

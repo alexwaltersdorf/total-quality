@@ -111,7 +111,7 @@ export default function CheckUp() {
   }, []);
 
   // SEO: Meta description e canonical (155 caracteres - ideal: 150-160)
-  useMetaDescription("Check-up preventivo em Caraguatatuba com hemograma, colesterol, tomografia e ecocardiograma. Pacotes Básico, Select e Premium. Agende agora!");
+  useMetaDescription("Check-up preventivo em Caraguatatuba com hemograma, colesterol, tomografia e eletrocardiograma. Pacotes Básico, Select e Premium. Agende agora!");
   useCanonical("/checkup");
 
   // SEO: Schema.org LocalBusiness para melhorar visibilidade local

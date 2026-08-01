@@ -106,7 +106,7 @@ export const examesData: ExamData[] = [
       { q: "A tomografia dói?", a: "Não. O exame é completamente indolor. Você ficará deitado na mesa enquanto o aparelho captura as imagens. Pode sentir um leve aquecimento se for usado contraste." },
       { q: "Quanto tempo dura o exame?", a: "O exame em si dura entre 10 e 30 minutos, dependendo da região examinada e da necessidade de contraste." },
       { q: "Preciso de contraste?", a: "Depende da indicação médica. O contraste é usado para melhorar a visualização de vasos sanguíneos e certos órgãos. Seu médico indicará se é necessário." },
-      { q: "Posso fazer tomografia com prótese metálica?", a: "Sim. Diferente da ressonância magnética, a tomografia pode ser realizada em pacientes com próteses metálicas, marcapassos e implantes." },
+      { q: "Posso fazer tomografia com prótese metálica?", a: "Sim. A tomografia pode ser realizada em pacientes com próteses metálicas, marcapassos e implantes." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar uma tomografia computadorizada.",
     heroImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/tomografia-computadorizada_c4982f52.png",

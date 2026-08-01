@@ -126,6 +126,72 @@ describe("GUARD-RAIL: cobertura do sitemap (nao remover)", () => {
   });
 });
 
+describe("GUARD-RAIL: nunca anunciar servico nao prestado (nao remover)", () => {
+  // Anunciar exame que a clinica nao realiza viola as diretrizes do Google
+  // (risco de suspensao do perfil) e as normas do CFM. Duas decisoes do Alex:
+  //   - ressonancia magnetica: nao oferecida (29/07/2026);
+  //   - ecocardiograma: nao oferecido no momento, previsto para o futuro
+  //     (01/08/2026) — ao passar a oferecer, remover daqui PRIMEIRO.
+  const NAO_OFERECIDOS = [/resson[âa]ncia/i, /ecocardiograma/i, /ecodoppler/i];
+
+  it.each(
+    getAllRoutes().map((r) => new URL(r.canonical).pathname)
+  )("%s nao menciona exame que a clinica nao realiza", (pathname) => {
+    const html = getSeoContentForPath(pathname);
+    if (!html) return;
+    for (const termo of NAO_OFERECIDOS) {
+      expect(html, `${pathname} menciona ${termo}`).not.toMatch(termo);
+    }
+  });
+});
+
+describe("GUARD-RAIL: links internos em todas as rotas (nao remover)", () => {
+  // Auditoria de links internos, jul-ago/2026: as menções a exames eram texto
+  // solto por todo o site. Todo link do HTML pre-renderizado precisa apontar
+  // para rota que existe — link quebrado cai no 404 real de resolveHttpStatus
+  // e desperdica rastreamento, o que e pior do que nao ter link.
+  const blogSlugs = getKnownBlogSlugs();
+
+  it.each(
+    getAllRoutes().map((r) => new URL(r.canonical).pathname)
+  )("todo link interno de %s resolve 200", (pathname) => {
+    const html = getSeoContentForPath(pathname);
+    if (!html) return;
+    const hrefs = Array.from(html.matchAll(/href="(\/[^"#]*)"/g)).map((m) => m[1]);
+    for (const href of hrefs) {
+      expect(resolveHttpStatus(href, blogSlugs), `${pathname} → ${href} nao resolve 200`).toBe(200);
+    }
+  });
+
+  it("a home pre-renderizada distribui autoridade para as paginas de exame", () => {
+    const home = getSeoContentForPath("/")!;
+    const hrefs = new Set(
+      Array.from(home.matchAll(/href="(\/[^"#]*)"/g)).map((m) => m[1])
+    );
+    // A home e a pagina mais forte do site: se ela parar de linkar as paginas
+    // de exame, todas elas perdem a principal fonte de autoridade interna.
+    for (const href of [
+      "/laboratorio-caraguatatuba",
+      "/exames/exames-de-sangue",
+      "/exames/tomografia-computadorizada",
+      "/exames/ultrassonografia",
+      "/exames/mamografia",
+      "/exames/raio-x",
+      "/exames/holter",
+      "/exames/mapa",
+      "/exames/eletrocardiograma",
+      "/exames/eletroencefalograma",
+      "/exames/espirometria",
+      "/exames/exame-toxicologico",
+      "/exames/exame-admissional",
+      "/bioimpedancia",
+      "/checkup",
+    ]) {
+      expect(hrefs, `home nao linka ${href}`).toContain(href);
+    }
+  });
+});
+
 describe("GUARD-RAIL: links internos da landing de laboratorio (nao remover)", () => {
   // Auditoria de links internos, jul/2026: a lista de exames desta pagina era
   // texto solto (<div>/<span> no React, <li> sem <a> no pre-render). O Google

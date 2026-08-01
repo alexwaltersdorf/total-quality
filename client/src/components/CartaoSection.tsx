@@ -3,6 +3,7 @@
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  */
 import { ArrowUpRight, CreditCard, Users, Percent } from "lucide-react";
+import { Link } from "wouter";
 import { trackCardInterest } from "@/lib/tracking";
 
 export default function CartaoSection() {
@@ -29,7 +30,31 @@ export default function CartaoSection() {
               <span className="text-brand">TOTAL QUALITY</span>
             </h2>
             <p className="text-lg text-text-light leading-relaxed mb-10 max-w-lg">
-              Descontos exclusivos em exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma e análises laboratoriais para toda sua família em Caraguatatuba. Faça seu cartão e aproveite benefícios especiais.
+              Descontos exclusivos em{" "}
+              <Link href="/exames/exames-de-sangue" className="text-brand hover:underline">
+                exames de sangue
+              </Link>
+              ,{" "}
+              <Link href="/exames/hemograma" className="text-brand hover:underline">
+                hemograma
+              </Link>
+              , glicemia, colesterol, hormônios,{" "}
+              <Link href="/exames/tomografia-computadorizada" className="text-brand hover:underline">
+                tomografia
+              </Link>
+              ,{" "}
+              <Link href="/exames/ultrassonografia" className="text-brand hover:underline">
+                ultrassonografia
+              </Link>
+              ,{" "}
+              <Link href="/exames/mamografia" className="text-brand hover:underline">
+                mamografia
+              </Link>{" "}
+              e{" "}
+              <Link href="/laboratorio-caraguatatuba" className="text-brand hover:underline">
+                análises laboratoriais
+              </Link>{" "}
+              para toda sua família em Caraguatatuba. Faça seu cartão e aproveite benefícios especiais.
             </p>
             <button
               onClick={() => { trackCardInterest(); window.open("https://wa.me/551238873535?text=Olá! Gostaria de saber mais sobre o Cartão Total Quality.", "_blank"); }}

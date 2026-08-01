@@ -6,6 +6,7 @@
  */
 import ResponsiveImage from "@/components/ResponsiveImage";
 import { ArrowUpRight } from "lucide-react";
+import { Link } from "wouter";
 import { trackScheduleExam } from "@/lib/tracking";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 
@@ -49,7 +50,37 @@ export default function HeroSection() {
             </div>
 
             <p className="reveal text-lg text-text-light leading-relaxed max-w-md mb-10" style={{ transitionDelay: "200ms" }}>
-              Desde 2003, mais de 30.000 famílias confiam no nosso laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba. Realizamos exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma e check-up preventivo com tecnologia de última geração.
+              {/* Links discretos: sublinhado suave em vez da cor da marca, para nao
+                  poluir o hero. Continuam sendo <a href> rastreaveis. */}
+              Desde 2003, mais de 30.000 famílias confiam no nosso{" "}
+              <Link href="/laboratorio-caraguatatuba" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                laboratório de análises clínicas
+              </Link>{" "}
+              e clínica de medicina diagnóstica em Caraguatatuba. Realizamos{" "}
+              <Link href="/exames/exames-de-sangue" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                exames de sangue
+              </Link>
+              ,{" "}
+              <Link href="/exames/hemograma" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                hemograma
+              </Link>
+              , glicemia, colesterol, hormônios,{" "}
+              <Link href="/exames/tomografia-computadorizada" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                tomografia
+              </Link>
+              ,{" "}
+              <Link href="/exames/ultrassonografia" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                ultrassonografia
+              </Link>
+              ,{" "}
+              <Link href="/exames/mamografia" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                mamografia
+              </Link>{" "}
+              e{" "}
+              <Link href="/checkup" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                check-up preventivo
+              </Link>{" "}
+              com tecnologia de última geração.
             </p>
 
             <div className="reveal flex flex-wrap gap-4 mb-16" style={{ transitionDelay: "300ms" }}>

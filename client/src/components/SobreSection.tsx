@@ -5,6 +5,7 @@
 import ResponsiveImage from "@/components/ResponsiveImage";
 import { Target, Eye, Heart, ShieldCheck, Leaf, GraduationCap } from "lucide-react";
 import { ArrowUpRight } from "lucide-react";
+import { Link } from "wouter";
 
 
 const values = [
@@ -65,7 +66,24 @@ export default function SobreSection() {
             </h2>
             <p className="text-lg text-text-light leading-relaxed mb-8">
               Fundada em 2003 em Caraguatatuba - SP, a Total Quality Medicina Diagnóstica é reconhecida como
-              <strong className="text-text"> "a clínica mais completa do Litoral Norte de São Paulo"</strong>. Nossa trajetória de mais de 20 anos é marcada pela excelência em tomografia, ultrassonografia, mamografia, ecocardiograma, exames laboratoriais e atendimento humanizado.
+              <strong className="text-text"> "a clínica mais completa do Litoral Norte de São Paulo"</strong>. Nossa trajetória de
+              mais de 20 anos é marcada pela excelência em{" "}
+              <Link href="/exames/tomografia-computadorizada" className="text-brand hover:underline">
+                tomografia
+              </Link>
+              ,{" "}
+              <Link href="/exames/ultrassonografia" className="text-brand hover:underline">
+                ultrassonografia
+              </Link>
+              ,{" "}
+              <Link href="/exames/mamografia" className="text-brand hover:underline">
+                mamografia
+              </Link>
+              ,{" "}
+              <Link href="/laboratorio-caraguatatuba" className="text-brand hover:underline">
+                exames laboratoriais
+              </Link>{" "}
+              e atendimento humanizado.
             </p>
 
             {/* Highlight cards */}

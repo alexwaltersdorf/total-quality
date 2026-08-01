@@ -203,7 +203,7 @@ const bioimpedanciaHtml = `
 
 const homeHtml = `
     <h1>Laboratório de Análises Clínicas e Medicina Diagnóstica em Caraguatatuba</h1>
-    <p>Há mais de 23 anos no Litoral Norte, a Total Quality reúne em um só lugar laboratório de análises clínicas e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de exames de sangue, tomografia computadorizada, ultrassonografia com Doppler, mamografia digital, raio-X, MAPA, Holter 24h, espirometria, exame toxicológico, bioimpedância, check-up preventivo e medicina ocupacional.</p>
+    <p>Há mais de 23 anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">laboratório de análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>.</p>
     <ul>
       <li>Resultados online em até 24 horas para a maioria dos exames</li>
       <li>Equipamentos modernos e equipe especializada</li>
@@ -267,7 +267,7 @@ const checkupHtml = `
       <li>Exames de sangue: hemograma completo, glicemia, perfil lipídico (colesterol e triglicerídeos), função renal e hepática</li>
       <li>Hormônios: TSH e T4 livre para avaliação da tireoide</li>
       <li>Vitamina D e vitamina B12</li>
-      <li>Avaliação cardiológica: eletrocardiograma e, nos pacotes completos, ecocardiograma</li>
+      <li>Avaliação cardiológica: <a href="/exames/eletrocardiograma">eletrocardiograma</a> e, conforme o pacote, <a href="/exames/holter">Holter 24h</a> ou <a href="/exames/mapa">MAPA 24h</a></li>
       <li>PSA para homens e exames específicos por faixa etária</li>
       <li>Exame de urina e outros conforme o pacote escolhido</li>
     </ul>

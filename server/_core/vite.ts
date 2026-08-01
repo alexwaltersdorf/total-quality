@@ -75,7 +75,12 @@ export function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath));
+  // `index: false` e essencial: por padrao o express.static responde "/" com o
+  // index.html cru, curto-circuitando o catch-all abaixo. Com isso a HOME — a
+  // pagina mais importante do site — era servida com o <div id="root"> VAZIO,
+  // sem meta tags por rota e sem conteudo pre-renderizado, enquanto todas as
+  // outras rotas recebiam tudo. Descoberto em 01/08/2026 por curl na home.
+  app.use(express.static(distPath, { index: false }));
 
   // fall through to index.html if the file doesn't exist
   app.use("*", (req, res) => {

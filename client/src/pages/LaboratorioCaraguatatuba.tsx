@@ -52,7 +52,10 @@ const examesImagem: Array<ExamLink & { icon: typeof Microscope }> = [
   { icon: Stethoscope, name: "Ultrassonografia Geral e Doppler", href: "/exames/ultrassonografia" },
   { icon: Shield, name: "Mamografia Digital", href: "/exames/mamografia" },
   { icon: Microscope, name: "Raio-X Digital", href: "/exames/raio-x" },
-  { icon: Heart, name: "Ecocardiograma" },
+  // Ecocardiograma saiu daqui em 01/08/2026: a clinica NAO realiza no momento
+  // (informado pelo Alex), embora pretenda oferecer no futuro. Nao reintroduzir
+  // sem confirmacao — anunciar servico nao prestado viola as diretrizes do
+  // Google e as normas do CFM, mesma regra da ressonancia magnetica.
   // Holter e MAPA estavam num card so; separados, cada um leva a sua pagina.
   { icon: Heart, name: "Holter 24h", href: "/exames/holter" },
   { icon: Heart, name: "MAPA 24h", href: "/exames/mapa" },

@@ -436,3 +436,30 @@ por testes em `server/seo-content.test.ts`:
 17. **Nada de `<img>` ou `<iframe>` dentro do `<head>`**: os `noscript` de pixel
     e de tag manager vão no início do `<body>`. Dentro do head o parser fecha a
     seção implicitamente e joga as tags seguintes para o body.
+18. **Nunca anunciar serviço não prestado**: listar exame que a clínica não
+    realiza viola as diretrizes do Google (risco de suspensão do perfil) e as
+    normas do CFM — e, na prática, atrai visita que não converte e piora o sinal
+    de engajamento. Hoje estão fora: **ressonância magnética** (decisão de
+    29/07/2026) e **ecocardiograma** (01/08/2026 — a clínica pretende oferecer no
+    futuro; ao passar a oferecer, remover do guard-rail ANTES de anunciar). O
+    teste `nunca anunciar servico nao prestado` em `server/seo-content.test.ts`
+    varre todas as rotas do sitemap e falha se algum termo reaparecer. Ele já
+    pegou duas menções que a busca manual não achou.
+19. **Menção a exame é link, não texto**: qualquer lugar do site que cite um
+    exame com página própria deve linkar para ela — no React com `<Link>` do
+    wouter (renderiza `<a href>` rastreável e mantém navegação client-side) e no
+    HTML pré-renderizado com `<a href>` direto. Item sem página fica como texto:
+    **só linkar destino que existe**, porque link para rota inexistente cai no
+    404 real e desperdiça rastreamento, o que é pior do que não ter link. O
+    guard-rail extrai todo `href` de todas as rotas pré-renderizadas e exige
+    `resolveHttpStatus` = 200.
+20. **A home é a fonte de autoridade interna**: o bloco pré-renderizado de `/`
+    precisa linkar todas as páginas de exame. Se ela parar de linkar, todas elas
+    perdem a principal fonte de autoridade do site. Há teste específico para isso.
+21. **`express.static` com `index: false`**: sem isso o Express responde `/` com
+    o `index.html` cru e curto-circuita o catch-all que injeta meta tags por rota
+    e o conteúdo pré-renderizado — a home ficava com o `<div id="root">` vazio
+    enquanto todas as outras rotas recebiam tudo. Descoberto em 01/08/2026 por
+    curl na home; o teste unitário não pegava porque exercitava
+    `getSeoContentForPath("/")` isolado, sem passar pelo servidor. **Ao mexer no
+    `serveStatic`, conferir a home por curl, não só por teste.**
