@@ -363,6 +363,32 @@ describe("GUARD-RAIL: pagina /convenios (auditoria ago/2026, fila C6)", () => {
   });
 });
 
+describe("GUARD-RAIL: linkagem interna dos artigos do blog (ago/2026)", () => {
+  // Antes os corpos dos artigos tinham ZERO links — a camada informacional
+  // nao repassava autoridade a nenhuma pagina estrategica. O auto-linker
+  // (client/src/lib/internalLinkTargets.ts) precisa continuar produzindo
+  // links no prerender de todo artigo, sem nunca linkar o artigo para si.
+  const slugs = Array.from(getKnownBlogSlugs());
+
+  it.each(slugs)("artigo %s linka ao menos uma página estratégica no corpo", (slug) => {
+    const html = getSeoContentForPath(`/blog/${slug}`)!;
+    const article = html.slice(html.indexOf("<article>"), html.indexOf("</article>"));
+    const hrefs = Array.from(article.matchAll(/href="(\/[^"#]*)"/g)).map((m) => m[1]);
+    expect(hrefs.length, `corpo de ${slug} voltou a ficar sem links internos`).toBeGreaterThan(0);
+    expect(hrefs, `artigo ${slug} linka para si mesmo`).not.toContain(`/blog/${slug}`);
+  });
+
+  it("todo link automático resolve 200 (mapa não aponta para rota morta)", () => {
+    const blogSlugs = getKnownBlogSlugs();
+    for (const slug of blogSlugs) {
+      const html = getSeoContentForPath(`/blog/${slug}`)!;
+      for (const m of html.matchAll(/href="(\/[^"#]*)"/g)) {
+        expect(resolveHttpStatus(m[1], blogSlugs), `${m[1]} em ${slug} não resolve 200`).toBe(200);
+      }
+    }
+  });
+});
+
 describe("GUARD-RAIL: headings sem palavras coladas (auditoria HeadingsMap ago/2026)", () => {
   // Titulos JSX quebrados com <br/> ou <span> empilhados SEM espaco explicito
   // concatenam sem espaco no nome acessivel: "PRINCIPAIS"+"EXAMES" vira

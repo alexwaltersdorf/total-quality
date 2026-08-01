@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, ArrowUpRight, Clock, Calendar, Tag, Share2 } from "lucide-react";
 import { blogPosts, loadBlogPost } from "@/lib/blogData";
+import { linkifyText } from "@/lib/internalLinkTargets";
 import { trpc } from "@/lib/trpc";
 import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
 import Navbar from "@/components/Navbar";
@@ -192,14 +193,27 @@ export default function BlogPost() {
       <article className="pb-16">
         <div className="container max-w-3xl mx-auto">
           <div className="space-y-6">
-            {post.content.map((paragraph, i) => (
-              <p
-                key={i}
-                className={`text-text leading-[1.85] ${i === 0 ? "text-lg first-letter:text-5xl first-letter:font-display first-letter:float-left first-letter:mr-2 first-letter:mt-1 first-letter:text-brand first-letter:leading-none" : "text-base"}`}
-              >
-                {paragraph}
-              </p>
-            ))}
+            {/* Linkagem interna automática (mesmo mapa do prerender —
+                internalLinkTargets.ts): informacional → página estratégica. */}
+            {(() => {
+              const usedHrefs = new Set<string>();
+              return post.content.map((paragraph, i) => (
+                <p
+                  key={i}
+                  className={`text-text leading-[1.85] ${i === 0 ? "text-lg first-letter:text-5xl first-letter:font-display first-letter:float-left first-letter:mr-2 first-letter:mt-1 first-letter:text-brand first-letter:leading-none" : "text-base"}`}
+                >
+                  {linkifyText(paragraph, `/blog/${post.slug}`, usedHrefs).map((span, j) =>
+                    span.href ? (
+                      <Link key={j} href={span.href} className="text-brand underline underline-offset-2 hover:opacity-80">
+                        {span.text}
+                      </Link>
+                    ) : (
+                      <span key={j}>{span.text}</span>
+                    )
+                  )}
+                </p>
+              ));
+            })()}
           </div>
 
           {/* Tags */}

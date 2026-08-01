@@ -16,6 +16,7 @@ import nodePath from "node:path";
  */
 
 import { examesData, type ExamData } from "../../client/src/lib/examesData";
+import { linkifyText } from "../../client/src/lib/internalLinkTargets";
 import blogIndex from "../../client/src/content/blog/index.json";
 
 type BlogPost = (typeof blogIndex)[number] & { content: string[] };
@@ -24,16 +25,28 @@ type BlogPost = (typeof blogIndex)[number] & { content: string[] };
  * Corpo dos artigos lido do disco: os JSONs em client/src/content/blog sao a
  * fonte unica (o cliente carrega os mesmos arquivos sob demanda).
  */
+/*
+ * Do source (server/_core/) o diretorio do blog esta em ../../client/...;
+ * do bundle de producao (dist/index.js) esta em ../client/... — o caminho
+ * unico anterior fazia TODO artigo prerenderizar sem corpo em producao
+ * (o catch devolvia content: [] em silencio). Testar os dois candidatos.
+ */
+const BLOG_CONTENT_DIR = [
+  nodePath.resolve(import.meta.dirname, "../../client/src/content/blog"),
+  nodePath.resolve(import.meta.dirname, "../client/src/content/blog"),
+].find((dir) => fs.existsSync(dir));
+
 function loadBlogPostFromDisk(slug: string): BlogPost | null {
   const meta = blogIndex.find((b) => b.slug === slug);
   if (!meta) return null;
-  const file = nodePath.resolve(
-    import.meta.dirname,
-    "../../client/src/content/blog",
-    `${slug}.json`
-  );
+  if (!BLOG_CONTENT_DIR) {
+    console.error("[seo-content] diretorio de artigos do blog nao encontrado — prerender sem corpo");
+    return { ...meta, content: [] } as BlogPost;
+  }
   try {
-    return JSON.parse(fs.readFileSync(file, "utf-8")) as BlogPost;
+    return JSON.parse(
+      fs.readFileSync(nodePath.resolve(BLOG_CONTENT_DIR, `${slug}.json`), "utf-8")
+    ) as BlogPost;
   } catch {
     return { ...meta, content: [] } as BlogPost;
   }
@@ -515,7 +528,21 @@ function blogIndexHtml(): string {
 }
 
 function renderBlogHtml(post: BlogPost): string {
-  const paragraphs = post.content.map((par) => `<p>${escapeHtml(par)}</p>`).join("");
+  // Linkagem interna automática: o corpo dos artigos não tinha NENHUM link —
+  // a camada informacional não repassava autoridade às páginas estratégicas.
+  // Mapa e regras em client/src/lib/internalLinkTargets.ts (fonte única,
+  // compartilhada com o BlogPost.tsx).
+  const usedHrefs = new Set<string>();
+  const currentPath = `/blog/${post.slug}`;
+  const paragraphs = post.content
+    .map((par) => {
+      const spans = linkifyText(par, currentPath, usedHrefs);
+      const html = spans
+        .map((s) => (s.href ? `<a href="${s.href}">${escapeHtml(s.text)}</a>` : escapeHtml(s.text)))
+        .join("");
+      return `<p>${html}</p>`;
+    })
+    .join("");
   return `
     <article>
       <h1>${escapeHtml(post.title)}</h1>
