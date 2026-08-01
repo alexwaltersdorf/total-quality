@@ -62,6 +62,62 @@ function escapeHtml(text: string): string {
   return text.replace(/[&<>"']/g, (char) => map[char]);
 }
 
+const SITE = "https://totalquality.med.br";
+const BUSINESS_ID = `${SITE}/#medicalbusiness`;
+
+/**
+ * Emite blocos <script type="application/ld+json"> DENTRO do conteúdo
+ * pré-renderizado. JSON-LD é válido em qualquer ponto do documento — o Google
+ * lê o HTML servido antes de o React montar. Assim cada rota carrega o schema
+ * DELA (MedicalWebPage/FAQPage/BreadcrumbList), em vez de todas as rotas
+ * repetirem o FAQPage genérico da home, como acontecia com o bloco estático do
+ * index.html (schema duplicado/conflitante nas páginas de exame).
+ */
+function jsonLd(objects: object[]): string {
+  return objects
+    .map(
+      (obj) =>
+        // `<` escapado: impede que um "</script>" em texto quebre o bloco.
+        `<script type="application/ld+json">${JSON.stringify(obj).replace(/</g, "\\u003c")}</script>`
+    )
+    .join("\n");
+}
+
+type Faq = { q: string; a: string };
+
+function faqPageLd(faqs: Faq[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.q,
+      acceptedAnswer: { "@type": "Answer", text: faq.a },
+    })),
+  };
+}
+
+function breadcrumbLd(items: Array<[string, string]>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map(([name, url], i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name,
+      item: `${SITE}${url}`,
+    })),
+  };
+}
+
+/** Seção visível de FAQ + schema FAQPage, gerados da MESMA fonte. */
+function faqSectionHtml(faqs: Faq[]): string {
+  const visible = faqs
+    .map((faq) => `<h3>${escapeHtml(faq.q)}</h3><p>${escapeHtml(faq.a)}</p>`)
+    .join("");
+  return `<h2>Perguntas frequentes</h2>${visible}${jsonLd([faqPageLd(faqs)])}`;
+}
+
 function napHtml(ctaMessage: string): string {
   return `
     <h2>Onde fazer em Caraguatatuba</h2>
@@ -102,18 +158,31 @@ function internalLinksHtml(currentPath: string): string {
 
 function renderExamHtml(exam: ExamData): string {
   const h1 = exam.metaTitle.split("|")[0].trim();
+  const canonical = `${SITE}/exames/${exam.slug}`;
   const indications = exam.indications
     .map((item) => `<li>${escapeHtml(item)}</li>`)
     .join("");
   const preparations = exam.preparations
     .map((prep) => `<li>${escapeHtml(prep.text)}</li>`)
     .join("");
-  const faqs = exam.faqs
-    .map(
-      (faq) =>
-        `<h3>${escapeHtml(faq.q)}</h3><p>${escapeHtml(faq.a)}</p>`
-    )
-    .join("");
+
+  // Schema proprio da pagina de exame: MedicalWebPage sobre um MedicalTest,
+  // ancorado na mesma entidade canonica do index.html (#medicalbusiness) para
+  // nao criar entidade duplicada, mais o breadcrumb ate o hub /exames.
+  const pageLd = {
+    "@context": "https://schema.org",
+    "@type": "MedicalWebPage",
+    "@id": `${canonical}#webpage`,
+    url: canonical,
+    name: exam.metaTitle,
+    description: exam.metaDescription,
+    about: {
+      "@type": "MedicalTest",
+      name: exam.shortTitle,
+      description: exam.whatIs,
+    },
+    provider: { "@id": BUSINESS_ID },
+  };
 
   return `
     <h1>${escapeHtml(h1)}</h1>
@@ -126,10 +195,17 @@ function renderExamHtml(exam: ExamData): string {
     <ul>${indications}</ul>
     <h2>Preparo para o exame</h2>
     <ul>${preparations}</ul>
-    <h2>Perguntas frequentes</h2>
-    ${faqs}
+    ${faqSectionHtml(exam.faqs)}
     ${napHtml(`Agende seu exame de ${exam.shortTitle.toLowerCase()} pelo WhatsApp ou telefone e faça em um só lugar todos os seus exames laboratoriais e de imagem.`)}
-    ${internalLinksHtml(`/exames/${exam.slug}`)}`;
+    ${internalLinksHtml(`/exames/${exam.slug}`)}
+    ${jsonLd([
+      pageLd,
+      breadcrumbLd([
+        ["Início", "/"],
+        ["Exames", "/exames"],
+        [exam.shortTitle, `/exames/${exam.slug}`],
+      ]),
+    ])}`;
 }
 
 const laboratorioHtml = `
@@ -169,11 +245,42 @@ const laboratorioHtml = `
     <h3>Preciso agendar para fazer exames de sangue?</h3>
     <p>Para a maioria dos exames laboratoriais não é necessário agendamento: basta comparecer com o pedido médico e documento com foto. Veja as <a href="/blog/alimentacao-e-exames-laboratoriais">orientações de preparo e jejum</a> antes de vir. Exames de imagem e procedimentos especiais podem ser agendados pelo WhatsApp.</p>
     <h3>Quais convênios são aceitos?</h3>
-    <p>Atendemos os principais convênios e planos de saúde da região, além de atendimento particular. Veja a <a href="/blog/convenios-laboratorio-caraguatatuba">lista completa de convênios aceitos</a> ou consulte seu plano pelo WhatsApp (12) 3887-3535.</p>
+    <p>Atendemos os principais convênios e planos de saúde da região, além de atendimento particular. Veja a <a href="/convenios">lista completa de convênios aceitos</a> ou consulte seu plano pelo WhatsApp (12) 3887-3535.</p>
     <h3>Em quanto tempo sai o resultado?</h3>
     <p>A maioria dos exames de sangue fica pronta em até 24 horas, com resultados disponíveis online. Exames específicos podem levar até 7 dias úteis.</p>
     ${napHtml("Venha fazer seus exames laboratoriais no Centro de Caraguatatuba, a poucos minutos da Praça Cândido Mota.")}
-    ${internalLinksHtml("/laboratorio-caraguatatuba")}`;
+    ${internalLinksHtml("/laboratorio-caraguatatuba")}
+    ${jsonLd([
+      {
+        "@context": "https://schema.org",
+        "@type": "MedicalWebPage",
+        "@id": `${SITE}/laboratorio-caraguatatuba#webpage`,
+        url: `${SITE}/laboratorio-caraguatatuba`,
+        name: "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality",
+        description:
+          "Laboratório de análises clínicas em Caraguatatuba: hemograma, exames de sangue, hormônios e mais de 3.000 exames. Resultados em até 24h.",
+        about: { "@id": BUSINESS_ID },
+        provider: { "@id": BUSINESS_ID },
+      },
+      faqPageLd([
+        {
+          q: "Preciso agendar para fazer exames de sangue?",
+          a: "Para a maioria dos exames laboratoriais não é necessário agendamento: basta comparecer com o pedido médico e documento com foto, de segunda a sexta das 7h30 às 18h. Exames de imagem e procedimentos especiais podem ser agendados pelo WhatsApp (12) 3887-3535.",
+        },
+        {
+          q: "Quais convênios são aceitos?",
+          a: "Atendemos os principais convênios e planos de saúde da região, além de atendimento particular. Consulte seu plano pelo WhatsApp (12) 3887-3535.",
+        },
+        {
+          q: "Em quanto tempo sai o resultado?",
+          a: "A maioria dos exames de sangue fica pronta em até 24 horas, com resultados disponíveis online. Exames específicos podem levar até 7 dias úteis.",
+        },
+      ]),
+      breadcrumbLd([
+        ["Início", "/"],
+        ["Laboratório em Caraguatatuba", "/laboratorio-caraguatatuba"],
+      ]),
+    ])}`;
 
 const bioimpedanciaHtml = `
     <h1>Bioimpedância em Caraguatatuba</h1>
@@ -201,8 +308,63 @@ const bioimpedanciaHtml = `
     ${napHtml("Agende sua bioimpedância pelo WhatsApp e acompanhe sua composição corporal com precisão.")}
     ${internalLinksHtml("/bioimpedancia")}`;
 
+/**
+ * Pagina /convenios: "aceita meu convenio?" e o principal desempate local
+ * entre laboratorios (lacuna verificada na auditoria de 01/08: as queries
+ * transacionais de convenio caiam num post de blog). Esta pagina e o destino
+ * transacional; o post /blog/convenios-laboratorio-caraguatatuba segue como
+ * informacional.
+ *
+ * A lista vive tambem em client/src/lib/conveniosData.ts (o client nao pode
+ * importar deste modulo, que usa node:fs). Ao mudar um convenio, mudar NOS
+ * DOIS — o teste de paridade em seo-content.test.ts compara as duas listas.
+ */
+export const CONVENIOS = [
+  "Unimed", "Bradesco Saúde", "SulAmérica", "Amil", "Porto Seguro Saúde",
+  "NotreDame Intermédica", "Hapvida", "Cassi", "Geap", "Postal Saúde",
+  "Economus", "Funasa",
+];
+
+const CONVENIOS_FAQS: Faq[] = [
+  {
+    q: "Meu convênio cobre exame de sangue e exames laboratoriais?",
+    a: "Pela regulamentação da ANS, os planos de saúde cobrem os exames do Rol de Procedimentos, o que inclui a grande maioria dos exames laboratoriais de rotina (hemograma, glicemia, colesterol, hormônios) e exames de imagem como tomografia, ultrassonografia e mamografia. Confirme a cobertura do seu plano pelo WhatsApp (12) 3887-3535.",
+  },
+  {
+    q: "Preciso de autorização prévia do convênio?",
+    a: "Alguns convênios exigem autorização prévia para exames de maior complexidade, como tomografia. Nossa equipe orienta sobre a necessidade de autorização para o seu caso no momento do agendamento.",
+  },
+  {
+    q: "O que preciso levar para usar o convênio?",
+    a: "Carteirinha do plano de saúde atualizada, documento de identidade com foto e o pedido médico original.",
+  },
+  {
+    q: "E se eu não tiver convênio?",
+    a: "Atendemos particular com valores acessíveis e pagamento em dinheiro, cartão de crédito, débito ou PIX. Há condições especiais para check-ups e pacotes de exames.",
+  },
+];
+
+function conveniosHtml(): string {
+  const lista = CONVENIOS.map((c) => `<li>${escapeHtml(c)}</li>`).join("");
+  return `
+    <h1>Convênios Aceitos no Laboratório em Caraguatatuba</h1>
+    <p>A Total Quality Medicina Diagnóstica aceita os principais convênios e planos de saúde em Caraguatatuba – SP, para <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/laboratorio-caraguatatuba">exames laboratoriais</a>, <a href="/exames/tomografia-computadorizada">tomografia</a>, <a href="/exames/ultrassonografia">ultrassonografia</a>, <a href="/exames/mamografia">mamografia</a> e <a href="/checkup">check-up</a>.</p>
+    <h2>Planos de saúde atendidos</h2>
+    <ul>${lista}<li>Outros planos regionais e nacionais — consulte o seu</li></ul>
+    <p>A lista é atualizada periodicamente. Confirme a aceitação do seu plano pelo WhatsApp <a href="${NAP.whatsappHref}">(12) 3887-3535</a> antes de agendar.</p>
+    ${faqSectionHtml(CONVENIOS_FAQS)}
+    ${napHtml("Confirme seu convênio e agende seus exames pelo WhatsApp — atendimento de segunda a sexta, das 7h30 às 18h.")}
+    ${internalLinksHtml("/convenios")}
+    ${jsonLd([
+      breadcrumbLd([
+        ["Início", "/"],
+        ["Convênios", "/convenios"],
+      ]),
+    ])}`;
+}
+
 const homeHtml = `
-    <h1>Laboratório de Análises Clínicas e Medicina Diagnóstica em Caraguatatuba</h1>
+    <h1>Laboratório em Caraguatatuba — Total Quality Medicina Diagnóstica</h1>
     <p>Há mais de 23 anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">laboratório de análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>.</p>
     <ul>
       <li>Resultados online em até 24 horas para a maioria dos exames</li>
@@ -210,6 +372,24 @@ const homeHtml = `
       <li>Atendimento particular, convênios e empresas</li>
       <li>Mais de 340 avaliações no Google com nota 4,5</li>
     </ul>
+    ${faqSectionHtml([
+      {
+        q: "Quais exames são realizados no laboratório em Caraguatatuba?",
+        a: "A Total Quality realiza mais de 3.000 tipos de exames em Caraguatatuba - SP, incluindo exames de sangue (hemograma, glicemia, colesterol, hormônios), tomografia computadorizada, ultrassonografia, mamografia digital, raio-X, eletrocardiograma, holter 24h, MAPA, bioimpedância e check-up preventivo.",
+      },
+      {
+        q: "Qual o endereço do laboratório em Caraguatatuba?",
+        a: "O laboratório Total Quality está localizado na R. Padre Anchieta, 1010 - Centro, Caraguatatuba - SP. Funcionamento de segunda a sexta, das 07h30 às 18h.",
+      },
+      {
+        q: "Como agendar exames no laboratório em Caraguatatuba?",
+        a: "Você pode agendar seus exames pelo WhatsApp ou pelo telefone (12) 3887-3535. O agendamento também pode ser feito pelo site totalquality.med.br.",
+      },
+      {
+        q: "O laboratório em Caraguatatuba aceita convênios?",
+        a: "Sim, o laboratório Total Quality em Caraguatatuba aceita diversos convênios de saúde. Entre em contato pelo WhatsApp para verificar se seu plano é aceito.",
+      },
+    ])}
     ${napHtml("Agende seus exames pelo WhatsApp (12) 3887-3535 ou visite-nos no Centro de Caraguatatuba.")}
     ${internalLinksHtml("/")}`;
 
@@ -225,6 +405,7 @@ export function getSeoContentForPath(pathname: string): string | null {
 
   if (path === "/privacidade") return wrap(privacidadeHtml);
   if (path === "/checkup") return wrap(checkupHtml);
+  if (path === "/convenios") return wrap(conveniosHtml());
   if (path === "/exames") return wrap(examesHubHtml());
 
   const examMatch = path.match(/^\/exames\/([a-z0-9\-]+)$/);
@@ -355,6 +536,7 @@ const CLIENT_ROUTES = new Set([
   "/",
   "/exames",
   "/checkup",
+  "/convenios",
   "/privacidade",
   "/bioimpedancia",
   "/blog",

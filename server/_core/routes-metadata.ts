@@ -195,8 +195,11 @@ const blogMetadata: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
   "exame-de-sangue-caraguatatuba": {
-    title: "Onde Fazer Exame de Sangue em Caraguatatuba — Guia Completo 2026",
-    description: "Descubra onde fazer exame de sangue em Caraguatatuba - SP com qualidade. Guia completo com tipos de exames, preparo, preços e como agendar.",
+    // Reposicionado (auditoria 01/08): a intencao transacional "onde fazer"
+    // canibalizava a pagina de servico /exames/exames-de-sangue. O artigo vira
+    // informacional (tipos e preparo); a pagina de servico e o destino comercial.
+    title: "Exame de Sangue: Tipos, Preparo e Jejum — Guia Total Quality",
+    description: "Guia completo sobre exames de sangue: quais os principais tipos, como se preparar, quanto tempo de jejum e como ler o pedido médico. Por Total Quality Caraguatatuba.",
     keywords: "exame de sangue, laboratório Caraguatatuba, hemograma, análises clínicas",
     ogTitle: "Exame de Sangue em Caraguatatuba",
     ogDescription: "Tudo o que você precisa saber sobre exames de sangue em Caraguatatuba.",
@@ -260,7 +263,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
 const staticRoutes: Record<string, RouteMetadata> = {
   "/": {
     title: "Laboratório em Caraguatatuba | Total Quality",
-    description: "Laboratório de análises clínicas em Caraguatatuba - SP. Exames de sangue, tomografia, ultrassom e check-up. Agende pelo WhatsApp (12) 3887-3535.",
+    description: "Laboratório em Caraguatatuba com resultados em até 24h. Há 23 anos no Litoral Norte: exames de sangue, tomografia, ultrassom e check-up. Nota 4,5 no Google.",
     keywords: "laboratório Caraguatatuba, exames de sangue, tomografia, ultrassom, check-up",
     ogTitle: "Total Quality Medicina Diagnóstica e Laboratorial | Exames de Sangue em Caraguatatuba - SP",
     ogDescription: "Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba - SP. Exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia e mais de 3.000 tipos de exames. Agende pelo WhatsApp.",
@@ -319,14 +322,24 @@ const staticRoutes: Record<string, RouteMetadata> = {
     priority: 0.9,
     changefreq: "weekly",
   },
+  "/convenios": {
+    title: "Convênios Aceitos | Laboratório Total Quality Caraguatatuba",
+    description: "Veja os convênios e planos de saúde aceitos no laboratório Total Quality em Caraguatatuba: Unimed, Bradesco Saúde, SulAmérica, Amil e mais. Confirme pelo WhatsApp.",
+    keywords: "convênios laboratório Caraguatatuba, plano de saúde exames, Unimed Caraguatatuba",
+    ogTitle: "Convênios Aceitos | Total Quality Caraguatatuba",
+    ogDescription: "Principais convênios e planos de saúde aceitos para exames laboratoriais e de imagem em Caraguatatuba.",
+    canonical: "https://totalquality.med.br/convenios",
+    priority: 0.7,
+    changefreq: "monthly",
+  },
   "/laboratorio-caraguatatuba": {
     // Intencao distinta da home para evitar canibalizacao: home = "laboratório em
     // caraguatatuba" (transacional); esta pagina = "laboratório de análises clínicas".
     title: "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality",
     description: "Laboratório de análises clínicas em Caraguatatuba: hemograma, exames de sangue, hormônios e mais de 3.000 exames. Resultados em até 24h. Agende.",
     keywords: "laboratório Caraguatatuba, análises clínicas, exames de sangue, diagnóstico",
-    ogTitle: "Laboratório em Caraguatatuba | Total Quality",
-    ogDescription: "Laboratório moderno com mais de 3.000 tipos de exames e tecnologia de última geração.",
+    ogTitle: "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality",
+    ogDescription: "Laboratório de análises clínicas com mais de 3.000 tipos de exames e resultados em até 24h.",
     canonical: "https://totalquality.med.br/laboratorio-caraguatatuba",
     priority: 0.8,
     changefreq: "monthly",

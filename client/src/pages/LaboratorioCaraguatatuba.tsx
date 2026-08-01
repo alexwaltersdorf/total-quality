@@ -74,7 +74,7 @@ export default function LaboratorioCaraguatatuba() {
   const scrollRef = useScrollReveal();
 
   useEffect(() => {
-    document.title = "Laboratório em Caraguatatuba | Total Quality — Exames e Diagnósticos";
+    document.title = "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality";
   }, []);
 
   useCanonical("https://totalquality.med.br/laboratorio-caraguatatuba");
@@ -343,7 +343,7 @@ export default function LaboratorioCaraguatatuba() {
             <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
               O laboratório Total Quality em Caraguatatuba aceita diversos convênios de saúde. Veja a{" "}
               <Link
-                href="/blog/convenios-laboratorio-caraguatatuba"
+                href="/convenios"
                 className="text-brand hover:underline"
               >
                 lista completa de convênios aceitos

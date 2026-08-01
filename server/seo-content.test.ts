@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  CONVENIOS,
   getSeoContentForPath,
   injectSeoContent,
   resolveHttpStatus,
 } from "./_core/seo-content";
+import { CONVENIOS as CONVENIOS_CLIENT } from "@/lib/conveniosData";
 import { getAllRoutes, getKnownBlogSlugs } from "./_core/routes-metadata";
 import { getLegacyRedirect, isGone } from "./_core/legacy-redirects";
 
@@ -280,7 +282,9 @@ describe("GUARD-RAIL: links internos da landing de laboratorio (nao remover)", (
     "/exames/espirometria",
     "/bioimpedancia",
     "/blog/vitamina-d-importancia-saude",
-    "/blog/convenios-laboratorio-caraguatatuba",
+    // Auditoria ago/2026 (C6): a duvida de convenio e transacional — o link
+    // aponta para a pagina /convenios, nao mais para o post informacional.
+    "/convenios",
     "/blog/alimentacao-e-exames-laboratoriais",
   ])("linka para %s", (href) => {
     expect(html).toContain(`href="${href}"`);
@@ -330,5 +334,31 @@ describe("Redirecionamentos legados (auditoria Search Console jul/2026)", () => 
     expect(html).toContain("<h1>Política de Privacidade</h1>");
     expect(html).toContain("LGPD");
     expect(resolveHttpStatus("/privacidade", getKnownBlogSlugs())).toBe(200);
+  });
+});
+
+describe("GUARD-RAIL: pagina /convenios (auditoria ago/2026, fila C6)", () => {
+  it("existe, e pre-renderizada e resolve 200", () => {
+    const html = getSeoContentForPath("/convenios");
+    expect(html).toBeTruthy();
+    expect(html).toContain("<h1>Convênios Aceitos no Laboratório em Caraguatatuba</h1>");
+    expect(html).toContain("Perguntas frequentes");
+    expect(html).toContain("FAQPage");
+    expect(resolveHttpStatus("/convenios", getKnownBlogSlugs())).toBe(200);
+  });
+
+  it("as listas de convenios do servidor e do client sao identicas (paridade)", () => {
+    // A lista vive em dois lugares porque o client nao pode importar
+    // seo-content.ts (usa node:fs). Se este teste falhar, alguem atualizou
+    // um lado e esqueceu o outro — sincronizar os dois arquivos.
+    expect(CONVENIOS).toEqual(CONVENIOS_CLIENT);
+    expect(CONVENIOS.length).toBeGreaterThanOrEqual(10);
+  });
+
+  it("todo convenio da lista aparece no HTML pre-renderizado", () => {
+    const html = getSeoContentForPath("/convenios")!;
+    for (const convenio of CONVENIOS) {
+      expect(html, `convenio ${convenio} sumiu da pagina`).toContain(convenio);
+    }
   });
 });

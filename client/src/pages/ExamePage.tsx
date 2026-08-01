@@ -33,7 +33,7 @@ export default function ExamePage() {
   // SEO: Structured Data — BreadcrumbList
   const breadcrumbs = useMemo(() => exam ? [
     { name: "Início", url: "/" },
-    { name: "Exames", url: "/#exames" },
+    { name: "Exames", url: "/exames" },
     { name: exam.shortTitle, url: `/exames/${exam.slug}` },
   ] : [], [exam]);
   useBreadcrumbSchema(breadcrumbs);
