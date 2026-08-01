@@ -151,7 +151,7 @@ export default function ExamesSection() {
           <div>
             <span className="reveal section-label mb-4 block">Exames de Sangue, Laboratoriais e Diagnósticos em Caraguatatuba</span>
             <h2 className="reveal heading-display text-5xl sm:text-6xl lg:text-7xl text-text" style={{ transitionDelay: "100ms" }}>
-              PRINCIPAIS
+              PRINCIPAIS{" "}
               <br />
               <span className="text-brand">EXAMES</span>
             </h2>

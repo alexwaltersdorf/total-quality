@@ -100,7 +100,7 @@ export default function Bioimpedancia() {
               <h1 className="reveal heading-display text-[clamp(3rem,8vw,6.5rem)] text-text leading-[0.85] mb-6" style={{ transitionDelay: "100ms" }}>
                 BIO
                 <br />
-                <span className="text-brand">IMPEDÂNCIA</span>
+                <span className="text-brand">IMPEDÂNCIA</span>{" "}
                 <span className="block text-base lg:text-lg text-text-light font-light tracking-wide mt-4 normal-case">
                   Bioimpedância em Caraguatatuba - SP | Total Quality Medicina Diagnóstica
                 </span>
@@ -157,7 +157,7 @@ export default function Bioimpedancia() {
             <div className="reveal">
               <span className="section-label mb-6 block">O Exame</span>
               <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-6">
-                O QUE É A<br /><span className="text-brand">BIOIMPEDÂNCIA?</span>
+                O QUE É A{" "}<br /><span className="text-brand">BIOIMPEDÂNCIA?</span>
               </h2>
               <div className="space-y-4 text-text-light leading-relaxed">
                 <p>
@@ -218,7 +218,7 @@ export default function Bioimpedancia() {
               <div className="reveal lg:sticky lg:top-28">
                 <span className="section-label mb-6 block">Indicações</span>
                 <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-6">
-                  PARA QUEM É<br /><span className="text-brand">INDICADO?</span>
+                  PARA QUEM É{" "}<br /><span className="text-brand">INDICADO?</span>
                 </h2>
                 <p className="text-text-light text-lg leading-relaxed">
                   A bioimpedância é uma ferramenta versátil, útil tanto para atletas de alto rendimento quanto para quem busca melhorar a saúde e a forma física.
@@ -278,7 +278,7 @@ export default function Bioimpedancia() {
               <div className="reveal lg:sticky lg:top-28">
                 <span className="section-label mb-6 block">Dúvidas</span>
                 <h2 className="heading-display text-[clamp(2.5rem,5vw,4rem)] text-text leading-[0.9] mb-6">
-                  PERGUNTAS<br /><span className="text-brand">FREQUENTES</span>
+                  PERGUNTAS{" "}<br /><span className="text-brand">FREQUENTES</span>
                 </h2>
                 <p className="text-text-light leading-relaxed">
                   Tire suas dúvidas sobre o exame de bioimpedância. Se precisar de mais informações, entre em contato conosco.
@@ -310,7 +310,7 @@ export default function Bioimpedancia() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="reveal">
               <h2 className="heading-display text-[clamp(2.5rem,5vw,5rem)] leading-[0.85] mb-6">
-                CONHEÇA SEU<br /><span className="text-white/80">CORPO POR DENTRO</span>
+                CONHEÇA SEU{" "}<br /><span className="text-white/80">CORPO POR DENTRO</span>
               </h2>
               <p className="text-white/70 text-lg leading-relaxed max-w-md mb-8">
                 Agende seu exame de bioimpedância e tenha dados precisos para tomar as melhores decisões sobre sua saúde, nutrição e treino.

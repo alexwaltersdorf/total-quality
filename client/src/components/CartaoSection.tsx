@@ -25,7 +25,7 @@ export default function CartaoSection() {
               Novidade
             </span>
             <h2 className="heading-display text-5xl sm:text-6xl lg:text-7xl text-text mb-6">
-              CARTÃO
+              CARTÃO{" "}
               <br />
               <span className="text-brand">TOTAL QUALITY</span>
             </h2>

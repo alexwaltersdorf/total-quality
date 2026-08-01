@@ -363,6 +363,52 @@ describe("GUARD-RAIL: pagina /convenios (auditoria ago/2026, fila C6)", () => {
   });
 });
 
+describe("GUARD-RAIL: headings sem palavras coladas (auditoria HeadingsMap ago/2026)", () => {
+  // Titulos JSX quebrados com <br/> ou <span> empilhados SEM espaco explicito
+  // concatenam sem espaco no nome acessivel: "PRINCIPAIS"+"EXAMES" vira
+  // "PRINCIPAISEXAMES" para HeadingsMap, leitores de tela e Google.
+  // Regra: sempre terminar a linha de texto com {" "} antes de <br/> ou de
+  // outro <span>. Unica excecao intencional: BIO<br/>IMPEDANCIA, que forma
+  // a palavra correta "BIOIMPEDANCIA" justamente por concatenar sem espaco.
+  it("nenhum heading do client junta palavras sem espaço", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const files = fs
+      .readdirSync(path.resolve(import.meta.dirname, "..", "client", "src"), {
+        recursive: true,
+        encoding: "utf-8",
+      })
+      .filter((f) => f.endsWith(".tsx"));
+    const headingRe = /<h([1-6])[^>]*>([\s\S]*?)<\/h\1>/g;
+    const stripTags = (s: string) => s.replace(/\{[^}]*\}/g, "").replace(/<[^>]+>/g, "");
+    const problemas: string[] = [];
+    for (const rel of files) {
+      const src = fs.readFileSync(
+        path.resolve(import.meta.dirname, "..", "client", "src", rel),
+        "utf-8"
+      );
+      for (const m of src.matchAll(headingRe)) {
+        const lines = m[2].split("\n");
+        for (let i = 0; i < lines.length - 1; i++) {
+          const a = stripTags(lines[i].trimEnd());
+          const b = stripTags(lines.slice(i + 1).join("")).trimStart();
+          const nxt = (lines[i + 1] ?? "").trim();
+          const juncao =
+            a && b &&
+            /[\p{L}\p{N}]$/u.test(a) && /^[\p{L}\p{N}]/u.test(b) &&
+            !lines[i].trimEnd().endsWith('{" "}') &&
+            (nxt.startsWith("<br") || nxt.startsWith("<span") || lines[i].includes("<br />"));
+          if (juncao && !(a.trim().endsWith("BIO") && b.startsWith("IMPEDÂNCIA"))) {
+            problemas.push(`${rel}: "${a.trim().slice(-25)}" + "${b.slice(0, 25)}"`);
+            break;
+          }
+        }
+      }
+    }
+    expect(problemas, problemas.join("\n")).toEqual([]);
+  });
+});
+
 describe("GUARD-RAIL: coleta sem agendamento (confirmado pelo Alex em 01/08/2026)", () => {
   // A coleta laboratorial e por ordem de chegada — argumento de desempate nas
   // buscas locais ("exame de sangue sem agendamento"). As paginas de exames de

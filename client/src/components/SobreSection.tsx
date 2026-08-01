@@ -60,7 +60,7 @@ export default function SobreSection() {
           <div className="lg:col-span-6 reveal-right pt-4 lg:pt-12">
             <span className="section-label mb-6 block">Sobre a Clínica de Medicina Diagnóstica</span>
             <h2 className="heading-display text-5xl sm:text-6xl text-text mb-8">
-              SOBRE A
+              SOBRE A{" "}
               <br />
               <span className="text-brand">TOTAL QUALITY</span>
             </h2>

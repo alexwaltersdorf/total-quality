@@ -110,7 +110,7 @@ export default function ContatoSection() {
           <div>
             <span className="reveal section-label mb-4 block">Agende seu exame de sangue ou diagnóstico em Caraguatatuba</span>
             <h2 className="reveal heading-display text-5xl sm:text-6xl lg:text-7xl text-text" style={{ transitionDelay: "100ms" }}>
-              ENTRE EM
+              ENTRE EM{" "}
               <br />
               <span className="text-brand">CONTATO</span>
             </h2>

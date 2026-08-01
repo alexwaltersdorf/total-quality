@@ -121,7 +121,7 @@ export default function LaboratorioCaraguatatuba() {
 
                 <h1 className="reveal heading-display text-4xl lg:text-5xl xl:text-6xl text-text mb-6">
                   LABORATÓRIO EM{" "}
-                  <span className="text-brand">CARAGUATATUBA</span>
+                  <span className="text-brand">CARAGUATATUBA</span>{" "}
                   <span className="block text-2xl lg:text-3xl text-text-light font-light mt-2">
                     Total Quality Medicina Diagnóstica
                   </span>

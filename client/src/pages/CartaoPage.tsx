@@ -109,8 +109,8 @@ export default function CartaoPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight mb-6">
-                  <span className="text-text-light block">POR QUE</span>
-                  <span className="text-brand block">ESCOLHER TOTAL</span>
+                  <span className="text-text-light block">POR QUE</span>{" "}
+                  <span className="text-brand block">ESCOLHER TOTAL</span>{" "}
                   <span className="text-brand block">QUALITY CARE?</span>
                 </h2>
                 <p className="text-lg text-text-light leading-relaxed">
@@ -146,7 +146,7 @@ export default function CartaoPage() {
               Planos de Proteção
             </p>
             <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight mb-6">
-              <span className="text-text-light block">ESCOLHA SEU</span>
+              <span className="text-text-light block">ESCOLHA SEU</span>{" "}
               <span className="text-brand block">PLANO</span>
             </h2>
             <p className="text-lg text-text-light max-w-2xl mx-auto">
@@ -182,7 +182,7 @@ export default function CartaoPage() {
               Seus Desafios
             </p>
             <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
-              <span className="text-text-light block">VOCÊ ENFRENTA</span>
+              <span className="text-text-light block">VOCÊ ENFRENTA</span>{" "}
               <span className="text-brand block">ESSES PROBLEMAS?</span>
             </h2>
           </div>
@@ -225,8 +225,8 @@ export default function CartaoPage() {
                 A Solução
               </p>
               <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight mb-6">
-                <span className="text-text-light block">TOTAL QUALITY</span>
-                <span className="text-brand block">CARE</span>
+                <span className="text-text-light block">CONHEÇA O</span>{" "}
+                <span className="text-brand block">TOTAL QUALITY CARE</span>
               </h2>
               <p className="text-lg text-text-light mb-6 leading-relaxed">
                 Um cartão que oferece acesso completo a telemedicina, descontos em exames, cashback em PIX e benefícios exclusivos. Tudo em um único lugar, por uma mensalidade acessível.
@@ -264,7 +264,7 @@ export default function CartaoPage() {
               Cashback
             </p>
             <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
-              <span className="text-text-light block">SUA MENSALIDADE</span>
+              <span className="text-text-light block">SUA MENSALIDADE</span>{" "}
               <span className="text-brand block">VOLTA EM CASHBACK</span>
             </h2>
           </div>
@@ -323,7 +323,7 @@ export default function CartaoPage() {
               Simule Seu Ganho
             </p>
             <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
-              <span className="text-text-light block">QUANTO VOCÊ VAI</span>
+              <span className="text-text-light block">QUANTO VOCÊ VAI</span>{" "}
               <span className="text-brand block">GANHAR EM CASHBACK?</span>
             </h2>
           </div>
@@ -382,7 +382,7 @@ export default function CartaoPage() {
               Stack de Valor
             </p>
             <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
-              <span className="text-text-light block">O QUE ESTÁ</span>
+              <span className="text-text-light block">O QUE ESTÁ</span>{" "}
               <span className="text-brand block">INCLUSO NO SEU PLANO</span>
             </h2>
           </div>
@@ -415,7 +415,7 @@ export default function CartaoPage() {
               Autoridade Local
             </p>
             <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
-              <span className="text-text-light block">POR QUE CONFIAR</span>
+              <span className="text-text-light block">POR QUE CONFIAR</span>{" "}
               <span className="text-brand block">NA TOTAL QUALITY?</span>
             </h2>
           </div>
@@ -447,7 +447,7 @@ export default function CartaoPage() {
               Depoimentos
             </p>
             <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
-              <span className="text-text-light block">O QUE NOSSOS</span>
+              <span className="text-text-light block">O QUE NOSSOS</span>{" "}
               <span className="text-brand block">CLIENTES DIZEM</span>
             </h2>
           </div>
@@ -499,7 +499,7 @@ export default function CartaoPage() {
               Comparação
             </p>
             <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
-              <span className="text-text-light block">COM VS SEM</span>
+              <span className="text-text-light block">COM VS SEM</span>{" "}
               <span className="text-brand block">TOTAL QUALITY CARE</span>
             </h2>
           </div>
@@ -596,7 +596,7 @@ export default function CartaoPage() {
               Comparação
             </p>
             <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
-              <span className="text-text-light block">COMPARAÇÃO</span>
+              <span className="text-text-light block">COMPARAÇÃO</span>{" "}
               <span className="text-brand block">COMPLETA</span>
             </h2>
           </div>
@@ -688,7 +688,7 @@ export default function CartaoPage() {
               Garantias
             </p>
             <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
-              <span className="text-text-light block">GARANTIAS E</span>
+              <span className="text-text-light block">GARANTIAS E</span>{" "}
               <span className="text-brand block">CERTIFICADOS</span>
             </h2>
           </div>
@@ -719,7 +719,7 @@ export default function CartaoPage() {
               Dúvidas
             </p>
             <h2 className="text-5xl sm:text-6xl font-bebas-neue tracking-wide leading-tight">
-              <span className="text-text-light block">PERGUNTAS</span>
+              <span className="text-text-light block">PERGUNTAS</span>{" "}
               <span className="text-brand block">FREQUENTES</span>
             </h2>
           </div>

@@ -54,9 +54,9 @@ export default function DiferenciaisSection() {
           <div>
             <span className="reveal section-label mb-4 block">Diferenciais da Clínica</span>
             <h2 className="reveal heading-display text-5xl sm:text-6xl lg:text-7xl text-text" style={{ transitionDelay: "100ms" }}>
-              POR QUE ESCOLHER
+              NOSSOS{" "}
               <br />
-              <span className="text-brand">A TOTAL QUALITY?</span>
+              <span className="text-brand">DIFERENCIAIS</span>
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
