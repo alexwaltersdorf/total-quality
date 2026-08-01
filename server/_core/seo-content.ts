@@ -383,7 +383,7 @@ const homeHtml = `
       },
       {
         q: "Como agendar exames no laboratório em Caraguatatuba?",
-        a: "Você pode agendar seus exames pelo WhatsApp ou pelo telefone (12) 3887-3535. O agendamento também pode ser feito pelo site totalquality.med.br.",
+        a: "Exames laboratoriais e de sangue não precisam de agendamento: o atendimento é por ordem de chegada, de segunda a sexta, das 07h30 às 18h. Exames de imagem e procedimentos especiais podem ser agendados pelo WhatsApp ou telefone (12) 3887-3535, ou pelo site totalquality.med.br.",
       },
       {
         q: "O laboratório em Caraguatatuba aceita convênios?",
