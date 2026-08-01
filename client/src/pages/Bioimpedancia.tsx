@@ -139,7 +139,7 @@ export default function Bioimpedancia() {
             </div>
             <div className="lg:col-span-7 reveal-right">
               <div className="relative">
-                <img src={HERO_IMG} alt="Exame de Bioimpedância" className="w-full h-[50vh] lg:h-[75vh] object-cover" />
+                <img src={HERO_IMG} alt="Exame de bioimpedância na Total Quality em Caraguatatuba - SP - análise de composição corporal" className="w-full h-[50vh] lg:h-[75vh] object-cover" />
                 <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-5 max-w-xs shadow-sm">
                   <p className="text-xs uppercase tracking-[0.15em] font-semibold text-brand mb-1">Não Invasivo</p>
                   <p className="text-sm text-text-light">Exame rápido, indolor e com resultados imediatos</p>
@@ -172,7 +172,7 @@ export default function Bioimpedancia() {
               </div>
             </div>
             <div className="reveal-right">
-              <img src={DETAIL_IMG} alt="Relatório de composição corporal" className="w-full h-auto object-cover" />
+              <img src={DETAIL_IMG} alt="Relatório de composição corporal do exame de bioimpedância - Total Quality Caraguatatuba" className="w-full h-auto object-cover" />
             </div>
           </div>
         </div>

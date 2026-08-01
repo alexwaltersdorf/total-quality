@@ -210,6 +210,22 @@ describe("GUARD-RAIL: horario oficial unico (nao remover)", () => {
     expect((indexHtml.match(/"opens": "07:30"/g) || []).length).toBe(2);
     expect(indexHtml).not.toMatch(/Saturday|Sunday/);
   });
+
+  it("og:image, favicon e imagem do schema saem do domínio próprio, nunca de CDN de terceiro", async () => {
+    // Auditoria ago/2026: og:image, favicon e o "image" do LocalBusiness
+    // apontavam para um PNG generico ("optik-hero") no CloudFront da Manus —
+    // a imagem da ENTIDADE local vinha de dominio de terceiro. Fotos reais
+    // da clinica no dominio proprio sao sinal de procedencia local.
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const indexHtml = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "../client/index.html"),
+      "utf-8"
+    );
+    expect(indexHtml).not.toContain("cloudfront.net");
+    expect(indexHtml).toContain('og:image" content="https://totalquality.med.br/images/');
+    expect(indexHtml).toContain('"image": ["https://totalquality.med.br/images/');
+  });
 });
 
 describe("GUARD-RAIL: links internos em todas as rotas (nao remover)", () => {

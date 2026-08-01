@@ -164,7 +164,7 @@ export default function CheckUp() {
             </div>
           </div>
           <div className="reveal-right">
-            <img src={HERO_IMG} alt="Check-Up Preventivo" className="w-full rounded-lg shadow-lg" />
+            <img src={HERO_IMG} alt="Check-up preventivo na Total Quality em Caraguatatuba - SP - exames laboratoriais e de imagem em um só lugar" className="w-full rounded-lg shadow-lg" />
           </div>
         </div>
       </section>
@@ -287,7 +287,7 @@ export default function CheckUp() {
             </div>
 
             <div className="reveal-right">
-              <img src={PROCESS_IMG} alt="Processo de Check-Up" className="w-full rounded-lg shadow-lg" />
+              <img src={PROCESS_IMG} alt="Etapas do check-up preventivo na clínica Total Quality em Caraguatatuba - SP" className="w-full rounded-lg shadow-lg" />
             </div>
           </div>
         </div>

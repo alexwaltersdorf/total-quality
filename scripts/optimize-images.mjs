@@ -40,6 +40,28 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
 const meta = await sharp(src).metadata();
 const applicable = widths.filter((w) => w <= meta.width);
 
+/*
+ * Geotag EXIF da clínica (R. Padre Anchieta, 1010 — Caraguatatuba/SP).
+ * -23.6225 → 23°37'21"S · -45.4132 → 45°24'47.5"W
+ * Honestidade sobre o efeito: o Google declara que não usa EXIF para
+ * ranqueamento; o valor aqui é consistência de procedência (autoria +
+ * local) a custo zero na geração. Não esperar ganho de posição por isso.
+ * Requer sharp >= 0.33 (withExif); se a versão local for mais antiga,
+ * remover o .withExif() abaixo e atualizar o sharp.
+ */
+const EXIF_CLINICA = {
+  IFD0: {
+    Copyright: "Total Quality Medicina Diagnóstica - Caraguatatuba/SP",
+    Artist: "Total Quality Medicina Diagnóstica",
+  },
+  IFD3: {
+    GPSLatitudeRef: "S",
+    GPSLatitude: "23/1 37/1 2100/100",
+    GPSLongitudeRef: "W",
+    GPSLongitude: "45/1 24/1 4752/100",
+  },
+};
+
 console.log(`${slug}: origem ${meta.width}x${meta.height} (${Math.round(fs.statSync(src).size / 1024)} KB)`);
 
 for (const width of applicable) {
@@ -48,7 +70,11 @@ for (const width of applicable) {
     ["webp", { quality: 72 }],
   ]) {
     const file = path.join(OUT_DIR, `${slug}-${width}.${format}`);
-    await sharp(src).resize({ width }).toFormat(format, options).toFile(file);
+    await sharp(src)
+      .resize({ width })
+      .withExif(EXIF_CLINICA)
+      .toFormat(format, options)
+      .toFile(file);
     console.log(`  ${slug}-${width}.${format}: ${Math.round(fs.statSync(file).size / 1024)} KB`);
   }
 }
