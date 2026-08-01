@@ -384,6 +384,7 @@ export default function LaboratorioCaraguatatuba() {
                   <p>Segunda a Sexta: <strong className="text-text">07h30 às 18h</strong></p>
                   <p>Sábado e Domingo: <strong className="text-text">fechado</strong></p>
                   <p className="text-sm italic">Sem agendamento — atendimento por ordem de chegada</p>
+                  <p className="text-sm italic">Coleta domiciliar disponível mediante agendamento</p>
                 </div>
               </div>
               <div className="reveal bg-white rounded-2xl p-8 border border-black/5">

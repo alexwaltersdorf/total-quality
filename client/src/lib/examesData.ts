@@ -73,6 +73,7 @@ export const examesData: ExamData[] = [
       { q: "Preciso agendar horário para fazer exame de sangue?", a: "Não. A coleta é feita sem agendamento, por ordem de chegada: basta comparecer com o pedido médico e documento com foto, de segunda a sexta, das 7h30 às 18h. Se preferir, chame no WhatsApp (12) 3887-3535 para tirar dúvidas e já receber as orientações de preparo." },
       { q: "Quanto custa um exame de sangue?", a: "O valor varia conforme o exame solicitado. Envie o seu pedido médico pelo WhatsApp (12) 3887-3535 e retornamos com o orçamento. Atendemos particular com pagamento em dinheiro, cartão, débito ou PIX, e o Cartão Total Quality oferece até 70% de desconto em exames laboratoriais." },
       { q: "Meu convênio cobre exames de sangue?", a: "Aceitamos os principais convênios e planos de saúde da região, e os exames laboratoriais de rotina fazem parte do Rol de Procedimentos da ANS. Confirme a aceitação do seu plano pelo WhatsApp (12) 3887-3535." },
+      { q: "Vocês fazem coleta domiciliar?", a: "Sim. Realizamos coleta domiciliar de exames laboratoriais em Caraguatatuba. Agende pelo WhatsApp (12) 3887-3535 para confirmar disponibilidade, horários e valores." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar exames de sangue.",
     category: "laboratorio",

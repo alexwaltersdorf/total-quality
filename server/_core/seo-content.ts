@@ -252,6 +252,8 @@ const laboratorioHtml = `
     <p>Atendemos os principais convênios e planos de saúde da região, além de atendimento particular. Veja a <a href="/convenios">lista completa de convênios aceitos</a> ou consulte seu plano pelo WhatsApp (12) 3887-3535.</p>
     <h3>Em quanto tempo sai o resultado?</h3>
     <p>A maioria dos exames de sangue fica pronta em até 24 horas, com resultados disponíveis online. Exames específicos podem levar até 7 dias úteis.</p>
+    <h3>Vocês fazem coleta domiciliar?</h3>
+    <p>Sim. Realizamos coleta domiciliar de <a href="/exames/exames-de-sangue">exames laboratoriais</a> em Caraguatatuba. Agende pelo WhatsApp (12) 3887-3535 para confirmar disponibilidade, horários e valores.</p>
     ${napHtml("Venha fazer seus exames laboratoriais no Centro de Caraguatatuba, a poucos minutos da Praça Cândido Mota.")}
     ${internalLinksHtml("/laboratorio-caraguatatuba")}
     ${jsonLd([
@@ -278,6 +280,10 @@ const laboratorioHtml = `
         {
           q: "Em quanto tempo sai o resultado?",
           a: "A maioria dos exames de sangue fica pronta em até 24 horas, com resultados disponíveis online. Exames específicos podem levar até 7 dias úteis.",
+        },
+        {
+          q: "Vocês fazem coleta domiciliar?",
+          a: "Sim. Realizamos coleta domiciliar de exames laboratoriais em Caraguatatuba. Agende pelo WhatsApp (12) 3887-3535 para confirmar disponibilidade, horários e valores.",
         },
       ]),
       breadcrumbLd([
@@ -372,6 +378,7 @@ const homeHtml = `
     <p>Há mais de 23 anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">laboratório de análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>.</p>
     <ul>
       <li>Resultados online em até 24 horas para a maioria dos exames</li>
+      <li>Coleta laboratorial sem agendamento, por ordem de chegada — e coleta domiciliar mediante agendamento</li>
       <li>Equipamentos modernos e equipe especializada</li>
       <li>Atendimento particular, convênios e empresas</li>
       <li>Mais de 340 avaliações no Google com nota 4,5</li>
