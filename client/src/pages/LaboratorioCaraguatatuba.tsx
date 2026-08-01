@@ -5,6 +5,7 @@
  */
 import ResponsiveImage from "@/components/ResponsiveImage";
 import { useEffect } from "react";
+import { Link } from "wouter";
 import { ArrowUpRight, MapPin, Phone, Clock, CheckCircle, Stethoscope, Microscope, Heart, Brain, Shield } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -14,26 +15,51 @@ import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { trackScheduleExam } from "@/lib/tracking";
 
 
-const examesLaboratoriais = [
-  "Hemograma completo", "Glicemia em jejum", "Colesterol total e frações",
-  "Triglicerídeos", "TSH e T4 livre", "PSA total e livre",
-  "Vitamina D", "Hemoglobina glicada", "Ureia e creatinina",
-  "TGO e TGP", "Ácido úrico", "Hormônios",
-  "Marcadores tumorais", "Coagulograma", "Exame de urina",
-  "Exame toxicológico", "Sorologias", "Parasitológico de fezes",
+/*
+ * Os itens com `href` viram links internos reais (auditoria de links internos,
+ * jul/2026). Antes a lista inteira era <div> + <span>: o Google via os nomes
+ * dos exames como texto solto, sem caminho para as paginas que os aprofundam.
+ *
+ * Regra ao editar: so colocar `href` para pagina que EXISTE — item sem pagina
+ * fica como texto. Link para rota inexistente cai no 404 real de
+ * `resolveHttpStatus` e desperdica rastreamento.
+ */
+type ExamLink = { name: string; href?: string };
+
+const examesLaboratoriais: ExamLink[] = [
+  { name: "Hemograma completo", href: "/exames/hemograma" },
+  { name: "Glicemia em jejum" },
+  { name: "Colesterol total e frações" },
+  { name: "Triglicerídeos" },
+  { name: "TSH e T4 livre" },
+  { name: "PSA total e livre" },
+  { name: "Vitamina D", href: "/blog/vitamina-d-importancia-saude" },
+  { name: "Hemoglobina glicada" },
+  { name: "Ureia e creatinina" },
+  { name: "TGO e TGP" },
+  { name: "Ácido úrico" },
+  { name: "Hormônios" },
+  { name: "Marcadores tumorais" },
+  { name: "Coagulograma" },
+  { name: "Exame de urina" },
+  { name: "Exame toxicológico", href: "/exames/exame-toxicologico" },
+  { name: "Sorologias" },
+  { name: "Parasitológico de fezes" },
 ];
 
-const examesImagem = [
-  { icon: Microscope, name: "Tomografia Computadorizada Multislice" },
-  { icon: Stethoscope, name: "Ultrassonografia Geral e Doppler" },
-  { icon: Shield, name: "Mamografia Digital" },
-  { icon: Microscope, name: "Raio-X Digital" },
+const examesImagem: Array<ExamLink & { icon: typeof Microscope }> = [
+  { icon: Microscope, name: "Tomografia Computadorizada Multislice", href: "/exames/tomografia-computadorizada" },
+  { icon: Stethoscope, name: "Ultrassonografia Geral e Doppler", href: "/exames/ultrassonografia" },
+  { icon: Shield, name: "Mamografia Digital", href: "/exames/mamografia" },
+  { icon: Microscope, name: "Raio-X Digital", href: "/exames/raio-x" },
   { icon: Heart, name: "Ecocardiograma" },
-  { icon: Heart, name: "Holter 24h e MAPA 24h" },
-  { icon: Heart, name: "Eletrocardiograma" },
-  { icon: Brain, name: "Eletroencefalograma" },
-  { icon: Stethoscope, name: "Espirometria" },
-  { icon: Stethoscope, name: "Bioimpedância" },
+  // Holter e MAPA estavam num card so; separados, cada um leva a sua pagina.
+  { icon: Heart, name: "Holter 24h", href: "/exames/holter" },
+  { icon: Heart, name: "MAPA 24h", href: "/exames/mapa" },
+  { icon: Heart, name: "Eletrocardiograma", href: "/exames/eletrocardiograma" },
+  { icon: Brain, name: "Eletroencefalograma", href: "/exames/eletroencefalograma" },
+  { icon: Stethoscope, name: "Espirometria", href: "/exames/espirometria" },
+  { icon: Stethoscope, name: "Bioimpedância", href: "/bioimpedancia" },
 ];
 
 const convenios = [
@@ -150,20 +176,48 @@ export default function LaboratorioCaraguatatuba() {
               Nosso laboratório em Caraguatatuba realiza mais de 3.000 tipos de exames laboratoriais com
               equipamentos automatizados de alta precisão. A coleta é feita por profissionais treinados em
               ambiente confortável e seguro. Os resultados ficam disponíveis online em até 24 horas para a
-              maioria dos exames de sangue em Caraguatatuba.
+              maioria dos{" "}
+              <Link href="/exames/exames-de-sangue" className="text-brand hover:underline">
+                exames de sangue em Caraguatatuba
+              </Link>
+              . Se a ideia é acompanhar a saúde de forma preventiva, veja também o{" "}
+              <Link href="/checkup" className="text-brand hover:underline">
+                check-up completo
+              </Link>{" "}
+              e as{" "}
+              <Link href="/blog/alimentacao-e-exames-laboratoriais" className="text-brand hover:underline">
+                orientações de preparo e jejum
+              </Link>
+              .
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {examesLaboratoriais.map((exame, i) => (
-                <div
-                  key={exame}
-                  className="reveal flex items-center gap-2 bg-white rounded-lg px-4 py-3 border border-black/5"
-                  style={{ transitionDelay: `${i * 30}ms` }}
-                >
-                  <CheckCircle className="w-4 h-4 text-brand flex-shrink-0" />
-                  <span className="text-sm text-text">{exame}</span>
-                </div>
-              ))}
+              {examesLaboratoriais.map((exame, i) => {
+                const conteudo = (
+                  <>
+                    <CheckCircle className="w-4 h-4 text-brand flex-shrink-0" />
+                    <span className="text-sm text-text">{exame.name}</span>
+                  </>
+                );
+                const base =
+                  "reveal flex items-center gap-2 bg-white rounded-lg px-4 py-3 border border-black/5";
+                const delay = { transitionDelay: `${i * 30}ms` };
+
+                return exame.href ? (
+                  <Link
+                    key={exame.name}
+                    href={exame.href}
+                    className={`${base} hover:border-brand hover:shadow-sm transition-all`}
+                    style={delay}
+                  >
+                    {conteudo}
+                  </Link>
+                ) : (
+                  <div key={exame.name} className={base} style={delay}>
+                    {conteudo}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -181,16 +235,32 @@ export default function LaboratorioCaraguatatuba() {
             </p>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {examesImagem.map((exame, i) => (
-                <div
-                  key={exame.name}
-                  className="reveal flex items-center gap-4 bg-neutral-50 rounded-xl px-6 py-5 border border-black/5 hover:shadow-md transition-shadow"
-                  style={{ transitionDelay: `${i * 50}ms` }}
-                >
-                  <exame.icon className="w-6 h-6 text-brand flex-shrink-0" />
-                  <span className="text-text font-medium">{exame.name}</span>
-                </div>
-              ))}
+              {examesImagem.map((exame, i) => {
+                const conteudo = (
+                  <>
+                    <exame.icon className="w-6 h-6 text-brand flex-shrink-0" />
+                    <span className="text-text font-medium">{exame.name}</span>
+                  </>
+                );
+                const base =
+                  "reveal flex items-center gap-4 bg-neutral-50 rounded-xl px-6 py-5 border border-black/5 hover:shadow-md transition-shadow";
+                const delay = { transitionDelay: `${i * 50}ms` };
+
+                return exame.href ? (
+                  <Link
+                    key={exame.name}
+                    href={exame.href}
+                    className={`${base} hover:border-brand`}
+                    style={delay}
+                  >
+                    {conteudo}
+                  </Link>
+                ) : (
+                  <div key={exame.name} className={base} style={delay}>
+                    {conteudo}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -268,8 +338,15 @@ export default function LaboratorioCaraguatatuba() {
               CONVÊNIOS ACEITOS NO LABORATÓRIO EM <span className="text-brand">CARAGUATATUBA</span>
             </h2>
             <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
-              O laboratório Total Quality em Caraguatatuba aceita diversos convênios de saúde. Entre em contato
-              pelo WhatsApp para verificar se o seu plano é aceito e agendar seus exames com praticidade.
+              O laboratório Total Quality em Caraguatatuba aceita diversos convênios de saúde. Veja a{" "}
+              <Link
+                href="/blog/convenios-laboratorio-caraguatatuba"
+                className="text-brand hover:underline"
+              >
+                lista completa de convênios aceitos
+              </Link>{" "}
+              ou entre em contato pelo WhatsApp para verificar se o seu plano é aceito e agendar seus exames
+              com praticidade.
             </p>
 
             <div className="flex flex-wrap gap-3 mb-10">

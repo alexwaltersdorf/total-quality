@@ -126,6 +126,47 @@ describe("GUARD-RAIL: cobertura do sitemap (nao remover)", () => {
   });
 });
 
+describe("GUARD-RAIL: links internos da landing de laboratorio (nao remover)", () => {
+  // Auditoria de links internos, jul/2026: a lista de exames desta pagina era
+  // texto solto (<div>/<span> no React, <li> sem <a> no pre-render). O Google
+  // lia os nomes dos exames sem nenhum caminho para as paginas que os
+  // aprofundam — autoridade parada numa pagina so.
+  const html = getSeoContentForPath("/laboratorio-caraguatatuba")!;
+
+  it.each([
+    "/exames/hemograma",
+    "/exames/exames-de-sangue",
+    "/exames/exame-toxicologico",
+    "/exames/exame-admissional",
+    "/exames/tomografia-computadorizada",
+    "/exames/ultrassonografia",
+    "/exames/mamografia",
+    "/exames/raio-x",
+    "/exames/eletrocardiograma",
+    "/exames/holter",
+    "/exames/mapa",
+    "/exames/eletroencefalograma",
+    "/exames/espirometria",
+    "/bioimpedancia",
+    "/blog/vitamina-d-importancia-saude",
+    "/blog/convenios-laboratorio-caraguatatuba",
+    "/blog/alimentacao-e-exames-laboratoriais",
+  ])("linka para %s", (href) => {
+    expect(html).toContain(`href="${href}"`);
+  });
+
+  it("todo destino linkado existe de verdade (nao gera 404)", () => {
+    // Link para rota inexistente cai no 404 real de resolveHttpStatus e
+    // desperdica rastreamento — pior do que nao ter link.
+    const blogSlugs = getKnownBlogSlugs();
+    const hrefs = Array.from(html.matchAll(/href="(\/[^"#]*)"/g)).map((m) => m[1]);
+    expect(hrefs.length).toBeGreaterThan(15);
+    for (const href of hrefs) {
+      expect(resolveHttpStatus(href, blogSlugs), `${href} nao resolve 200`).toBe(200);
+    }
+  });
+});
+
 describe("Redirecionamentos legados (auditoria Search Console jul/2026)", () => {
   it("mapeia as URLs legadas conhecidas pelo Google para o destino atual", () => {
     expect(getLegacyRedirect("/index")).toBe("/");

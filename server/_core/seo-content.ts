@@ -137,15 +137,25 @@ const laboratorioHtml = `
     <p>A Total Quality é um laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba – SP, com mais de 23 anos de atuação no Litoral Norte. Realizamos mais de 3.000 tipos de exames laboratoriais e de imagem em um só lugar, com equipamentos automatizados de alta precisão, equipe especializada e resultados disponíveis online.</p>
     <h2>Exames laboratoriais realizados</h2>
     <ul>
-      <li>Hemograma completo e exames de sangue em geral</li>
+      <li><a href="/exames/hemograma">Hemograma completo</a> e <a href="/exames/exames-de-sangue">exames de sangue</a> em geral</li>
       <li>Glicemia, hemoglobina glicada e curva glicêmica</li>
       <li>Colesterol total e frações, triglicerídeos (perfil lipídico)</li>
       <li>Hormônios: TSH, T4 livre, testosterona, estradiol e outros</li>
-      <li>Vitamina D, vitamina B12 e ferritina</li>
+      <li><a href="/blog/vitamina-d-importancia-saude">Vitamina D</a>, vitamina B12 e ferritina</li>
       <li>PSA e marcadores tumorais</li>
       <li>Exames de urina e fezes</li>
-      <li>Sorologias e exames toxicológicos</li>
-      <li>Exames ocupacionais (admissional, periódico, demissional e ASO)</li>
+      <li>Sorologias e <a href="/exames/exame-toxicologico">exames toxicológicos</a></li>
+      <li><a href="/exames/exame-admissional">Exames ocupacionais</a> (admissional, periódico, demissional e ASO)</li>
+    </ul>
+    <h2>Exames de imagem e cardiológicos</h2>
+    <ul>
+      <li><a href="/exames/tomografia-computadorizada">Tomografia computadorizada multislice</a></li>
+      <li><a href="/exames/ultrassonografia">Ultrassonografia geral e com Doppler</a></li>
+      <li><a href="/exames/mamografia">Mamografia digital</a></li>
+      <li><a href="/exames/raio-x">Raio-X digital</a></li>
+      <li><a href="/exames/eletrocardiograma">Eletrocardiograma</a>, <a href="/exames/holter">Holter 24h</a> e <a href="/exames/mapa">MAPA 24h</a></li>
+      <li><a href="/exames/eletroencefalograma">Eletroencefalograma</a></li>
+      <li><a href="/exames/espirometria">Espirometria</a> e <a href="/bioimpedancia">bioimpedância</a></li>
     </ul>
     <h2>Por que escolher a Total Quality</h2>
     <ul>
@@ -157,9 +167,9 @@ const laboratorioHtml = `
     </ul>
     <h2>Perguntas frequentes</h2>
     <h3>Preciso agendar para fazer exames de sangue?</h3>
-    <p>Para a maioria dos exames laboratoriais não é necessário agendamento: basta comparecer com o pedido médico e documento com foto. Exames de imagem e procedimentos especiais podem ser agendados pelo WhatsApp.</p>
+    <p>Para a maioria dos exames laboratoriais não é necessário agendamento: basta comparecer com o pedido médico e documento com foto. Veja as <a href="/blog/alimentacao-e-exames-laboratoriais">orientações de preparo e jejum</a> antes de vir. Exames de imagem e procedimentos especiais podem ser agendados pelo WhatsApp.</p>
     <h3>Quais convênios são aceitos?</h3>
-    <p>Atendemos os principais convênios e planos de saúde da região, além de atendimento particular. Consulte seu convênio pelo WhatsApp (12) 3887-3535.</p>
+    <p>Atendemos os principais convênios e planos de saúde da região, além de atendimento particular. Veja a <a href="/blog/convenios-laboratorio-caraguatatuba">lista completa de convênios aceitos</a> ou consulte seu plano pelo WhatsApp (12) 3887-3535.</p>
     <h3>Em quanto tempo sai o resultado?</h3>
     <p>A maioria dos exames de sangue fica pronta em até 24 horas, com resultados disponíveis online. Exames específicos podem levar até 7 dias úteis.</p>
     ${napHtml("Venha fazer seus exames laboratoriais no Centro de Caraguatatuba, a poucos minutos da Praça Cândido Mota.")}
