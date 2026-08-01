@@ -315,7 +315,7 @@ export default function ExamePage() {
             AGENDE SEU <span className="text-brand">{exam.shortTitle.toUpperCase()}</span>
           </h2>
           <p className="reveal text-text-muted text-lg mb-10 max-w-2xl mx-auto" style={{ transitionDelay: "100ms" }}>
-            Entre em contato conosco para agendar seu exame. Atendemos de segunda a sexta, das 08h às 18h.
+            Entre em contato conosco para agendar seu exame. Atendemos de segunda a sexta, das 07h30 às 18h.
           </p>
           <div className="reveal flex flex-wrap gap-4 justify-center" style={{ transitionDelay: "200ms" }}>
             <button

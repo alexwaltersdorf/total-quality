@@ -298,7 +298,7 @@ export default function LaboratorioCaraguatatuba() {
                       <Clock className="w-5 h-5 text-brand flex-shrink-0 mt-0.5" />
                       <div>
                         <p className="font-medium text-text">Horários de Atendimento</p>
-                        <p className="text-text-light">Segunda a Sexta: 08h às 18h</p>
+                        <p className="text-text-light">Segunda a Sexta: 07h30 às 18h</p>
                       </div>
                     </div>
                   </div>
@@ -381,14 +381,14 @@ export default function LaboratorioCaraguatatuba() {
               <div className="reveal bg-white rounded-2xl p-8 border border-black/5">
                 <h3 className="heading-display text-xl text-text mb-4">COLETA LABORATORIAL</h3>
                 <div className="space-y-2 text-text-light">
-                  <p>Segunda a Sexta: <strong className="text-text">06h30 às 16h</strong></p>
-                  <p>Sábado: <strong className="text-text">06h30 às 11h</strong></p>
+                  <p>Segunda a Sexta: <strong className="text-text">07h30 às 18h</strong></p>
+                  <p>Sábado e Domingo: <strong className="text-text">fechado</strong></p>
                 </div>
               </div>
               <div className="reveal bg-white rounded-2xl p-8 border border-black/5">
                 <h3 className="heading-display text-xl text-text mb-4">EXAMES DE IMAGEM</h3>
                 <div className="space-y-2 text-text-light">
-                  <p>Segunda a Sexta: <strong className="text-text">08h às 18h</strong></p>
+                  <p>Segunda a Sexta: <strong className="text-text">07h30 às 18h</strong></p>
                   <p className="text-sm italic">Agendamento prévio necessário</p>
                 </div>
               </div>

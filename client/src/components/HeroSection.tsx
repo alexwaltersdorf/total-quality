@@ -140,7 +140,7 @@ export default function HeroSection() {
               <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-5 max-w-xs shadow-lg">
                 <p className="text-xs uppercase tracking-[0.15em] font-semibold text-brand mb-1">Caraguatatuba - SP</p>
                 <p className="text-sm text-text-light">R. Padre Anchieta, 1010 - Centro</p>
-                <p className="text-sm text-text-light">Seg-Sex: 08h às 18h</p>
+                <p className="text-sm text-text-light">Seg-Sex: 07h30 às 18h</p>
               </div>
             </div>
           </div>

@@ -169,6 +169,47 @@ describe("GUARD-RAIL: nunca anunciar servico nao prestado (nao remover)", () => 
   });
 });
 
+describe("GUARD-RAIL: horario oficial unico (nao remover)", () => {
+  // Decisao do Alex em 02/08/2026: segunda a sexta, 07h30 as 18h; sabado e
+  // domingo FECHADOS. O perfil do Google ja esta assim. Antes desta correcao o
+  // codigo tinha QUATRO horarios diferentes (8h-18h, 7h30-17h30 na sexta,
+  // coleta 6h30-16h e sabado 6h30-11h) — NAP inconsistente e sinal negativo de
+  // ranking local. Se algum horario legado reaparecer, este teste quebra.
+  const HORARIOS_LEGADOS = [/06h30/i, /6h30 às/i, /08h às 18h/i, /17h30/i, /Sábado: /];
+
+  it("nenhum arquivo do cliente volta a citar horario legado", async () => {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const raiz = nodePath.resolve(import.meta.dirname, "../client");
+    const arquivos = fs
+      .readdirSync(nodePath.join(raiz, "src"), { recursive: true })
+      .filter((f) => /\.(tsx?|json)$/.test(String(f)))
+      .map((f) => nodePath.join(raiz, "src", String(f)));
+    arquivos.push(nodePath.join(raiz, "index.html"));
+    for (const arquivo of arquivos) {
+      const conteudo = fs.readFileSync(arquivo, "utf-8");
+      for (const legado of HORARIOS_LEGADOS) {
+        expect(conteudo, `${arquivo} contem horario legado ${legado}`).not.toMatch(legado);
+      }
+    }
+  });
+
+  it("o pre-render e o schema usam o horario oficial", async () => {
+    const html = getSeoContentForPath("/")!;
+    expect(html).toContain("7h30 às 18h");
+    expect(html).toContain("Sábado e domingo fechado");
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const indexHtml = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "../client/index.html"),
+      "utf-8"
+    );
+    expect(indexHtml).not.toContain('"opens": "08:00"');
+    expect((indexHtml.match(/"opens": "07:30"/g) || []).length).toBe(2);
+    expect(indexHtml).not.toMatch(/Saturday|Sunday/);
+  });
+});
+
 describe("GUARD-RAIL: links internos em todas as rotas (nao remover)", () => {
   // Auditoria de links internos, jul-ago/2026: as menções a exames eram texto
   // solto por todo o site. Todo link do HTML pre-renderizado precisa apontar

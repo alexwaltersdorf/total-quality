@@ -362,7 +362,7 @@ export default function Navbar() {
           </div>
           <div className="mt-10 text-xs text-text-muted space-y-1">
             <p>R. Padre Anchieta, 1010 - Centro, Caraguatatuba - SP</p>
-            <p>Seg-Sex: 08h às 18h</p>
+            <p>Seg-Sex: 07h30 às 18h</p>
             <a
               href="tel:+551238873535"
               className="block hover:text-brand"

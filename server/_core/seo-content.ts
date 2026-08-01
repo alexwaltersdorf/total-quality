@@ -48,7 +48,7 @@ const NAP = {
   phoneDisplay: "(12) 3887-3535",
   phoneHref: "tel:+551238873535",
   whatsappHref: "https://wa.me/551238873535",
-  hours: "Segunda a quinta das 7h30 às 18h · Sexta das 7h30 às 17h30",
+  hours: "Segunda a sexta, das 7h30 às 18h · Sábado e domingo fechado",
 };
 
 function escapeHtml(text: string): string {

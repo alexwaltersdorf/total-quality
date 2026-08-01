@@ -140,7 +140,7 @@ export default function ContatoSection() {
             <Link href="/checkup" className="text-brand hover:underline">
               check-up
             </Link>{" "}
-            na Total Quality em Caraguatatuba - SP. Atendemos de segunda a sexta, das 08h às 18h.
+            na Total Quality em Caraguatatuba - SP. Atendemos de segunda a sexta, das 07h30 às 18h.
           </p>
         </div>
 
@@ -209,7 +209,7 @@ export default function ContatoSection() {
                     <span className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted">Horário</span>
                   </div>
                   <p className="text-text font-medium">Segunda a Sexta</p>
-                  <p className="text-text-light">08h às 18h</p>
+                  <p className="text-text-light">07h30 às 18h</p>
                 </div>
               </div>
 

@@ -160,7 +160,7 @@ export default function PorQueEscolherSection() {
               </h3>
               <p className="text-text-light leading-relaxed mb-4">
                 O laboratório Total Quality está localizado no centro de Caraguatatuba, na R. Padre Anchieta, 1010,
-                com fácil acesso de carro, ônibus ou a pé. Funcionamos de segunda a sexta-feira, das 08h às 18h.
+                com fácil acesso de carro, ônibus ou a pé. Funcionamos de segunda a sexta-feira, das 07h30 às 18h.
                 Aceitamos diversos convênios de saúde e oferecemos atendimento particular com preços acessíveis.
               </p>
               <div className="flex flex-wrap gap-3">

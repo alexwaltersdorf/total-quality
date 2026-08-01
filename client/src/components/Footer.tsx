@@ -137,7 +137,7 @@ export default function Footer() {
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-6">Horário</h4>
             <p className="text-text-light text-sm mb-1">Segunda a Sexta</p>
-            <p className="text-text font-medium text-sm mb-8">08h às 18h</p>
+            <p className="text-text font-medium text-sm mb-8">07h30 às 18h</p>
 
             <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-4">Social</h4>
             <a
