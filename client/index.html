@@ -2,6 +2,31 @@
 <html lang="pt-BR">
 
   <head>
+    <!-- Consent Mode v2 (LGPD): TEM de vir ANTES do GTM. Padrao NEGADO para
+         armazenamento de anuncios/analytics; o banner de cookies
+         (client/src/components/CookieConsent.tsx) atualiza para "granted"
+         quando o visitante aceita, e a escolha fica em localStorage. Com
+         consentimento negado o GA4 opera em modo cookieless (pings
+         modelados) — mede sem identificar. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      (function () {
+        var stored = null;
+        try { stored = localStorage.getItem('tq-consent'); } catch (e) {}
+        var granted = stored === 'granted';
+        gtag('consent', 'default', {
+          ad_storage: granted ? 'granted' : 'denied',
+          analytics_storage: granted ? 'granted' : 'denied',
+          ad_user_data: granted ? 'granted' : 'denied',
+          ad_personalization: granted ? 'granted' : 'denied',
+          functionality_storage: 'granted',
+          security_storage: 'granted',
+          wait_for_update: 500
+        });
+      })();
+    </script>
+
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],

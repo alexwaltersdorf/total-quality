@@ -51,6 +51,7 @@ function Router() {
 }
 
 const Toaster = lazy(() => import("@/components/ui/sonner").then((m) => ({ default: m.Toaster })));
+const CookieConsent = lazy(() => import("@/components/CookieConsent"));
 
 /**
  * Carrega o Toaster (sonner) apos o navegador ficar ocioso. Toasts sempre
@@ -84,6 +85,9 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
         <DeferredToaster />
+        <Suspense fallback={null}>
+          <CookieConsent />
+        </Suspense>
         <Router />
       </ThemeProvider>
     </ErrorBoundary>
