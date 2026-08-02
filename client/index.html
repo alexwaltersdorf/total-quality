@@ -5,8 +5,15 @@
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;
+    /* Gateway da tag (first-party): serve o GTM por /metrics no nosso dominio
+       (proxy em server/_core/tag-gateway.ts). Se o gateway falhar, cai
+       automaticamente para o dominio do Google — a medicao nunca para. */
+    j.src='/metrics/?id='+i+dl;
+    j.onerror=function(){var k=d.createElement(s);k.async=true;
+    k.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+    f.parentNode.insertBefore(k,f);};
+    f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-WLR7JD57');</script>
     <!-- End Google Tag Manager -->
 

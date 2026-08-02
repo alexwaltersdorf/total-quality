@@ -13,6 +13,7 @@ import { syncAutoSeoArticles } from "./syncAutoSeo";
 import { validateWebhookToken, processAutoSeoWebhook, processAutoSeoWebhookBatch } from "./autoseoWebhook";
 import { weeklyMonitoringHandler } from "./monitoring-handler";
 import { generateSitemap } from "./sitemap-handler";
+import { registerTagGateway } from "./tag-gateway";
 import { getLegacyRedirect, isGone } from "./legacy-redirects";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -168,6 +169,11 @@ async function startServer() {
     },
   }));
 
+  // Gateway da tag do Google (proxy first-party /metrics -> fps.goog).
+  // PRECISA vir antes dos body parsers: os POSTs de medicao sao encaminhados
+  // como stream bruto — express.json consumiria o corpo antes do proxy.
+  registerTagGateway(app);
+
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
@@ -241,6 +247,7 @@ Allow: /
 Disallow: /admin
 Disallow: /api
 Disallow: /dashboard
+Disallow: /metrics
 Disallow: /*?q=
 
 Sitemap: https://totalquality.med.br/sitemap.xml`;
