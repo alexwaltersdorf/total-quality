@@ -10,8 +10,12 @@ import { useCallback } from 'react';
  * DENTRO do GTM, disparando nesse evento e lendo `conversion_label` /
  * `event_label` das variáveis de camada de dados.
  *
- * Rótulo de conversão histórico (para configurar a tag no GTM):
- *   AW-16697936154/VFxiCKPqvvEZEMrKsqsq
+ * ATENÇÃO (auditoria 02/08/2026): o rótulo histórico AW-16697936154/... que
+ * vivia neste arquivo NÃO pertence a nenhuma das contas de Ads da clínica —
+ * as conversões de site iam para uma conta desconhecida. O ID real da conta
+ * principal (920-715-3288) é AW-14387808424; o rótulo é definido NA TAG do
+ * GTM (ver gtm/README.md no repo SEO---Total-Quality), não aqui. Este código
+ * só emite o evento — o destino é responsabilidade do container.
  */
 
 interface ConversionEvent {
@@ -21,14 +25,11 @@ interface ConversionEvent {
   phone?: string;
 }
 
-const CONVERSION_LABEL = 'AW-16697936154/VFxiCKPqvvEZEMrKsqsq';
-
 function pushConversion(payload: Record<string, unknown>) {
   if (typeof window === 'undefined') return;
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({
     event: 'ads_conversion',
-    conversion_label: CONVERSION_LABEL,
     currency: 'BRL',
     ...payload,
   });
