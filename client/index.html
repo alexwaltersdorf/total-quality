@@ -256,48 +256,11 @@
     <!-- Favicon -->
     <link rel="icon" type="image/webp" href="/images/logo-276.webp" />
 
-    <!-- Terceiros (Meta Pixel + Google Ads gtag + Soro) carregados apos idle ou primeira
-         interacao: tira ~900 KB de JS de terceiros do caminho critico (TBT/LCP).
-         O GTM continua carregando imediatamente para nao perder atribuicao de conversao. -->
-    <script>
-      (function () {
-        var loaded = false;
-        function loadThirdParty() {
-          if (loaded) return;
-          loaded = true;
-          !function(f,b,e,v,n,t,s)
-          {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-          n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-          if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-          n.queue=[];t=b.createElement(e);t.async=!0;
-          t.src=v;s=b.getElementsByTagName(e)[0];
-          s.parentNode.insertBefore(t,s)}(window, document,'script',
-          'https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', '1536672876562340');
-          fbq('track', 'PageView');
-          var g = document.createElement('script');
-          g.src = 'https://www.googletagmanager.com/gtag/js?id=AW-16697936154';
-          g.async = true;
-          document.head.appendChild(g);
-          window.dataLayer = window.dataLayer || [];
-          window.gtag = window.gtag || function () { dataLayer.push(arguments); };
-          gtag('js', new Date());
-          gtag('config', 'AW-16697936154');
-          var w = document.createElement('script');
-          w.src = 'https://app.trysoro.com/api/embed/b285a81e-b387-4c17-9c9a-a93bebb4d786';
-          w.defer = true;
-          document.body.appendChild(w);
-        }
-        if ('requestIdleCallback' in window) {
-          requestIdleCallback(loadThirdParty, { timeout: 5000 });
-        } else {
-          setTimeout(loadThirdParty, 4000);
-        }
-        ['scroll', 'click', 'touchstart', 'keydown'].forEach(function (ev) {
-          addEventListener(ev, loadThirdParty, { once: true, passive: true });
-        });
-      })();
-    </script>
+    <!-- Rastreamento: SOMENTE o container GTM-WLR7JD57 (decisao do Alex,
+         01/08/2026). O Meta Pixel direto, o gtag direto do Google Ads e o
+         widget Trysoro foram removidos daqui — pixels e conversoes devem ser
+         configurados DENTRO do container GTM. Os eventos do site chegam la
+         via dataLayer (client/src/lib/tracking.ts e useGoogleAdsConversion). -->
   </head>
 
   <body>
