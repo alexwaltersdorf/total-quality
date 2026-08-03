@@ -17,6 +17,7 @@ import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { CONVENIOS } from "@/lib/conveniosData";
+import { trackWhatsAppConversion } from "@/lib/tracking";
 
 const WHATSAPP_HREF =
   "https://wa.me/551238873535?text=Olá! Gostaria de confirmar se meu convênio é aceito na Total Quality.";
@@ -100,7 +101,7 @@ export default function Convenios() {
               <p className="mt-4">
                 A lista é atualizada periodicamente. Confirme a aceitação do seu plano pelo
                 WhatsApp{" "}
-                <a href={WHATSAPP_HREF} className="text-primary underline" target="_blank" rel="noopener noreferrer">
+                <a href={WHATSAPP_HREF} className="text-primary underline" target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsAppConversion("convenios_link", "convenios")}>
                   (12) 3887-3535
                 </a>{" "}
                 antes de agendar.
@@ -132,6 +133,7 @@ export default function Convenios() {
                 href={WHATSAPP_HREF}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackWhatsAppConversion("convenios_cta", "convenios")}
                 className="inline-block bg-primary text-white font-semibold px-6 py-3 rounded-full hover:opacity-90 transition-opacity"
               >
                 Agendar pelo WhatsApp

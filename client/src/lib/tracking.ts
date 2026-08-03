@@ -53,15 +53,6 @@ export function trackPageView(pageName?: string) {
     content_group: getContentGroup(),
   });
 
-  // Meta Pixel - PageView
-  if (window.fbq) {
-    window.fbq("track", "PageView");
-  }
-
-  // TikTok Pixel - PageView
-  if (window.ttq) {
-    window.ttq.page();
-  }
 }
 
 /** Rastreia scroll depth (25%, 50%, 75%, 90%) */
@@ -100,85 +91,36 @@ export function trackSectionView(sectionName: string) {
 // ============================================================
 
 /** Rastreia clique em "Agendar Exame" (WhatsApp) - CONVERSÃO PRINCIPAL */
-export function trackScheduleExam(source: string, examType?: string) {
-  pushToDataLayer("generate_lead", {
+/*
+ * EVENTO CANONICO DE CONVERSAO (padronizacao de 02/08/2026): todo clique em
+ * qualquer botao/link de WhatsApp empurra UM UNICO evento whatsapp_click
+ * com este payload. O antigo evento de lead foi aposentado e nao ha mais
+ * pixel direto — o GTM converte whatsapp_click em Lead (Meta) e em
+ * conversao (Google Ads).
+ */
+export function trackWhatsAppConversion(label: string, source: string, examType: string = "geral") {
+  pushToDataLayer("whatsapp_click", {
     event_category: "conversion",
-    event_label: "schedule_exam_whatsapp",
+    event_label: label,
     lead_source: source,
-    exam_type: examType || "geral",
+    exam_type: examType,
     currency: "BRL",
-    value: 1, // valor simbólico para otimização
+    value: 1,
   });
+}
 
-  // Meta Pixel - Lead
-  if (window.fbq) {
-    window.fbq("track", "Lead", {
-      content_name: "Agendamento de Exame",
-      content_category: examType || "geral",
-      value: 1,
-      currency: "BRL",
-    });
-  }
-
-  // TikTok Pixel - SubmitForm (equivalente a lead)
-  if (window.ttq) {
-    window.ttq.track("SubmitForm", {
-      content_name: "Agendamento de Exame",
-      content_type: examType || "geral",
-    });
-  }
+export function trackScheduleExam(source: string, examType?: string) {
+  trackWhatsAppConversion(source, source.replace(/_(cta|section)$/, ""), examType || "geral");
 }
 
 /** Rastreia clique em "Agendar Check-Up" */
 export function trackScheduleCheckup(packageType: string) {
-  pushToDataLayer("generate_lead", {
-    event_category: "conversion",
-    event_label: "schedule_checkup",
-    lead_source: "checkup_page",
-    exam_type: `checkup_${packageType}`,
-    currency: "BRL",
-    value: 1,
-  });
-
-  if (window.fbq) {
-    window.fbq("track", "Schedule", {
-      content_name: `Check-Up ${packageType}`,
-      content_category: "checkup",
-    });
-  }
-
-  if (window.ttq) {
-    window.ttq.track("SubmitForm", {
-      content_name: `Check-Up ${packageType}`,
-      content_type: "checkup",
-    });
-  }
+  trackWhatsAppConversion(`checkup_${packageType}`, "checkup", `checkup_${packageType}`);
 }
 
 /** Rastreia clique em "Agendar Bioimpedância" */
 export function trackScheduleBioimpedancia() {
-  pushToDataLayer("generate_lead", {
-    event_category: "conversion",
-    event_label: "schedule_bioimpedancia",
-    lead_source: "bioimpedancia_page",
-    exam_type: "bioimpedancia",
-    currency: "BRL",
-    value: 1,
-  });
-
-  if (window.fbq) {
-    window.fbq("track", "Schedule", {
-      content_name: "Bioimpedância",
-      content_category: "bioimpedancia",
-    });
-  }
-
-  if (window.ttq) {
-    window.ttq.track("SubmitForm", {
-      content_name: "Bioimpedância",
-      content_type: "bioimpedancia",
-    });
-  }
+  trackWhatsAppConversion("bioimpedancia_cta", "bioimpedancia", "bioimpedancia");
 }
 
 // ============================================================
@@ -194,12 +136,6 @@ export function trackExamCategorySelect(category: string) {
     event_label: `exam_category_${category}`,
   });
 
-  if (window.fbq) {
-    window.fbq("track", "ViewContent", {
-      content_name: category,
-      content_type: "exam_category",
-    });
-  }
 }
 
 /** Rastreia visualização de exame específico */
@@ -224,35 +160,15 @@ export function trackFormStart() {
     form_name: "contato",
   });
 
-  if (window.fbq) {
-    window.fbq("track", "InitiateCheckout", {
-      content_name: "Formulário de Contato",
-    });
-  }
 }
 
 /** Rastreia envio do formulário de contato - CONVERSÃO */
 export function trackFormSubmit(formData: { name: string; subject?: string }) {
-  pushToDataLayer("generate_lead", {
+  pushToDataLayer("form_submit", {
     event_category: "conversion",
-    event_label: "contact_form_submit",
     form_name: "contato",
-    lead_source: "contact_form",
     contact_subject: formData.subject || "geral",
   });
-
-  if (window.fbq) {
-    window.fbq("track", "Lead", {
-      content_name: "Formulário de Contato",
-      content_category: formData.subject || "geral",
-    });
-  }
-
-  if (window.ttq) {
-    window.ttq.track("SubmitForm", {
-      content_name: "Formulário de Contato",
-    });
-  }
 }
 
 // ============================================================
@@ -268,39 +184,11 @@ export function trackPhoneClick(source: string) {
     click_source: source,
   });
 
-  if (window.fbq) {
-    window.fbq("track", "Contact", {
-      content_name: "Telefone",
-    });
-  }
-
-  if (window.ttq) {
-    window.ttq.track("Contact", {
-      content_name: "Telefone",
-    });
-  }
 }
 
 /** Rastreia clique no WhatsApp (sem ser agendamento) */
 export function trackWhatsAppClick(source: string) {
-  pushToDataLayer("whatsapp_click", {
-    event_category: "contact",
-    event_label: "whatsapp_click",
-    contact_method: "whatsapp",
-    click_source: source,
-  });
-
-  if (window.fbq) {
-    window.fbq("track", "Contact", {
-      content_name: "WhatsApp",
-    });
-  }
-
-  if (window.ttq) {
-    window.ttq.track("Contact", {
-      content_name: "WhatsApp",
-    });
-  }
+  trackWhatsAppConversion(source, source.replace(/_(cta|section)$/, ""));
 }
 
 // ============================================================
@@ -309,25 +197,7 @@ export function trackWhatsAppClick(source: string) {
 
 /** Rastreia interesse no Cartão Total Quality */
 export function trackCardInterest() {
-  pushToDataLayer("generate_lead", {
-    event_category: "conversion",
-    event_label: "card_interest",
-    lead_source: "cartao_section",
-    content_type: "cartao_total_quality",
-  });
-
-  if (window.fbq) {
-    window.fbq("track", "Lead", {
-      content_name: "Cartão Total Quality",
-      content_category: "cartao",
-    });
-  }
-
-  if (window.ttq) {
-    window.ttq.track("SubmitForm", {
-      content_name: "Cartão Total Quality",
-    });
-  }
+  trackWhatsAppConversion("cartao_cta", "cartao", "cartao");
 }
 
 // ============================================================

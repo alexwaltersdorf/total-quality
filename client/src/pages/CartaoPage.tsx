@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { trackCardInterest } from "@/lib/tracking";
 import { ChevronDown, Zap, Smartphone, Heart, Dumbbell, Pill, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CartaoPricingCard from "@/components/CartaoPricingCard";
@@ -29,6 +30,7 @@ export default function CartaoPage() {
       "quality-premium": "Quero Proteção Premium, R$ 99,90"
     };
     const message = planMessages[planId] || `Olá! Gostaria de contratar o plano ${cartaoPlanos.find(p => p.id === planId)?.name}.`;
+    trackCardInterest();
     window.location.href = `https://wa.me/551238873535?text=${encodeURIComponent(message)}`;
   };
 

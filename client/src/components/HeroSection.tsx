@@ -2,7 +2,7 @@
  * Style: Optik Editorial — Giant display type, asymmetric layout
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  * SEO: Keywords in headings, alt texts, and semantic HTML
- * Tracking: CTA clicks → generate_lead, nav clicks
+ * Tracking: CTA clicks → whatsapp_click (evento canonico), nav clicks
  */
 import ResponsiveImage from "@/components/ResponsiveImage";
 import { ArrowUpRight } from "lucide-react";

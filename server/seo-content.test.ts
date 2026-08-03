@@ -408,6 +408,39 @@ describe("GUARD-RAIL: linkagem interna dos artigos do blog (ago/2026)", () => {
   });
 });
 
+describe("GUARD-RAIL: rastreamento padronizado (briefing de 02/08/2026)", () => {
+  // Regra: todo clique de WhatsApp empurra UM UNICO evento whatsapp_click
+  // padronizado (tracking.ts/trackWhatsAppConversion); generate_lead foi
+  // aposentado; nenhum pixel direto no codigo — o GTM e o unico distribuidor.
+  it("nenhum CTA de WhatsApp sem chamada de tracking, e eventos aposentados ausentes", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const base = path.resolve(import.meta.dirname, "..", "client", "src");
+    const files = fs
+      .readdirSync(base, { recursive: true, encoding: "utf-8" })
+      .filter((f) => f.endsWith(".tsx") || f.endsWith(".ts"));
+    const problemas: string[] = [];
+    for (const rel of files) {
+      const src = fs.readFileSync(path.resolve(base, rel), "utf-8");
+      if (src.includes("generate_lead")) problemas.push(`${rel}: generate_lead aposentado`);
+      if (src.includes('"ads_conversion"')) problemas.push(`${rel}: ads_conversion aposentado`);
+      if (/window\.fbq\(|window\.ttq\./.test(src)) problemas.push(`${rel}: pixel direto proibido`);
+      // CTAs vivem em componentes (.tsx); um .ts pode citar wa.me para
+      // classificar referrer (utmTracker) sem ser um CTA.
+      if (!rel.endsWith(".tsx")) continue;
+      const lines = src.split("\n");
+      lines.forEach((line, i) => {
+        if (!line.includes("wa.me")) return;
+        const janela = lines.slice(Math.max(0, i - 6), i + 7).join("\n");
+        if (!/track(WhatsApp|Schedule|Card|Lead)/.test(janela)) {
+          problemas.push(`${rel}:${i + 1}: CTA de WhatsApp sem tracking`);
+        }
+      });
+    }
+    expect(problemas, problemas.join("\n")).toEqual([]);
+  });
+});
+
 describe("GUARD-RAIL: headings sem palavras coladas (auditoria HeadingsMap ago/2026)", () => {
   // Titulos JSX quebrados com <br/> ou <span> empilhados SEM espaco explicito
   // concatenam sem espaco no nome acessivel: "PRINCIPAIS"+"EXAMES" vira

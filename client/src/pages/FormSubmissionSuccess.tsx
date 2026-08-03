@@ -4,6 +4,7 @@
  * Page: Página de sucesso após envio de formulário de contato
  */
 import { useEffect, useState } from "react";
+import { trackWhatsAppConversion } from "@/lib/tracking";
 import { CheckCircle, ArrowUpRight, Phone } from "lucide-react";
 import { useLocation } from "wouter";
 
@@ -40,7 +41,8 @@ export default function FormSubmissionSuccess() {
             `E-mail: ${params.get("email") || "Não informado"}%0A` +
             (params.get("tipoExame") ? `Exame: ${params.get("tipoExame")}%0A` : "") +
             (params.get("mensagem") ? `Mensagem: ${params.get("mensagem")}` : "");
-          window.open(`https://wa.me/551238873535?text=${msg}`, "_blank");
+          trackWhatsAppConversion("form_success_cta", "form_success");
+    window.open(`https://wa.me/551238873535?text=${msg}`, "_blank");
           return 0;
         }
         return prev - 1;
@@ -56,6 +58,7 @@ export default function FormSubmissionSuccess() {
       `E-mail: ${formData.email}%0A` +
       (formData.tipoExame ? `Exame: ${formData.tipoExame}%0A` : "") +
       (formData.mensagem ? `Mensagem: ${formData.mensagem}` : "");
+    trackWhatsAppConversion("form_success_cta", "form_success");
     window.open(`https://wa.me/551238873535?text=${msg}`, "_blank");
   };
 

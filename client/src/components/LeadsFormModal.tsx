@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { trackWhatsAppConversion } from "@/lib/tracking";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
@@ -50,6 +51,7 @@ export default function LeadsFormModal({
 
       // Send to WhatsApp
       const message = `Olá! Meu nome é ${formData.name}. Email: ${formData.email}. Telefone: ${formData.phone}. Mensagem: ${formData.message}`;
+      trackWhatsAppConversion("leads_modal", "modal");
       window.location.href = `https://wa.me/551238873535?text=${encodeURIComponent(
         message
       )}`;

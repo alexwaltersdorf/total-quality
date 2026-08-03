@@ -4,6 +4,7 @@
  * Layout: Editorial grid with featured post + grid of posts
  */
 import { useState, useEffect } from "react";
+import { trackWhatsAppConversion } from "@/lib/tracking";
 import { Link } from "wouter";
 import { ArrowUpRight, ArrowLeft, Clock, Search } from "lucide-react";
 import { blogPosts, blogCategories, type BlogPostMeta } from "@/lib/blogData";
@@ -251,6 +252,7 @@ export default function Blog() {
             e cardiologia com resultados rápidos e atendimento humanizado.
           </p>
           <a
+            onClick={() => trackWhatsAppConversion("blog_cta", "blog", "geral")}
             href="https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame."
             target="_blank"
             rel="noopener noreferrer"

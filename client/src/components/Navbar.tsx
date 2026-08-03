@@ -6,8 +6,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { trackNavClick, trackScheduleExam, trackResultsClick, trackPhoneClick } from "@/lib/tracking";
-import { useGoogleAdsConversion } from "@/hooks/useGoogleAdsConversion";
+import { trackNavClick, trackScheduleExam, trackResultsClick, trackPhoneClick, trackWhatsAppClick } from "@/lib/tracking";
 
 const navLinks = [
   { label: "Início", href: "#inicio" },
@@ -45,7 +44,6 @@ export default function Navbar() {
   const [mobileExamesOpen, setMobileExamesOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { trackScheduleClick, trackWhatsAppClick, trackPhoneClick: trackPhoneClickAds } = useGoogleAdsConversion();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -73,21 +71,19 @@ export default function Navbar() {
 
   const handleScheduleClickNavbar = () => {
     setMobileOpen(false);
-    trackScheduleClick('navbar');
     trackScheduleExam("navbar_cta", "geral");
     window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame.", "_blank");
   };
 
   const handleWhatsAppClickNavbar = () => {
     setMobileOpen(false);
-    trackWhatsAppClick('5512388735350');
+    trackWhatsAppClick("navbar");
     window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame.", "_blank");
   };
 
   const handlePhoneClickNavbar = () => {
     setMobileOpen(false);
-    trackPhoneClickAds('5512388735350');
-    trackPhoneClick();
+    trackPhoneClick("navbar");
     window.location.href = 'tel:+5512388735350';
   };
 

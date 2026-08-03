@@ -4,6 +4,7 @@
  * Page: Check-Up Preventivo
  */
 import { useEffect, useRef } from "react";
+import { trackScheduleCheckup } from "@/lib/tracking";
 import { ArrowUpRight, Heart, Shield, Activity, Clock, CheckCircle, Stethoscope, FlaskConical, Brain } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -152,7 +153,7 @@ export default function CheckUp() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <button
-                onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
+                onClick={() => { trackScheduleCheckup("geral"); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank"); }}
                 className="btn-pill !bg-brand !text-white hover:!bg-brand-dark"
               >
                 Agendar Check-Up
@@ -217,7 +218,7 @@ export default function CheckUp() {
                   </div>
 
                   <button
-                    onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar o " + pkg.title + ".", "_blank")}
+                    onClick={() => { trackScheduleCheckup(pkg.title); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar o " + pkg.title + ".", "_blank"); }}
                     className={`w-full py-3 px-4 rounded-lg font-semibold transition-all ${
                       pkg.highlight
                         ? "bg-white text-brand hover:bg-white/90"
@@ -304,7 +305,7 @@ export default function CheckUp() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
+              onClick={() => { trackScheduleCheckup("geral"); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank"); }}
               className="btn-pill bg-white text-brand hover:bg-white/90"
             >
               Agendar pelo WhatsApp
