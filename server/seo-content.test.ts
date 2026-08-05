@@ -223,6 +223,12 @@ describe("GUARD-RAIL: horario oficial unico (nao remover)", () => {
       "utf-8"
     );
     expect(indexHtml).not.toContain("cloudfront.net");
+    // Regra "so GTM" (02/08): nenhum pixel, gtag ou noscript de mensuracao
+    // direto no HTML — Meta Pixel aposentado (1536672876562340) incluso.
+    expect(indexHtml).not.toContain("facebook.com/tr");
+    expect(indexHtml).not.toContain("1536672876562340");
+    expect(indexHtml).not.toContain("gtag/js?id=");
+    expect(indexHtml).not.toContain("trysoro");
     expect(indexHtml).toContain('og:image" content="https://totalquality.med.br/images/');
     expect(indexHtml).toContain('"image": ["https://totalquality.med.br/images/');
   });
