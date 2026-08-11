@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { trackCardInterest } from "@/lib/tracking";
+import { trackCardInterest, trackCtaClick, trackPageView } from "@/lib/tracking";
 import { ChevronDown, Zap, Smartphone, Heart, Dumbbell, Pill, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CartaoPricingCard from "@/components/CartaoPricingCard";
@@ -7,23 +7,20 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import LeadsFormModal from "@/components/LeadsFormModal";
-import { useTracking } from "@/hooks/useTracking";
 import { cartaoPlanos, mainBenefitsData, faqs } from "@/lib/cartaoPlanos";
 
 export default function CartaoPage() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const { trackCTAClick, trackPageView } = useTracking();
-
   // Rastrear visualização da página
   useEffect(() => {
-    trackPageView('CartaoPage');
-  }, [trackPageView]);
+    trackPageView("Cartão Total Quality Care");
+  }, []);
 
   const handleSelectPlan = (planId: string) => {
     setSelectedPlan(planId);
-    trackCTAClick(`select_plan_${planId}`);
+    trackCtaClick(`select_plan_${planId}`);
     const planMessages: Record<string, string> = {
       "quality-plus": "Quero Proteção Essencial, R$ 29,90",
       "quality-select": "Quero Proteção Completa, R$ 69,90",
@@ -35,11 +32,11 @@ export default function CartaoPage() {
   };
 
   const handleCTAClick = (ctaName: string) => {
-    trackCTAClick(ctaName);
+    trackCtaClick(ctaName);
   };
 
   const handleOpenFormModal = () => {
-    trackCTAClick('open_leads_form');
+    trackCtaClick('open_leads_form');
     setIsFormModalOpen(true);
   };
 

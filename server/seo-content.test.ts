@@ -430,7 +430,11 @@ describe("GUARD-RAIL: rastreamento padronizado (briefing de 02/08/2026)", () => 
       const src = fs.readFileSync(path.resolve(base, rel), "utf-8");
       if (src.includes("generate_lead")) problemas.push(`${rel}: generate_lead aposentado`);
       if (src.includes('"ads_conversion"')) problemas.push(`${rel}: ads_conversion aposentado`);
-      if (/window\.fbq\(|window\.ttq\./.test(src)) problemas.push(`${rel}: pixel direto proibido`);
+      // Cobre window.fbq(...) e o disfarce (window as any).fbq(...), que foi
+      // como o hook legado useTracking.ts escapou da limpeza de 02/08.
+      if (/\bfbq\s*\(|\bttq\s*\.|\bgtag\s*\(\s*['"]config/.test(src)) {
+        problemas.push(`${rel}: pixel/tag direto proibido — o GTM e o unico distribuidor`);
+      }
       // CTAs vivem em componentes (.tsx); um .ts pode citar wa.me para
       // classificar referrer (utmTracker) sem ser um CTA.
       if (!rel.endsWith(".tsx")) continue;

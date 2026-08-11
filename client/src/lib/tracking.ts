@@ -200,6 +200,20 @@ export function trackCardInterest() {
   trackWhatsAppConversion("cartao_cta", "cartao", "cartao");
 }
 
+/**
+ * Rastreia clique em CTA que NAO leva ao WhatsApp (abrir modal, escolher
+ * plano, expandir bloco). Usa select_content, evento que ja esta no gatilho do
+ * GTM — nao exige mudanca no contêiner.
+ */
+export function trackCtaClick(ctaName: string) {
+  pushToDataLayer("select_content", {
+    content_type: "cta",
+    content_id: ctaName,
+    event_category: "engagement",
+    event_label: `cta_${ctaName}`,
+  });
+}
+
 // ============================================================
 // NAVEGAÇÃO E MENU
 // ============================================================
