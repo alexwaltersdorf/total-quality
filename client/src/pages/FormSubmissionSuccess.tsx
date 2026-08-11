@@ -2,47 +2,62 @@
  * Style: Optik Editorial — Success page with countdown
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  * Page: Página de sucesso após envio de formulário de contato
+ *
+ * A URL desta rota e SEMPRE limpa. Os dados do lead chegam por sessionStorage
+ * (lib/leadHandoff.ts) e sao consumidos uma unica vez; sem eles a pagina exibe
+ * uma confirmacao neutra em vez de quebrar. Dado clinico (tipo de exame e
+ * mensagem) nao e reexibido na tela — segue apenas na mensagem do WhatsApp,
+ * que vai para o canal da propria clinica.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { trackWhatsAppConversion } from "@/lib/tracking";
+import { consumeLeadHandoff, type LeadHandoff } from "@/lib/leadHandoff";
 import { CheckCircle, ArrowUpRight, Phone } from "lucide-react";
 import { useLocation } from "wouter";
 
+const WHATSAPP_NUMBER = "551238873535";
+
+/** Monta a mensagem pre-preenchida do WhatsApp a partir do lead em memoria. */
+function buildWhatsAppMessage(lead: LeadHandoff | null): string {
+  if (!lead) return "Olá! Gostaria de agendar um exame.";
+  const linhas = [
+    `Olá! Meu nome é ${lead.nome || "Cliente"}.`,
+    `Telefone: ${lead.telefone || "Não informado"}`,
+    `E-mail: ${lead.email || "Não informado"}`,
+  ];
+  if (lead.tipoExame) linhas.push(`Exame: ${lead.tipoExame}`);
+  if (lead.mensagem) linhas.push(`Mensagem: ${lead.mensagem}`);
+  return linhas.join("\n");
+}
+
 export default function FormSubmissionSuccess() {
-  const [location, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
   const [countdown, setCountdown] = useState(5);
-  const [formData, setFormData] = useState({
-    nome: "",
-    telefone: "",
-    email: "",
-    tipoExame: "",
-    mensagem: "",
-  });
+  const [nome, setNome] = useState("");
+  // Ref, e nao state: o lead precisa sobreviver ao duplo-render do StrictMode
+  // sem ser lido duas vezes do storage (a leitura apaga o registro).
+  const leadRef = useRef<LeadHandoff | null>(null);
+
+  const openWhatsApp = () => {
+    const msg = encodeURIComponent(buildWhatsAppMessage(leadRef.current));
+    trackWhatsAppConversion("form_success_cta", "form_success");
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank", "noopener,noreferrer");
+  };
 
   useEffect(() => {
-    // Extrair dados da URL
-    const params = new URLSearchParams(window.location.search);
-    setFormData({
-      nome: params.get("nome") || "",
-      telefone: params.get("telefone") || "",
-      email: params.get("email") || "",
-      tipoExame: params.get("tipoExame") || "",
-      mensagem: params.get("mensagem") || "",
-    });
+    if (!leadRef.current) {
+      const lead = consumeLeadHandoff();
+      if (lead) {
+        leadRef.current = lead;
+        setNome(lead.nome);
+      }
+    }
 
-    // Countdown de 5 segundos
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          // Redirecionar para WhatsApp após 5 segundos
-          const msg = `Olá! Meu nome é ${params.get("nome") || "Cliente"}.%0A` +
-            `Telefone: ${params.get("telefone") || "Não informado"}%0A` +
-            `E-mail: ${params.get("email") || "Não informado"}%0A` +
-            (params.get("tipoExame") ? `Exame: ${params.get("tipoExame")}%0A` : "") +
-            (params.get("mensagem") ? `Mensagem: ${params.get("mensagem")}` : "");
-          trackWhatsAppConversion("form_success_cta", "form_success");
-    window.open(`https://wa.me/551238873535?text=${msg}`, "_blank");
+          openWhatsApp();
           return 0;
         }
         return prev - 1;
@@ -51,16 +66,6 @@ export default function FormSubmissionSuccess() {
 
     return () => clearInterval(timer);
   }, []);
-
-  const handleWhatsAppNow = () => {
-    const msg = `Olá! Meu nome é ${formData.nome}.%0A` +
-      `Telefone: ${formData.telefone}%0A` +
-      `E-mail: ${formData.email}%0A` +
-      (formData.tipoExame ? `Exame: ${formData.tipoExame}%0A` : "") +
-      (formData.mensagem ? `Mensagem: ${formData.mensagem}` : "");
-    trackWhatsAppConversion("form_success_cta", "form_success");
-    window.open(`https://wa.me/551238873535?text=${msg}`, "_blank");
-  };
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4 py-12">
@@ -80,36 +85,9 @@ export default function FormSubmissionSuccess() {
 
         {/* Description */}
         <p className="text-lg text-text-muted mb-8 leading-relaxed">
-          Obrigado por entrar em contato com a Total Quality! Seus dados foram registrados com sucesso.
+          {nome ? `Obrigado por entrar em contato, ${nome}! ` : "Obrigado por entrar em contato com a Total Quality! "}
+          Recebemos sua mensagem e nossa equipe vai retornar em breve.
         </p>
-
-        {/* Form Data Summary */}
-        <div className="bg-gray-50 rounded-lg p-6 mb-8 text-left space-y-3">
-          {formData.nome && (
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-1">Nome</p>
-              <p className="text-text font-medium">{formData.nome}</p>
-            </div>
-          )}
-          {formData.email && (
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-1">E-mail</p>
-              <p className="text-text font-medium">{formData.email}</p>
-            </div>
-          )}
-          {formData.telefone && (
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-1">Telefone</p>
-              <p className="text-text font-medium">{formData.telefone}</p>
-            </div>
-          )}
-          {formData.tipoExame && (
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-1">Tipo de Exame</p>
-              <p className="text-text font-medium">{formData.tipoExame}</p>
-            </div>
-          )}
-        </div>
 
         {/* Countdown */}
         <div className="mb-8">
@@ -127,7 +105,7 @@ export default function FormSubmissionSuccess() {
         {/* CTA Buttons */}
         <div className="space-y-3">
           <button
-            onClick={handleWhatsAppNow}
+            onClick={openWhatsApp}
             className="btn-pill w-full justify-center !bg-[#25D366] hover:!bg-[#1da851] !text-white"
           >
             <Phone className="w-4 h-4" />
@@ -144,7 +122,8 @@ export default function FormSubmissionSuccess() {
 
         {/* Info Text */}
         <p className="text-xs text-text-muted mt-8">
-          Seus dados foram salvos e serão utilizados para melhorar nosso atendimento. Você será redirecionado para o WhatsApp para continuar a conversa.
+          Seus dados foram registrados com segurança e usados apenas para o seu atendimento. Você será
+          redirecionado para o WhatsApp para continuar a conversa.
         </p>
       </div>
     </div>

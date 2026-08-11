@@ -447,6 +447,40 @@ describe("GUARD-RAIL: rastreamento padronizado (briefing de 02/08/2026)", () => 
   });
 });
 
+describe("GUARD-RAIL: nenhum dado pessoal ou de saude em URL (LGPD, ago/2026)", () => {
+  // Ate 11/08/2026 o formulario de contato navegava para
+  // /formulario-sucesso?nome=&telefone=&email=&tipoExame=&mensagem=. Isso
+  // gravava nome, telefone, e-mail e o EXAME PROCURADO (dado sensivel de
+  // saude, art. 11 da LGPD) dentro do page_location do GA4 — violacao da
+  // politica de dados pessoais do Google Analytics. O lead passou a viajar por
+  // sessionStorage (lib/leadHandoff.ts). Nao reverter.
+  it("nenhuma rota do cliente recebe PII em query string", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const base = path.resolve(import.meta.dirname, "..", "client", "src");
+    const files = fs
+      .readdirSync(base, { recursive: true, encoding: "utf-8" })
+      .filter((f) => f.endsWith(".tsx") || f.endsWith(".ts"));
+    const CAMPOS = ["nome", "telefone", "email", "tipoExame", "mensagem"];
+    const problemas: string[] = [];
+    for (const rel of files) {
+      const src = fs.readFileSync(path.resolve(base, rel), "utf-8");
+      if (/formulario-sucesso\?/.test(src)) {
+        problemas.push(`${rel}: /formulario-sucesso navegado com query string`);
+      }
+      // URLSearchParams montado com campos do formulario de contato.
+      const params = src.match(/new URLSearchParams\(\{[\s\S]{0,400}?\}\)/g) ?? [];
+      for (const bloco of params) {
+        const usados = CAMPOS.filter((c) => new RegExp(`\\b${c}\\s*:`).test(bloco));
+        if (usados.length > 0) {
+          problemas.push(`${rel}: URLSearchParams com ${usados.join(", ")}`);
+        }
+      }
+    }
+    expect(problemas, problemas.join("\n")).toEqual([]);
+  });
+});
+
 describe("GUARD-RAIL: headings sem palavras coladas (auditoria HeadingsMap ago/2026)", () => {
   // Titulos JSX quebrados com <br/> ou <span> empilhados SEM espaco explicito
   // concatenam sem espaco no nome acessivel: "PRINCIPAIS"+"EXAMES" vira

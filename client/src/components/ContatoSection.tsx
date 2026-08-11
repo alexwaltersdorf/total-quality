@@ -26,6 +26,7 @@ const toast = {
 import { trpc } from "@/lib/trpc";
 import { trackFormStart, trackFormSubmit, trackPhoneClick, trackWhatsAppClick, trackExternalLink, trackMapInteraction } from "@/lib/tracking";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
+import { storeLeadHandoff } from "@/lib/leadHandoff";
 
 export default function ContatoSection() {
   const [formData, setFormData] = useState({
@@ -42,27 +43,17 @@ export default function ContatoSection() {
   const contactMutation = trpc.contact.create.useMutation({
     onSuccess: () => {
       toast.success("Mensagem enviada com sucesso!");
-      const params = new URLSearchParams({
-        nome: formData.nome,
-        telefone: formData.telefone,
-        email: formData.email,
-        tipoExame: formData.tipoExame,
-        mensagem: formData.mensagem,
-      });
-      setLocation(`/formulario-sucesso?${params.toString()}`);
+      // O lead vai por sessionStorage, nunca pela URL: em query string ele
+      // acabaria dentro do page_location do GA4 (ver lib/leadHandoff.ts).
+      storeLeadHandoff(formData);
+      setLocation("/formulario-sucesso");
       setFormData({ nome: "", telefone: "", email: "", tipoExame: "", mensagem: "" });
       setFormStarted(false);
     },
     onError: () => {
       toast.info("Redirecionando para confirmação...");
-      const params = new URLSearchParams({
-        nome: formData.nome,
-        telefone: formData.telefone,
-        email: formData.email,
-        tipoExame: formData.tipoExame,
-        mensagem: formData.mensagem,
-      });
-      setLocation(`/formulario-sucesso?${params.toString()}`);
+      storeLeadHandoff(formData);
+      setLocation("/formulario-sucesso");
     },
     onSettled: () => {
       setIsSubmitting(false);
