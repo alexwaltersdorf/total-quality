@@ -465,6 +465,35 @@ describe("GUARD-RAIL: rastreamento padronizado (briefing de 02/08/2026)", () => 
     }
     expect(problemas, problemas.join("\n")).toEqual([]);
   });
+
+  // Conversoes aprimoradas: o contato so pode entrar no dataLayer com hash
+  // SHA-256 (lib/userData.ts) e com consentimento de marketing. Texto puro
+  // nunca — nem no evento, nem em user_data.
+  it("nenhum e-mail ou telefone em texto puro no dataLayer", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const base = path.resolve(import.meta.dirname, "..", "client", "src");
+    const files = fs
+      .readdirSync(base, { recursive: true, encoding: "utf-8" })
+      .filter((f) => f.endsWith(".tsx") || f.endsWith(".ts"));
+    const problemas: string[] = [];
+    for (const rel of files) {
+      const src = fs.readFileSync(path.resolve(base, rel), "utf-8");
+      const pushes = src.match(/pushToDataLayer\([\s\S]{0,600}?\n\s*\}\);/g) ?? [];
+      for (const bloco of pushes) {
+        if (/\b(email|e_mail|telefone|phone|phone_number|user_email)\s*:/.test(bloco)) {
+          problemas.push(`${rel}: contato em texto puro no push do dataLayer`);
+        }
+      }
+    }
+    // O unico modulo autorizado a manipular contato e o userData.ts, e ele so
+    // devolve campos com prefixo sha256_.
+    const userData = fs.readFileSync(path.resolve(base, "lib", "userData.ts"), "utf-8");
+    expect(userData).toContain("sha256_email_address");
+    expect(userData).toContain("sha256_phone_number");
+    expect(userData).toContain("marketingConsentGranted");
+    expect(problemas, problemas.join("\n")).toEqual([]);
+  });
 });
 
 describe("GUARD-RAIL: nenhum dado pessoal ou de saude em URL (LGPD, ago/2026)", () => {

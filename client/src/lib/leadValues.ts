@@ -8,30 +8,30 @@
  * que uma duvida pontual sobre horario).
  *
  * IMPORTANTE: os numeros aqui sao ticket medio, informacao de negocio do Alex.
- * Enquanto ele nao informar os valores reais, TODOS ficam em 1 — o
- * comportamento atual, otimizacao por volume — e nada e inventado. Preencher a
- * tabela abaixo e um passo consciente, nao um chute: numero errado aqui
- * distorce o leilao do Ads e gasta orcamento no lugar errado.
- *
- * Como preencher: trocar o 1 pelo ticket medio em reais do tipo de lead.
- * Ex.: CHECKUP: 450 se o check-up medio fecha em R$ 450.
+ * Ele informou R$ 249,60 como ticket medio da clinica em 11/08/2026, e esse
+ * valor vale para todos os tipos por enquanto. Nao inventar diferenciacao: um
+ * numero chutado por tipo distorce o leilao do Ads e gasta orcamento no lugar
+ * errado. Quando houver ticket medio POR tipo de lead, trocar linha a linha —
+ * e so a partir dai o Ads consegue preferir os leads que valem mais.
  */
+const TICKET_MEDIO = 249.6;
+
 export const LEAD_VALUES: Record<string, number> = {
   // Laboratorio e exames avulsos
-  geral: 1,
-  laboratorio: 1,
-  exames: 1,
-  // Pacotes e servicos de ticket maior
-  checkup: 1,
-  bioimpedancia: 1,
-  cartao: 1,
+  geral: TICKET_MEDIO,
+  laboratorio: TICKET_MEDIO,
+  exames: TICKET_MEDIO,
+  // Pacotes e servicos
+  checkup: TICKET_MEDIO,
+  bioimpedancia: TICKET_MEDIO,
+  cartao: TICKET_MEDIO,
   // Origens informacionais (blog, artigos): intencao mais fria
-  blog: 1,
-  convenios: 1,
+  blog: TICKET_MEDIO,
+  convenios: TICKET_MEDIO,
 };
 
 /** Valor usado quando o tipo de lead nao esta na tabela. */
-export const LEAD_VALUE_PADRAO = 1;
+export const LEAD_VALUE_PADRAO = TICKET_MEDIO;
 
 /**
  * Resolve o valor de um lead. Tenta o tipo de exame primeiro (mais especifico)

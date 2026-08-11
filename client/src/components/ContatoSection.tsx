@@ -63,7 +63,14 @@ export default function ContatoSection() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    trackFormSubmit({ name: formData.nome, subject: formData.tipoExame });
+    // E-mail e telefone vão apenas para o hash SHA-256 das conversões
+    // aprimoradas, e só com consentimento de marketing (lib/userData.ts).
+    void trackFormSubmit({
+      name: formData.nome,
+      subject: formData.tipoExame,
+      email: formData.email,
+      telefone: formData.telefone,
+    });
 
     // Persistir contato no banco de dados
     contactMutation.mutate({

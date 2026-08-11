@@ -77,16 +77,50 @@ voltar**. Todo clique de WhatsApp virou `whatsapp_click`, com origem no
 
 ## Valor da conversão
 
-`client/src/lib/leadValues.ts` mapeia tipo de lead para valor em reais. Hoje
-todos valem 1 — otimização por volume, o comportamento anterior. Preencher com
-o ticket médio real de cada tipo faz o Ads perseguir os leads que valem mais.
-Número errado ali distorce o leilão, então só preencher com dado confirmado.
+`client/src/lib/leadValues.ts` mapeia tipo de lead para valor em reais. O
+ticket médio informado pela clínica é **R$ 249,60**, aplicado a todos os tipos.
+Enquanto o valor for o mesmo para todos, o Ads otimiza por volume com o valor
+correto em reais — o que já habilita relatórios de ROAS e estratégias de lance
+por valor. Quando houver ticket médio **por tipo** de lead, trocar linha a
+linha; só a partir daí o Ads consegue preferir os leads que valem mais.
 
-**Conversões aprimoradas (hash de e-mail/telefone) não estão implementadas e
-não devem ser sem decisão explícita.** Mandar identificador de quem buscou um
-exame específico ao Google é tratamento de dado sensível de saúde: exige base
-legal, consentimento de marketing granular (`ad_user_data` concedido) e hash
-SHA-256 no cliente sobre valor normalizado. Nunca texto puro.
+## Conversões aprimoradas (enhanced conversions)
+
+Implementadas em `client/src/lib/userData.ts`. O contato sai do navegador já
+normalizado e com **hash SHA-256 em hexadecimal** — texto puro nunca entra no
+dataLayer, nunca chega ao GTM e nunca chega ao Google.
+
+Normalização, no padrão do Google:
+
+- **E-mail**: sem espaços, minúsculo; em `gmail.com`/`googlemail.com` os pontos
+  da parte local são removidos.
+- **Telefone**: E.164 assumindo Brasil quando o DDI não vem escrito —
+  `(12) 98888-7777` vira `+5512988887777`.
+
+O `user_data` só é montado quando **as três condições** valem: o visitante
+aceitou cookies de marketing no banner (`tq-consent = granted`, que também
+concede `ad_user_data`), o navegador expõe Web Crypto (contexto seguro) e pelo
+menos um dos dois campos é válido. Faltando qualquer uma, a conversão continua
+sendo enviada — apenas sem identificação.
+
+Pontos que enviam `user_data`, todos com o paciente já identificado por
+iniciativa dele:
+
+| Evento | Origem |
+|---|---|
+| `form_submit` | formulário de contato |
+| `whatsapp_click` (`form_success_cta`) | tela de confirmação do formulário |
+| `whatsapp_click` (`leads_modal`) | modal de leads do cartão |
+
+**Cuidado permanente com dado de saúde:** o `exam_type` viaja no evento para
+segmentação interna e o `user_data` serve apenas para casar o clique com o
+anúncio. Não criar público nem relatório que cruze os dois — laboratório de
+análises clínicas, contato somado a exame procurado é dado sensível (art. 11 da
+LGPD).
+
+No painel do Ads, a ação de conversão precisa ter **conversões aprimoradas
+ativadas** e a tag do GTM precisa de uma variável de dados fornecidos pelo
+usuário lendo `user_data` do dataLayer.
 
 ## Consent Mode v2
 

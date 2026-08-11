@@ -10,7 +10,7 @@
  * que vai para o canal da propria clinica.
  */
 import { useEffect, useRef, useState } from "react";
-import { trackWhatsAppConversion } from "@/lib/tracking";
+import { trackWhatsAppConversionWithLead } from "@/lib/tracking";
 import { consumeLeadHandoff, type LeadHandoff } from "@/lib/leadHandoff";
 import { CheckCircle, ArrowUpRight, Phone } from "lucide-react";
 import { useLocation } from "wouter";
@@ -39,8 +39,14 @@ export default function FormSubmissionSuccess() {
   const leadRef = useRef<LeadHandoff | null>(null);
 
   const openWhatsApp = () => {
-    const msg = encodeURIComponent(buildWhatsAppMessage(leadRef.current));
-    trackWhatsAppConversion("form_success_cta", "form_success");
+    const lead = leadRef.current;
+    const msg = encodeURIComponent(buildWhatsAppMessage(lead));
+    // Conversão identificada: o hash do contato entra nas conversões
+    // aprimoradas do Ads quando há consentimento de marketing.
+    void trackWhatsAppConversionWithLead("form_success_cta", "form_success", "geral", {
+      email: lead?.email,
+      telefone: lead?.telefone,
+    });
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank", "noopener,noreferrer");
   };
 

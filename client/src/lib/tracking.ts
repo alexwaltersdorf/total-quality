@@ -13,6 +13,7 @@
  * para máxima compatibilidade entre plataformas.
  */
 import { resolveLeadValue } from "@/lib/leadValues";
+import { buildUserData } from "@/lib/userData";
 
 // Tipagem do dataLayer
 declare global {
@@ -123,9 +124,35 @@ export function trackWhatsAppConversion(label: string, source: string, examType:
     lead_source: source,
     exam_type: examType,
     currency: "BRL",
-    // Parametrizado em lib/leadValues.ts: enquanto o Alex nao informar o
-    // ticket medio de cada tipo de lead, todos valem 1 (otimizacao por volume).
+    // Ticket medio informado pelo Alex — ver lib/leadValues.ts.
     value: resolveLeadValue(source, examType),
+  });
+}
+
+/**
+ * Mesma conversao, para os pontos em que o paciente JA se identificou
+ * (formulario de contato e modal de leads). Anexa o user_data com hash
+ * SHA-256 das conversoes aprimoradas do Google Ads.
+ *
+ * Sem consentimento de marketing, sem Web Crypto ou com dados invalidos, o
+ * user_data simplesmente nao vai — a conversao continua sendo registrada, so
+ * que sem identificacao. Texto puro nunca entra no dataLayer.
+ */
+export async function trackWhatsAppConversionWithLead(
+  label: string,
+  source: string,
+  examType: string,
+  contato: { email?: string; telefone?: string }
+) {
+  const userData = await buildUserData(contato);
+  pushToDataLayer("whatsapp_click", {
+    event_category: "conversion",
+    event_label: label,
+    lead_source: source,
+    exam_type: examType,
+    currency: "BRL",
+    value: resolveLeadValue(source, examType),
+    ...(userData ? { user_data: userData } : {}),
   });
 }
 
@@ -183,11 +210,20 @@ export function trackFormStart() {
 }
 
 /** Rastreia envio do formulário de contato - CONVERSÃO */
-export function trackFormSubmit(formData: { name: string; subject?: string }) {
+export async function trackFormSubmit(formData: {
+  name: string;
+  subject?: string;
+  email?: string;
+  telefone?: string;
+}) {
+  // user_data com hash para as conversoes aprimoradas; ausente sem
+  // consentimento de marketing (ver lib/userData.ts).
+  const userData = await buildUserData({ email: formData.email, telefone: formData.telefone });
   pushToDataLayer("form_submit", {
     event_category: "conversion",
     form_name: "contato",
     contact_subject: formData.subject || "geral",
+    ...(userData ? { user_data: userData } : {}),
   });
 }
 
