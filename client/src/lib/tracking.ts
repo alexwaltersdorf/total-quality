@@ -12,16 +12,12 @@
  * Eventos seguem a nomenclatura GA4 recommended events + custom events
  * para máxima compatibilidade entre plataformas.
  */
+import { resolveLeadValue } from "@/lib/leadValues";
 
 // Tipagem do dataLayer
 declare global {
   interface Window {
     dataLayer: Record<string, unknown>[];
-    fbq?: (...args: unknown[]) => void;
-    ttq?: {
-      track: (...args: unknown[]) => void;
-      page: () => void;
-    };
   }
 }
 
@@ -127,7 +123,9 @@ export function trackWhatsAppConversion(label: string, source: string, examType:
     lead_source: source,
     exam_type: examType,
     currency: "BRL",
-    value: 1,
+    // Parametrizado em lib/leadValues.ts: enquanto o Alex nao informar o
+    // ticket medio de cada tipo de lead, todos valem 1 (otimizacao por volume).
+    value: resolveLeadValue(source, examType),
   });
 }
 
