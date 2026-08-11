@@ -26,7 +26,7 @@ export default function CallRedirect() {
     <div className="flex items-center justify-center min-h-screen bg-white">
       <div className="text-center">
         <p className="text-lg text-gray-600 mb-4">Preparando chamada...</p>
-        <p className="text-sm text-gray-500">Se não funcionar, clique aqui: <a href="tel:+551238873535" className="text-brand underline">+55 (12) 3887-3535</a></p>
+        <p className="text-sm text-gray-500">Se não funcionar, clique aqui: <a href="tel:+551238873535" onClick={() => trackPhoneClick("ligar_fallback")} className="text-brand underline">+55 (12) 3887-3535</a></p>
       </div>
     </div>
   );

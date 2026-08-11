@@ -9,6 +9,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
+import { trackPhoneClick } from "@/lib/tracking";
 
 export default function Privacidade() {
   useCanonical("https://totalquality.med.br/privacidade");
@@ -109,7 +110,7 @@ export default function Privacidade() {
                 com a gente:
               </p>
               <address className="not-italic mt-3">
-                Telefone: <a className="text-brand" href="tel:+551238873535">(12) 3887-3535</a>
+                Telefone: <a className="text-brand" href="tel:+551238873535" onClick={() => trackPhoneClick("privacidade")}>(12) 3887-3535</a>
                 <br />
                 E-mail: <a className="text-brand" href="mailto:contato@totalquality.med.br">contato@totalquality.med.br</a>
                 <br />

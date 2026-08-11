@@ -440,10 +440,26 @@ describe("GUARD-RAIL: rastreamento padronizado (briefing de 02/08/2026)", () => 
       if (!rel.endsWith(".tsx")) continue;
       const lines = src.split("\n");
       lines.forEach((line, i) => {
+        // Nenhum CTA de WhatsApp navega na mesma aba: tirar o paciente do site
+        // encerra a sessao e derruba a atribuicao.
+        if (/window\.location\.href\s*=\s*[`'"]https:\/\/wa\.me/.test(line)) {
+          problemas.push(`${rel}:${i + 1}: WhatsApp na mesma aba — use window.open(..., "_blank")`);
+        }
         if (!line.includes("wa.me")) return;
         const janela = lines.slice(Math.max(0, i - 6), i + 7).join("\n");
         if (!/track(WhatsApp|Schedule|Card|Lead)/.test(janela)) {
           problemas.push(`${rel}:${i + 1}: CTA de WhatsApp sem tracking`);
+        }
+        if (/href=/.test(line) && !/target="_blank"/.test(janela)) {
+          problemas.push(`${rel}:${i + 1}: link de WhatsApp sem target="_blank"`);
+        }
+      });
+      // Todo link de telefone dispara trackPhoneClick.
+      lines.forEach((line, i) => {
+        if (!/href="tel:/.test(line)) return;
+        const janela = lines.slice(Math.max(0, i - 2), i + 5).join("\n");
+        if (!/trackPhoneClick/.test(janela)) {
+          problemas.push(`${rel}:${i + 1}: link de telefone sem trackPhoneClick`);
         }
       });
     }

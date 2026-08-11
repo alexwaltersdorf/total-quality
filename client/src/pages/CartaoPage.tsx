@@ -24,7 +24,12 @@ export default function CartaoPage() {
     };
     const message = planMessages[planId] || `Olá! Gostaria de contratar o plano ${cartaoPlanos.find(p => p.id === planId)?.name}.`;
     trackCardInterest();
-    window.location.href = `https://wa.me/551238873535?text=${encodeURIComponent(message)}`;
+    // Nova aba: o paciente continua com o site aberto atras da conversa.
+    window.open(
+      `https://wa.me/551238873535?text=${encodeURIComponent(message)}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
   };
 
   const handleCTAClick = (ctaName: string) => {

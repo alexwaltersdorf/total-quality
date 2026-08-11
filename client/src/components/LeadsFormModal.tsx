@@ -52,9 +52,12 @@ export default function LeadsFormModal({
       // Send to WhatsApp
       const message = `Olá! Meu nome é ${formData.name}. Email: ${formData.email}. Telefone: ${formData.phone}. Mensagem: ${formData.message}`;
       trackWhatsAppConversion("leads_modal", "modal");
-      window.location.href = `https://wa.me/551238873535?text=${encodeURIComponent(
-        message
-      )}`;
+      // Nova aba: o paciente continua com o site aberto atras da conversa.
+      window.open(
+        `https://wa.me/551238873535?text=${encodeURIComponent(message)}`,
+        "_blank",
+        "noopener,noreferrer"
+      );
 
       // Reset form
       setFormData({

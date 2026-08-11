@@ -240,7 +240,7 @@ export default function BlogPost() {
             </p>
             <a
               onClick={() => trackWhatsAppConversion("artigo_cta", "blog", "geral")}
-            href="https://wa.me/551238873535?text=Olá! Li o artigo sobre {post.title} e gostaria de agendar um exame."
+              href={`https://wa.me/551238873535?text=Olá! Li o artigo sobre ${post.title} e gostaria de agendar um exame.`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-pill-brand inline-flex items-center gap-2"

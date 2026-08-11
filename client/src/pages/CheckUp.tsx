@@ -4,7 +4,7 @@
  * Page: Check-Up Preventivo
  */
 import { useEffect, useRef } from "react";
-import { trackScheduleCheckup } from "@/lib/tracking";
+import { trackScheduleCheckup, trackPhoneClick } from "@/lib/tracking";
 import { ArrowUpRight, Heart, Shield, Activity, Clock, CheckCircle, Stethoscope, FlaskConical, Brain } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -159,7 +159,7 @@ export default function CheckUp() {
                 Agendar Check-Up
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
-              <a href="tel:+551238873535" className="btn-pill bg-transparent !text-text border border-black/20 hover:!bg-black/5">
+              <a href="tel:+551238873535" onClick={() => trackPhoneClick("checkup_topo")} className="btn-pill bg-transparent !text-text border border-black/20 hover:!bg-black/5">
                 Ligar: (12) 3887-3535
               </a>
             </div>
@@ -311,7 +311,7 @@ export default function CheckUp() {
               Agendar pelo WhatsApp
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
-            <a href="tel:+551238873535" className="btn-pill bg-transparent text-white border border-white/30 hover:bg-white/10">
+            <a href="tel:+551238873535" onClick={() => trackPhoneClick("checkup_rodape")} className="btn-pill bg-transparent text-white border border-white/30 hover:bg-white/10">
               Ligar: (12) 3887-3535
             </a>
           </div>

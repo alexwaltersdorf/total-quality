@@ -180,7 +180,7 @@ export default function ContatoSection() {
                     <a href="tel:+551238873535" className="flex items-center justify-center px-6 py-3 bg-[#4A4A4A] text-white rounded-full hover:bg-[#3A3A3A] transition-colors font-semibold text-center" onClick={() => trackPhoneClick("contato_section")}>
                       LIGAR: (12) 3887-3535
                     </a>
-                    <a href="https://wa.me/551238873535?text=Olá! Gostaria de informações." className="flex items-center justify-center px-6 py-3 bg-[#25D366] text-white rounded-full hover:bg-[#1da851] transition-colors font-semibold text-center" onClick={() => trackWhatsAppClick("contato_section")}>
+                    <a href="https://wa.me/551238873535?text=Olá! Gostaria de informações." target="_blank" rel="noopener noreferrer" className="flex items-center justify-center px-6 py-3 bg-[#25D366] text-white rounded-full hover:bg-[#1da851] transition-colors font-semibold text-center" onClick={() => trackWhatsAppClick("contato_section")}>
                       WHATSAPP: (12) 3887-3535
                     </a>
                   </div>

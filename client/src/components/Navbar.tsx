@@ -84,7 +84,7 @@ export default function Navbar() {
   const handlePhoneClickNavbar = () => {
     setMobileOpen(false);
     trackPhoneClick("navbar");
-    window.location.href = 'tel:+5512388735350';
+    window.location.href = 'tel:+551238873535';
   };
 
   const handleScheduleClick = handleScheduleClickNavbar;

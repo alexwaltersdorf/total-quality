@@ -4,7 +4,7 @@
  * Page: Bioimpedância
  */
 import { useEffect, useRef } from "react";
-import { trackScheduleBioimpedancia } from "@/lib/tracking";
+import { trackScheduleBioimpedancia, trackPhoneClick } from "@/lib/tracking";
 import { ArrowUpRight, ArrowLeft, Zap, TrendingUp, Droplets, Bone, Flame, Scale, Target, Users, BarChart3 } from "lucide-react";
 import { Link } from "wouter";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
@@ -324,7 +324,7 @@ export default function Bioimpedancia() {
                   Agendar pelo WhatsApp
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </button>
-                <a href="tel:+551238873535" className="btn-pill bg-transparent !text-white border border-white/30 hover:!bg-white/10">
+                <a href="tel:+551238873535" onClick={() => trackPhoneClick("bioimpedancia_cta")} className="btn-pill bg-transparent !text-white border border-white/30 hover:!bg-white/10">
                   (12) 3887-3535
                 </a>
               </div>

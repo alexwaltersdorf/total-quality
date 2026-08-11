@@ -12,7 +12,7 @@ import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
-import { trackScheduleExam } from "@/lib/tracking";
+import { trackScheduleExam, trackPhoneClick } from "@/lib/tracking";
 
 
 /*
@@ -145,6 +145,7 @@ export default function LaboratorioCaraguatatuba() {
                   </button>
                   <a
                     href="tel:+551238873535"
+                    onClick={() => trackPhoneClick("landing_lab_hero")}
                     className="btn-pill !bg-transparent !text-text border border-black/15 hover:!bg-black/5"
                   >
                     <Phone className="w-3.5 h-3.5" />
@@ -291,7 +292,7 @@ export default function LaboratorioCaraguatatuba() {
                       <Phone className="w-5 h-5 text-brand flex-shrink-0 mt-0.5" />
                       <div>
                         <p className="font-medium text-text">Telefone e WhatsApp</p>
-                        <a href="tel:+551238873535" className="text-brand hover:underline">(12) 3887-3535</a>
+                        <a href="tel:+551238873535" onClick={() => trackPhoneClick("landing_lab_contato")} className="text-brand hover:underline">(12) 3887-3535</a>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
@@ -419,6 +420,7 @@ export default function LaboratorioCaraguatatuba() {
               </button>
               <a
                 href="tel:+551238873535"
+                onClick={() => trackPhoneClick("landing_lab_cta")}
                 className="btn-pill !bg-transparent !text-white border border-white/30 hover:!bg-white/10"
               >
                 <Phone className="w-3.5 h-3.5" />
