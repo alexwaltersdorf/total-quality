@@ -24,13 +24,22 @@ alguém reintroduzir `fbq(`, `ttq.` ou `gtag('config'`.
 |---|---|---|
 | GTM | `GTM-WLR7JD57` | contêiner único |
 | GA4 | `G-FZH25GKTJ9` | propriedade "totalqualitymedicina" (294418772) |
-| Google Ads | `AW-14387808424` | conta 920-715-3288, a que tem investimento ativo |
-| Google Ads | `AW-125205491754` | conta 660-569-9690 |
+| Google Ads | `AW-312778444` | conta 920-715-3288, a que tem investimento ativo; rótulo `JbzkCNiX6docEMy9kpUB` |
+| Google Ads | `AW-17886498822` | conta 660-569-9690 |
 | Meta Pixel | `1868545660691533` | configurado dentro do GTM, nunca no código |
 
-**Nunca usar:** `AW-16697936154`, `AW-312778444`, `AW-18050059780`,
-`AW-17886498822` e o pixel `1536672876562340`. Não pertencem à clínica ou estão
-aposentados — conversões enviadas a eles ficam invisíveis para as campanhas.
+`AW-16697936154` e `AW-18050059780` aparecem em tags antigas do contêiner e não
+têm origem identificada — não usar em tag nova, e não excluir do contêiner sem
+conferir no painel de qual conta vieram. O pixel `1536672876562340` está
+aposentado.
+
+> **Correção de 11/08/2026.** Até 10/08 esta tabela dizia `AW-14387808424` e
+> `AW-125205491754`. Estava errada. Os números vieram de uma leitura da API do
+> Windsor sem perceber que o conector **soma** o campo
+> `customer_conversion_tracking_setting_conversion_tracking_id` linha a linha:
+> `14387808424` é `46 × 312778444`. Para ler um identificador nessa API, sempre
+> quebrar por `date` e por campanha e conferir em dois períodos — se o valor
+> muda com o período, é agregação, não é o ID.
 
 ## Eventos
 
@@ -150,14 +159,21 @@ O banner é `client/src/components/CookieConsent.tsx`, com "Aceitar cookies" e
 
 ## Pendências no painel (não são código)
 
-1. A versão publicada do GTM ainda aponta a conversão para **AW-312778444**,
-   conta que não é da clínica. Trocar para `AW-14387808424`, criar a ação de
-   conversão dentro da conta 920-715-3288, colar o rótulo novo e publicar.
-2. Gatilho da conversão precisa virar `^(whatsapp_click|phone_click)$` —
-   `ads_conversion` não existe mais.
-3. Adicionar `form_submit` à RegEx do gatilho da tag "GA4 - eventos do site".
+1. Gatilho da conversão precisa virar `^(whatsapp_click|phone_click)$` —
+   `ads_conversion` não existe mais. O ID e o rótulo da tag publicada
+   (`AW-312778444` / `JbzkCNiX6docEMy9kpUB`) estão **corretos**, não mexer.
+2. Adicionar `form_submit` e `page_view` à RegEx do gatilho da tag
+   "GA4 - eventos do site".
+3. **Desligar o page_view automático da tag de configuração do GA4** — o site
+   passou a ser a fonte única, e a configuração mandando o dela no
+   carregamento é o que duplicava o evento.
 4. Marcar `whatsapp_click`, `phone_click` e `form_submit` como eventos
    principais no GA4.
-5. A tag `FB_CONVERSIONS_API-...-Web-Tag-GA4_Event` manda o evento interno
+5. Ativar conversões aprimoradas na ação de conversão do Ads e, na tag do GTM,
+   apontar a variável de dados fornecidos pelo usuário (modo manual) para
+   `user_data` do dataLayer.
+6. A tag `FB_CONVERSIONS_API-...-Web-Tag-GA4_Event` manda o evento interno
    `gtm.dom` como nome de evento para o GA4 — restringir a uma allowlist.
-6. Garantir que o gatilho de History Change não emita `page_view` (regra 2).
+
+O pacote de importação pronto, com essas correções já aplicadas, está em
+`gtm/gtm-import-conversoes-eventos.json` no repositório `SEO---Total-Quality`.
