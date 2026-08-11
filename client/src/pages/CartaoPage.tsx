@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { trackCardInterest, trackCtaClick, trackPageView } from "@/lib/tracking";
+import { useState } from "react";
+import { trackCardInterest, trackCtaClick } from "@/lib/tracking";
 import { ChevronDown, Zap, Smartphone, Heart, Dumbbell, Pill, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CartaoPricingCard from "@/components/CartaoPricingCard";
@@ -13,10 +13,6 @@ export default function CartaoPage() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  // Rastrear visualização da página
-  useEffect(() => {
-    trackPageView("Cartão Total Quality Care");
-  }, []);
 
   const handleSelectPlan = (planId: string) => {
     setSelectedPlan(planId);

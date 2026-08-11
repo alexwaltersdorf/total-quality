@@ -46,13 +46,35 @@ function pushToDataLayer(event: string, params: Record<string, unknown> = {}) {
 // NAVEGAÇÃO E PAGEVIEW
 // ============================================================
 
-/** Rastreia visualização de página (SPA navigation) */
+/*
+ * FONTE UNICA DE page_view.
+ *
+ * Ate 11/08/2026 havia tres emissores: um push manual na Home, outro no hook
+ * legado useTracking (CartaoPage) e o disparo do proprio GTM na troca de rota.
+ * O GA4 recebia o evento em duplicidade. Agora quem chama e apenas o
+ * usePageViewTracking, montado uma vez no App; o gatilho de History Change do
+ * GTM NAO deve emitir page_view (ver docs/analytics.md).
+ *
+ * A deduplicacao por caminho + janela de tempo tambem absorve o duplo-render
+ * do StrictMode em desenvolvimento.
+ */
+let lastPageViewPath: string | null = null;
+let lastPageViewAt = 0;
+const PAGE_VIEW_DEDUP_MS = 1000;
+
+/** Rastreia visualização de página (navegação SPA). */
 export function trackPageView(pageName?: string) {
+  if (typeof window === "undefined") return;
+  const path = window.location.pathname;
+  const agora = Date.now();
+  if (path === lastPageViewPath && agora - lastPageViewAt < PAGE_VIEW_DEDUP_MS) return;
+  lastPageViewPath = path;
+  lastPageViewAt = agora;
+
   pushToDataLayer("page_view", {
     page_name: pageName || document.title,
     content_group: getContentGroup(),
   });
-
 }
 
 /** Rastreia scroll depth (25%, 50%, 75%, 90%) */
