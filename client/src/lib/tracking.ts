@@ -316,24 +316,55 @@ export function initScrollTracking() {
   return () => window.removeEventListener("scroll", handleScroll);
 }
 
-/** Inicializa rastreamento de tempo na página */
+/**
+ * Inicializa rastreamento de tempo na página.
+ *
+ * Marcos discretos, cada um uma unica vez por pagina. Antes eram
+ * [15, 30, 60, 120, 300] verificados a cada 5s — tres eventos so no primeiro
+ * minuto, consumindo cota do GA4 e inflando engajamento.
+ *
+ * O contador acumula apenas tempo com a aba VISIVEL (Page Visibility API):
+ * antes ele seguia correndo com a aba em segundo plano, contando como
+ * engajamento tempo em que ninguem estava lendo a pagina.
+ */
 export function initTimeTracking() {
-  const intervals = [15, 30, 60, 120, 300]; // segundos
-  const triggered = new Set<number>();
-  let startTime = Date.now();
+  const marcos = [30, 60, 180]; // segundos
+  const disparados = new Set<number>();
+  let visivelDesde = document.visibilityState === "visible" ? Date.now() : null;
+  let acumulado = 0;
 
-  const checkTime = () => {
-    const elapsed = Math.round((Date.now() - startTime) / 1000);
-    intervals.forEach((interval) => {
-      if (elapsed >= interval && !triggered.has(interval)) {
-        triggered.add(interval);
-        trackTimeOnPage(interval);
+  const decorrido = () =>
+    Math.round((acumulado + (visivelDesde ? Date.now() - visivelDesde : 0)) / 1000);
+
+  const checarMarcos = () => {
+    const segundos = decorrido();
+    for (const marco of marcos) {
+      if (segundos >= marco && !disparados.has(marco)) {
+        disparados.add(marco);
+        trackTimeOnPage(marco);
       }
-    });
+    }
   };
 
-  const timer = setInterval(checkTime, 5000);
-  return () => clearInterval(timer);
+  const aoTrocarVisibilidade = () => {
+    if (document.visibilityState === "visible") {
+      visivelDesde = Date.now();
+      return;
+    }
+    if (visivelDesde) {
+      acumulado += Date.now() - visivelDesde;
+      visivelDesde = null;
+    }
+    checarMarcos();
+  };
+
+  document.addEventListener("visibilitychange", aoTrocarVisibilidade);
+  const timer = window.setInterval(checarMarcos, 10000);
+
+  return () => {
+    window.clearInterval(timer);
+    document.removeEventListener("visibilitychange", aoTrocarVisibilidade);
+  };
 }
 
 /** Inicializa observador de seções visíveis */
