@@ -261,23 +261,9 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/favicon-kMQsdmGbgGnMBKEvfxvRGD.webp" />
 
-    <!-- Meta Pixel (defer para não bloquear renderização) -->
-    <script defer>
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '1536672876562340');
-      fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=1536672876562340&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- End Meta Pixel -->
+    <!-- Meta Pixel: carregado exclusivamente via GTM-WLR7JD57 (pixel 1868545660691533).
+         O snippet hardcoded que existia aqui inicializava '1536672876562340', que é o ID da
+         Página do Facebook e não um pixel — inicialização inválida, removida. Não readicionar. -->
 
     <!-- Google Ads Conversion Tracking (defer para não bloquear renderização) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-16697936154"></script>
