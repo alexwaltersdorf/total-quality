@@ -33,7 +33,7 @@ export default function Home() {
   const scrollRef = useScrollReveal();
 
   useEffect(() => {
-    document.title = "Laboratório em Caraguatatuba | Total Quality";
+    document.title = "Laboratório em Caraguatatuba | Total Quality | Ligue Agora";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
       metaDesc.setAttribute("content", "Laboratório de análises clínicas em Caraguatatuba - SP. Exames de sangue, tomografia, ultrassom e check-up. Agende pelo WhatsApp (12) 3887-3535.");
