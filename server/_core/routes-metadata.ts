@@ -262,7 +262,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
 // Rotas estáticas principais
 const staticRoutes: Record<string, RouteMetadata> = {
   "/": {
-    title: "Laboratório em Caraguatatuba | Total Quality",
+    title: "Laboratório em Caraguatatuba | Total Quality | Ligue Agora",
     description: "Laboratório em Caraguatatuba com resultados em até 24h. Há 23 anos no Litoral Norte: exames de sangue, tomografia, ultrassom e check-up. Nota 4,5 no Google.",
     keywords: "laboratório Caraguatatuba, exames de sangue, tomografia, ultrassom, check-up",
     ogTitle: "Total Quality Medicina Diagnóstica e Laboratorial | Exames de Sangue em Caraguatatuba - SP",
