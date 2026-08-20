@@ -4,6 +4,7 @@
  * Page: Dynamic Exam Page (reusable for all exams)
  */
 import { useEffect, useRef, useMemo, lazy, Suspense } from "react";
+import { trackScheduleExam, trackPhoneClick } from "@/lib/tracking";
 import { ArrowUpRight, ChevronRight, CheckCircle } from "lucide-react";
 import { useParams, useLocation, Link } from "wouter";
 import Navbar from "@/components/Navbar";
@@ -33,7 +34,7 @@ export default function ExamePage() {
   // SEO: Structured Data — BreadcrumbList
   const breadcrumbs = useMemo(() => exam ? [
     { name: "Início", url: "/" },
-    { name: "Exames", url: "/#exames" },
+    { name: "Exames", url: "/exames" },
     { name: exam.shortTitle, url: `/exames/${exam.slug}` },
   ] : [], [exam]);
   useBreadcrumbSchema(breadcrumbs);
@@ -108,10 +109,10 @@ export default function ExamePage() {
                   {word}{" "}
                 </span>
               ))}
-              <span className="block text-base lg:text-lg text-text-light font-light tracking-wide mt-4 normal-case">
-                {exam.shortTitle} em Caraguatatuba - SP | Total Quality Medicina Diagnóstica
-              </span>
             </h1>
+            <p className="reveal block text-base lg:text-lg text-text-light font-light tracking-wide mt-4 normal-case">
+              {exam.shortTitle} em Caraguatatuba - SP | Total Quality Medicina Diagnóstica
+            </p>
 
             <p className="reveal text-text-light text-lg lg:text-xl leading-relaxed max-w-3xl mb-10" style={{ transitionDelay: "200ms" }}>
               {exam.heroDescription}
@@ -119,13 +120,13 @@ export default function ExamePage() {
 
             <div className="reveal flex flex-wrap gap-4 mb-16" style={{ transitionDelay: "300ms" }}>
               <button
-                onClick={() => window.open(`https://wa.me/551238873535?text=${encodeURIComponent(exam.whatsappMessage)}`, "_blank")}
+                onClick={() => { trackScheduleExam(`exame_${exam.slug}`, exam.slug); window.open(`https://wa.me/551238873535?text=${encodeURIComponent(exam.whatsappMessage)}`, "_blank"); }}
                 className="btn-pill"
               >
                 Agendar pelo WhatsApp
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
-              <a href="tel:+551238873535" className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">
+              <a href="tel:+551238873535" onClick={() => trackPhoneClick("exame_topo")} className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">
                 Ligar: (12) 3887-3535
               </a>
             </div>
@@ -312,20 +313,26 @@ export default function ExamePage() {
       <section className="py-16 lg:py-24 bg-surface-dark">
         <div className="container text-center">
           <h2 className="reveal heading-display text-4xl sm:text-5xl lg:text-6xl text-text mb-6">
-            AGENDE SEU <span className="text-brand">{exam.shortTitle.toUpperCase()}</span>
+            {exam.category === "laboratorio" ? (
+              <>FAÇA SEU <span className="text-brand">{exam.shortTitle.toUpperCase()}</span> SEM AGENDAMENTO</>
+            ) : (
+              <>AGENDE SEU <span className="text-brand">{exam.shortTitle.toUpperCase()}</span></>
+            )}
           </h2>
           <p className="reveal text-text-muted text-lg mb-10 max-w-2xl mx-auto" style={{ transitionDelay: "100ms" }}>
-            Entre em contato conosco para agendar seu exame. Atendemos de segunda a sexta, das 08h às 18h.
+            {exam.category === "laboratorio"
+              ? "A coleta é por ordem de chegada, sem agendamento: basta trazer o pedido médico e um documento com foto, de segunda a sexta, das 07h30 às 18h."
+              : "Entre em contato conosco para agendar seu exame. Atendemos de segunda a sexta, das 07h30 às 18h."}
           </p>
           <div className="reveal flex flex-wrap gap-4 justify-center" style={{ transitionDelay: "200ms" }}>
             <button
-              onClick={() => window.open(`https://wa.me/551238873535?text=${encodeURIComponent(exam.whatsappMessage)}`, "_blank")}
+              onClick={() => { trackScheduleExam(`exame_${exam.slug}`, exam.slug); window.open(`https://wa.me/551238873535?text=${encodeURIComponent(exam.whatsappMessage)}`, "_blank"); }}
               className="btn-pill"
             >
-              Agendar pelo WhatsApp
+              {exam.category === "laboratorio" ? "Tirar dúvidas no WhatsApp" : "Agendar pelo WhatsApp"}
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
-            <a href="tel:+551238873535" className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">
+            <a href="tel:+551238873535" onClick={() => trackPhoneClick("exame_rodape")} className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">
               Ligar: (12) 3887-3535
             </a>
           </div>

@@ -76,6 +76,7 @@ export default function ThankYouCall() {
         {/* Manual call button */}
         <a
           href="tel:+551238873535"
+          onClick={() => trackPhoneClick("obrigado_chamada")}
           className="inline-flex items-center gap-3 px-8 py-4 bg-white text-brand font-semibold rounded-full hover:bg-white/90 transition-all shadow-lg hover:shadow-xl"
         >
           <Phone className="w-5 h-5" />

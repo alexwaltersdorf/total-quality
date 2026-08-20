@@ -1,5 +1,11 @@
 name: Deploy to Hostinger
 
+# O build acontece AQUI, no runner do GitHub (RAM de sobra, ~40s), e o
+# servidor recebe apenas o dist/ pronto. Antes o `pnpm build` rodava por SSH
+# dentro da Hostinger, cujo limite de 1 GB de heap derrubava o Vite com
+# "JavaScript heap out of memory" — 100% das execuções falharam entre
+# 04/06 e 19/08/2026 e NADA chegou a produção nesse período.
+
 on:
   push:
     branches:
@@ -12,51 +18,78 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy on Hostinger (CloudLinux + Passenger)
+    name: Build no runner + publicação na Hostinger
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy via SSH
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Ativar corepack (pnpm da versão do packageManager)
+        run: corepack enable
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Build (runner, sem limite de 1 GB)
+        run: pnpm build
+
+      - name: Compactar artefato
+        run: tar -czf dist.tar.gz dist
+
+      - name: Enviar artefato para o servidor
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          port: ${{ secrets.HOSTINGER_PORT }}
+          source: dist.tar.gz
+          target: ${{ secrets.HOSTINGER_PATH }}
+
+      - name: Ativar no servidor (fonte + deps + swap do dist + restart)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOSTINGER_HOST }}
           username: ${{ secrets.HOSTINGER_USER }}
           key: ${{ secrets.HOSTINGER_SSH_KEY }}
           port: ${{ secrets.HOSTINGER_PORT }}
-          command_timeout: 30m
+          command_timeout: 15m
           script: |
             set -e
 
             NODE_BIN="/opt/alt/alt-nodejs22/root/usr/bin"
             PNPM="/opt/alt/alt-nodejs22/root/usr/lib/node_modules/corepack/shims/pnpm"
             export PATH="$NODE_BIN:$PATH"
-            export RAYON_NUM_THREADS=1
-            export UV_THREADPOOL_SIZE=1
-            export NODE_OPTIONS="--max-old-space-size=1024"
 
             if [ ! -x "$NODE_BIN/node" ]; then echo "ERRO: Node nao encontrado"; exit 1; fi
             if [ ! -f "$PNPM" ]; then echo "ERRO: pnpm shim nao encontrado"; exit 1; fi
 
             cd "${{ secrets.HOSTINGER_PATH }}"
 
-            echo "==> [1/6] Pull do branch main"
+            echo "==> [1/5] Sincronizando fonte (blog, package.json) com origin/main"
             git fetch origin main
             git reset --hard origin/main
 
-            echo "==> [2/6] Instalando dependencias (build scripts permitidos via package.json)"
+            echo "==> [2/5] Instalando dependencias de runtime (sem build)"
             "$PNPM" install --frozen-lockfile
 
-            echo "==> [3/6] Restaurando bit de execucao dos binarios (workaround CageFS)"
+            echo "==> [3/5] Restaurando bit de execucao dos binarios (workaround CageFS)"
             find node_modules -path "*/.bin/*" -type f -exec chmod +x {} \; 2>/dev/null || true
-            find node_modules/.pnpm -name "*.cjs" -path "*/bin/*" -exec chmod +x {} \; 2>/dev/null || true
-            find node_modules/.pnpm -name "*.js" -path "*/bin/*" -exec chmod +x {} \; 2>/dev/null || true
 
-            echo "==> [4/6] Build da aplicacao (single-threaded)"
-            "$PNPM" build
+            echo "==> [4/5] Ativando o build enviado pelo runner"
+            rm -rf dist
+            tar -xzf dist.tar.gz
+            rm -f dist.tar.gz
 
-            echo "==> [5/6] Restart via Phusion Passenger"
+            echo "==> [5/5] Restart via Phusion Passenger"
             mkdir -p tmp
             touch tmp/restart.txt
 
-            echo "==> [6/6] Deploy OK em $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "==> Deploy OK em $(date '+%Y-%m-%d %H:%M:%S')"
             echo "    Node:  $(node --version)"
-            echo "    pnpm:  $("$PNPM" --version)"
+            echo "    Bundle: $(ls dist/public/assets/index-*.js 2>/dev/null | head -1)"

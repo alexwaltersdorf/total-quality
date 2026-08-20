@@ -1,6 +1,57 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Fontes self-hosted (auditoria PageSpeed jul/2026).
+ *
+ * Antes o site buscava as fontes no fonts.googleapis.com/fonts.gstatic.com: dois
+ * preconnect, duas conexoes TLS extras e uma folha de estilo de terceiro no
+ * caminho critico, ~72 KB fora do nosso controle de cache. Agora os .woff2 vem
+ * do proprio dominio, com o mesmo cache dos demais assets.
+ *
+ * DM Sans e variavel (300..700), o que cobre font-light/normal/medium/semibold/
+ * bold usados nas telas — um unico arquivo no lugar de cinco estaticos.
+ * Nao ha arquivo italico: as duas ocorrencias de `italic` no site (uma legenda e
+ * um depoimento) usam o oblique sintetico do navegador, o que evita baixar mais
+ * 60 KB por dois paragrafos.
+ *
+ * Os subsets sao os mesmos que o Google servia (latin e latin-ext); o latin-ext
+ * so e baixado quando a pagina usa algum caractere daquele intervalo.
+ * Para atualizar: baixe de novo os .woff2 apontados por
+ * https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300..700
+ */
+@font-face {
+  font-family: 'Bebas Neue';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/bebas-neue-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Bebas Neue';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/bebas-neue-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/dm-sans-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/dm-sans-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -53,10 +104,25 @@
   --color-surface-light: oklch(0.97 0 0);
   --color-surface-dark: oklch(0.94 0 0);
 
-  /* Text color — dark gray #5A5A5A */
+  /* Escala de texto — contraste WCAG AA (auditoria PageSpeed jul/2026).
+   *
+   * `text-muted` era oklch(0.65) = #8f8f8f, que da apenas 3,23:1 sobre branco e
+   * reprovava no AA (minimo 4,5:1 para texto normal — inclui os `text-xs` dos
+   * cards do blog, das legendas do rodape e dos rotulos do hero).
+   * `text-light` era oklch(0.55): passava sobre branco (4,85:1), mas caia para
+   * 4,07:1 sobre `surface-dark`, que e o fundo do rodape.
+   *
+   * A escala foi escurecida mantendo a hierarquia (text < light < muted em
+   * claridade). Os valores abaixo passam 4,5:1 sobre os tres fundos usados no
+   * site — branco, surface-light (0.97) e surface-dark (0.94):
+   *
+   *   text        #4d4d4d   8,46:1 / 7,76:1 / 7,10:1
+   *   text-light  #5d5d5d   6,54:1 / 5,99:1 / 5,48:1
+   *   text-muted  #696969   5,51:1 / 5,05:1 / 4,62:1
+   */
   --color-text: oklch(0.42 0 0);
-  --color-text-light: oklch(0.55 0 0);
-  --color-text-muted: oklch(0.65 0 0);
+  --color-text-light: oklch(0.48 0 0);
+  --color-text-muted: oklch(0.52 0 0);
 
   --font-display: 'Bebas Neue', sans-serif;
   --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;

@@ -4,6 +4,7 @@
  * +400 palavras com keywords geolocalizadas integradas naturalmente
  */
 import { ArrowUpRight, CheckCircle, Award, Users, Microscope, MapPin, Clock } from "lucide-react";
+import { Link } from "wouter";
 import { trackScheduleExam } from "@/lib/tracking";
 
 const diferenciais = [
@@ -98,12 +99,48 @@ export default function PorQueEscolherSection() {
               DIAGNÓSTICO POR IMAGEM EM <span className="text-brand">CARAGUATATUBA</span>
             </h3>
             <p className="reveal text-text-light leading-relaxed mb-4">
-              A Total Quality é a clínica de medicina diagnóstica mais completa de Caraguatatuba, oferecendo
-              tomografia computadorizada multislice, ultrassonografia geral e Doppler, mamografia digital,
-              raio-X digital, ecocardiograma, holter 24h, MAPA 24h, eletrocardiograma, espirometria,
-              eletroencefalograma e bioimpedância. Nossos equipamentos de diagnóstico por imagem em
-              Caraguatatuba são de última geração, proporcionando imagens de alta resolução para diagnósticos
-              mais precisos.
+              A Total Quality é a clínica de medicina diagnóstica mais completa de Caraguatatuba, oferecendo{" "}
+              <Link href="/exames/tomografia-computadorizada" className="text-brand hover:underline">
+                tomografia computadorizada multislice
+              </Link>
+              ,{" "}
+              <Link href="/exames/ultrassonografia" className="text-brand hover:underline">
+                ultrassonografia geral e Doppler
+              </Link>
+              ,{" "}
+              <Link href="/exames/mamografia" className="text-brand hover:underline">
+                mamografia digital
+              </Link>
+              ,{" "}
+              <Link href="/exames/raio-x" className="text-brand hover:underline">
+                raio-X digital
+              </Link>
+              ,{" "}
+              <Link href="/exames/holter" className="text-brand hover:underline">
+                holter 24h
+              </Link>
+              ,{" "}
+              <Link href="/exames/mapa" className="text-brand hover:underline">
+                MAPA 24h
+              </Link>
+              ,{" "}
+              <Link href="/exames/eletrocardiograma" className="text-brand hover:underline">
+                eletrocardiograma
+              </Link>
+              ,{" "}
+              <Link href="/exames/espirometria" className="text-brand hover:underline">
+                espirometria
+              </Link>
+              ,{" "}
+              <Link href="/exames/eletroencefalograma" className="text-brand hover:underline">
+                eletroencefalograma
+              </Link>{" "}
+              e{" "}
+              <Link href="/bioimpedancia" className="text-brand hover:underline">
+                bioimpedância
+              </Link>
+              . Nossos equipamentos de diagnóstico por imagem em Caraguatatuba são de última geração,
+              proporcionando imagens de alta resolução para diagnósticos mais precisos.
             </p>
             <p className="reveal text-text-light leading-relaxed">
               Contamos com equipe médica especializada em radiologia, cardiologia e neurologia, garantindo
@@ -123,7 +160,7 @@ export default function PorQueEscolherSection() {
               </h3>
               <p className="text-text-light leading-relaxed mb-4">
                 O laboratório Total Quality está localizado no centro de Caraguatatuba, na R. Padre Anchieta, 1010,
-                com fácil acesso de carro, ônibus ou a pé. Funcionamos de segunda a sexta-feira, das 08h às 18h.
+                com fácil acesso de carro, ônibus ou a pé. Funcionamos de segunda a sexta-feira, das 07h30 às 18h.
                 Aceitamos diversos convênios de saúde e oferecemos atendimento particular com preços acessíveis.
               </p>
               <div className="flex flex-wrap gap-3">

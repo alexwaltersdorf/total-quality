@@ -19,7 +19,6 @@ import ContatoSection from "@/components/ContatoSection";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import {
-  trackPageView,
   initScrollTracking,
   initTimeTracking,
   initSectionObserver,
@@ -33,7 +32,7 @@ export default function Home() {
   const scrollRef = useScrollReveal();
 
   useEffect(() => {
-    document.title = "Laboratório em Caraguatatuba | Total Quality";
+    document.title = "Laboratório em Caraguatatuba | Total Quality | Ligue Agora";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
       metaDesc.setAttribute("content", "Laboratório de análises clínicas em Caraguatatuba - SP. Exames de sangue, tomografia, ultrassom e check-up. Agende pelo WhatsApp (12) 3887-3535.");
@@ -66,8 +65,8 @@ export default function Home() {
     // Start page engagement tracking (time on page, scroll depth, quartiles)
     const cleanupEngagement = startPageTracking("/", "Home");
 
-    // Tracking: page view + engagement metrics
-    trackPageView("Home");
+    // O page_view do dataLayer sai do usePageViewTracking (App.tsx), fonte
+    // unica. Aqui fica so o registro no painel proprio (banco da clinica).
     trackEventDirect("page_view", "navigation", { page: "Home", ...utmForAPI });
     const cleanupScroll = initScrollTracking();
     const cleanupTime = initTimeTracking();

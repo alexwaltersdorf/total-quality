@@ -3,10 +3,12 @@
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  * Layout: Editorial article with large hero image and clean typography
  */
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { trackWhatsAppConversion } from "@/lib/tracking";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, ArrowUpRight, Clock, Calendar, Tag, Share2 } from "lucide-react";
-import { blogPosts } from "@/lib/blogData";
+import { blogPosts, loadBlogPost } from "@/lib/blogData";
+import { linkifyText } from "@/lib/internalLinkTargets";
 import { trpc } from "@/lib/trpc";
 import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
 import Navbar from "@/components/Navbar";
@@ -19,7 +21,26 @@ export default function BlogPost() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
 
-  const post = useMemo(() => blogPosts.find((p) => p.slug === slug), [slug]);
+  const meta = useMemo(() => blogPosts.find((p) => p.slug === slug), [slug]);
+  const [content, setContent] = useState<string[] | null>(null);
+
+  // O corpo do artigo vive em client/src/content/blog/<slug>.json e vira um
+  // chunk proprio — nao pesa no bundle de quem nunca abre o blog.
+  useEffect(() => {
+    let cancelled = false;
+    if (!slug) return;
+    loadBlogPost(slug).then((full) => {
+      if (!cancelled) setContent(full?.content ?? []);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
+
+  const post = useMemo(
+    () => (meta ? { ...meta, content: content ?? [] } : undefined),
+    [meta, content]
+  );
 
   const relatedPosts = useMemo(() => {
     if (!post) return [];
@@ -173,14 +194,27 @@ export default function BlogPost() {
       <article className="pb-16">
         <div className="container max-w-3xl mx-auto">
           <div className="space-y-6">
-            {post.content.map((paragraph, i) => (
-              <p
-                key={i}
-                className={`text-text leading-[1.85] ${i === 0 ? "text-lg first-letter:text-5xl first-letter:font-display first-letter:float-left first-letter:mr-2 first-letter:mt-1 first-letter:text-brand first-letter:leading-none" : "text-base"}`}
-              >
-                {paragraph}
-              </p>
-            ))}
+            {/* Linkagem interna automática (mesmo mapa do prerender —
+                internalLinkTargets.ts): informacional → página estratégica. */}
+            {(() => {
+              const usedHrefs = new Set<string>();
+              return post.content.map((paragraph, i) => (
+                <p
+                  key={i}
+                  className={`text-text leading-[1.85] ${i === 0 ? "text-lg first-letter:text-5xl first-letter:font-display first-letter:float-left first-letter:mr-2 first-letter:mt-1 first-letter:text-brand first-letter:leading-none" : "text-base"}`}
+                >
+                  {linkifyText(paragraph, `/blog/${post.slug}`, usedHrefs).map((span, j) =>
+                    span.href ? (
+                      <Link key={j} href={span.href} className="text-brand underline underline-offset-2 hover:opacity-80">
+                        {span.text}
+                      </Link>
+                    ) : (
+                      <span key={j}>{span.text}</span>
+                    )
+                  )}
+                </p>
+              ));
+            })()}
           </div>
 
           {/* Tags */}
@@ -200,12 +234,13 @@ export default function BlogPost() {
 
           {/* CTA */}
           <div className="mt-12 p-8 bg-surface-light border border-black/5 text-center">
-            <h3 className="heading-display text-3xl text-text mb-3">AGENDE SEUS EXAMES</h3>
+            <h2 className="heading-display text-3xl text-text mb-3">AGENDE SEUS EXAMES</h2>
             <p className="text-text-light text-sm mb-6 max-w-md mx-auto">
               Na Total Quality em Caraguatatuba, cuidamos da sua saúde com tecnologia de ponta e atendimento humanizado.
             </p>
             <a
-              href="https://wa.me/551238873535?text=Olá! Li o artigo sobre {post.title} e gostaria de agendar um exame."
+              onClick={() => trackWhatsAppConversion("artigo_cta", "blog", "geral")}
+              href={`https://wa.me/551238873535?text=Olá! Li o artigo sobre ${post.title} e gostaria de agendar um exame.`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-pill-brand inline-flex items-center gap-2"

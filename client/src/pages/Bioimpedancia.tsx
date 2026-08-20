@@ -4,6 +4,7 @@
  * Page: Bioimpedância
  */
 import { useEffect, useRef } from "react";
+import { trackScheduleBioimpedancia, trackPhoneClick } from "@/lib/tracking";
 import { ArrowUpRight, ArrowLeft, Zap, TrendingUp, Droplets, Bone, Flame, Scale, Target, Users, BarChart3 } from "lucide-react";
 import { Link } from "wouter";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
@@ -80,7 +81,7 @@ export default function Bioimpedancia() {
             </span>
           </Link>
           <button
-            onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame de Bioimpedância.", "_blank")}
+            onClick={() => { trackScheduleBioimpedancia(); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame de Bioimpedância.", "_blank"); }}
             className="btn-pill"
           >
             Agendar Exame
@@ -100,7 +101,7 @@ export default function Bioimpedancia() {
               <h1 className="reveal heading-display text-[clamp(3rem,8vw,6.5rem)] text-text leading-[0.85] mb-6" style={{ transitionDelay: "100ms" }}>
                 BIO
                 <br />
-                <span className="text-brand">IMPEDÂNCIA</span>
+                <span className="text-brand">IMPEDÂNCIA</span>{" "}
                 <span className="block text-base lg:text-lg text-text-light font-light tracking-wide mt-4 normal-case">
                   Bioimpedância em Caraguatatuba - SP | Total Quality Medicina Diagnóstica
                 </span>
@@ -110,7 +111,7 @@ export default function Bioimpedancia() {
               </p>
               <div className="reveal flex flex-wrap gap-4 mb-12" style={{ transitionDelay: "300ms" }}>
                 <button
-                  onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame de Bioimpedância.", "_blank")}
+                  onClick={() => { trackScheduleBioimpedancia(); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame de Bioimpedância.", "_blank"); }}
                   className="btn-pill-brand btn-pill"
                 >
                   Agendar Exame
@@ -139,7 +140,7 @@ export default function Bioimpedancia() {
             </div>
             <div className="lg:col-span-7 reveal-right">
               <div className="relative">
-                <img src={HERO_IMG} alt="Exame de Bioimpedância" className="w-full h-[50vh] lg:h-[75vh] object-cover" />
+                <img src={HERO_IMG} alt="Exame de bioimpedância na Total Quality em Caraguatatuba - SP - análise de composição corporal" className="w-full h-[50vh] lg:h-[75vh] object-cover" />
                 <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-5 max-w-xs shadow-sm">
                   <p className="text-xs uppercase tracking-[0.15em] font-semibold text-brand mb-1">Não Invasivo</p>
                   <p className="text-sm text-text-light">Exame rápido, indolor e com resultados imediatos</p>
@@ -157,7 +158,7 @@ export default function Bioimpedancia() {
             <div className="reveal">
               <span className="section-label mb-6 block">O Exame</span>
               <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-6">
-                O QUE É A<br /><span className="text-brand">BIOIMPEDÂNCIA?</span>
+                O QUE É A{" "}<br /><span className="text-brand">BIOIMPEDÂNCIA?</span>
               </h2>
               <div className="space-y-4 text-text-light leading-relaxed">
                 <p>
@@ -172,7 +173,7 @@ export default function Bioimpedancia() {
               </div>
             </div>
             <div className="reveal-right">
-              <img src={DETAIL_IMG} alt="Relatório de composição corporal" className="w-full h-auto object-cover" />
+              <img src={DETAIL_IMG} alt="Relatório de composição corporal do exame de bioimpedância - Total Quality Caraguatatuba" className="w-full h-auto object-cover" />
             </div>
           </div>
         </div>
@@ -218,7 +219,7 @@ export default function Bioimpedancia() {
               <div className="reveal lg:sticky lg:top-28">
                 <span className="section-label mb-6 block">Indicações</span>
                 <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-6">
-                  PARA QUEM É<br /><span className="text-brand">INDICADO?</span>
+                  PARA QUEM É{" "}<br /><span className="text-brand">INDICADO?</span>
                 </h2>
                 <p className="text-text-light text-lg leading-relaxed">
                   A bioimpedância é uma ferramenta versátil, útil tanto para atletas de alto rendimento quanto para quem busca melhorar a saúde e a forma física.
@@ -278,7 +279,7 @@ export default function Bioimpedancia() {
               <div className="reveal lg:sticky lg:top-28">
                 <span className="section-label mb-6 block">Dúvidas</span>
                 <h2 className="heading-display text-[clamp(2.5rem,5vw,4rem)] text-text leading-[0.9] mb-6">
-                  PERGUNTAS<br /><span className="text-brand">FREQUENTES</span>
+                  PERGUNTAS{" "}<br /><span className="text-brand">FREQUENTES</span>
                 </h2>
                 <p className="text-text-light leading-relaxed">
                   Tire suas dúvidas sobre o exame de bioimpedância. Se precisar de mais informações, entre em contato conosco.
@@ -310,20 +311,20 @@ export default function Bioimpedancia() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="reveal">
               <h2 className="heading-display text-[clamp(2.5rem,5vw,5rem)] leading-[0.85] mb-6">
-                CONHEÇA SEU<br /><span className="text-white/80">CORPO POR DENTRO</span>
+                CONHEÇA SEU{" "}<br /><span className="text-white/80">CORPO POR DENTRO</span>
               </h2>
               <p className="text-white/70 text-lg leading-relaxed max-w-md mb-8">
                 Agende seu exame de bioimpedância e tenha dados precisos para tomar as melhores decisões sobre sua saúde, nutrição e treino.
               </p>
               <div className="flex flex-wrap gap-4">
                 <button
-                  onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame de Bioimpedância.", "_blank")}
+                  onClick={() => { trackScheduleBioimpedancia(); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame de Bioimpedância.", "_blank"); }}
                   className="btn-pill !bg-white !text-brand hover:!bg-white/90"
                 >
                   Agendar pelo WhatsApp
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </button>
-                <a href="tel:+551238873535" className="btn-pill bg-transparent !text-white border border-white/30 hover:!bg-white/10">
+                <a href="tel:+551238873535" onClick={() => trackPhoneClick("bioimpedancia_cta")} className="btn-pill bg-transparent !text-white border border-white/30 hover:!bg-white/10">
                   (12) 3887-3535
                 </a>
               </div>

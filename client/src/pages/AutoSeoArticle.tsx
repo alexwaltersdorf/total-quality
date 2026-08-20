@@ -4,6 +4,7 @@
  * Layout: Editorial article with large hero image and clean typography
  */
 import { useEffect, useMemo } from "react";
+import { trackWhatsAppConversion } from "@/lib/tracking";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, ArrowUpRight, Clock, Calendar, Share2, Loader2 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
@@ -247,12 +248,13 @@ export default function AutoSeoArticle() {
 
           {/* CTA */}
           <div className="mt-12 p-8 bg-surface-light border border-black/5 text-center">
-            <h3 className="heading-display text-3xl text-text mb-3">AGENDE SEUS EXAMES</h3>
+            <h2 className="heading-display text-3xl text-text mb-3">AGENDE SEUS EXAMES</h2>
             <p className="text-text-light text-sm mb-6 max-w-md mx-auto">
               Na Total Quality em Caraguatatuba, cuidamos da sua saúde com tecnologia de ponta e atendimento humanizado.
             </p>
             <a
-              href={`https://wa.me/551238873535?text=Olá! Li o artigo sobre ${article.title} e gostaria de agendar um exame.`}
+              onClick={() => trackWhatsAppConversion("artigo_cta", "blog", "geral")}
+            href={`https://wa.me/551238873535?text=Olá! Li o artigo sobre ${article.title} e gostaria de agendar um exame.`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-pill-brand inline-flex items-center gap-2"

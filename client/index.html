@@ -2,11 +2,43 @@
 <html lang="pt-BR">
 
   <head>
+    <!-- Consent Mode v2 (LGPD): TEM de vir ANTES do GTM. Padrao NEGADO para
+         armazenamento de anuncios/analytics; o banner de cookies
+         (client/src/components/CookieConsent.tsx) atualiza para "granted"
+         quando o visitante aceita, e a escolha fica em localStorage. Com
+         consentimento negado o GA4 opera em modo cookieless (pings
+         modelados) — mede sem identificar. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      (function () {
+        var stored = null;
+        try { stored = localStorage.getItem('tq-consent'); } catch (e) {}
+        var granted = stored === 'granted';
+        gtag('consent', 'default', {
+          ad_storage: granted ? 'granted' : 'denied',
+          analytics_storage: granted ? 'granted' : 'denied',
+          ad_user_data: granted ? 'granted' : 'denied',
+          ad_personalization: granted ? 'granted' : 'denied',
+          functionality_storage: 'granted',
+          security_storage: 'granted',
+          wait_for_update: 500
+        });
+      })();
+    </script>
+
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;
+    /* Gateway da tag (first-party): serve o GTM por /metrics no nosso dominio
+       (proxy em server/_core/tag-gateway.ts). Se o gateway falhar, cai
+       automaticamente para o dominio do Google — a medicao nunca para. */
+    j.src='/metrics/?id='+i+dl;
+    j.onerror=function(){var k=d.createElement(s);k.async=true;
+    k.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+    f.parentNode.insertBefore(k,f);};
+    f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-WLR7JD57');</script>
     <!-- End Google Tag Manager -->
 
@@ -16,7 +48,7 @@
       content="width=device-width, initial-scale=1.0" />
 
     <!-- SEO: Title -->
-    <title>Laboratório em Caraguatatuba | Total Quality</title>
+    <title>Laboratório em Caraguatatuba | Total Quality | Ligue Agora</title>
 
     <!-- SEO: Meta Description com palavras-chave -->
     <meta name="description" content="Laboratório de análises clínicas em Caraguatatuba - SP. Exames de sangue, tomografia, ultrassom e check-up. Agende pelo WhatsApp (12) 3887-3535." />
@@ -43,7 +75,7 @@
     <meta property="og:url" content="https://totalquality.med.br/" />
     <meta property="og:site_name" content="Total Quality Medicina Diagnóstica" />
     <meta property="og:locale" content="pt_BR" />
-    <meta property="og:image" content="https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png" />
+    <meta property="og:image" content="https://totalquality.med.br/images/fachada-1024.webp" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Total Quality Medicina Diagnóstica — Laboratório em Caraguatatuba" />
@@ -52,7 +84,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Total Quality | Exames de Sangue e Laboratório em Caraguatatuba - SP" />
     <meta name="twitter:description" content="Laboratório de análises clínicas em Caraguatatuba. Exames de sangue, hemograma, glicemia, colesterol, hormônios, vitamina D, PSA, tomografia, ultrassonografia, mamografia e check-up." />
-    <meta name="twitter:image" content="https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png" />
+    <meta name="twitter:image" content="https://totalquality.med.br/images/fachada-1024.webp" />
 
     <!-- SEO: Geo Tags -->
     <meta name="geo.region" content="BR-SP" />
@@ -92,7 +124,7 @@
       "openingHoursSpecification": {
         "@type": "OpeningHoursSpecification",
         "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        "opens": "08:00",
+        "opens": "07:30",
         "closes": "18:00"
       },
       "foundingDate": "2003",
@@ -105,7 +137,13 @@
         },
         "geoRadius": "50000"
       },
-      "image": "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png",
+      "image": ["https://totalquality.med.br/images/fachada-1024.webp", "https://totalquality.med.br/images/recepcao-1024.webp", "https://totalquality.med.br/images/laboratorio-1440.webp"],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.5",
+        "reviewCount": "348",
+        "bestRating": "5"
+      },
       "sameAs": [
         "https://www.instagram.com/totalqualitymedicina/"
       ]
@@ -120,7 +158,7 @@
       "@id": "https://totalquality.med.br/#medicalbusiness",
       "name": "Total Quality Medicina Diagnóstica",
       "alternateName": "Total Quality",
-      "description": "Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba - SP. Exames de sangue (hemograma, glicemia, colesterol, triglicerídeos, TSH, T4 livre, PSA, vitamina D, ácido úrico, ureia, creatinina, TGO, TGP, hemoglobina glicada), tomografia, ultrassonografia, mamografia digital, raio-X, ecocardiograma, holter, MAPA, bioimpedância e check-up preventivo com tecnologia de última geração.",
+      "description": "Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba - SP. Exames de sangue (hemograma, glicemia, colesterol, triglicerídeos, TSH, T4 livre, PSA, vitamina D, ácido úrico, ureia, creatinina, TGO, TGP, hemoglobina glicada), tomografia, ultrassonografia, mamografia digital, raio-X, eletrocardiograma, holter, MAPA, bioimpedância e check-up preventivo com tecnologia de última geração.",
       "url": "https://totalquality.med.br/",
       "telephone": "+55-12-3887-3535",
       "email": "contato@totalquality.med.br",
@@ -141,7 +179,7 @@
       "openingHoursSpecification": {
         "@type": "OpeningHoursSpecification",
         "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        "opens": "08:00",
+        "opens": "07:30",
         "closes": "18:00"
       },
       "medicalSpecialty": [
@@ -154,7 +192,6 @@
         { "@type": "MedicalTest", "name": "Ultrassonografia Geral e Doppler" },
         { "@type": "MedicalTest", "name": "Mamografia Digital" },
         { "@type": "MedicalTest", "name": "Raio-X Digital" },
-        { "@type": "MedicalTest", "name": "Ecocardiograma" },
         { "@type": "MedicalTest", "name": "Holter 24h" },
         { "@type": "MedicalTest", "name": "MAPA 24h" },
         { "@type": "MedicalTest", "name": "Eletrocardiograma" },
@@ -182,7 +219,7 @@
         { "@type": "MedicalTest", "name": "Exame Toxicológico" }
       ],
       "priceRange": "$$",
-      "image": "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png",
+      "image": ["https://totalquality.med.br/images/fachada-1024.webp", "https://totalquality.med.br/images/recepcao-1024.webp", "https://totalquality.med.br/images/laboratorio-1440.webp"],
       "foundingDate": "2003",
       "sameAs": [
         "https://www.instagram.com/totalqualitymedicina/"
@@ -190,47 +227,6 @@
     }
     </script>
 
-    <!-- SEO: Schema.org JSON-LD — FAQPage (Perguntas Frequentes Geolocalizadas) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Quais exames são realizados no laboratório em Caraguatatuba?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "A Total Quality realiza mais de 3.000 tipos de exames em Caraguatatuba - SP, incluindo exames de sangue (hemograma, glicemia, colesterol, hormônios), tomografia computadorizada, ultrassonografia, mamografia digital, raio-X, ecocardiograma, holter 24h, MAPA, bioimpedância e check-up preventivo."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Qual o endereço do laboratório em Caraguatatuba?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "O laboratório Total Quality está localizado na R. Padre Anchieta, 1010 - Centro, Caraguatatuba - SP. Funcionamento de segunda a sexta das 08h às 18h."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Como agendar exames no laboratório em Caraguatatuba?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Você pode agendar seus exames pelo WhatsApp ou pelo telefone (12) 3887-3535. O agendamento também pode ser feito pelo site totalquality.med.br."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "O laboratório em Caraguatatuba aceita convênios?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Sim, o laboratório Total Quality em Caraguatatuba aceita diversos convênios de saúde. Entre em contato pelo WhatsApp para verificar se seu plano é aceito."
-          }
-        }
-      ]
-    }
-    </script>
 
     <!-- SEO: Schema.org JSON-LD — WebSite (Sitelinks Search Box) -->
     <script type="application/ld+json">
@@ -238,45 +234,65 @@
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Total Quality Medicina Diagnóstica",
-      "url": "https://totalquality.med.br/",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://totalquality.med.br/blog?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
+      "url": "https://totalquality.med.br/"
     }
     </script>
 
-    <!-- LCP: Preconnect + preload do hero image (CloudFront CDN) -->
-    <link rel="preconnect" href="https://d2xsxph8kpxj0f.cloudfront.net" crossorigin />
-    <link rel="preload" as="image" href="https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png" fetchpriority="high" />
+    <!-- CSS critico. O bloco pre-renderizado (server/_core/seo-content.ts) e o
+         primeiro paint da pagina, e desde a P1.2 a folha principal nao bloqueia
+         mais a renderizacao (ver nonBlockingCss em vite.config.ts) — entao tudo
+         que esse bloco precisa para aparecer certo tem que estar aqui.
+         Nao ocultar o bloco: o conteudo precisa ser rastreavel. -->
+    <style>
+      /* Reset minimo: a preflight do Tailwind chega junto com a folha principal,
+         que agora e assincrona. Sem isto o body teria a margem de 8px do
+         navegador no primeiro paint e o texto saltaria quando o CSS chegasse. */
+      *, *::before, *::after { box-sizing: border-box; }
+      body { margin: 0; background: #fff; }
+      .seo-prerender h1, .seo-prerender h2, .seo-prerender h3 { font-weight: 600; }
+      .seo-prerender ul { list-style: disc; }
+      .seo-prerender a { text-decoration: none; }
+      .seo-prerender {
+        max-width: 68ch;
+        margin: 0 auto;
+        padding: 6rem 1.5rem 4rem;
+        font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+        color: #5a5a5a;
+        line-height: 1.7;
+      }
+      .seo-prerender h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.1; color: #1a1a1a; margin-bottom: 1rem; }
+      .seo-prerender h2 { font-size: 1.5rem; color: #1a1a1a; margin: 2.5rem 0 0.75rem; }
+      .seo-prerender h3 { font-size: 1.125rem; color: #1a1a1a; margin: 1.5rem 0 0.5rem; }
+      .seo-prerender p, .seo-prerender ul, .seo-prerender address { margin-bottom: 1rem; }
+      .seo-prerender ul { padding-left: 1.25rem; }
+      .seo-prerender a { color: #9b212b; }
+    </style>
 
-    <!-- Google Fonts — load assincrono (nao bloqueia render) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" />
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet" /></noscript>
+    <!-- LCP: preload do hero image (WebP local, servido pelo proprio dominio/CDN Hostinger) -->
+    <link
+      rel="preload"
+      as="image"
+      type="image/avif"
+      href="/images/recepcao-1024.avif"
+      imagesrcset="/images/recepcao-480.avif 480w, /images/recepcao-768.avif 768w, /images/recepcao-1024.avif 1024w"
+      imagesizes="(max-width: 1024px) 100vw, 55vw"
+      fetchpriority="high" />
+
+    <!-- Fontes self-hosted: @font-face em client/src/index.css, arquivos em
+         client/public/fonts. Sem preconnect e sem folha de estilo de terceiro.
+         Preload apenas do subset latin, o unico usado em toda pagina; o latin-ext
+         o navegador busca so quando algum caractere daquele intervalo aparece. -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/dm-sans-latin.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/bebas-neue-latin.woff2" crossorigin />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/favicon-kMQsdmGbgGnMBKEvfxvRGD.webp" />
+    <link rel="icon" type="image/webp" href="/images/logo-276.webp" />
 
-    <!-- Meta Pixel: carregado exclusivamente via GTM-WLR7JD57 (pixel 1868545660691533).
-         O snippet hardcoded que existia aqui inicializava '1536672876562340', que é o ID da
-         Página do Facebook e não um pixel — inicialização inválida, removida. Não readicionar. -->
-
-    <!-- Google Ads Conversion Tracking (defer para não bloquear renderização) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-16697936154"></script>
-    <script defer>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'AW-16697936154');
-    </script>
-    <!-- End Google Ads Conversion Tracking -->
-
-    <!-- Soro Widget — defer ja evita blocking -->
-    <script src="https://app.trysoro.com/api/embed/b285a81e-b387-4c17-9c9a-a93bebb4d786" defer></script>
+    <!-- Rastreamento: SOMENTE o container GTM-WLR7JD57 (decisao do Alex,
+         01/08/2026). O Meta Pixel direto, o gtag direto do Google Ads e o
+         widget Trysoro foram removidos daqui — pixels e conversoes devem ser
+         configurados DENTRO do container GTM. Os eventos do site chegam la
+         via dataLayer (client/src/lib/tracking.ts e useGoogleAdsConversion). -->
   </head>
 
   <body>

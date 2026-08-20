@@ -120,6 +120,26 @@ const examesMetadata: Record<string, RouteMetadata> = {
     priority: 0.8,
     changefreq: "monthly",
   },
+  "hemograma": {
+    title: "Hemograma Completo: O Que É, Jejum e Resultado | Total Quality",
+    description: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Faça na Total Quality, resultado em até 24h.",
+    keywords: "hemograma, hemograma completo, hemograma precisa de jejum, exame de sangue, análises clínicas, Caraguatatuba",
+    ogTitle: "Hemograma Completo | Total Quality",
+    ogDescription: "Tudo sobre o hemograma completo: o que avalia, preparo e resultado em até 24h.",
+    canonical: "https://totalquality.med.br/exames/hemograma",
+    priority: 0.9,
+    changefreq: "monthly",
+  },
+  "exame-admissional": {
+    title: "Exame Admissional em Caraguatatuba | ASO e Ocupacionais | Total Quality",
+    description: "Exame admissional, periódico, demissional e ASO em Caraguatatuba. Medicina ocupacional completa para empresas do Litoral Norte, com agilidade. Agende.",
+    keywords: "exame admissional, ASO, exame ocupacional, exame demissional, medicina do trabalho, Caraguatatuba",
+    ogTitle: "Exames Ocupacionais e ASO | Total Quality",
+    ogDescription: "Admissional, periódico, demissional e ASO para empresas de Caraguatatuba e região.",
+    canonical: "https://totalquality.med.br/exames/exame-admissional",
+    priority: 0.9,
+    changefreq: "monthly",
+  },
   "mamografia": {
     title: "Mamografia Digital em Caraguatatuba | Total Quality",
     description: "Mamografia digital em Caraguatatuba - SP. Diagnóstico de câncer de mama. Tecnologia de última geração. Agende seu exame.",
@@ -175,8 +195,11 @@ const blogMetadata: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
   "exame-de-sangue-caraguatatuba": {
-    title: "Onde Fazer Exame de Sangue em Caraguatatuba — Guia Completo 2026",
-    description: "Descubra onde fazer exame de sangue em Caraguatatuba - SP com qualidade. Guia completo com tipos de exames, preparo, preços e como agendar.",
+    // Reposicionado (auditoria 01/08): a intencao transacional "onde fazer"
+    // canibalizava a pagina de servico /exames/exames-de-sangue. O artigo vira
+    // informacional (tipos e preparo); a pagina de servico e o destino comercial.
+    title: "Exame de Sangue: Tipos, Preparo e Jejum — Guia Total Quality",
+    description: "Guia completo sobre exames de sangue: quais os principais tipos, como se preparar, quanto tempo de jejum e como ler o pedido médico. Por Total Quality Caraguatatuba.",
     keywords: "exame de sangue, laboratório Caraguatatuba, hemograma, análises clínicas",
     ogTitle: "Exame de Sangue em Caraguatatuba",
     ogDescription: "Tudo o que você precisa saber sobre exames de sangue em Caraguatatuba.",
@@ -207,7 +230,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
   "saude-do-coracao-prevencao": {
     title: "Saúde do Coração: 7 Hábitos Que Podem Salvar Sua Vida | Total Quality",
     description: "Doenças cardiovasculares são a principal causa de morte no Brasil. Conheça os 7 hábitos comprovados que protegem seu coração.",
-    keywords: "cardiologia, saúde do coração, prevenção, ecocardiograma",
+    keywords: "cardiologia, saúde do coração, prevenção, eletrocardiograma",
     ogTitle: "Saúde do Coração: 7 Hábitos",
     ogDescription: "Descubra os 7 hábitos que podem salvar sua vida e proteger seu coração.",
     canonical: "https://totalquality.med.br/blog/saude-do-coracao-prevencao",
@@ -239,8 +262,8 @@ const blogMetadata: Record<string, RouteMetadata> = {
 // Rotas estáticas principais
 const staticRoutes: Record<string, RouteMetadata> = {
   "/": {
-    title: "Laboratório em Caraguatatuba | Total Quality",
-    description: "Laboratório de análises clínicas em Caraguatatuba - SP. Exames de sangue, tomografia, ultrassom e check-up. Agende pelo WhatsApp (12) 3887-3535.",
+    title: "Laboratório em Caraguatatuba | Total Quality | Ligue Agora",
+    description: "Laboratório em Caraguatatuba com resultados em até 24h. Há 23 anos no Litoral Norte: exames de sangue, tomografia, ultrassom e check-up. Nota 4,5 no Google.",
     keywords: "laboratório Caraguatatuba, exames de sangue, tomografia, ultrassom, check-up",
     ogTitle: "Total Quality Medicina Diagnóstica e Laboratorial | Exames de Sangue em Caraguatatuba - SP",
     ogDescription: "Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba - SP. Exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia e mais de 3.000 tipos de exames. Agende pelo WhatsApp.",
@@ -279,12 +302,44 @@ const staticRoutes: Record<string, RouteMetadata> = {
     priority: 0.8,
     changefreq: "weekly",
   },
+  "/privacidade": {
+    title: "Política de Privacidade | Total Quality Medicina Diagnóstica",
+    description: "Como a Total Quality coleta, usa e protege seus dados pessoais e de saúde, conforme a LGPD. Seus direitos e como exercê-los.",
+    keywords: "política de privacidade, LGPD, proteção de dados, dados de saúde",
+    ogTitle: "Política de Privacidade | Total Quality",
+    ogDescription: "Tratamento de dados pessoais e de saúde na Total Quality, conforme a LGPD.",
+    canonical: "https://totalquality.med.br/privacidade",
+    priority: 0.3,
+    changefreq: "yearly",
+  },
+  "/exames": {
+    title: "Exames Laboratoriais e de Imagem em Caraguatatuba | Total Quality",
+    description: "Todos os exames da Total Quality em Caraguatatuba: exames laboratoriais, hemograma, ultrassom, tomografia, cardiológicos, ocupacionais e mais. Veja a lista completa.",
+    keywords: "exames laboratoriais, exames Caraguatatuba, análises clínicas, exames de imagem, lista de exames",
+    ogTitle: "Exames | Total Quality Medicina Diagnóstica",
+    ogDescription: "Lista completa de exames laboratoriais, de imagem e cardiológicos em Caraguatatuba.",
+    canonical: "https://totalquality.med.br/exames",
+    priority: 0.9,
+    changefreq: "weekly",
+  },
+  "/convenios": {
+    title: "Convênios Aceitos | Laboratório Total Quality Caraguatatuba",
+    description: "Veja os convênios e planos de saúde aceitos no laboratório Total Quality em Caraguatatuba: Unimed, Bradesco Saúde, SulAmérica, Amil e mais. Confirme pelo WhatsApp.",
+    keywords: "convênios laboratório Caraguatatuba, plano de saúde exames, Unimed Caraguatatuba",
+    ogTitle: "Convênios Aceitos | Total Quality Caraguatatuba",
+    ogDescription: "Principais convênios e planos de saúde aceitos para exames laboratoriais e de imagem em Caraguatatuba.",
+    canonical: "https://totalquality.med.br/convenios",
+    priority: 0.7,
+    changefreq: "monthly",
+  },
   "/laboratorio-caraguatatuba": {
-    title: "Laboratório em Caraguatatuba | Análises Clínicas | Total Quality",
-    description: "Laboratório em Caraguatatuba: exames de sangue, análises clínicas, diagnóstico por imagem. Tecnologia de ponta e equipe especializada.",
+    // Intencao distinta da home para evitar canibalizacao: home = "laboratório em
+    // caraguatatuba" (transacional); esta pagina = "laboratório de análises clínicas".
+    title: "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality",
+    description: "Laboratório de análises clínicas em Caraguatatuba: hemograma, exames de sangue, hormônios e mais de 3.000 exames. Resultados em até 24h. Agende.",
     keywords: "laboratório Caraguatatuba, análises clínicas, exames de sangue, diagnóstico",
-    ogTitle: "Laboratório em Caraguatatuba | Total Quality",
-    ogDescription: "Laboratório moderno com mais de 3.000 tipos de exames e tecnologia de última geração.",
+    ogTitle: "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality",
+    ogDescription: "Laboratório de análises clínicas com mais de 3.000 tipos de exames e resultados em até 24h.",
     canonical: "https://totalquality.med.br/laboratorio-caraguatatuba",
     priority: 0.8,
     changefreq: "monthly",
@@ -333,6 +388,13 @@ export function getRouteMetadata(pathname: string): RouteMetadata | null {
 
   // Rota não encontrada
   return null;
+}
+
+/**
+ * Slugs de blog com metadata conhecida (usado na resolução de 404)
+ */
+export function getKnownBlogSlugs(): Set<string> {
+  return new Set(Object.keys(blogMetadata));
 }
 
 /**

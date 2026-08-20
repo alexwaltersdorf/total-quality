@@ -357,3 +357,109 @@ curl -s http://localhost:3000/sua-rota | grep -E "<title>|canonical|og:url|name=
 **Versão:** 1.0  
 **Criado:** 16 de Julho de 2026  
 **Próxima revisão:** Quando adicionar nova categoria de páginas
+
+---
+
+## Regras permanentes de SEO técnico (auditorias jul/2026 — NÃO regredir)
+
+Estas regras vieram das auditorias PageSpeed/SEMrush de jul/2026 e estão protegidas
+por testes em `server/seo-content.test.ts`:
+
+1. **Toda rota do sitemap DEVE ter conteúdo pré-renderizado.** O site é uma SPA;
+   sem o bloco injetado por `server/_core/seo-content.ts` dentro do `#root`, o
+   Google recebe HTML vazio e a página não rankeia. Ao criar uma página nova:
+   metadata em `routes-metadata.ts` + conteúdo em `seo-content.ts` (o teste
+   guard-rail falha se esquecer).
+2. **Uma intenção de busca por página (sem canibalização).** Home = "laboratório
+   em caraguatatuba"; `/laboratorio-caraguatatuba` = "laboratório de análises
+   clínicas"; cada `/exames/:slug` = o nome do exame. Não repetir o mesmo
+   título-alvo em duas páginas.
+3. **H1 limpo, sem marca empilhada.** A marca vai no `<title>` (após o pipe),
+   nunca dentro do `<h1>`.
+4. **robots.txt não bloqueia crawlers de IA** (GPTBot/CCBot liberados — o site já
+   aparece em respostas de LLMs). Mudar isso só com decisão explícita do negócio.
+5. **Rotas inexistentes retornam HTTP 404 real** (`resolveHttpStatus`), nunca 200
+   com a homepage.
+6. **Imagens**: toda imagem passa por `scripts/optimize-images.mjs` (AVIF + WebP,
+   variantes 480/768/1024/1440/1920) e é exibida pelo componente
+   `<ResponsiveImage>`, que emite `<picture>` com `srcset`, `sizes` e
+   `width`/`height` explícitos. Servidas de `/public/images` no próprio domínio —
+   **nunca** referenciar PNG/JPG de CDN externo: os objetos do bucket S3 voltam
+   como `application/octet-stream` e sem `Cache-Control`. Só o LCP usa
+   `priority` (eager + fetchpriority=high); todo o resto é lazy.
+   Scripts de terceiros carregam no idle ou na primeira interação — nunca no
+   caminho crítico.
+7. **Domínio canônico**: `https://totalquality.med.br` (sem www) — o middleware
+   301 em `server/_core/index.ts` consolida; manter.
+8. **Silo de análises clínicas**: hub `/exames` organiza as páginas de exame e
+   distribui links internos. Novos exames entram em `client/src/lib/examesData.ts`
+   (o hub, a página, o sitemap e a pré-renderização são gerados automaticamente).
+9. **Artigos de blog em JSON**: o corpo dos artigos fica em
+   `client/src/content/blog/<slug>.json` (um arquivo por artigo) e os metadados
+   em `index.json`. O corpo é carregado sob demanda via `loadBlogPost()` — nunca
+   voltar a embutir texto de artigo em `.ts`, era ~33 KB no chunk inicial de
+   todas as páginas. O servidor lê os mesmos JSONs para pré-renderizar.
+10. **Mapa**: iframe estático com `loading="lazy"`. Não reintroduzir a Google
+    Maps JS API por proxy de terceiros — a anterior
+    (`forge.butterfly-effect.dev`) saiu do ar e deixou o mapa quebrado em
+    produção.
+11. **URLs legadas**: toda URL que o Google já conhece e que deixou de existir
+    entra em `server/_core/legacy-redirects.ts` — 301 para o equivalente atual,
+    410 para artefato de link quebrado. Nunca deixar cair no catch-all da SPA:
+    era a origem de 13 soft 404 (auditoria do Search Console, jul/2026).
+12. **Schema.org sem placeholder**: não declarar `SearchAction`/`potentialAction`
+    sem um endpoint de busca real. O `target` com `{search_term_string}` foi
+    rastreado literalmente e a URL-fantasma `/blog?q=%7Bsearch_term_string%7D`
+    acabou indexada no lugar do hub `/blog`. `robots.txt` bloqueia `/*?q=`.
+13. **Fontes self-hosted**: Bebas Neue e DM Sans vêm de `/public/fonts`, com
+    `@font-face` em `client/src/index.css`. Nunca voltar a apontar para
+    `fonts.googleapis.com`/`fonts.gstatic.com` — eram dois `preconnect`, duas
+    conexões TLS e uma folha de terceiro no caminho crítico. DM Sans é variável
+    (300..700) e cobre todos os pesos usados; só o subset `latin` recebe
+    `preload`. Para atualizar, baixar de novo os `.woff2` apontados pela API do
+    Google Fonts e manter os `unicode-range` originais.
+14. **CSS não bloqueante**: o plugin `nonBlockingCss` (vite.config.ts) converte o
+    `<link rel=stylesheet>` do Vite em `preload as=style` + promoção no `onload`,
+    com fallback em `<noscript>`. Consequência: **tudo que o bloco
+    pré-renderizado precisa para pintar certo tem que estar no `<style>` inline
+    do `client/index.html`** — a preflight do Tailwind chega depois. Ao mexer no
+    HTML pré-renderizado, conferir se o estilo correspondente está inline.
+15. **Contraste WCAG AA**: os tokens `text`, `text-light` e `text-muted` estão
+    calibrados para passar 4,5:1 sobre os três fundos do site (branco,
+    `surface-light` 0.97 e `surface-dark` 0.94, que é o rodapé). Não clarear:
+    `text-muted` já foi `#8f8f8f` (3,23:1) e reprovava na auditoria. Os cálculos
+    estão no comentário do bloco em `client/src/index.css`.
+16. **`aria-label` contém o texto visível**: em qualquer botão ou link com texto,
+    o nome acessível precisa começar pelo texto visível, senão o Lighthouse
+    acusa `label-content-name-mismatch` e o controle por voz não alcança o
+    elemento. Rótulo só descritivo vale apenas para controle com ícone puro.
+17. **Nada de `<img>` ou `<iframe>` dentro do `<head>`**: os `noscript` de pixel
+    e de tag manager vão no início do `<body>`. Dentro do head o parser fecha a
+    seção implicitamente e joga as tags seguintes para o body.
+18. **Nunca anunciar serviço não prestado**: listar exame que a clínica não
+    realiza viola as diretrizes do Google (risco de suspensão do perfil) e as
+    normas do CFM — e, na prática, atrai visita que não converte e piora o sinal
+    de engajamento. Hoje estão fora: **ressonância magnética** (decisão de
+    29/07/2026) e **ecocardiograma** (01/08/2026 — a clínica pretende oferecer no
+    futuro; ao passar a oferecer, remover do guard-rail ANTES de anunciar). O
+    teste `nunca anunciar servico nao prestado` em `server/seo-content.test.ts`
+    varre todas as rotas do sitemap e falha se algum termo reaparecer. Ele já
+    pegou duas menções que a busca manual não achou.
+19. **Menção a exame é link, não texto**: qualquer lugar do site que cite um
+    exame com página própria deve linkar para ela — no React com `<Link>` do
+    wouter (renderiza `<a href>` rastreável e mantém navegação client-side) e no
+    HTML pré-renderizado com `<a href>` direto. Item sem página fica como texto:
+    **só linkar destino que existe**, porque link para rota inexistente cai no
+    404 real e desperdiça rastreamento, o que é pior do que não ter link. O
+    guard-rail extrai todo `href` de todas as rotas pré-renderizadas e exige
+    `resolveHttpStatus` = 200.
+20. **A home é a fonte de autoridade interna**: o bloco pré-renderizado de `/`
+    precisa linkar todas as páginas de exame. Se ela parar de linkar, todas elas
+    perdem a principal fonte de autoridade do site. Há teste específico para isso.
+21. **`express.static` com `index: false`**: sem isso o Express responde `/` com
+    o `index.html` cru e curto-circuita o catch-all que injeta meta tags por rota
+    e o conteúdo pré-renderizado — a home ficava com o `<div id="root">` vazio
+    enquanto todas as outras rotas recebiam tudo. Descoberto em 01/08/2026 por
+    curl na home; o teste unitário não pegava porque exercitava
+    `getSeoContentForPath("/")` isolado, sem passar pelo servidor. **Ao mexer no
+    `serveStatic`, conferir a home por curl, não só por teste.**

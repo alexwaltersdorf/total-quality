@@ -3,37 +3,66 @@
  * URL: /laboratorio-caraguatatuba
  * SEO: H1 + H2s geolocalizados, 800-1000 palavras, schema BreadcrumbList
  */
+import ResponsiveImage from "@/components/ResponsiveImage";
 import { useEffect } from "react";
+import { Link } from "wouter";
 import { ArrowUpRight, MapPin, Phone, Clock, CheckCircle, Stethoscope, Microscope, Heart, Brain, Shield } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
-import { trackScheduleExam } from "@/lib/tracking";
+import { trackScheduleExam, trackPhoneClick } from "@/lib/tracking";
 
-const HERO_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png";
 
-const examesLaboratoriais = [
-  "Hemograma completo", "Glicemia em jejum", "Colesterol total e frações",
-  "Triglicerídeos", "TSH e T4 livre", "PSA total e livre",
-  "Vitamina D", "Hemoglobina glicada", "Ureia e creatinina",
-  "TGO e TGP", "Ácido úrico", "Hormônios",
-  "Marcadores tumorais", "Coagulograma", "Exame de urina",
-  "Exame toxicológico", "Sorologias", "Parasitológico de fezes",
+/*
+ * Os itens com `href` viram links internos reais (auditoria de links internos,
+ * jul/2026). Antes a lista inteira era <div> + <span>: o Google via os nomes
+ * dos exames como texto solto, sem caminho para as paginas que os aprofundam.
+ *
+ * Regra ao editar: so colocar `href` para pagina que EXISTE — item sem pagina
+ * fica como texto. Link para rota inexistente cai no 404 real de
+ * `resolveHttpStatus` e desperdica rastreamento.
+ */
+type ExamLink = { name: string; href?: string };
+
+const examesLaboratoriais: ExamLink[] = [
+  { name: "Hemograma completo", href: "/exames/hemograma" },
+  { name: "Glicemia em jejum" },
+  { name: "Colesterol total e frações" },
+  { name: "Triglicerídeos" },
+  { name: "TSH e T4 livre" },
+  { name: "PSA total e livre" },
+  { name: "Vitamina D", href: "/blog/vitamina-d-importancia-saude" },
+  { name: "Hemoglobina glicada" },
+  { name: "Ureia e creatinina" },
+  { name: "TGO e TGP" },
+  { name: "Ácido úrico" },
+  { name: "Hormônios" },
+  { name: "Marcadores tumorais" },
+  { name: "Coagulograma" },
+  { name: "Exame de urina" },
+  { name: "Exame toxicológico", href: "/exames/exame-toxicologico" },
+  { name: "Sorologias" },
+  { name: "Parasitológico de fezes" },
 ];
 
-const examesImagem = [
-  { icon: Microscope, name: "Tomografia Computadorizada Multislice" },
-  { icon: Stethoscope, name: "Ultrassonografia Geral e Doppler" },
-  { icon: Shield, name: "Mamografia Digital" },
-  { icon: Microscope, name: "Raio-X Digital" },
-  { icon: Heart, name: "Ecocardiograma" },
-  { icon: Heart, name: "Holter 24h e MAPA 24h" },
-  { icon: Heart, name: "Eletrocardiograma" },
-  { icon: Brain, name: "Eletroencefalograma" },
-  { icon: Stethoscope, name: "Espirometria" },
-  { icon: Stethoscope, name: "Bioimpedância" },
+const examesImagem: Array<ExamLink & { icon: typeof Microscope }> = [
+  { icon: Microscope, name: "Tomografia Computadorizada Multislice", href: "/exames/tomografia-computadorizada" },
+  { icon: Stethoscope, name: "Ultrassonografia Geral e Doppler", href: "/exames/ultrassonografia" },
+  { icon: Shield, name: "Mamografia Digital", href: "/exames/mamografia" },
+  { icon: Microscope, name: "Raio-X Digital", href: "/exames/raio-x" },
+  // Ecocardiograma saiu daqui em 01/08/2026: a clinica NAO realiza no momento
+  // (informado pelo Alex), embora pretenda oferecer no futuro. Nao reintroduzir
+  // sem confirmacao — anunciar servico nao prestado viola as diretrizes do
+  // Google e as normas do CFM, mesma regra da ressonancia magnetica.
+  // Holter e MAPA estavam num card so; separados, cada um leva a sua pagina.
+  { icon: Heart, name: "Holter 24h", href: "/exames/holter" },
+  { icon: Heart, name: "MAPA 24h", href: "/exames/mapa" },
+  { icon: Heart, name: "Eletrocardiograma", href: "/exames/eletrocardiograma" },
+  { icon: Brain, name: "Eletroencefalograma", href: "/exames/eletroencefalograma" },
+  { icon: Stethoscope, name: "Espirometria", href: "/exames/espirometria" },
+  { icon: Stethoscope, name: "Bioimpedância", href: "/bioimpedancia" },
 ];
 
 const convenios = [
@@ -45,7 +74,7 @@ export default function LaboratorioCaraguatatuba() {
   const scrollRef = useScrollReveal();
 
   useEffect(() => {
-    document.title = "Laboratório em Caraguatatuba | Total Quality — Exames e Diagnósticos";
+    document.title = "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality";
   }, []);
 
   useCanonical("https://totalquality.med.br/laboratorio-caraguatatuba");
@@ -92,7 +121,7 @@ export default function LaboratorioCaraguatatuba() {
 
                 <h1 className="reveal heading-display text-4xl lg:text-5xl xl:text-6xl text-text mb-6">
                   LABORATÓRIO EM{" "}
-                  <span className="text-brand">CARAGUATATUBA</span>
+                  <span className="text-brand">CARAGUATATUBA</span>{" "}
                   <span className="block text-2xl lg:text-3xl text-text-light font-light mt-2">
                     Total Quality Medicina Diagnóstica
                   </span>
@@ -116,6 +145,7 @@ export default function LaboratorioCaraguatatuba() {
                   </button>
                   <a
                     href="tel:+551238873535"
+                    onClick={() => trackPhoneClick("landing_lab_hero")}
                     className="btn-pill !bg-transparent !text-text border border-black/15 hover:!bg-black/5"
                   >
                     <Phone className="w-3.5 h-3.5" />
@@ -125,11 +155,15 @@ export default function LaboratorioCaraguatatuba() {
               </div>
 
               <div className="lg:col-span-5">
-                <img
-                  src={HERO_IMAGE}
-                  alt="Laboratório Total Quality em Caraguatatuba - SP - Interior da clínica"
+                <ResponsiveImage
+                  slug="recepcao"
+                  widths={[480, 768, 1024]}
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  width={1024}
+                  height={576}
+                  alt="Recepção do laboratório Total Quality em Caraguatatuba - SP"
                   className="reveal w-full rounded-2xl shadow-lg"
-                  loading="eager"
+                  priority
                 />
               </div>
             </div>
@@ -146,20 +180,48 @@ export default function LaboratorioCaraguatatuba() {
               Nosso laboratório em Caraguatatuba realiza mais de 3.000 tipos de exames laboratoriais com
               equipamentos automatizados de alta precisão. A coleta é feita por profissionais treinados em
               ambiente confortável e seguro. Os resultados ficam disponíveis online em até 24 horas para a
-              maioria dos exames de sangue em Caraguatatuba.
+              maioria dos{" "}
+              <Link href="/exames/exames-de-sangue" className="text-brand hover:underline">
+                exames de sangue em Caraguatatuba
+              </Link>
+              . Se a ideia é acompanhar a saúde de forma preventiva, veja também o{" "}
+              <Link href="/checkup" className="text-brand hover:underline">
+                check-up completo
+              </Link>{" "}
+              e as{" "}
+              <Link href="/blog/alimentacao-e-exames-laboratoriais" className="text-brand hover:underline">
+                orientações de preparo e jejum
+              </Link>
+              .
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {examesLaboratoriais.map((exame, i) => (
-                <div
-                  key={exame}
-                  className="reveal flex items-center gap-2 bg-white rounded-lg px-4 py-3 border border-black/5"
-                  style={{ transitionDelay: `${i * 30}ms` }}
-                >
-                  <CheckCircle className="w-4 h-4 text-brand flex-shrink-0" />
-                  <span className="text-sm text-text">{exame}</span>
-                </div>
-              ))}
+              {examesLaboratoriais.map((exame, i) => {
+                const conteudo = (
+                  <>
+                    <CheckCircle className="w-4 h-4 text-brand flex-shrink-0" />
+                    <span className="text-sm text-text">{exame.name}</span>
+                  </>
+                );
+                const base =
+                  "reveal flex items-center gap-2 bg-white rounded-lg px-4 py-3 border border-black/5";
+                const delay = { transitionDelay: `${i * 30}ms` };
+
+                return exame.href ? (
+                  <Link
+                    key={exame.name}
+                    href={exame.href}
+                    className={`${base} hover:border-brand hover:shadow-sm transition-all`}
+                    style={delay}
+                  >
+                    {conteudo}
+                  </Link>
+                ) : (
+                  <div key={exame.name} className={base} style={delay}>
+                    {conteudo}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -177,16 +239,32 @@ export default function LaboratorioCaraguatatuba() {
             </p>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {examesImagem.map((exame, i) => (
-                <div
-                  key={exame.name}
-                  className="reveal flex items-center gap-4 bg-neutral-50 rounded-xl px-6 py-5 border border-black/5 hover:shadow-md transition-shadow"
-                  style={{ transitionDelay: `${i * 50}ms` }}
-                >
-                  <exame.icon className="w-6 h-6 text-brand flex-shrink-0" />
-                  <span className="text-text font-medium">{exame.name}</span>
-                </div>
-              ))}
+              {examesImagem.map((exame, i) => {
+                const conteudo = (
+                  <>
+                    <exame.icon className="w-6 h-6 text-brand flex-shrink-0" />
+                    <span className="text-text font-medium">{exame.name}</span>
+                  </>
+                );
+                const base =
+                  "reveal flex items-center gap-4 bg-neutral-50 rounded-xl px-6 py-5 border border-black/5 hover:shadow-md transition-shadow";
+                const delay = { transitionDelay: `${i * 50}ms` };
+
+                return exame.href ? (
+                  <Link
+                    key={exame.name}
+                    href={exame.href}
+                    className={`${base} hover:border-brand`}
+                    style={delay}
+                  >
+                    {conteudo}
+                  </Link>
+                ) : (
+                  <div key={exame.name} className={base} style={delay}>
+                    {conteudo}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -214,14 +292,14 @@ export default function LaboratorioCaraguatatuba() {
                       <Phone className="w-5 h-5 text-brand flex-shrink-0 mt-0.5" />
                       <div>
                         <p className="font-medium text-text">Telefone e WhatsApp</p>
-                        <a href="tel:+551238873535" className="text-brand hover:underline">(12) 3887-3535</a>
+                        <a href="tel:+551238873535" onClick={() => trackPhoneClick("landing_lab_contato")} className="text-brand hover:underline">(12) 3887-3535</a>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
                       <Clock className="w-5 h-5 text-brand flex-shrink-0 mt-0.5" />
                       <div>
                         <p className="font-medium text-text">Horários de Atendimento</p>
-                        <p className="text-text-light">Segunda a Sexta: 08h às 18h</p>
+                        <p className="text-text-light">Segunda a Sexta: 07h30 às 18h</p>
                       </div>
                     </div>
                   </div>
@@ -264,8 +342,15 @@ export default function LaboratorioCaraguatatuba() {
               CONVÊNIOS ACEITOS NO LABORATÓRIO EM <span className="text-brand">CARAGUATATUBA</span>
             </h2>
             <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
-              O laboratório Total Quality em Caraguatatuba aceita diversos convênios de saúde. Entre em contato
-              pelo WhatsApp para verificar se o seu plano é aceito e agendar seus exames com praticidade.
+              O laboratório Total Quality em Caraguatatuba aceita diversos convênios de saúde. Veja a{" "}
+              <Link
+                href="/convenios"
+                className="text-brand hover:underline"
+              >
+                lista completa de convênios aceitos
+              </Link>{" "}
+              ou entre em contato pelo WhatsApp para verificar se o seu plano é aceito e tirar
+              suas dúvidas com praticidade.
             </p>
 
             <div className="flex flex-wrap gap-3 mb-10">
@@ -297,14 +382,16 @@ export default function LaboratorioCaraguatatuba() {
               <div className="reveal bg-white rounded-2xl p-8 border border-black/5">
                 <h3 className="heading-display text-xl text-text mb-4">COLETA LABORATORIAL</h3>
                 <div className="space-y-2 text-text-light">
-                  <p>Segunda a Sexta: <strong className="text-text">06h30 às 16h</strong></p>
-                  <p>Sábado: <strong className="text-text">06h30 às 11h</strong></p>
+                  <p>Segunda a Sexta: <strong className="text-text">07h30 às 18h</strong></p>
+                  <p>Sábado e Domingo: <strong className="text-text">fechado</strong></p>
+                  <p className="text-sm italic">Sem agendamento — atendimento por ordem de chegada</p>
+                  <p className="text-sm italic">Coleta domiciliar disponível mediante agendamento</p>
                 </div>
               </div>
               <div className="reveal bg-white rounded-2xl p-8 border border-black/5">
                 <h3 className="heading-display text-xl text-text mb-4">EXAMES DE IMAGEM</h3>
                 <div className="space-y-2 text-text-light">
-                  <p>Segunda a Sexta: <strong className="text-text">08h às 18h</strong></p>
+                  <p>Segunda a Sexta: <strong className="text-text">07h30 às 18h</strong></p>
                   <p className="text-sm italic">Agendamento prévio necessário</p>
                 </div>
               </div>
@@ -316,11 +403,12 @@ export default function LaboratorioCaraguatatuba() {
         <section className="py-16 lg:py-24 bg-brand text-white">
           <div className="container text-center">
             <h2 className="reveal heading-display text-3xl lg:text-4xl mb-6">
-              AGENDE SEU EXAME NO LABORATÓRIO EM CARAGUATATUBA
+              FAÇA SEUS EXAMES SEM AGENDAMENTO NO LABORATÓRIO EM CARAGUATATUBA
             </h2>
             <p className="reveal text-white/80 text-lg max-w-2xl mx-auto mb-10">
-              Entre em contato conosco para agendar seu exame. Atendimento rápido e humanizado,
-              com resultados online e equipe especializada.
+              A coleta é por ordem de chegada, de segunda a sexta, das 07h30 às 18h — basta trazer
+              o pedido médico e um documento com foto. Atendimento rápido e humanizado, com
+              resultados online e equipe especializada.
             </p>
             <div className="reveal flex flex-wrap gap-4 justify-center">
               <button
@@ -332,6 +420,7 @@ export default function LaboratorioCaraguatatuba() {
               </button>
               <a
                 href="tel:+551238873535"
+                onClick={() => trackPhoneClick("landing_lab_cta")}
                 className="btn-pill !bg-transparent !text-white border border-white/30 hover:!bg-white/10"
               >
                 <Phone className="w-3.5 h-3.5" />
