@@ -4,9 +4,10 @@
  * Layout: Editorial grid with featured post + grid of posts
  */
 import { useState, useEffect } from "react";
+import { trackWhatsAppConversion } from "@/lib/tracking";
 import { Link } from "wouter";
 import { ArrowUpRight, ArrowLeft, Clock, Search } from "lucide-react";
-import { blogPosts, blogCategories, type BlogPost } from "@/lib/blogData";
+import { blogPosts, blogCategories, type BlogPostMeta } from "@/lib/blogData";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
@@ -14,7 +15,7 @@ import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { trpc } from "@/lib/trpc";
 import { Loader2 } from "lucide-react";
 
-function BlogCard({ post, featured = false }: { post: BlogPost; featured?: boolean }) {
+function BlogCard({ post, featured = false }: { post: BlogPostMeta; featured?: boolean }) {
   if (featured) {
     return (
       <Link href={`/blog/${post.slug}`} className="group block">
@@ -251,6 +252,7 @@ export default function Blog() {
             e cardiologia com resultados rápidos e atendimento humanizado.
           </p>
           <a
+            onClick={() => trackWhatsAppConversion("blog_cta", "blog", "geral")}
             href="https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame."
             target="_blank"
             rel="noopener noreferrer"

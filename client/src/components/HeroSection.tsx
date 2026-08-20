@@ -2,13 +2,14 @@
  * Style: Optik Editorial — Giant display type, asymmetric layout
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  * SEO: Keywords in headings, alt texts, and semantic HTML
- * Tracking: CTA clicks → generate_lead, nav clicks
+ * Tracking: CTA clicks → whatsapp_click (evento canonico), nav clicks
  */
+import ResponsiveImage from "@/components/ResponsiveImage";
 import { ArrowUpRight } from "lucide-react";
+import { Link } from "wouter";
 import { trackScheduleExam } from "@/lib/tracking";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 
-const HERO_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png";
 
 const marqueeItems = [
   "TOMOGRAFIA", "EXAMES DE SANGUE", "HEMOGRAMA",
@@ -49,7 +50,37 @@ export default function HeroSection() {
             </div>
 
             <p className="reveal text-lg text-text-light leading-relaxed max-w-md mb-10" style={{ transitionDelay: "200ms" }}>
-              Desde 2003, mais de 30.000 famílias confiam no nosso laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba. Realizamos exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma e check-up preventivo com tecnologia de última geração.
+              {/* Links discretos: sublinhado suave em vez da cor da marca, para nao
+                  poluir o hero. Continuam sendo <a href> rastreaveis. */}
+              Desde 2003, mais de 30.000 famílias confiam no nosso{" "}
+              <Link href="/laboratorio-caraguatatuba" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                laboratório de análises clínicas
+              </Link>{" "}
+              e clínica de medicina diagnóstica em Caraguatatuba. Realizamos{" "}
+              <Link href="/exames/exames-de-sangue" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                exames de sangue
+              </Link>
+              ,{" "}
+              <Link href="/exames/hemograma" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                hemograma
+              </Link>
+              , glicemia, colesterol, hormônios,{" "}
+              <Link href="/exames/tomografia-computadorizada" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                tomografia
+              </Link>
+              ,{" "}
+              <Link href="/exames/ultrassonografia" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                ultrassonografia
+              </Link>
+              ,{" "}
+              <Link href="/exames/mamografia" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                mamografia
+              </Link>{" "}
+              e{" "}
+              <Link href="/checkup" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                check-up preventivo
+              </Link>{" "}
+              com tecnologia de última geração.
             </p>
 
             <div className="reveal flex flex-wrap gap-4 mb-16" style={{ transitionDelay: "300ms" }}>
@@ -67,7 +98,10 @@ export default function HeroSection() {
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
                 className="btn-pill !bg-transparent !text-text border border-black/15 hover:!bg-black/5"
-                aria-label="Ver lista de exames disponíveis"
+                // O nome acessivel precisa conter o texto visivel: sem isso o
+                // Lighthouse acusa `label-content-name-mismatch` e quem usa
+                // controle por voz nao consegue dizer "clicar em Ver Exames".
+                aria-label="Ver Exames disponíveis na Total Quality"
               >
                 Ver Exames
                 <ArrowUpRight className="w-3.5 h-3.5" />
@@ -92,21 +126,24 @@ export default function HeroSection() {
           {/* Right column - Hero image */}
           <div className="lg:col-span-6 xl:col-span-7">
             <div className="relative aspect-[4/3] lg:aspect-auto lg:h-[80vh]">
-              <img
-                src={HERO_IMAGE}
-                alt="Clínica Total Quality Medicina Diagnóstica em Caraguatatuba - SP - Interior moderno com equipamentos de tomografia e diagnóstico por imagem"
+              {/* Foto REAL da recepcao. A antiga "hero-clinica" era banco de
+                  imagens e mostrava uma RESSONANCIA — exame que a clinica nao
+                  oferece; imagem removida das paginas em 01/08/2026. */}
+              <ResponsiveImage
+                slug="recepcao"
+                widths={[480, 768, 1024]}
+                sizes="(max-width: 1024px) 100vw, 55vw"
+                width={1024}
+                height={576}
+                alt="Recepção da clínica Total Quality Medicina Diagnóstica em Caraguatatuba - SP"
                 className="w-full h-full object-cover"
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                width="2752"
-                height="1536"
+                priority
               />
               {/* Floating info card */}
               <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-5 max-w-xs shadow-lg">
                 <p className="text-xs uppercase tracking-[0.15em] font-semibold text-brand mb-1">Caraguatatuba - SP</p>
                 <p className="text-sm text-text-light">R. Padre Anchieta, 1010 - Centro</p>
-                <p className="text-sm text-text-light">Seg-Sex: 08h às 18h</p>
+                <p className="text-sm text-text-light">Seg-Sex: 07h30 às 18h</p>
               </div>
             </div>
           </div>

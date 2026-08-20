@@ -3,8 +3,8 @@
  * Theme: White background, dark gray #5A5A5A text, brand #9B212B
  * Integração: tRPC para persistir contatos no banco de dados
  */
-import { useState, useRef } from "react";
-import { useLocation } from "wouter";
+import { useState } from "react";
+import { Link, useLocation } from "wouter";
 import {
   MapPin,
   Phone,
@@ -16,11 +16,17 @@ import {
   Loader2,
   Mail,
 } from "lucide-react";
-import { toast } from "sonner";
-import { MapView } from "@/components/Map";
+// Import dinamico: o sonner (~64KB) so entra no bundle quando o usuario envia o
+// formulario, em vez de pesar no chunk inicial de todas as paginas publicas.
+const toast = {
+  success: (msg: string) => import("sonner").then((m) => m.toast.success(msg)),
+  info: (msg: string) => import("sonner").then((m) => m.toast.info(msg)),
+  error: (msg: string) => import("sonner").then((m) => m.toast.error(msg)),
+};
 import { trpc } from "@/lib/trpc";
 import { trackFormStart, trackFormSubmit, trackPhoneClick, trackWhatsAppClick, trackExternalLink, trackMapInteraction } from "@/lib/tracking";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
+import { storeLeadHandoff } from "@/lib/leadHandoff";
 
 export default function ContatoSection() {
   const [formData, setFormData] = useState({
@@ -30,7 +36,6 @@ export default function ContatoSection() {
     tipoExame: "",
     mensagem: "",
   });
-  const mapRef = useRef<google.maps.Map | null>(null);
   const [formStarted, setFormStarted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [, setLocation] = useLocation();
@@ -38,27 +43,17 @@ export default function ContatoSection() {
   const contactMutation = trpc.contact.create.useMutation({
     onSuccess: () => {
       toast.success("Mensagem enviada com sucesso!");
-      const params = new URLSearchParams({
-        nome: formData.nome,
-        telefone: formData.telefone,
-        email: formData.email,
-        tipoExame: formData.tipoExame,
-        mensagem: formData.mensagem,
-      });
-      setLocation(`/formulario-sucesso?${params.toString()}`);
+      // O lead vai por sessionStorage, nunca pela URL: em query string ele
+      // acabaria dentro do page_location do GA4 (ver lib/leadHandoff.ts).
+      storeLeadHandoff(formData);
+      setLocation("/formulario-sucesso");
       setFormData({ nome: "", telefone: "", email: "", tipoExame: "", mensagem: "" });
       setFormStarted(false);
     },
     onError: () => {
       toast.info("Redirecionando para confirmação...");
-      const params = new URLSearchParams({
-        nome: formData.nome,
-        telefone: formData.telefone,
-        email: formData.email,
-        tipoExame: formData.tipoExame,
-        mensagem: formData.mensagem,
-      });
-      setLocation(`/formulario-sucesso?${params.toString()}`);
+      storeLeadHandoff(formData);
+      setLocation("/formulario-sucesso");
     },
     onSettled: () => {
       setIsSubmitting(false);
@@ -68,7 +63,14 @@ export default function ContatoSection() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    trackFormSubmit({ name: formData.nome, subject: formData.tipoExame });
+    // E-mail e telefone vão apenas para o hash SHA-256 das conversões
+    // aprimoradas, e só com consentimento de marketing (lib/userData.ts).
+    void trackFormSubmit({
+      name: formData.nome,
+      subject: formData.tipoExame,
+      email: formData.email,
+      telefone: formData.telefone,
+    });
 
     // Persistir contato no banco de dados
     contactMutation.mutate({
@@ -98,19 +100,6 @@ export default function ContatoSection() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleMapReady = (map: google.maps.Map) => {
-    mapRef.current = map;
-    const position = { lat: -23.6225, lng: -45.4132 };
-    map.setCenter(position);
-    map.setZoom(16);
-
-    new google.maps.marker.AdvancedMarkerElement({
-      map,
-      position,
-      title: "Total Quality Medicina Diagnóstica",
-    });
-  };
-
   return (
     <section id="contato" className="py-24 lg:py-32 bg-surface-dark" aria-label="Contato e agendamento de exames de sangue e laboratoriais na Total Quality Caraguatatuba">
       <div className="container">
@@ -119,25 +108,58 @@ export default function ContatoSection() {
           <div>
             <span className="reveal section-label mb-4 block">Agende seu exame de sangue ou diagnóstico em Caraguatatuba</span>
             <h2 className="reveal heading-display text-5xl sm:text-6xl lg:text-7xl text-text" style={{ transitionDelay: "100ms" }}>
-              ENTRE EM
+              ENTRE EM{" "}
               <br />
               <span className="text-brand">CONTATO</span>
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
-            Agende seu exame de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma ou check-up na Total Quality em Caraguatatuba - SP. Atendemos de segunda a sexta, das 08h às 18h.
+            Agende seu{" "}
+            <Link href="/exames/exames-de-sangue" className="text-brand hover:underline">
+              exame de sangue
+            </Link>
+            ,{" "}
+            <Link href="/exames/hemograma" className="text-brand hover:underline">
+              hemograma
+            </Link>
+            , glicemia, colesterol, hormônios,{" "}
+            <Link href="/exames/tomografia-computadorizada" className="text-brand hover:underline">
+              tomografia
+            </Link>
+            ,{" "}
+            <Link href="/exames/ultrassonografia" className="text-brand hover:underline">
+              ultrassonografia
+            </Link>
+            ,{" "}
+            <Link href="/exames/mamografia" className="text-brand hover:underline">
+              mamografia
+            </Link>{" "}
+            ou{" "}
+            <Link href="/checkup" className="text-brand hover:underline">
+              check-up
+            </Link>{" "}
+            na Total Quality em Caraguatatuba - SP. Atendemos de segunda a sexta, das 07h30 às 18h.
           </p>
         </div>
 
         <div className="divider-line mb-16" />
 
-        {/* Google Maps */}
+        {/* Mapa: iframe estatico com lazy loading.
+            Substitui a Google Maps JS API, que carregava por um proxy de
+            terceiros (forge.butterfly-effect.dev) fora do ar — o mapa estava
+            quebrado em producao com ERR_FAILED/CORS. O iframe nao executa
+            JavaScript nosso, so carrega quando entra no viewport e nao pesa
+            no TBT. */}
         <div className="reveal mb-16">
-          <MapView
-            className="w-full h-[350px] lg:h-[450px]"
-            initialCenter={{ lat: -23.6225, lng: -45.4132 }}
-            initialZoom={16}
-            onMapReady={handleMapReady}
+          <iframe
+            title="Localização da Total Quality Medicina Diagnóstica em Caraguatatuba - SP"
+            src="https://www.google.com/maps?q=R.+Padre+Anchieta,+1010+-+Centro,+Caraguatatuba+-+SP,+11660-010&z=16&output=embed"
+            className="w-full h-[350px] lg:h-[450px] border-0"
+            width={1200}
+            height={450}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
           />
         </div>
 
@@ -165,7 +187,7 @@ export default function ContatoSection() {
                     <a href="tel:+551238873535" className="flex items-center justify-center px-6 py-3 bg-[#4A4A4A] text-white rounded-full hover:bg-[#3A3A3A] transition-colors font-semibold text-center" onClick={() => trackPhoneClick("contato_section")}>
                       LIGAR: (12) 3887-3535
                     </a>
-                    <a href="https://wa.me/551238873535?text=Olá! Gostaria de informações." className="flex items-center justify-center px-6 py-3 bg-[#25D366] text-white rounded-full hover:bg-[#1da851] transition-colors font-semibold text-center" onClick={() => trackWhatsAppClick("contato_section")}>
+                    <a href="https://wa.me/551238873535?text=Olá! Gostaria de informações." target="_blank" rel="noopener noreferrer" className="flex items-center justify-center px-6 py-3 bg-[#25D366] text-white rounded-full hover:bg-[#1da851] transition-colors font-semibold text-center" onClick={() => trackWhatsAppClick("contato_section")}>
                       WHATSAPP: (12) 3887-3535
                     </a>
                   </div>
@@ -185,7 +207,7 @@ export default function ContatoSection() {
                     <span className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted">Horário</span>
                   </div>
                   <p className="text-text font-medium">Segunda a Sexta</p>
-                  <p className="text-text-light">08h às 18h</p>
+                  <p className="text-text-light">07h30 às 18h</p>
                 </div>
               </div>
 

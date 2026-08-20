@@ -384,7 +384,10 @@ export async function getVideoStats(since?: Date) {
 
 export async function createAnalyticsEvent(event: InsertAnalyticsEvent) {
   const db = await getDb();
-  if (!db) throw new Error("Database not available");
+  // Rastreamento e best-effort: quando o banco esta indisponivel a chamada
+  // devolve success:false em vez de lancar. Antes, /api/trpc/analytics.track
+  // respondia HTTP 500 em toda visita a home (auditoria do Search Console).
+  if (!db) return { success: false as const, reason: "database_unavailable" };
   await db.insert(analyticsEvents).values(event);
   return { success: true };
 }

@@ -147,24 +147,24 @@ export function getSummaryMetrics(events: AnalyticsEvent[]) {
   return {
     totalEvents: events.length,
     pageViews: countByEvent(events, "page_view"),
-    leads: countByEvent(events, "generate_lead"),
+    leads: countByEvent(events, "whatsapp_click") + countByEvent(events, "form_submit"),
     whatsappClicks: countByEvent(events, "whatsapp_click"),
     phoneClicks: countByEvent(events, "phone_click"),
     formStarts: countByEvent(events, "form_start"),
     formSubmits: events.filter(
-      (e) => e.event === "generate_lead" && e.event_label === "contact_form_submit"
+      (e) => e.event === "form_submit"
     ).length,
     scheduleExam: events.filter(
-      (e) => e.event === "generate_lead" && e.event_label === "schedule_exam_whatsapp"
+      (e) => e.event === "whatsapp_click" && String(e.exam_type || "geral") === "geral"
     ).length,
     scheduleCheckup: events.filter(
-      (e) => e.event === "generate_lead" && e.event_label === "schedule_checkup"
+      (e) => e.event === "whatsapp_click" && String(e.exam_type || "").startsWith("checkup")
     ).length,
     scheduleBioimpedancia: events.filter(
-      (e) => e.event === "generate_lead" && e.event_label === "schedule_bioimpedancia"
+      (e) => e.event === "whatsapp_click" && e.exam_type === "bioimpedancia"
     ).length,
     cardInterest: events.filter(
-      (e) => e.event === "generate_lead" && e.event_label === "card_interest"
+      (e) => e.event === "whatsapp_click" && e.exam_type === "cartao"
     ).length,
     navClicks: countByEvent(events, "nav_click"),
     externalLinks: countByEvent(events, "external_link_click"),
@@ -190,12 +190,12 @@ export function getDailyMetrics(days: number): DailyMetrics[] {
     result.push({
       date: dateStr,
       pageViews: dayEvents.filter((e) => e.event === "page_view").length,
-      leads: dayEvents.filter((e) => e.event === "generate_lead").length,
+      leads: dayEvents.filter((e) => e.event === "whatsapp_click" || e.event === "form_submit").length,
       whatsappClicks: dayEvents.filter((e) => e.event === "whatsapp_click").length,
       phoneClicks: dayEvents.filter((e) => e.event === "phone_click").length,
       formStarts: dayEvents.filter((e) => e.event === "form_start").length,
       formSubmits: dayEvents.filter(
-        (e) => e.event === "generate_lead" && e.event_label === "contact_form_submit"
+        (e) => e.event === "form_submit"
       ).length,
     });
   }
@@ -268,7 +268,7 @@ export function getTopExamCategories(events: AnalyticsEvent[]): { category: stri
 
 /** Obter fontes de leads */
 export function getLeadSources(events: AnalyticsEvent[]): { source: string; count: number }[] {
-  const leads = events.filter((e) => e.event === "generate_lead");
+  const leads = events.filter((e) => e.event === "whatsapp_click" || e.event === "form_submit");
   const counts: Record<string, number> = {};
 
   leads.forEach((e) => {
@@ -286,7 +286,7 @@ export function getFunnelMetrics(events: AnalyticsEvent[]) {
   const pageViews = countByEvent(events, "page_view");
   const sectionViews = countByEvent(events, "section_view");
   const formStarts = countByEvent(events, "form_start");
-  const leads = countByEvent(events, "generate_lead");
+  const leads = countByEvent(events, "whatsapp_click") + countByEvent(events, "form_submit");
 
   return {
     steps: [
@@ -307,11 +307,11 @@ export function generateDemoData() {
     { event: "page_view", category: "engagement", label: "page_view", weight: 40 },
     { event: "section_view", category: "engagement", label: "viewed_exames", weight: 25 },
     { event: "scroll", category: "engagement", label: "scroll_50%", weight: 20 },
-    { event: "generate_lead", category: "conversion", label: "schedule_exam_whatsapp", weight: 5 },
-    { event: "generate_lead", category: "conversion", label: "schedule_checkup", weight: 2 },
-    { event: "generate_lead", category: "conversion", label: "schedule_bioimpedancia", weight: 2 },
-    { event: "generate_lead", category: "conversion", label: "contact_form_submit", weight: 2 },
-    { event: "generate_lead", category: "conversion", label: "card_interest", weight: 1 },
+    { event: "whatsapp_click", category: "conversion", label: "hero_cta", weight: 5 },
+    { event: "whatsapp_click", category: "conversion", label: "checkup_geral", weight: 2 },
+    { event: "whatsapp_click", category: "conversion", label: "bioimpedancia_cta", weight: 2 },
+    { event: "form_submit", category: "conversion", label: "contato", weight: 2 },
+    { event: "whatsapp_click", category: "conversion", label: "cartao_cta", weight: 1 },
     { event: "whatsapp_click", category: "contact", label: "whatsapp_click", weight: 8 },
     { event: "phone_click", category: "contact", label: "phone_click", weight: 4 },
     { event: "form_start", category: "engagement", label: "contact_form_start", weight: 6 },
@@ -370,7 +370,7 @@ export function generateDemoData() {
       if (selectedType.event === "select_content") {
         (event as Record<string, unknown>).content_id = examCategories[Math.floor(Math.random() * examCategories.length)];
       }
-      if (selectedType.event === "generate_lead") {
+      if (selectedType.event === "whatsapp_click" || selectedType.event === "form_submit") {
         event.lead_source = leadSources[Math.floor(Math.random() * leadSources.length)];
         event.exam_type = examCategories[Math.floor(Math.random() * examCategories.length)];
       }

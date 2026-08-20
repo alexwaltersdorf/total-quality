@@ -41,11 +41,11 @@ export default function Footer() {
       {/* CTA strip */}
       <div className="border-b border-black/10">
         <div className="container py-16 lg:py-20 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
-          <h3 className="heading-display text-4xl sm:text-5xl lg:text-6xl text-text">
-            AGENDE SEU
+          <h2 className="heading-display text-4xl sm:text-5xl lg:text-6xl text-text">
+            AGENDE SEU{" "}
             <br />
             <span className="text-brand">EXAME AGORA</span>
-          </h3>
+          </h2>
           <button
             onClick={() => { trackScheduleExam("footer_cta", "geral"); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame.", "_blank"); }}
             className="btn-pill"
@@ -69,7 +69,7 @@ export default function Footer() {
 
           {/* Navigation */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-6">Navegação</h4>
+            <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-6">Navegação</h3>
             <ul className="space-y-3">
               {footerLinks.map((link) => (
                 <li key={link.href}>
@@ -95,7 +95,7 @@ export default function Footer() {
 
           {/* Exames Sitelinks */}
           <div className="lg:col-span-1">
-            <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-6">Nossos Exames</h4>
+            <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-6">Nossos Exames</h3>
             <ul className="space-y-3">
               {examSitelinks.map((exam) => (
                 <li key={exam.href}>
@@ -112,7 +112,7 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-6">Contato</h4>
+            <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-6">Contato</h3>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-brand mt-0.5 shrink-0" />
@@ -135,11 +135,11 @@ export default function Footer() {
 
           {/* Hours & Social */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-6">Horário</h4>
+            <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-6">Horário</h3>
             <p className="text-text-light text-sm mb-1">Segunda a Sexta</p>
-            <p className="text-text font-medium text-sm mb-8">08h às 18h</p>
+            <p className="text-text font-medium text-sm mb-8">07h30 às 18h</p>
 
-            <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-4">Social</h4>
+            <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-4">Social</h3>
             <a
               href="https://www.instagram.com/totalqualitymedicina"
               target="_blank"

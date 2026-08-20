@@ -4,6 +4,7 @@
  * Page: Check-Up Preventivo
  */
 import { useEffect, useRef } from "react";
+import { trackScheduleCheckup, trackPhoneClick } from "@/lib/tracking";
 import { ArrowUpRight, Heart, Shield, Activity, Clock, CheckCircle, Stethoscope, FlaskConical, Brain } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -111,7 +112,7 @@ export default function CheckUp() {
   }, []);
 
   // SEO: Meta description e canonical (155 caracteres - ideal: 150-160)
-  useMetaDescription("Check-up preventivo em Caraguatatuba com hemograma, colesterol, tomografia e ecocardiograma. Pacotes Básico, Select e Premium. Agende agora!");
+  useMetaDescription("Check-up preventivo em Caraguatatuba com hemograma, colesterol, tomografia e eletrocardiograma. Pacotes Básico, Select e Premium. Agende agora!");
   useCanonical("/checkup");
 
   // SEO: Schema.org LocalBusiness para melhorar visibilidade local
@@ -152,19 +153,19 @@ export default function CheckUp() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <button
-                onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
+                onClick={() => { trackScheduleCheckup("geral"); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank"); }}
                 className="btn-pill !bg-brand !text-white hover:!bg-brand-dark"
               >
                 Agendar Check-Up
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
-              <a href="tel:+551238873535" className="btn-pill bg-transparent !text-text border border-black/20 hover:!bg-black/5">
+              <a href="tel:+551238873535" onClick={() => trackPhoneClick("checkup_topo")} className="btn-pill bg-transparent !text-text border border-black/20 hover:!bg-black/5">
                 Ligar: (12) 3887-3535
               </a>
             </div>
           </div>
           <div className="reveal-right">
-            <img src={HERO_IMG} alt="Check-Up Preventivo" className="w-full rounded-lg shadow-lg" />
+            <img src={HERO_IMG} alt="Check-up preventivo na Total Quality em Caraguatatuba - SP - exames laboratoriais e de imagem em um só lugar" className="w-full rounded-lg shadow-lg" />
           </div>
         </div>
       </section>
@@ -217,7 +218,7 @@ export default function CheckUp() {
                   </div>
 
                   <button
-                    onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar o " + pkg.title + ".", "_blank")}
+                    onClick={() => { trackScheduleCheckup(pkg.title); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar o " + pkg.title + ".", "_blank"); }}
                     className={`w-full py-3 px-4 rounded-lg font-semibold transition-all ${
                       pkg.highlight
                         ? "bg-white text-brand hover:bg-white/90"
@@ -287,7 +288,7 @@ export default function CheckUp() {
             </div>
 
             <div className="reveal-right">
-              <img src={PROCESS_IMG} alt="Processo de Check-Up" className="w-full rounded-lg shadow-lg" />
+              <img src={PROCESS_IMG} alt="Etapas do check-up preventivo na clínica Total Quality em Caraguatatuba - SP" className="w-full rounded-lg shadow-lg" />
             </div>
           </div>
         </div>
@@ -304,13 +305,13 @@ export default function CheckUp() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank")}
+              onClick={() => { trackScheduleCheckup("geral"); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um Check-Up.", "_blank"); }}
               className="btn-pill bg-white text-brand hover:bg-white/90"
             >
               Agendar pelo WhatsApp
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
-            <a href="tel:+551238873535" className="btn-pill bg-transparent text-white border border-white/30 hover:bg-white/10">
+            <a href="tel:+551238873535" onClick={() => trackPhoneClick("checkup_rodape")} className="btn-pill bg-transparent text-white border border-white/30 hover:bg-white/10">
               Ligar: (12) 3887-3535
             </a>
           </div>

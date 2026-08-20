@@ -12,16 +12,13 @@
  * Eventos seguem a nomenclatura GA4 recommended events + custom events
  * para máxima compatibilidade entre plataformas.
  */
+import { resolveLeadValue } from "@/lib/leadValues";
+import { buildUserData } from "@/lib/userData";
 
 // Tipagem do dataLayer
 declare global {
   interface Window {
     dataLayer: Record<string, unknown>[];
-    fbq?: (...args: unknown[]) => void;
-    ttq?: {
-      track: (...args: unknown[]) => void;
-      page: () => void;
-    };
   }
 }
 
@@ -46,22 +43,35 @@ function pushToDataLayer(event: string, params: Record<string, unknown> = {}) {
 // NAVEGAÇÃO E PAGEVIEW
 // ============================================================
 
-/** Rastreia visualização de página (SPA navigation) */
+/*
+ * FONTE UNICA DE page_view.
+ *
+ * Ate 11/08/2026 havia tres emissores: um push manual na Home, outro no hook
+ * legado useTracking (CartaoPage) e o disparo do proprio GTM na troca de rota.
+ * O GA4 recebia o evento em duplicidade. Agora quem chama e apenas o
+ * usePageViewTracking, montado uma vez no App; o gatilho de History Change do
+ * GTM NAO deve emitir page_view (ver docs/analytics.md).
+ *
+ * A deduplicacao por caminho + janela de tempo tambem absorve o duplo-render
+ * do StrictMode em desenvolvimento.
+ */
+let lastPageViewPath: string | null = null;
+let lastPageViewAt = 0;
+const PAGE_VIEW_DEDUP_MS = 1000;
+
+/** Rastreia visualização de página (navegação SPA). */
 export function trackPageView(pageName?: string) {
+  if (typeof window === "undefined") return;
+  const path = window.location.pathname;
+  const agora = Date.now();
+  if (path === lastPageViewPath && agora - lastPageViewAt < PAGE_VIEW_DEDUP_MS) return;
+  lastPageViewPath = path;
+  lastPageViewAt = agora;
+
   pushToDataLayer("page_view", {
     page_name: pageName || document.title,
     content_group: getContentGroup(),
   });
-
-  // Meta Pixel - PageView
-  if (window.fbq) {
-    window.fbq("track", "PageView");
-  }
-
-  // TikTok Pixel - PageView
-  if (window.ttq) {
-    window.ttq.page();
-  }
 }
 
 /** Rastreia scroll depth (25%, 50%, 75%, 90%) */
@@ -100,85 +110,64 @@ export function trackSectionView(sectionName: string) {
 // ============================================================
 
 /** Rastreia clique em "Agendar Exame" (WhatsApp) - CONVERSÃO PRINCIPAL */
-export function trackScheduleExam(source: string, examType?: string) {
-  pushToDataLayer("generate_lead", {
+/*
+ * EVENTO CANONICO DE CONVERSAO (padronizacao de 02/08/2026): todo clique em
+ * qualquer botao/link de WhatsApp empurra UM UNICO evento whatsapp_click
+ * com este payload. O antigo evento de lead foi aposentado e nao ha mais
+ * pixel direto — o GTM converte whatsapp_click em Lead (Meta) e em
+ * conversao (Google Ads).
+ */
+export function trackWhatsAppConversion(label: string, source: string, examType: string = "geral") {
+  pushToDataLayer("whatsapp_click", {
     event_category: "conversion",
-    event_label: "schedule_exam_whatsapp",
+    event_label: label,
     lead_source: source,
-    exam_type: examType || "geral",
+    exam_type: examType,
     currency: "BRL",
-    value: 1, // valor simbólico para otimização
+    // Ticket medio informado pelo Alex — ver lib/leadValues.ts.
+    value: resolveLeadValue(source, examType),
   });
+}
 
-  // Meta Pixel - Lead
-  if (window.fbq) {
-    window.fbq("track", "Lead", {
-      content_name: "Agendamento de Exame",
-      content_category: examType || "geral",
-      value: 1,
-      currency: "BRL",
-    });
-  }
+/**
+ * Mesma conversao, para os pontos em que o paciente JA se identificou
+ * (formulario de contato e modal de leads). Anexa o user_data com hash
+ * SHA-256 das conversoes aprimoradas do Google Ads.
+ *
+ * Sem consentimento de marketing, sem Web Crypto ou com dados invalidos, o
+ * user_data simplesmente nao vai — a conversao continua sendo registrada, so
+ * que sem identificacao. Texto puro nunca entra no dataLayer.
+ */
+export async function trackWhatsAppConversionWithLead(
+  label: string,
+  source: string,
+  examType: string,
+  contato: { email?: string; telefone?: string }
+) {
+  const userData = await buildUserData(contato);
+  pushToDataLayer("whatsapp_click", {
+    event_category: "conversion",
+    event_label: label,
+    lead_source: source,
+    exam_type: examType,
+    currency: "BRL",
+    value: resolveLeadValue(source, examType),
+    ...(userData ? { user_data: userData } : {}),
+  });
+}
 
-  // TikTok Pixel - SubmitForm (equivalente a lead)
-  if (window.ttq) {
-    window.ttq.track("SubmitForm", {
-      content_name: "Agendamento de Exame",
-      content_type: examType || "geral",
-    });
-  }
+export function trackScheduleExam(source: string, examType?: string) {
+  trackWhatsAppConversion(source, source.replace(/_(cta|section)$/, ""), examType || "geral");
 }
 
 /** Rastreia clique em "Agendar Check-Up" */
 export function trackScheduleCheckup(packageType: string) {
-  pushToDataLayer("generate_lead", {
-    event_category: "conversion",
-    event_label: "schedule_checkup",
-    lead_source: "checkup_page",
-    exam_type: `checkup_${packageType}`,
-    currency: "BRL",
-    value: 1,
-  });
-
-  if (window.fbq) {
-    window.fbq("track", "Schedule", {
-      content_name: `Check-Up ${packageType}`,
-      content_category: "checkup",
-    });
-  }
-
-  if (window.ttq) {
-    window.ttq.track("SubmitForm", {
-      content_name: `Check-Up ${packageType}`,
-      content_type: "checkup",
-    });
-  }
+  trackWhatsAppConversion(`checkup_${packageType}`, "checkup", `checkup_${packageType}`);
 }
 
 /** Rastreia clique em "Agendar Bioimpedância" */
 export function trackScheduleBioimpedancia() {
-  pushToDataLayer("generate_lead", {
-    event_category: "conversion",
-    event_label: "schedule_bioimpedancia",
-    lead_source: "bioimpedancia_page",
-    exam_type: "bioimpedancia",
-    currency: "BRL",
-    value: 1,
-  });
-
-  if (window.fbq) {
-    window.fbq("track", "Schedule", {
-      content_name: "Bioimpedância",
-      content_category: "bioimpedancia",
-    });
-  }
-
-  if (window.ttq) {
-    window.ttq.track("SubmitForm", {
-      content_name: "Bioimpedância",
-      content_type: "bioimpedancia",
-    });
-  }
+  trackWhatsAppConversion("bioimpedancia_cta", "bioimpedancia", "bioimpedancia");
 }
 
 // ============================================================
@@ -194,12 +183,6 @@ export function trackExamCategorySelect(category: string) {
     event_label: `exam_category_${category}`,
   });
 
-  if (window.fbq) {
-    window.fbq("track", "ViewContent", {
-      content_name: category,
-      content_type: "exam_category",
-    });
-  }
 }
 
 /** Rastreia visualização de exame específico */
@@ -224,35 +207,24 @@ export function trackFormStart() {
     form_name: "contato",
   });
 
-  if (window.fbq) {
-    window.fbq("track", "InitiateCheckout", {
-      content_name: "Formulário de Contato",
-    });
-  }
 }
 
 /** Rastreia envio do formulário de contato - CONVERSÃO */
-export function trackFormSubmit(formData: { name: string; subject?: string }) {
-  pushToDataLayer("generate_lead", {
+export async function trackFormSubmit(formData: {
+  name: string;
+  subject?: string;
+  email?: string;
+  telefone?: string;
+}) {
+  // user_data com hash para as conversoes aprimoradas; ausente sem
+  // consentimento de marketing (ver lib/userData.ts).
+  const userData = await buildUserData({ email: formData.email, telefone: formData.telefone });
+  pushToDataLayer("form_submit", {
     event_category: "conversion",
-    event_label: "contact_form_submit",
     form_name: "contato",
-    lead_source: "contact_form",
     contact_subject: formData.subject || "geral",
+    ...(userData ? { user_data: userData } : {}),
   });
-
-  if (window.fbq) {
-    window.fbq("track", "Lead", {
-      content_name: "Formulário de Contato",
-      content_category: formData.subject || "geral",
-    });
-  }
-
-  if (window.ttq) {
-    window.ttq.track("SubmitForm", {
-      content_name: "Formulário de Contato",
-    });
-  }
 }
 
 // ============================================================
@@ -268,39 +240,11 @@ export function trackPhoneClick(source: string) {
     click_source: source,
   });
 
-  if (window.fbq) {
-    window.fbq("track", "Contact", {
-      content_name: "Telefone",
-    });
-  }
-
-  if (window.ttq) {
-    window.ttq.track("Contact", {
-      content_name: "Telefone",
-    });
-  }
 }
 
 /** Rastreia clique no WhatsApp (sem ser agendamento) */
 export function trackWhatsAppClick(source: string) {
-  pushToDataLayer("whatsapp_click", {
-    event_category: "contact",
-    event_label: "whatsapp_click",
-    contact_method: "whatsapp",
-    click_source: source,
-  });
-
-  if (window.fbq) {
-    window.fbq("track", "Contact", {
-      content_name: "WhatsApp",
-    });
-  }
-
-  if (window.ttq) {
-    window.ttq.track("Contact", {
-      content_name: "WhatsApp",
-    });
-  }
+  trackWhatsAppConversion(source, source.replace(/_(cta|section)$/, ""));
 }
 
 // ============================================================
@@ -309,25 +253,21 @@ export function trackWhatsAppClick(source: string) {
 
 /** Rastreia interesse no Cartão Total Quality */
 export function trackCardInterest() {
-  pushToDataLayer("generate_lead", {
-    event_category: "conversion",
-    event_label: "card_interest",
-    lead_source: "cartao_section",
-    content_type: "cartao_total_quality",
+  trackWhatsAppConversion("cartao_cta", "cartao", "cartao");
+}
+
+/**
+ * Rastreia clique em CTA que NAO leva ao WhatsApp (abrir modal, escolher
+ * plano, expandir bloco). Usa select_content, evento que ja esta no gatilho do
+ * GTM — nao exige mudanca no contêiner.
+ */
+export function trackCtaClick(ctaName: string) {
+  pushToDataLayer("select_content", {
+    content_type: "cta",
+    content_id: ctaName,
+    event_category: "engagement",
+    event_label: `cta_${ctaName}`,
   });
-
-  if (window.fbq) {
-    window.fbq("track", "Lead", {
-      content_name: "Cartão Total Quality",
-      content_category: "cartao",
-    });
-  }
-
-  if (window.ttq) {
-    window.ttq.track("SubmitForm", {
-      content_name: "Cartão Total Quality",
-    });
-  }
 }
 
 // ============================================================
@@ -410,24 +350,55 @@ export function initScrollTracking() {
   return () => window.removeEventListener("scroll", handleScroll);
 }
 
-/** Inicializa rastreamento de tempo na página */
+/**
+ * Inicializa rastreamento de tempo na página.
+ *
+ * Marcos discretos, cada um uma unica vez por pagina. Antes eram
+ * [15, 30, 60, 120, 300] verificados a cada 5s — tres eventos so no primeiro
+ * minuto, consumindo cota do GA4 e inflando engajamento.
+ *
+ * O contador acumula apenas tempo com a aba VISIVEL (Page Visibility API):
+ * antes ele seguia correndo com a aba em segundo plano, contando como
+ * engajamento tempo em que ninguem estava lendo a pagina.
+ */
 export function initTimeTracking() {
-  const intervals = [15, 30, 60, 120, 300]; // segundos
-  const triggered = new Set<number>();
-  let startTime = Date.now();
+  const marcos = [30, 60, 180]; // segundos
+  const disparados = new Set<number>();
+  let visivelDesde = document.visibilityState === "visible" ? Date.now() : null;
+  let acumulado = 0;
 
-  const checkTime = () => {
-    const elapsed = Math.round((Date.now() - startTime) / 1000);
-    intervals.forEach((interval) => {
-      if (elapsed >= interval && !triggered.has(interval)) {
-        triggered.add(interval);
-        trackTimeOnPage(interval);
+  const decorrido = () =>
+    Math.round((acumulado + (visivelDesde ? Date.now() - visivelDesde : 0)) / 1000);
+
+  const checarMarcos = () => {
+    const segundos = decorrido();
+    for (const marco of marcos) {
+      if (segundos >= marco && !disparados.has(marco)) {
+        disparados.add(marco);
+        trackTimeOnPage(marco);
       }
-    });
+    }
   };
 
-  const timer = setInterval(checkTime, 5000);
-  return () => clearInterval(timer);
+  const aoTrocarVisibilidade = () => {
+    if (document.visibilityState === "visible") {
+      visivelDesde = Date.now();
+      return;
+    }
+    if (visivelDesde) {
+      acumulado += Date.now() - visivelDesde;
+      visivelDesde = null;
+    }
+    checarMarcos();
+  };
+
+  document.addEventListener("visibilitychange", aoTrocarVisibilidade);
+  const timer = window.setInterval(checarMarcos, 10000);
+
+  return () => {
+    window.clearInterval(timer);
+    document.removeEventListener("visibilitychange", aoTrocarVisibilidade);
+  };
 }
 
 /** Inicializa observador de seções visíveis */

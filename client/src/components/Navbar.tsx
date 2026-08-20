@@ -6,8 +6,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { trackNavClick, trackScheduleExam, trackResultsClick, trackPhoneClick } from "@/lib/tracking";
-import { useGoogleAdsConversion } from "@/hooks/useGoogleAdsConversion";
+import { trackNavClick, trackScheduleExam, trackResultsClick, trackPhoneClick, trackWhatsAppClick } from "@/lib/tracking";
 
 const navLinks = [
   { label: "Início", href: "#inicio" },
@@ -45,7 +44,6 @@ export default function Navbar() {
   const [mobileExamesOpen, setMobileExamesOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { trackScheduleClick, trackWhatsAppClick, trackPhoneClick: trackPhoneClickAds } = useGoogleAdsConversion();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -73,22 +71,20 @@ export default function Navbar() {
 
   const handleScheduleClickNavbar = () => {
     setMobileOpen(false);
-    trackScheduleClick('navbar');
     trackScheduleExam("navbar_cta", "geral");
     window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame.", "_blank");
   };
 
   const handleWhatsAppClickNavbar = () => {
     setMobileOpen(false);
-    trackWhatsAppClick('5512388735350');
+    trackWhatsAppClick("navbar");
     window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame.", "_blank");
   };
 
   const handlePhoneClickNavbar = () => {
     setMobileOpen(false);
-    trackPhoneClickAds('5512388735350');
-    trackPhoneClick();
-    window.location.href = 'tel:+5512388735350';
+    trackPhoneClick("navbar");
+    window.location.href = 'tel:+551238873535';
   };
 
   const handleScheduleClick = handleScheduleClickNavbar;
@@ -123,11 +119,19 @@ export default function Navbar() {
           className="flex items-center gap-3 group"
           onClick={(e) => { e.preventDefault(); scrollTo("#inicio"); }}
         >
-          <img
-            src="https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/total-quality-logo_ce648054.png"
-            alt="Total Quality Medicina Diagnóstica"
-            className="h-10 md:h-12 w-auto object-contain"
-          />
+          <picture>
+            <source type="image/avif" srcSet="/images/logo-276.avif 276w, /images/logo-414.avif 414w" sizes="138px" />
+            <source type="image/webp" srcSet="/images/logo-276.webp 276w, /images/logo-414.webp 414w" sizes="138px" />
+            <img
+              src="/images/logo-276.webp"
+              alt="Total Quality Medicina Diagnóstica"
+              className="h-10 md:h-12 w-auto object-contain"
+              width={276}
+              height={96}
+              fetchPriority="high"
+              decoding="sync"
+            />
+          </picture>
         </a>
 
         {/* Desktop nav links */}
@@ -354,7 +358,7 @@ export default function Navbar() {
           </div>
           <div className="mt-10 text-xs text-text-muted space-y-1">
             <p>R. Padre Anchieta, 1010 - Centro, Caraguatatuba - SP</p>
-            <p>Seg-Sex: 08h às 18h</p>
+            <p>Seg-Sex: 07h30 às 18h</p>
             <a
               href="tel:+551238873535"
               className="block hover:text-brand"

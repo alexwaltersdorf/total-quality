@@ -13,6 +13,8 @@ import { syncAutoSeoArticles } from "./syncAutoSeo";
 import { validateWebhookToken, processAutoSeoWebhook, processAutoSeoWebhookBatch } from "./autoseoWebhook";
 import { weeklyMonitoringHandler } from "./monitoring-handler";
 import { generateSitemap } from "./sitemap-handler";
+import { registerTagGateway } from "./tag-gateway";
+import { getLegacyRedirect, isGone } from "./legacy-redirects";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -106,6 +108,25 @@ async function startServer() {
     );
   });
 
+  // Redirecionamentos de URLs legadas conhecidas pelo Google (auditoria do
+  // Search Console): 301 para o equivalente atual, 410 para artefatos de link
+  // quebrado. Precisa vir antes do catch-all da SPA, senao viram soft 404.
+  app.use((req, res, next) => {
+    const pathname = req.path;
+
+    if (isGone(pathname)) {
+      return res.status(410).type("text/plain").send("Gone");
+    }
+
+    const destination = getLegacyRedirect(pathname);
+    if (destination) {
+      const query = req.originalUrl.slice(req.path.length);
+      return res.redirect(301, `${destination}${destination.includes("#") ? "" : query}`);
+    }
+
+    next();
+  });
+
   // CWV Optimization: Cache headers para assets estáticos
   // Imagens, fonts, CSS, JS devem ser cacheados por longo tempo
   app.use((req, res, next) => {
@@ -147,6 +168,11 @@ async function startServer() {
       return compression.filter(req, res);
     },
   }));
+
+  // Gateway da tag do Google (proxy first-party /metrics -> fps.goog).
+  // PRECISA vir antes dos body parsers: os POSTs de medicao sao encaminhados
+  // como stream bruto — express.json consumiria o corpo antes do proxy.
+  registerTagGateway(app);
 
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
@@ -213,17 +239,16 @@ async function startServer() {
 
   // Robots.txt endpoint
   app.get("/robots.txt", (_req, res) => {
+    // GPTBot/CCBot liberados de propósito: a clínica já aparece em respostas de
+    // LLMs (3 prompts registrados no SEMrush) e esse canal só cresce. Não voltar
+    // a bloquear crawlers de IA sem decisão explícita do negócio.
     const robotsTxt = `User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api
 Disallow: /dashboard
-
-User-agent: GPTBot
-Disallow: /
-
-User-agent: CCBot
-Disallow: /
+Disallow: /metrics
+Disallow: /*?q=
 
 Sitemap: https://totalquality.med.br/sitemap.xml`;
     res.set({ "Content-Type": "text/plain" }).send(robotsTxt);
