@@ -588,3 +588,52 @@ describe("GUARD-RAIL: coleta sem agendamento (confirmado pelo Alex em 01/08/2026
     }
   );
 });
+
+describe("GUARD-RAIL: peso do bundle — sem destaque de sintaxe (ago/2026)", () => {
+  // Em 21/08/2026 a dependencia `streamdown` foi removida: existia para
+  // renderizar markdown de IA em streaming com destaque de sintaxe, e trazia
+  // junto 73 gramaticas de linguagem (emacs-lisp, C++, WebAssembly, Wolfram)
+  // mais mermaid e cytoscape. Num site de laboratorio clinico isso custava
+  // 271,8 KB gzip na pagina de artigo e 2.839 KB gzip no build inteiro, sem
+  // servir a nenhum leitor. O markdown passou a ser renderizado por
+  // client/src/lib/renderMarkdown.tsx (elementos React, sem innerHTML).
+  it("nenhuma biblioteca de destaque de sintaxe ou diagrama nas dependencias", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const pkg = JSON.parse(
+      fs.readFileSync(path.resolve(import.meta.dirname, "..", "package.json"), "utf-8")
+    );
+    const deps = Object.keys({ ...pkg.dependencies, ...pkg.devDependencies });
+    const proibidas = deps.filter((d) => /^(streamdown|shiki|mermaid|cytoscape|highlight\.js|prismjs)$/.test(d));
+    expect(proibidas, `dependencias pesadas de renderizacao: ${proibidas.join(", ")}`).toEqual([]);
+  });
+
+  it("nenhum modulo do client importa essas bibliotecas", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const base = path.resolve(import.meta.dirname, "..", "client", "src");
+    const files = fs
+      .readdirSync(base, { recursive: true, encoding: "utf-8" })
+      .filter((f) => f.endsWith(".tsx") || f.endsWith(".ts"));
+    const problemas: string[] = [];
+    for (const rel of files) {
+      const src = fs.readFileSync(path.resolve(base, rel), "utf-8");
+      if (/from\s+["'](streamdown|shiki|mermaid|cytoscape|highlight\.js|prismjs)["']/.test(src)) {
+        problemas.push(`${rel}: import de biblioteca pesada de renderizacao`);
+      }
+    }
+    expect(problemas, problemas.join("\n")).toEqual([]);
+  });
+
+  it("renderMarkdown nunca usa dangerouslySetInnerHTML", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const src = fs.readFileSync(
+      path.resolve(import.meta.dirname, "..", "client", "src", "lib", "renderMarkdown.tsx"),
+      "utf-8"
+    );
+    // O conteudo vem de webhook externo: elementos React escapam texto,
+    // innerHTML executaria markdown malicioso como HTML.
+    expect(src).not.toContain("dangerouslySetInnerHTML");
+  });
+});

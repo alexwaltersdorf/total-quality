@@ -13,7 +13,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useBreadcrumbSchema, useBlogPostingSchema, useCanonical, useMetaDescription } from "@/components/SEOHead";
-import { Streamdown } from "streamdown";
+import { renderMarkdown } from "@/lib/renderMarkdown";
 import GiscusComments from "@/components/GiscusComments";
 
 export default function AutoSeoArticle() {
@@ -219,7 +219,7 @@ export default function AutoSeoArticle() {
           {/* Renderizar conteúdo HTML ou Markdown */}
           {article.contentMarkdown ? (
             <div className="prose prose-lg max-w-none prose-headings:font-display prose-headings:text-text prose-p:text-text prose-p:leading-[1.85] prose-a:text-brand prose-a:no-underline hover:prose-a:underline prose-strong:text-text prose-strong:font-semibold prose-code:text-brand prose-code:bg-surface-light prose-code:px-2 prose-code:py-1 prose-code:rounded">
-              <Streamdown>{article.contentMarkdown}</Streamdown>
+              {renderMarkdown(article.contentMarkdown)}
             </div>
           ) : (
             <div className="space-y-6">
