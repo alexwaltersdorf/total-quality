@@ -1,0 +1,233 @@
+{
+  "name": "ANA-06 - Confirmacao de exame na vespera (09:00)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "a06-cron",
+      "name": "Todo dia util as 09:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -980,
+        300
+      ],
+      "notes": "Fuso do workflow = America/Sao_Paulo (Settings > Timezone). Seg a sex; sexta ja cobre segunda."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Exames confirmados que acontecem no proximo dia util.\n-- Sexta-feira 09:00 cobre segunda-feira (a clinica nao abre sab/dom).\nSELECT phone,\n       nome,\n       agendamento->>'data'                AS data,\n       COALESCE(agendamento->>'hora','')   AS hora,\n       COALESCE(agendamento->>'turno','')  AS turno,\n       COALESCE(agendamento->>'evento','') AS evento\nFROM ana_leads\nWHERE agendamento->>'status' = 'confirmado'\n  AND COALESCE(opt_out, false) = false\n  AND agendamento->>'confirmacao_enviada_em' IS NULL\n  AND agendamento->>'data' ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'\n  AND (agendamento->>'data')::date = CASE\n        WHEN EXTRACT(ISODOW FROM (NOW() AT TIME ZONE 'America/Sao_Paulo')) = 5\n        THEN (NOW() AT TIME ZONE 'America/Sao_Paulo')::date + 3\n        ELSE (NOW() AT TIME ZONE 'America/Sao_Paulo')::date + 1\n      END\nORDER BY hora",
+        "options": {}
+      },
+      "id": "a06-busca",
+      "name": "Buscar exames do proximo dia util",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -760,
+        300
+      ],
+      "notes": "Mesma credencial Postgres (Supabase) do ANA-01/02. Nao repete quem ja recebeu (confirmacao_enviada_em) nem quem deu opt-out (LGPD)."
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "a06-loop",
+      "name": "Um paciente por vez",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -540,
+        300
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "a06-fim",
+      "name": "Fim",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// ANA-06 — Monta a mensagem de confirmação da véspera.\n// Determinística de propósito: o texto que SAI é previsível e\n// auditável (CFM 2.336/2023). A RESPOSTA do paciente volta para a\n// Ana do ANA-01, que conduz confirmação, remarcação ou cancelamento.\n// ============================================================\nconst DIAS = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira',\n              'quinta-feira', 'sexta-feira', 'sábado'];\n\n// siglas que sempre vão em caixa alta\nconst SIGLAS = ['usg', 'rx', 'tc', 'ecg', 'eeg', 'mapa', 'dna', 'psa', 'tsh', 'holter'];\n\n// grafias sem acento que a recepção digita → forma correta para o paciente\nconst ACENTOS = {\n  'abdomen': 'abdômen', 'abdominal': 'abdominal', 'torax': 'tórax',\n  'prostata': 'próstata', 'obstetrico': 'obstétrico', 'obstetrica': 'obstétrica',\n  'maos': 'mãos', 'articulacao': 'articulação', 'coracao': 'coração',\n  'tireoide': 'tireoide', 'cervical': 'cervical', 'toxicologico': 'toxicológico', 'toxico': 'toxicológico',\n  'bacterioscopico': 'bacterioscópico', 'secrecao': 'secreção',\n  'espiro': 'espirometria', 'tv': 'transvaginal', 'morfologico': 'morfológico'\n};\n\nfunction primeiroNome(nome) {\n  const n = String(nome || '').trim().split(/\\s+/)[0] || '';\n  if (n.length < 2 || !/^[A-Za-zÀ-ÿ]+$/.test(n)) return '';\n  return n.charAt(0).toUpperCase() + n.slice(1).toLowerCase();\n}\n\n// palavras internas que não devem chegar ao paciente\nconst INTERNOS = /\\b(solumed|poiares|particular|convenio|conv[êe]nio|encaixe|retorno)\\b/gi;\n// âncoras usadas quando o título não segue o padrão \"hora - nome - exame\"\nconst ANCORA = /\\b(usg|ultrassom|ultrassonografia|rx|raio[- ]?x|tc|tomografia|ecg|eletro\\w*|eeg|holter|mapa|coleta|espiro\\w*|toxicol\\w*|papanicolau|sexagem|romberg|doppler|check[- ]?up|bacterioscopico|bacterioscópico)\\b/i;\n\nfunction nomeExame(evento) {\n  const bruto = String(evento || '').trim();\n  if (!bruto) return 'exame';\n  // o exame é o último trecho do título: \"09:00 - Maria Silva - USG ABDÔMEN\"\n  const partes = bruto.split(/\\s*[-–]\\s*/).map(p => p.trim()).filter(Boolean);\n  let ex = partes.length > 1 ? partes[partes.length - 1] : bruto;\n  // título fora do padrão (sem hífen): corta a partir do nome do exame\n  if (partes.length === 1) {\n    const m = ex.match(ANCORA);\n    ex = m ? ex.slice(m.index) : '';\n  }\n  ex = ex.replace(/^\\d{1,2}\\s*[hH:]\\s*\\d{0,2}\\s*/, '').replace(/[()]/g, ' ')\n         .replace(INTERNOS, ' ').replace(/[.\\s]+$/, '')\n         .replace(/\\s+/g, ' ').trim();\n  if (ex.length < 3) return 'exame';\n  ex = ex.toLowerCase().split(' ').map(function (p) {\n    const limpa = p.replace(/[^a-zà-ÿ]/g, '');\n    if (ACENTOS[limpa]) return p.replace(limpa, ACENTOS[limpa]);\n    return p;\n  }).join(' ');\n  ex = ex.split(' ').map(p => SIGLAS.indexOf(p) >= 0 ? p.toUpperCase() : p).join(' ');\n  return ex;\n}\n\nconst j = $input.first().json;\nconst nome = primeiroNome(j.nome);\nconst saudacao = nome ? ('Oi, ' + nome + '!') : 'Oi!';\nconst exame = nomeExame(j.evento);\n\nconst partesData = String(j.data).split('-').map(Number);\nconst alvo = Date.UTC(partesData[0], partesData[1] - 1, partesData[2]);\nconst dataBr = String(partesData[2]).padStart(2, '0') + '/' + String(partesData[1]).padStart(2, '0');\n\n// \"hoje\" em São Paulo: o Brasil não tem mais horário de verão, então UTC-3 é fixo\nconst agoraSP = new Date(Date.now() - 3 * 60 * 60 * 1000);\nconst hoje = Date.UTC(agoraSP.getUTCFullYear(), agoraSP.getUTCMonth(), agoraSP.getUTCDate());\n// na sexta-feira a rotina cobre a segunda: aí não é \"amanhã\"\nconst quando = (alvo - hoje) === 86400000\n  ? 'de amanhã'\n  : ('de ' + DIAS[new Date(alvo).getUTCDay()]);\n\nlet horario = '';\nif (/^\\d{2}:\\d{2}$/.test(j.hora || '')) horario = ', às *' + j.hora + '*';\nelse if (String(j.turno || '').indexOf('manh') === 0) horario = ', de *manhã*';\nelse if (j.turno) horario = ', à *tarde*';\n\nconst detalhe = '*' + exame + '*, dia *' + dataBr + '*' + horario;\n\n// 3 variações estáveis: o mesmo paciente recebe sempre o mesmo estilo\nconst v = Number(String(j.phone).slice(-3)) % 3;\nlet texto;\nif (v === 0) {\n  texto = saudacao + ' 😊 Aqui é a Ana, da Total Quality.\\n\\n'\n        + 'Passando pra confirmar seu exame ' + quando + ': ' + detalhe + '.\\n\\n'\n        + 'Posso confirmar sua presença? Se precisar remarcar, é só me falar que eu ajeito pra você 🙂';\n} else if (v === 1) {\n  texto = saudacao + ' Tudo bem? É a Ana, da Total Quality 😊\\n\\n'\n        + 'Seu exame ' + quando + ' está marcado: ' + detalhe + '.\\n\\n'\n        + 'Tá tudo certo pra você vir? Se precisar mudar a data, me avisa que a gente remarca sem problema.';\n} else {\n  texto = saudacao + ' Ana aqui, da Total Quality 🙂\\n\\n'\n        + 'Passando só pra lembrar do seu exame ' + quando + ': ' + detalhe + '.\\n\\n'\n        + 'Consigo confirmar sua presença?';\n}\n\ntexto += '\\n\\nA gente fica na *Av. Anchieta, 1010* — Centro. Chega uns 15 minutinhos antes, tá? '\n       + 'E se quiser as orientações de preparo, é só me pedir.';\n\nreturn [{ json: { phone: j.phone, nome: j.nome, data: j.data, hora: j.hora,\n                  exame: exame, texto: texto } }];"
+      },
+      "id": "a06-msg",
+      "name": "Montar mensagem",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://SUA-EVOLUTION-API/message/sendText/SUA-INSTANCIA",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "COLE_AQUI_A_APIKEY_DA_EVOLUTION"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $json.phone, text: $json.texto, delay: 1200, linkPreview: false }) }}",
+        "options": {}
+      },
+      "id": "a06-envia",
+      "name": "Enviar pelo WhatsApp (Evolution)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -100,
+        420
+      ],
+      "notes": "PREENCHER: a URL base da Evolution, o nome da instancia e a apikey - os mesmos do ANA-02."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Registra o envio (evita duplicidade) e grava a mensagem no historico,\n-- para a Ana do ANA-01 ter contexto quando o paciente responder.\nWITH log AS (\n  INSERT INTO ana_mensagens (phone, role, tipo, conteudo, dados)\n  VALUES ($1::text, 'assistant', 'texto', $2::text,\n          jsonb_build_object('evento', 'lembrete_vespera', 'origem', 'ANA-06'))\n  RETURNING phone\n)\nUPDATE ana_leads l\nSET agendamento = COALESCE(l.agendamento, '{}'::jsonb)\n                  || jsonb_build_object('confirmacao_enviada_em',\n                       to_char(NOW() AT TIME ZONE 'America/Sao_Paulo', 'YYYY-MM-DD\"T\"HH24:MI:SS')),\n    proxima_acao    = 'aguardar_confirmacao_vespera',\n    last_bot_msg_at = NOW(),\n    updated_at      = NOW()\nFROM log\nWHERE l.phone = log.phone",
+        "options": {
+          "queryBatching": "independently",
+          "queryReplacement": "={{ $('Montar mensagem').item.json.phone }},={{ $('Montar mensagem').item.json.texto }}"
+        }
+      },
+      "id": "a06-marca",
+      "name": "Registrar envio",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        120,
+        420
+      ],
+      "notes": "Marca confirmacao_enviada_em (nao reenvia) e grava a mensagem em ana_mensagens para a Ana ter contexto na resposta."
+    },
+    {
+      "parameters": {
+        "amount": 20,
+        "unit": "seconds"
+      },
+      "id": "a06-wait",
+      "name": "Aguardar 20s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        340,
+        420
+      ],
+      "webhookId": "a06-wait-webhook",
+      "notes": "Intervalo entre mensagens - evita rajada no WhatsApp."
+    }
+  ],
+  "connections": {
+    "Todo dia util as 09:00": {
+      "main": [
+        [
+          {
+            "node": "Buscar exames do proximo dia util",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar exames do proximo dia util": {
+      "main": [
+        [
+          {
+            "node": "Um paciente por vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Um paciente por vez": {
+      "main": [
+        [
+          {
+            "node": "Fim",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Montar mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar mensagem": {
+      "main": [
+        [
+          {
+            "node": "Enviar pelo WhatsApp (Evolution)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar pelo WhatsApp (Evolution)": {
+      "main": [
+        [
+          {
+            "node": "Registrar envio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar envio": {
+      "main": [
+        [
+          {
+            "node": "Aguardar 20s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aguardar 20s": {
+      "main": [
+        [
+          {
+            "node": "Um paciente por vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo"
+  }
+}
