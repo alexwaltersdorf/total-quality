@@ -21,8 +21,11 @@ CREATE TABLE IF NOT EXISTS ana_envios_log (
 CREATE INDEX IF NOT EXISTS ana_envios_log_phone_idx ON ana_envios_log (phone, enviado_em DESC);
 CREATE INDEX IF NOT EXISTS ana_envios_log_data_idx  ON ana_envios_log (enviado_em DESC);
 
--- Teto diário de mensagens proativas. 0 = envios suspensos.
-INSERT INTO ana_config (chave, valor) VALUES ('followup_teto_diario', '0')
+-- Chaves de controle do ritmo de envio.
+INSERT INTO ana_config (chave, valor) VALUES
+  ('followup_envios_suspensos', 'true'),  -- chave geral: nada sai enquanto for 'true'
+  ('followup_teto_diario',      '20'),    -- 20 mensagens por dia
+  ('followup_teto_hora',        '4')      -- no máximo 4 na mesma hora corrida
 ON CONFLICT (chave) DO NOTHING;
 
 -- Backup dos follow-ups suspensos, para restaurar quando liberar.
@@ -35,32 +38,76 @@ CREATE TABLE IF NOT EXISTS ana_followup_suspenso_2026_08 (
   motivo          text
 );
 
--- O ANA-02 passa a chamar SOMENTE esta função. Ela devolve os leads JÁ
--- marcados como enviados — uma segunda rodada nunca repete os mesmos.
-CREATE OR REPLACE FUNCTION ana_claim_followups(p_limite int DEFAULT 10, p_agora timestamptz DEFAULT now())
+-- RITMO: a função libera UMA mensagem por chamada, com intervalo sorteado.
+-- O ANA-02 deve rodar de 5 em 5 minutos e enviar no máximo o que vier daqui.
+-- O WhatsApp também marca disparo em bloco e cadência de relógio fixo — era
+-- exatamente o caso: rajadas de 5 a 11 mensagens cravadas nos minutos :01 e :31.
+--
+-- A função devolve o lead JÁ marcado como enviado: uma segunda rodada na mesma
+-- janela nunca repete o mesmo paciente.
+CREATE OR REPLACE FUNCTION ana_claim_followups(p_limite int DEFAULT 1, p_agora timestamptz DEFAULT now())
 RETURNS TABLE (phone text, nome text, proxima_acao text, followup_step int, resumo_interno text)
 LANGUAGE plpgsql AS $fn$
 DECLARE
-  v_agora timestamptz := p_agora;
-  v_sp    timestamp   := v_agora AT TIME ZONE 'America/Sao_Paulo';
-  v_hora  numeric     := extract(hour FROM v_sp) + extract(minute FROM v_sp) / 60.0;
-  v_dow   int         := extract(isodow FROM v_sp);
-  v_hoje  date        := v_sp::date;
-  v_teto  int;
-  v_usado int;
-  v_vagas int;
+  v_agora    timestamptz := p_agora;
+  v_sp       timestamp   := v_agora AT TIME ZONE 'America/Sao_Paulo';
+  v_hora     numeric     := extract(hour FROM v_sp) + extract(minute FROM v_sp) / 60.0;
+  v_dow      int         := extract(isodow FROM v_sp);
+  v_hoje     date        := v_sp::date;
+  v_ini      numeric     := 8.0;    -- janela de envio: 08:00
+  v_fim      numeric     := 17.5;   -- janela de envio: 17:30
+  v_atraso   numeric;
+  v_teto     int;
+  v_teto_h   int;
+  v_usado    int;
+  v_restante int;
+  v_na_hora  int;
+  v_ultimo   timestamptz;
+  v_min_rest numeric;
+  v_gap      numeric;
 BEGIN
-  -- horário comercial, segunda a sexta
-  IF v_dow > 5 OR v_hora < 8 OR v_hora >= 17.5 THEN RETURN; END IF;
+  -- 0. chave geral de suspensão
+  IF coalesce((SELECT valor FROM ana_config WHERE chave = 'followup_envios_suspensos'), 'true') = 'true'
+    THEN RETURN;
+  END IF;
 
+  -- 1. janela seg–sex, com início variável de 0 a 45 min (sorteado pela data,
+  --    para a primeira mensagem não sair sempre às 08:00 em ponto)
+  v_atraso := (abs(hashtext(v_hoje::text)) % 46) / 60.0;
+  IF v_dow > 5 OR v_hora < v_ini + v_atraso OR v_hora >= v_fim THEN RETURN; END IF;
+
+  -- 2. teto do dia
   SELECT coalesce((SELECT valor FROM ana_config WHERE chave = 'followup_teto_diario'), '0')::int
     INTO v_teto;
   SELECT count(*) INTO v_usado FROM ana_envios_log
    WHERE tipo = 'follow_up'
      AND (enviado_em AT TIME ZONE 'America/Sao_Paulo')::date = v_hoje;
-  v_vagas := least(p_limite, v_teto - v_usado);
-  IF v_vagas < 1 THEN RETURN; END IF;
+  v_restante := v_teto - v_usado;
+  IF v_restante < 1 THEN RETURN; END IF;
 
+  -- 3. teto da hora corrida (impede acúmulo mesmo com sorteio favorável)
+  SELECT coalesce((SELECT valor FROM ana_config WHERE chave = 'followup_teto_hora'), '4')::int
+    INTO v_teto_h;
+  SELECT count(*) INTO v_na_hora FROM ana_envios_log
+   WHERE tipo = 'follow_up' AND enviado_em > v_agora - interval '1 hour';
+  IF v_na_hora >= v_teto_h THEN RETURN; END IF;
+
+  -- 4. intervalo desde a última mensagem proativa (follow-up OU lembrete).
+  --    O alvo se recalcula sozinho: tempo que falta ÷ quantas ainda faltam.
+  --    O sorteio de 0,6x a 1,4x quebra a cadência de relógio fixo; o piso de
+  --    8 min impede duas mensagens coladas.
+  SELECT max(enviado_em) INTO v_ultimo FROM ana_envios_log
+   WHERE tipo IN ('follow_up', 'lembrete_vespera')
+     AND (enviado_em AT TIME ZONE 'America/Sao_Paulo')::date = v_hoje;
+
+  IF v_ultimo IS NOT NULL THEN
+    v_min_rest := greatest(1, (v_fim - v_hora) * 60);
+    v_gap := greatest(8, least(60, (v_min_rest / v_restante) * (0.6 + random() * 0.8)));
+    IF v_agora < v_ultimo + make_interval(mins => v_gap::int) THEN RETURN; END IF;
+  END IF;
+
+  -- 5. libera SEMPRE uma única mensagem por chamada (p_limite é ignorado de
+  --    propósito: é o que impede qualquer disparo em bloco)
   RETURN QUERY
   WITH elegiveis AS (
     SELECT l.phone AS ph
@@ -81,7 +128,7 @@ BEGIN
             WHERE e.phone = l.phone AND e.tipo = 'follow_up'
               AND e.enviado_em > coalesce(l.last_patient_msg_at, '-infinity'::timestamptz)) < 2
     ORDER BY l.followup_due_at
-    LIMIT v_vagas
+    LIMIT 1
   ),
   reservados AS (
     UPDATE ana_leads l
@@ -106,7 +153,12 @@ $fn$;
 --   1) restaurar a fila:
 --        UPDATE ana_leads l SET followup_due_at = s.followup_due_at
 --          FROM ana_followup_suspenso_2026_08 s WHERE l.phone = s.phone;
---   2) subir o teto aos poucos (aquecimento):
---        UPDATE ana_config SET valor = '20' WHERE chave = 'followup_teto_diario';
---      e ir aumentando ~20 por dia enquanto a taxa de resposta se mantiver.
+--   2) destravar:
+--        UPDATE ana_config SET valor = 'false' WHERE chave = 'followup_envios_suspensos';
+--   3) o teto começa em 20/dia. Só subir depois de uma semana com taxa de
+--      resposta acima de ~30%, e de 10 em 10:
+--        UPDATE ana_config SET valor = '30' WHERE chave = 'followup_teto_diario';
+--
+-- Para SUSPENDER de novo, a qualquer momento:
+--   UPDATE ana_config SET valor = 'true' WHERE chave = 'followup_envios_suspensos';
 -- ---------------------------------------------------------------------
