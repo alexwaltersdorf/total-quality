@@ -107,7 +107,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "-- Registra o envio (evita duplicidade) e grava a mensagem no historico,\n-- para a Ana do ANA-01 ter contexto quando o paciente responder.\nWITH log AS (\n  INSERT INTO ana_mensagens (phone, role, tipo, conteudo, dados)\n  VALUES ($1::text, 'assistant', 'texto', $2::text,\n          jsonb_build_object('evento', 'lembrete_vespera', 'origem', 'ANA-06'))\n  RETURNING phone\n)\nUPDATE ana_leads l\nSET agendamento = COALESCE(l.agendamento, '{}'::jsonb)\n                  || jsonb_build_object('confirmacao_enviada_em',\n                       to_char(NOW() AT TIME ZONE 'America/Sao_Paulo', 'YYYY-MM-DD\"T\"HH24:MI:SS')),\n    proxima_acao    = 'aguardar_confirmacao_vespera',\n    last_bot_msg_at = NOW(),\n    updated_at      = NOW()\nFROM log\nWHERE l.phone = log.phone",
+        "query": "-- Registra o envio (evita duplicidade), grava no historico para a Ana ter\n-- contexto na resposta, e lanca em ana_envios_log para respeitar o limite de\n-- 1 mensagem proativa por paciente por dia (guarda antibloqueio).\nWITH log AS (\n  INSERT INTO ana_mensagens (phone, role, tipo, conteudo, dados)\n  VALUES ($1::text, 'assistant', 'texto', $2::text,\n          jsonb_build_object('evento', 'lembrete_vespera', 'origem', 'ANA-06'))\n  RETURNING phone\n),\nenvio AS (\n  INSERT INTO ana_envios_log (phone, tipo)\n  SELECT phone, 'lembrete_vespera' FROM log\n  RETURNING phone\n)\nUPDATE ana_leads l\nSET agendamento = COALESCE(l.agendamento, '{}'::jsonb)\n                  || jsonb_build_object('confirmacao_enviada_em',\n                       to_char(NOW() AT TIME ZONE 'America/Sao_Paulo', 'YYYY-MM-DD\"T\"HH24:MI:SS')),\n    proxima_acao    = 'aguardar_confirmacao_vespera',\n    last_bot_msg_at = NOW(),\n    updated_at      = NOW()\nFROM envio\nWHERE l.phone = envio.phone",
         "options": {
           "queryBatching": "independently",
           "queryReplacement": "={{ $('Montar mensagem').item.json.phone }},={{ $('Montar mensagem').item.json.texto }}"
@@ -121,11 +121,11 @@
         120,
         420
       ],
-      "notes": "Marca confirmacao_enviada_em (nao reenvia) e grava a mensagem em ana_mensagens para a Ana ter contexto na resposta."
+      "notes": "Marca confirmacao_enviada_em (nao reenvia), grava em ana_mensagens para a Ana ter contexto na resposta e lanca em ana_envios_log (limite de 1 mensagem proativa por dia)."
     },
     {
       "parameters": {
-        "amount": 20,
+        "amount": 90,
         "unit": "seconds"
       },
       "id": "a06-wait",
@@ -137,7 +137,7 @@
         420
       ],
       "webhookId": "a06-wait-webhook",
-      "notes": "Intervalo entre mensagens - evita rajada no WhatsApp."
+      "notes": "90s entre mensagens. O bloqueio de 21/08 veio de rajadas de 5 a 11 conversas novas em menos de 1 minuto, a cada 30 minutos."
     }
   ],
   "connections": {
