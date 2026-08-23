@@ -6,7 +6,7 @@ confirma o exame com o paciente na véspera.
 
 | Arquivo | O que é |
 |---|---|
-| `ANA-05-sync-google-agenda-v4.json` | Lê a agenda a cada 15 min e grava o agendamento em `ana_leads`. |
+| `ANA-05-sync-google-agenda-v4.json` | v4.1 — lê a agenda a cada 15 min e grava o agendamento em `ana_leads`. |
 | `ANA-06-confirmacao-vespera.json` | Às 09:00 do dia útil anterior, confirma o exame no WhatsApp. |
 | `modelo-agenda-total-quality.ics` | 3 eventos-modelo para importar na agenda e treinar a recepção. |
 | `GUIA-RECEPCAO-agenda.md` | O padrão de preenchimento, em uma página. |
@@ -25,7 +25,14 @@ O parser v4 foi **calibrado contra os 90 eventos reais** da agenda (execução n
 - Rejeita telefone internacional (`+1 …`).
 - **A hora vem do título**, não do bloco: em 51 dos 74 eventos com hora no título (69%) o
   bloco está em outro horário. Com o bloco, 3 exames da manhã viravam "noite".
+- Extrai também o **nome do paciente** (83 de 90 eventos), para quem agendou no balcão.
 - Sem telefone confiável o evento é **ignorado** — silêncio é mais seguro que escrever errado.
+
+**v4.1 — UPSERT em vez de UPDATE.** Medido no banco: **22 dos 54 telefones da agenda não existem
+em `ana_leads`** — são pacientes que marcaram no balcão ou por telefone, sem passar pelo WhatsApp.
+Com `UPDATE` puro esses 22 eram um no-op silencioso: o agendamento nunca era gravado e a
+confirmação da véspera nunca sairia. O `INSERT … ON CONFLICT (phone) DO UPDATE` cria o lead
+nesses casos e **nunca sobrescreve um nome já cadastrado**.
 
 ## ANA-06 — confirmação da véspera (09:00)
 
