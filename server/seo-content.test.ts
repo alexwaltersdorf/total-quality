@@ -8,6 +8,7 @@ import {
 import { CONVENIOS as CONVENIOS_CLIENT } from "@/lib/conveniosData";
 import { getAllRoutes, getKnownBlogSlugs } from "./_core/routes-metadata";
 import { getLegacyRedirect, isGone } from "./_core/legacy-redirects";
+import { anosDeAtuacao } from "@shared/const";
 
 const PRIORITY_ROUTES = [
   "/",
@@ -231,6 +232,72 @@ describe("GUARD-RAIL: horario oficial unico (nao remover)", () => {
     expect(indexHtml).not.toContain("trysoro");
     expect(indexHtml).toContain('og:image" content="https://totalquality.med.br/images/');
     expect(indexHtml).toContain('"image": ["https://totalquality.med.br/images/');
+  });
+});
+
+describe("GUARD-RAIL: tempo de atuacao sempre calculado (nao remover)", () => {
+  // A Total Quality foi fundada em 08/07/2003 (FUNDACAO_ISO em shared/const.ts).
+  // Antes desta correcao o numero de anos vivia escrito a mao em CINCO lugares
+  // (routes-metadata.ts e quatro trechos do seo-content.ts) — todos ficariam
+  // errados no aniversario seguinte, em 08/07/2027. Se alguem voltar a escrever
+  // o numero fixo em vez de chamar anosDeAtuacao(), este teste quebra.
+  const ANOS_FIXOS = /(?:h[áa]|de|com)\s+mais\s+de\s+\d{2}\s+anos|H[áa]\s+\d{2}\s+anos|Mais\s+de\s+\d{2}\s+anos\s+de\s+experi/i;
+
+  it("o calculo acompanha o aniversario", () => {
+    expect(anosDeAtuacao(new Date(2026, 6, 7))).toBe(22); // 07/07/2026, vespera
+    expect(anosDeAtuacao(new Date(2026, 6, 8))).toBe(23); // 08/07/2026, aniversario
+    expect(anosDeAtuacao(new Date(2027, 6, 8))).toBe(24);
+  });
+
+  it("nenhum arquivo do prerender volta a fixar o numero de anos", async () => {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    for (const rel of ["_core/seo-content.ts", "_core/routes-metadata.ts"]) {
+      const arquivo = nodePath.resolve(import.meta.dirname, rel);
+      const conteudo = fs.readFileSync(arquivo, "utf-8");
+      expect(conteudo, `${rel} fixa o numero de anos em vez de usar anosDeAtuacao()`).not.toMatch(
+        ANOS_FIXOS
+      );
+    }
+  });
+
+  it("o prerender publica o numero calculado, nao um literal", () => {
+    const html = getSeoContentForPath("/")!;
+    expect(html).toContain(`Há mais de ${anosDeAtuacao()} anos no Litoral Norte`);
+  });
+
+  it("o schema declara a data de fundacao completa", async () => {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const indexHtml = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "../client/index.html"),
+      "utf-8"
+    );
+    expect((indexHtml.match(/"foundingDate": "2003-07-08"/g) || []).length).toBe(2);
+    expect(indexHtml).not.toContain('"foundingDate": "2003"');
+  });
+});
+
+describe("GUARD-RAIL: sem nota autodeclarada no schema (nao remover)", () => {
+  // Auditoria ago/2026 ja havia removido o aggregateRating FABRICADO do hook
+  // (useSchemaLocalBusiness). O index.html ficou para tras com 4,5/348 — numero
+  // que envelhece a cada avaliacao nova (a base cresce ~26/mes) e que o Google
+  // ignora de qualquer forma: nota autodeclarada de LocalBusiness nao gera
+  // estrelas desde 2019. Removido em 23/08/2026; se voltar, este teste quebra.
+  it("nem o index.html nem o hook declaram aggregateRating", async () => {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const indexHtml = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "../client/index.html"),
+      "utf-8"
+    );
+    expect(indexHtml).not.toContain("aggregateRating");
+    expect(indexHtml).not.toContain("reviewCount");
+    const hook = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "../client/src/hooks/useSchemaLocalBusiness.ts"),
+      "utf-8"
+    );
+    expect(hook).not.toContain("ratingValue");
   });
 });
 

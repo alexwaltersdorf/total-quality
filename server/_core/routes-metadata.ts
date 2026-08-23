@@ -4,6 +4,8 @@
  * Evita duplicação de conteúdo e garante indexação correta pelo Google
  */
 
+import { anosDeAtuacao } from "@shared/const";
+
 export interface RouteMetadata {
   title: string;
   description: string;
@@ -263,7 +265,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
 const staticRoutes: Record<string, RouteMetadata> = {
   "/": {
     title: "Laboratório em Caraguatatuba | Total Quality | Ligue Agora",
-    description: "Laboratório em Caraguatatuba com resultados em até 24h. Há 23 anos no Litoral Norte: exames de sangue, tomografia, ultrassom e check-up. Nota 4,5 no Google.",
+    description: `Laboratório em Caraguatatuba com resultados em até 24h. Há ${anosDeAtuacao()} anos no Litoral Norte: exames de sangue, tomografia, ultrassom e check-up. Nota 4,5 no Google.`,
     keywords: "laboratório Caraguatatuba, exames de sangue, tomografia, ultrassom, check-up",
     ogTitle: "Total Quality Medicina Diagnóstica e Laboratorial | Exames de Sangue em Caraguatatuba - SP",
     ogDescription: "Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba - SP. Exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia e mais de 3.000 tipos de exames. Agende pelo WhatsApp.",
