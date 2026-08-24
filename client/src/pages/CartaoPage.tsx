@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { trackCardInterest, trackCtaClick } from "@/lib/tracking";
 import { ChevronDown, Zap, Smartphone, Heart, Dumbbell, Pill, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,8 +8,17 @@ import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import LeadsFormModal from "@/components/LeadsFormModal";
 import { cartaoPlanos, mainBenefitsData, faqs } from "@/lib/cartaoPlanos";
+import { useMetaDescription } from "@/components/SEOHead";
 
 export default function CartaoPage() {
+  useEffect(() => {
+    document.title = "Cartão Total Quality Care | Benefícios e Cashback";
+  }, []);
+
+  useMetaDescription(
+    "Cartão Total Quality Care: benefícios, cashback, planos e preços. Saúde preventiva com vantagens financeiras."
+  );
+
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
