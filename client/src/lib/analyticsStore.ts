@@ -68,40 +68,41 @@ function saveEvents(events: AnalyticsEvent[]) {
   }
 }
 
-/** Intercepta o dataLayer e armazena eventos */
+/**
+ * Inicializa a estrutura usada pelo GTM.
+ *
+ * Nunca substitua `dataLayer.push`: o GTM instala o proprio listener nesse
+ * metodo. Sobrescreve-lo depois que o container carregou interrompe o envio de
+ * todos os eventos manuais para GA4, Ads e Meta.
+ */
 export function initAnalyticsCapture() {
-  const originalPush = Array.prototype.push;
   window.dataLayer = window.dataLayer || [];
+}
 
-  // Interceptar push no dataLayer
-  const originalDataLayerPush = window.dataLayer.push.bind(window.dataLayer);
-  window.dataLayer.push = function (...args: Record<string, unknown>[]) {
-    args.forEach((item) => {
-      if (item.event && typeof item.event === "string") {
-        const event: AnalyticsEvent = {
-          event: item.event,
-          timestamp: (item.event_timestamp as string) || new Date().toISOString(),
-          page_path: (item.page_path as string) || window.location.pathname,
-          page_title: (item.page_title as string) || document.title,
-          event_category: item.event_category as string,
-          event_label: item.event_label as string,
-          lead_source: item.lead_source as string,
-          exam_type: item.exam_type as string,
-          contact_method: item.contact_method as string,
-          click_source: item.click_source as string,
-          section_name: item.section_name as string,
-          nav_item: item.nav_item as string,
-          platform: item.platform as string,
-          percent_scrolled: item.percent_scrolled as number,
-          engagement_time_seconds: item.engagement_time_seconds as number,
-        };
-        const events = getStoredEvents();
-        events.push(event);
-        saveEvents(events);
-      }
-    });
-    return originalPush.apply(window.dataLayer, args);
+/** Armazena uma copia local sem interferir no listener instalado pelo GTM. */
+export function captureAnalyticsEvent(item: Record<string, unknown>) {
+  if (!item.event || typeof item.event !== "string") return;
+
+  const event: AnalyticsEvent = {
+    event: item.event,
+    timestamp: (item.event_timestamp as string) || new Date().toISOString(),
+    page_path: (item.page_path as string) || window.location.pathname,
+    page_title: (item.page_title as string) || document.title,
+    event_category: item.event_category as string,
+    event_label: item.event_label as string,
+    lead_source: item.lead_source as string,
+    exam_type: item.exam_type as string,
+    contact_method: item.contact_method as string,
+    click_source: item.click_source as string,
+    section_name: item.section_name as string,
+    nav_item: item.nav_item as string,
+    platform: item.platform as string,
+    percent_scrolled: item.percent_scrolled as number,
+    engagement_time_seconds: item.engagement_time_seconds as number,
   };
+  const events = getStoredEvents();
+  events.push(event);
+  saveEvents(events);
 }
 
 // ============================================================

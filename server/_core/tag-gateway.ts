@@ -54,6 +54,13 @@ function clientIp(req: Request): string {
   return req.socket.remoteAddress ?? "";
 }
 
+function requestClass(req: Request): "health" | "loader" | "collect" | "other" {
+  if (req.path.endsWith("/healthy")) return "health";
+  if (req.path.includes("/g/collect")) return "collect";
+  if (req.path === GATEWAY_PATH || req.path === `${GATEWAY_PATH}/`) return "loader";
+  return "other";
+}
+
 async function readRawBody(req: Request, limit = 1024 * 1024): Promise<Buffer | undefined> {
   if (req.method === "GET" || req.method === "HEAD") return undefined;
   const chunks: Buffer[] = [];
@@ -86,6 +93,14 @@ export function registerTagGateway(app: Express): void {
         signal: AbortSignal.timeout(10_000),
       });
 
+      if (upstream.status >= 400) {
+        // Nao registrar URL, query string, IP, cookie ou referer: podem conter
+        // identificadores. Classe, metodo e status bastam para operar o gateway.
+        console.warn(
+          `[TagGateway] upstream_status=${upstream.status} request_class=${requestClass(req)} method=${req.method}`
+        );
+      }
+
       res.status(upstream.status);
       for (const name of FORWARD_RESPONSE_HEADERS) {
         const value = upstream.headers.get(name);
@@ -100,9 +115,14 @@ export function registerTagGateway(app: Express): void {
 
       const payload = Buffer.from(await upstream.arrayBuffer());
       res.send(payload);
-    } catch {
-      // Falha do gateway nunca derruba a página: o loader do index.html tem
-      // fallback automático para googletagmanager.com via onerror.
+    } catch (error) {
+      console.error(
+        `[TagGateway] proxy_error request_class=${requestClass(req)} method=${req.method}`,
+        error instanceof Error ? error.message : "erro desconhecido"
+      );
+      // O fallback do index.html recupera apenas o carregamento do container.
+      // Hits configurados com transport_url dependem deste gateway e precisam
+      // ser detectados pelo monitor externo.
       res.status(502).end();
     }
   });
