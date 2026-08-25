@@ -198,5 +198,25 @@
       "Caraguatatuba",
       "exame de imagem"
     ]
+  },
+  {
+    "id": "11",
+    "slug": "hemograma-completo-o-que-avalia",
+    "title": "Hemograma Completo: O Que o Exame de Sangue Avalia?",
+    "subtitle": "Entenda quais células e parâmetros são analisados no hemograma completo",
+    "excerpt": "Entenda o que o hemograma completo avalia, quais células são analisadas, se precisa de jejum e como o exame auxilia na avaliação da saúde.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "25 Ago 2026",
+    "readTime": "10 min",
+    "image": "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/blog-checkup-preventivo-H3wYYGRF5gsNjaJi3J89XG.webp",
+    "tags": [
+      "hemograma completo",
+      "hemograma",
+      "exame de sangue",
+      "exames laboratoriais",
+      "Caraguatatuba"
+    ]
   }
 ]
