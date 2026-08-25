@@ -198,8 +198,8 @@ const blogMetadata: Record<string, RouteMetadata> = {
     // Reposicionado (auditoria 01/08): a intencao transacional "onde fazer"
     // canibalizava a pagina de servico /exames/exames-de-sangue. O artigo vira
     // informacional (tipos e preparo); a pagina de servico e o destino comercial.
-    title: "Exame de Sangue: Tipos, Preparo e Jejum — Guia Total Quality",
-    description: "Guia completo sobre exames de sangue: quais os principais tipos, como se preparar, quanto tempo de jejum e como ler o pedido médico. Por Total Quality Caraguatatuba.",
+    title: "Exame de Sangue em Caraguatatuba: Onde Fazer?",
+    description: "Saiba onde fazer exame de sangue em Caraguatatuba, quais cuidados podem ser necessários e como escolher um laboratório para realizar seus exames.",
     keywords: "exame de sangue, laboratório Caraguatatuba, hemograma, análises clínicas",
     ogTitle: "Exame de Sangue em Caraguatatuba",
     ogDescription: "Tudo o que você precisa saber sobre exames de sangue em Caraguatatuba.",
