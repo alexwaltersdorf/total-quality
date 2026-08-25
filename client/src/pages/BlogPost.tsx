@@ -59,7 +59,11 @@ export default function BlogPost() {
   useEffect(() => {
     window.scrollTo(0, 0);
     if (post) {
-      document.title = `${post.title} | Blog Total Quality Medicina Diagnóstica`;
+      document.title =
+        post.slug === "exame-de-sangue-caraguatatuba"
+          ? "Exame de Sangue em Caraguatatuba: Onde Fazer?"
+          : `${post.title} | Blog Total Quality Medicina Diagnóstica`;
+
       // Registrar visualização no banco de dados
       blogViewMutation.mutate({ slug: post.slug });
       trackEventDirect("blog_view", "content", { slug: post.slug, title: post.title });
@@ -67,7 +71,11 @@ export default function BlogPost() {
   }, [post?.slug]);
 
   // SEO: Meta description
-  useMetaDescription(post?.excerpt || "Blog Total Quality Medicina Diagnóstica - Artigos sobre saúde e bem-estar");
+  useMetaDescription(
+    post?.slug === "exame-de-sangue-caraguatatuba"
+      ? "Saiba onde fazer exame de sangue em Caraguatatuba, quais cuidados podem ser necessários e como escolher um laboratório para realizar seus exames."
+      : post?.excerpt || "Blog Total Quality Medicina Diagnóstica - Artigos sobre saúde e bem-estar"
+  );
 
   // SEO: Canonical URL
   useCanonical(`/blog/${slug || ""}`);
