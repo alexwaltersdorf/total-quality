@@ -1,0 +1,657 @@
+<title>Auditoria dos Fluxos da Ana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --paper:     #FBFAF8;
+    --surface:   #FFFFFF;
+    --surface-2: #F1F5F4;
+    --ink:       #101E22;
+    --ink-soft:  #4A5E61;
+    --ink-faint: #7B8D8F;
+    --rule:      #DCE4E3;
+    --rule-soft: #EAEFEE;
+    --accent:    #0E6E67;
+    --accent-bg: #E6F2F0;
+    --crit:      #B4442E;
+    --crit-bg:   #FBEDE9;
+    --warn:      #8C6210;
+    --warn-bg:   #FBF2E0;
+    --ok:        #1B7A4B;
+    --ok-bg:     #E9F5EE;
+    --shadow:    0 1px 2px rgba(16,30,34,.05), 0 10px 28px -16px rgba(16,30,34,.22);
+
+    --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --body:    "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --mono:    "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:     #0D1618;
+      --surface:   #152124;
+      --surface-2: #1C2B2E;
+      --ink:       #E6EEEC;
+      --ink-soft:  #A4B6B7;
+      --ink-faint: #77898B;
+      --rule:      #26353800;
+      --rule:      #263538;
+      --rule-soft: #1E2C2F;
+      --accent:    #58C4B6;
+      --accent-bg: #15302E;
+      --crit:      #E4907A;
+      --crit-bg:   #33201C;
+      --warn:      #D9A441;
+      --warn-bg:   #322916;
+      --ok:        #5FB98A;
+      --ok-bg:     #16302A;
+      --shadow:    0 1px 2px rgba(0,0,0,.4), 0 10px 28px -16px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:     #0D1618;
+    --surface:   #152124;
+    --surface-2: #1C2B2E;
+    --ink:       #E6EEEC;
+    --ink-soft:  #A4B6B7;
+    --ink-faint: #77898B;
+    --rule:      #263538;
+    --rule-soft: #1E2C2F;
+    --accent:    #58C4B6;
+    --accent-bg: #15302E;
+    --crit:      #E4907A;
+    --crit-bg:   #33201C;
+    --warn:      #D9A441;
+    --warn-bg:   #322916;
+    --ok:        #5FB98A;
+    --ok-bg:     #16302A;
+    --shadow:    0 1px 2px rgba(0,0,0,.4), 0 10px 28px -16px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.58;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 60px 28px 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 52px;
+  }
+
+  header { display: flex; flex-direction: column; gap: 14px; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11.5px; font-weight: 500;
+    letter-spacing: .16em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1 {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(2.1rem, 5.4vw, 3.05rem);
+    line-height: 1.03; letter-spacing: -.026em;
+    margin: 0; text-wrap: balance;
+  }
+  .lede { margin: 0; max-width: 66ch; font-size: 1.04rem; color: var(--ink-soft); }
+
+  h2 {
+    font-family: var(--display); font-weight: 600;
+    font-size: 1.3rem; letter-spacing: -.014em;
+    margin: 0 0 18px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+  h3 {
+    font-family: var(--display); font-weight: 600;
+    font-size: 1.02rem; letter-spacing: -.008em;
+    margin: 0 0 6px;
+  }
+  section > p:first-of-type { margin-top: 0; }
+  p { margin: 0 0 14px; max-width: 68ch; }
+
+  /* status dos fluxos */
+  .fluxos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(178px, 1fr));
+    gap: 14px;
+  }
+  .fluxo {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 7px;
+    padding: 15px 16px;
+    display: flex; flex-direction: column; gap: 7px;
+    box-shadow: var(--shadow);
+  }
+  .fluxo b {
+    font-family: var(--mono); font-size: .8rem;
+    font-weight: 600; letter-spacing: .04em;
+    color: var(--ink-faint);
+  }
+  .fluxo .nome { font-family: var(--display); font-weight: 600; font-size: .99rem; line-height: 1.25; }
+  .chip {
+    align-self: flex-start;
+    font-family: var(--mono); font-size: 10.5px; font-weight: 600;
+    letter-spacing: .07em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 3px;
+  }
+  .c-ok   { background: var(--ok-bg);   color: var(--ok); }
+  .c-warn { background: var(--warn-bg); color: var(--warn); }
+  .c-crit { background: var(--crit-bg); color: var(--crit); }
+
+  /* figura */
+  figure { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .fig-box {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 22px 18px;
+    overflow-x: auto;
+    box-shadow: var(--shadow);
+  }
+  figure svg { display: block; max-width: 100%; height: auto; min-width: 680px; margin: 0 auto; }
+  figcaption { font-size: .875rem; color: var(--ink-soft); max-width: 68ch; }
+
+  /* tabelas */
+  .tabela { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: .91rem; }
+  th, td { text-align: left; padding: 11px 13px; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+  th {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 600;
+    letter-spacing: .09em; text-transform: uppercase;
+    color: var(--ink-faint); border-bottom: 1px solid var(--rule);
+  }
+  td.num { font-variant-numeric: tabular-nums; font-family: var(--mono); white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+
+  /* achados */
+  .achado {
+    display: grid;
+    grid-template-columns: 74px 1fr;
+    gap: 18px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .achado:first-of-type { border-top: 1px solid var(--rule-soft); }
+  .sev {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 600;
+    letter-spacing: .07em; text-transform: uppercase;
+    padding: 3px 0; text-align: center; border-radius: 3px; height: fit-content;
+  }
+  .achado p { margin: 0; font-size: .93rem; color: var(--ink-soft); }
+  .achado p + p { margin-top: 8px; }
+  .achado .fix {
+    margin-top: 9px; font-size: .88rem;
+    color: var(--ink); background: var(--accent-bg);
+    border-left: 2px solid var(--accent);
+    padding: 8px 12px; border-radius: 0 4px 4px 0;
+  }
+
+  code {
+    font-family: var(--mono); font-size: .85em;
+    background: var(--surface-2); padding: 1px 5px; border-radius: 3px;
+  }
+
+  .plano { counter-reset: p; margin: 0; padding: 0; list-style: none;
+           display: flex; flex-direction: column; }
+  .plano li {
+    counter-increment: p;
+    display: grid; grid-template-columns: 38px 1fr; gap: 16px;
+    padding: 16px 0; border-bottom: 1px solid var(--rule-soft);
+  }
+  .plano li:first-child { border-top: 1px solid var(--rule-soft); }
+  .plano li::before {
+    content: counter(p);
+    font-family: var(--mono); font-size: 1.1rem; font-weight: 600;
+    color: var(--accent); line-height: 1.4;
+  }
+  .plano .t { font-weight: 600; margin-bottom: 3px; }
+  .plano .d { font-size: .89rem; color: var(--ink-soft); }
+
+  footer {
+    font-size: .82rem; color: var(--ink-faint);
+    border-top: 1px solid var(--rule); padding-top: 16px;
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Total Quality · 31 de agosto de 2026</div>
+    <h1>Auditoria dos Fluxos da Ana</h1>
+    <p class="lede">
+      Os cinco fluxos foram desenhados um de cada vez e nunca foram olhados em conjunto.
+      Vistos juntos, aparecem duas coisas: a corrente que liga a agenda ao atendimento está
+      partida em dois pontos, e quase todo o custo de processamento vem de reenviar a mesma
+      informação a cada mensagem.
+    </p>
+  </header>
+
+  <section>
+    <h2>Onde cada fluxo está hoje</h2>
+    <div class="fluxos">
+      <div class="fluxo">
+        <b>ANA-01</b>
+        <div class="nome">Atendimento no WhatsApp</div>
+        <span class="chip c-ok">no ar</span>
+      </div>
+      <div class="fluxo">
+        <b>ANA-02</b>
+        <div class="nome">Follow-up da cadência</div>
+        <span class="chip c-crit">desligado</span>
+      </div>
+      <div class="fluxo">
+        <b>ANA-03</b>
+        <div class="nome">Resumo diário</div>
+        <span class="chip c-warn">sem entregar</span>
+      </div>
+      <div class="fluxo">
+        <b>ANA-04</b>
+        <div class="nome">Auditoria de atendimento</div>
+        <span class="chip c-crit">parou em 24/08</span>
+      </div>
+      <div class="fluxo">
+        <b>ANA-05 / 06</b>
+        <div class="nome">Agenda e confirmação</div>
+        <span class="chip c-crit">nunca publicados</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>A dinâmica: tudo gira em torno do estado do lead</h2>
+    <p>
+      Nenhum fluxo conversa diretamente com outro. Todos escrevem e leem a mesma tabela —
+      <code>ana_leads</code> é o único ponto de encontro. É por isso que desligar um fluxo
+      derruba funções que pareciam não ter relação com ele.
+    </p>
+
+    <figure>
+      <div class="fig-box">
+        <svg viewBox="0 0 940 520" role="img"
+             aria-label="Diagrama: ANA-01 e ANA-05 escrevem no estado compartilhado ana_leads; ANA-02, ANA-06, ANA-03 e ANA-04 leem dele. As setas de ANA-05, ANA-06 e ANA-04 estão cortadas, e a rotina de retomada do bot está presa dentro do ANA-02, que está desligado.">
+          <defs>
+            <marker id="seta" viewBox="0 0 10 10" refX="9" refY="5"
+                    markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+            </marker>
+            <marker id="setaMorta" viewBox="0 0 10 10" refX="9" refY="5"
+                    markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#B4442E"/>
+            </marker>
+          </defs>
+
+          <g font-family="IBM Plex Sans, sans-serif" fill="currentColor">
+
+            <!-- coluna: escrita -->
+            <text x="20" y="26" font-family="IBM Plex Mono, monospace" font-size="11"
+                  letter-spacing="1.6" opacity=".55">QUEM ESCREVE</text>
+
+            <rect x="20" y="46" width="216" height="76" rx="7"
+                  fill="none" stroke="currentColor" stroke-width="1.4"/>
+            <text x="36" y="72" font-size="14" font-weight="600">ANA-01 · Atendimento</text>
+            <text x="36" y="93" font-size="11.5" opacity=".7">paciente escreve no WhatsApp</text>
+            <text x="36" y="110" font-size="11.5" opacity=".7">a Ana responde e classifica</text>
+
+            <rect x="20" y="330" width="216" height="76" rx="7"
+                  fill="none" stroke="#B4442E" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <text x="36" y="356" font-size="14" font-weight="600" fill="#B4442E">ANA-05 · Agenda</text>
+            <text x="36" y="377" font-size="11.5" fill="#B4442E" opacity=".85">lê o Google Agenda</text>
+            <text x="36" y="394" font-size="11.5" fill="#B4442E" opacity=".85">nunca foi publicado</text>
+
+            <!-- hub -->
+            <rect x="330" y="188" width="238" height="126" rx="9"
+                  fill="none" stroke="currentColor" stroke-width="2"/>
+            <text x="449" y="222" font-size="12" text-anchor="middle"
+                  font-family="IBM Plex Mono, monospace" letter-spacing="1.4" opacity=".55">ESTADO COMPARTILHADO</text>
+            <text x="449" y="252" font-size="15" font-weight="600" text-anchor="middle"
+                  font-family="IBM Plex Mono, monospace">ana_leads</text>
+            <text x="449" y="275" font-size="15" font-weight="600" text-anchor="middle"
+                  font-family="IBM Plex Mono, monospace">ana_mensagens</text>
+            <text x="449" y="298" font-size="11.5" text-anchor="middle" opacity=".7">524 leads · 11.394 mensagens</text>
+
+            <!-- setas de escrita -->
+            <line x1="236" y1="84" x2="330" y2="212" stroke="currentColor" stroke-width="1.4"
+                  marker-end="url(#seta)"/>
+            <text x="248" y="130" font-size="11" opacity=".75">grava lead</text>
+            <text x="248" y="146" font-size="11" opacity=".75">e mensagem</text>
+
+            <line x1="236" y1="368" x2="330" y2="292" stroke="#B4442E" stroke-width="1.4"
+                  stroke-dasharray="5 4" marker-end="url(#setaMorta)"/>
+            <text x="246" y="336" font-size="11" fill="#B4442E">grava agendamento</text>
+            <line x1="272" y1="316" x2="292" y2="344" stroke="#B4442E" stroke-width="2.2"/>
+            <line x1="292" y1="316" x2="272" y2="344" stroke="#B4442E" stroke-width="2.2"/>
+
+            <!-- coluna: leitura -->
+            <text x="662" y="26" font-family="IBM Plex Mono, monospace" font-size="11"
+                  letter-spacing="1.6" opacity=".55">QUEM LÊ E AGE</text>
+
+            <rect x="662" y="46" width="256" height="96" rx="7"
+                  fill="none" stroke="#B4442E" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <text x="678" y="72" font-size="14" font-weight="600" fill="#B4442E">ANA-02 · Follow-up</text>
+            <text x="678" y="93" font-size="11.5" fill="#B4442E" opacity=".85">desligado após o bloqueio</text>
+            <line x1="678" y1="104" x2="902" y2="104" stroke="#B4442E" stroke-width="1" opacity=".45"/>
+            <text x="678" y="122" font-size="11.5" fill="#B4442E" opacity=".85">contém: retomar o bot 24h</text>
+            <text x="678" y="136" font-size="11.5" fill="#B4442E" opacity=".85">após atendimento humano</text>
+
+            <rect x="662" y="164" width="256" height="60" rx="7"
+                  fill="none" stroke="#B4442E" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <text x="678" y="190" font-size="14" font-weight="600" fill="#B4442E">ANA-06 · Confirmação</text>
+            <text x="678" y="210" font-size="11.5" fill="#B4442E" opacity=".85">nunca foi publicado</text>
+
+            <rect x="662" y="246" width="256" height="60" rx="7"
+                  fill="none" stroke="currentColor" stroke-width="1.4"/>
+            <text x="678" y="272" font-size="14" font-weight="600">ANA-03 · Resumo diário</text>
+            <text x="678" y="292" font-size="11.5" opacity=".7">no ar, sem conseguir entregar</text>
+
+            <rect x="662" y="328" width="256" height="60" rx="7"
+                  fill="none" stroke="#B4442E" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <text x="678" y="354" font-size="14" font-weight="600" fill="#B4442E">ANA-04 · Auditoria</text>
+            <text x="678" y="374" font-size="11.5" fill="#B4442E" opacity=".85">última nota: 24/08</text>
+
+            <!-- setas de leitura -->
+            <line x1="568" y1="216" x2="662" y2="94" stroke="#B4442E" stroke-width="1.4"
+                  stroke-dasharray="5 4" marker-end="url(#setaMorta)"/>
+            <text x="578" y="150" font-size="11" fill="#B4442E">guarda libera</text>
+            <text x="578" y="166" font-size="11" fill="#B4442E">1 por vez</text>
+            <line x1="600" y1="132" x2="620" y2="160" stroke="#B4442E" stroke-width="2.2"/>
+            <line x1="620" y1="132" x2="600" y2="160" stroke="#B4442E" stroke-width="2.2"/>
+
+            <line x1="568" y1="238" x2="662" y2="194" stroke="#B4442E" stroke-width="1.4"
+                  stroke-dasharray="5 4" marker-end="url(#setaMorta)"/>
+
+            <line x1="568" y1="270" x2="662" y2="276" stroke="currentColor" stroke-width="1.4"
+                  marker-end="url(#seta)"/>
+            <text x="580" y="264" font-size="11" opacity=".75">lê o dia</text>
+
+            <line x1="568" y1="300" x2="662" y2="356" stroke="#B4442E" stroke-width="1.4"
+                  stroke-dasharray="5 4" marker-end="url(#setaMorta)"/>
+
+            <!-- rodapé do diagrama -->
+            <text x="20" y="466" font-size="11.5" opacity=".72">
+              Linha cheia = funcionando. Linha tracejada em vermelho = caminho morto hoje.
+            </text>
+            <text x="20" y="490" font-size="11.5" fill="#B4442E">
+              ✕ marca os dois cortes que ninguém pediu: a agenda não chega ao banco, e a
+            </text>
+            <text x="20" y="506" font-size="11.5" fill="#B4442E">
+              retomada do bot após atendimento humano foi junto com o ANA-02.
+            </text>
+          </g>
+        </svg>
+      </div>
+      <figcaption>
+        A rotina que devolve o atendimento à Ana 24h depois de um humano assumir mora
+        <em>dentro</em> do ANA-02. Desligar o envio desligou também a retomada — hoje há
+        <strong>14 leads elegíveis</strong> que nunca voltarão sozinhos, e o número cresce todo dia.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Custo de processamento: 95% é repetição</h2>
+    <p>
+      A conta não está no volume de conversa — está no que viaja junto com cada mensagem.
+      O prompt da Ana tem <strong>47.715 caracteres</strong> (cerca de 13 mil tokens) e é
+      reenviado <strong>inteiro, a cada turno</strong>, sem cache.
+    </p>
+
+    <div class="tabela">
+      <table>
+        <thead>
+          <tr><th>Medida (últimos 14 dias)</th><th>Valor</th><th>O que significa</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Chamadas ao modelo</td>
+            <td class="num">1.524</td>
+            <td>≈ 109 por dia</td>
+          </tr>
+          <tr>
+            <td>Prompt reenviado por chamada</td>
+            <td class="num">~13.000 tokens</td>
+            <td>idêntico em todas elas</td>
+          </tr>
+          <tr>
+            <td>Total estimado de entrada</td>
+            <td class="num">~20 milhões</td>
+            <td><strong>~19 milhões são o mesmo texto</strong></td>
+          </tr>
+          <tr>
+            <td>Mensagens do paciente</td>
+            <td class="num">3.881</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>Chegaram em rajada (&lt; 60s da anterior)</td>
+            <td class="num">1.975 · 51%</td>
+            <td>metade poderia ser respondida junto</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="margin-top:20px">
+      Três mudanças resolvem quase tudo, e nenhuma altera o comportamento da Ana:
+    </p>
+
+    <div class="achado">
+      <div class="sev c-crit">cache</div>
+      <div>
+        <h3>Marcar o prompt como cacheável</h3>
+        <p>
+          No nó <code>Chamar Ana</code>, o bloco <code>system</code> passa a ser enviado como lista
+          com <code>cache_control</code> do tipo efêmero. A partir da segunda chamada dentro da
+          janela, a leitura do prompt custa uma fração do preço cheio.
+        </p>
+        <div class="fix">
+          <code>system: [{ type: "text", text: PROMPT, cache_control: { type: "ephemeral" } }]</code>
+        </div>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-crit">rajada</div>
+      <div>
+        <h3>Esperar 15 segundos antes de responder</h3>
+        <p>
+          Metade das mensagens chega em sequência rápida — o paciente pensa em voz alta. Uma janela
+          curta de espera junta o que veio e responde tudo de uma vez: menos chamadas, e uma resposta
+          que soa como quem leu até o fim em vez de reagir a cada frase solta.
+        </p>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-warn">follow-up</div>
+      <div>
+        <h3>Prompt curto para o follow-up</h3>
+        <p>
+          O ANA-02 carrega os mesmos 47 mil caracteres para escrever duas linhas. Um prompt
+          dedicado de ~2 mil, com só o tom e as regras da cadência, faz o mesmo trabalho por
+          uma fração do custo.
+        </p>
+      </div>
+    </div>
+
+    <p style="margin-top:6px">
+      Já apliquei na base de conhecimento o bloco <code>&lt;economia_de_turnos&gt;</code>, que instrui a
+      Ana a não repetir o que já está no histórico: não perguntar de novo o que o paciente respondeu,
+      não reenviar preço ou preparo já enviados, responder mensagens em rajada de uma vez só, e não
+      gastar mensagem em "ok!" sem conteúdo.
+    </p>
+  </section>
+
+  <section>
+    <h2>Achados por gravidade</h2>
+
+    <div class="achado">
+      <div class="sev c-crit">crítico</div>
+      <div>
+        <h3>A agenda da clínica não chega ao banco</h3>
+        <p>
+          ANA-05 e ANA-06 nunca foram publicados. Resultado: dos 524 leads, apenas
+          <strong>19 têm agendamento registrado</strong>, enquanto a agenda real tem dezenas por semana.
+          A Ana trabalha cega — não sabe quem já marcou, e por isso o follow-up já cobrou paciente
+          que tinha exame marcado.
+        </p>
+        <div class="fix">Publicar ANA-05 v4.1 e ANA-06 no n8n. Os arquivos estão prontos no PR #2.</div>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-crit">crítico</div>
+      <div>
+        <h3>A retomada do bot está presa dentro do ANA-02</h3>
+        <p>
+          O nó <em>Retomar Pós-Humano (24h)</em> devolve o atendimento à Ana depois que um humano
+          assume. Ele mora dentro do fluxo de envio — que está desligado. Hoje há
+          <strong>101 leads com o bot pausado</strong> (19% da base) e 14 já passaram das 24h sem
+          que nada os devolva.
+        </p>
+        <div class="fix">Separar em um fluxo próprio, com gatilho próprio. Retomar atendimento não é enviar campanha.</div>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-crit">crítico</div>
+      <div>
+        <h3>O passo da cadência é contado duas vezes</h3>
+        <p>
+          O nó <em>Montar Payload FU</em> faz <code>followup_step + 1</code>, mas a função do banco
+          já incrementou antes de devolver. O paciente pula o D+1 acolhedor e recebe o xeque-mate
+          do D+14 como <strong>segunda</strong> mensagem.
+        </p>
+        <div class="fix"><code>const step = Number(lead.followup_step) || 1;</code> — sem o <code>+ 1</code>.</div>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-crit">crítico</div>
+      <div>
+        <h3>Retentativa nasce morta e queima a cota do dia</h3>
+        <p>
+          <em>Adiar Retentativa</em> e <em>Reverter Passo</em> reagendam para +1h mas não apagam a
+          linha do <code>ana_envios_log</code>. Como vale 1 mensagem por paciente por dia, a
+          retentativa nunca dispara — e a mensagem que não chegou continua ocupando uma das 20.
+        </p>
+        <div class="fix">Adicionar o <code>DELETE FROM ana_envios_log</code> nos dois nós (SQL já entregue).</div>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-warn">atenção</div>
+      <div>
+        <h3>A auditoria parou de rodar</h3>
+        <p>
+          O ANA-04 gera nota e relatório todo dia às 07:11. A última é de <strong>24/08</strong> —
+          seis dias sem auditoria. Faltou também o dia 22/08, e o 18/08 saiu duplicado. Perdemos
+          justamente a leitura dos dias do bloqueio.
+        </p>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-warn">atenção</div>
+      <div>
+        <h3>Mensagem gravada como enviada antes de sair</h3>
+        <p>
+          O ANA-02 grava em <code>ana_mensagens</code> e só depois chama a Evolution. Se o envio
+          falha, o histórico mente: a Ana lê que já falou aquilo e não repete. Parte dos números da
+          auditoria de agosto vem daí.
+        </p>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-warn">atenção</div>
+      <div>
+        <h3>Outro sistema dispara no mesmo número</h3>
+        <p>
+          Entrega de laudo, pesquisa de satisfação e confirmação de agendamento saem em rajada
+          templada e entram no banco marcadas como <code>humano</code> — não são da Ana. Algumas vão
+          para números que <strong>nunca escreveram</strong> para a clínica: é o mesmo padrão que
+          derrubou o WhatsApp, vindo de fora da guarda.
+        </p>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-ok">baixo</div>
+      <div>
+        <h3>Coluna de preço PIX vazia em toda a tabela</h3>
+        <p>
+          São 1.895 exames ativos e <strong>nenhum</strong> com <code>preco_pix</code> preenchido.
+          Hoje a Ana calcula os 10% pela regra do prompt, o que funciona — mas a coluna existir vazia
+          convida alguém a confiar nela um dia.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Plano, na ordem que faz sentido</h2>
+    <ol class="plano">
+      <li>
+        <div>
+          <div class="t">Descobrir e desligar o outro disparador</div>
+          <div class="d">Enquanto ele estiver ativo, tudo o mais é enxugar gelo — é ele que está
+          abordando quem nunca escreveu.</div>
+        </div>
+      </li>
+      <li>
+        <div>
+          <div class="t">Tirar a retomada do bot de dentro do ANA-02</div>
+          <div class="d">Fluxo próprio, gatilho próprio. Devolve os 101 leads pausados ao
+          atendimento sem religar nenhum envio.</div>
+        </div>
+      </li>
+      <li>
+        <div>
+          <div class="t">Publicar ANA-05 e ANA-06</div>
+          <div class="d">A Ana passa a saber quem já tem exame marcado. Sem isso, qualquer
+          follow-up religado volta a cobrar quem já agendou.</div>
+        </div>
+      </li>
+      <li>
+        <div>
+          <div class="t">Aplicar o cache do prompt e a janela de 15s</div>
+          <div class="d">Corta a maior parte do custo de processamento sem mudar uma linha do que
+          a Ana diz.</div>
+        </div>
+      </li>
+      <li>
+        <div>
+          <div class="t">Corrigir os quatro bugs do ANA-02</div>
+          <div class="d">Passo em dobro, retentativa morta, mensagem gravada antes do envio e
+          detecção de falha frágil. Só então faz sentido pensar em religar.</div>
+        </div>
+      </li>
+      <li>
+        <div>
+          <div class="t">Voltar a auditoria e o resumo diário</div>
+          <div class="d">Sem eles, a única forma de saber que algo quebrou é o paciente reclamar —
+          ou o número cair de novo.</div>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <footer>
+    Fonte: <code>ana_leads</code>, <code>ana_mensagens</code>, <code>ana_config</code>,
+    <code>ana_auditorias</code>, <code>ana_precos</code> e o JSON do fluxo ANA-02.
+    Período analisado: 15/08 a 31/08/2026 · 11.394 mensagens · 524 leads.
+  </footer>
+
+</div>
