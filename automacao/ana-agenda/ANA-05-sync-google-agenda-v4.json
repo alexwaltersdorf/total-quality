@@ -47,7 +47,13 @@
         -576,
         300
       ],
-      "notes": "Agenda confirmada em 20/08/2026: sac@totalquality.med.br (owner/primary, America/Sao_Paulo). showDeleted=true detecta cancelamentos."
+      "notes": "Agenda confirmada em 20/08/2026: sac@totalquality.med.br (owner/primary, America/Sao_Paulo). showDeleted=true detecta cancelamentos.",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "O6Uj5bEN2ESNl5Sy",
+          "name": "Google Calendar account"
+        }
+      }
     },
     {
       "parameters": {
@@ -66,10 +72,10 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "-- UPSERT: 22 dos 54 telefones da agenda ainda nao existem em ana_leads\n-- (agendamentos feitos no balcao ou por telefone). Com UPDATE puro eles\n-- eram um no-op silencioso e nunca receberiam a confirmacao da vespera.\nINSERT INTO ana_leads AS l (\n  phone, nome, agendamento, proxima_acao, followup_due_at,\n  resumo_interno, bot_ativo, temperatura, funil, intencao, created_at, updated_at)\nVALUES (\n  $1::text,\n  NULLIF($7::text, ''),\n  jsonb_build_object(\n    'status', CASE WHEN $4::boolean THEN 'cancelado' ELSE 'confirmado' END,\n    'data', $2::text, 'turno', $3::text, 'hora', $6::text,\n    'origem', 'google_agenda', 'evento', $5::text),\n  CASE WHEN $4::boolean THEN 'follow_up_d1' ELSE 'agendado' END,\n  CASE WHEN $4::boolean THEN NOW() + INTERVAL '2 hours' END,\n  CASE WHEN $4::boolean\n    THEN 'Agendamento CANCELADO no Google Agenda - retomar contato para reagendar.'\n    ELSE 'Agendamento CONFIRMADO via Google Agenda para ' || $2::text || ' as ' || $6::text\n         || ' (' || $3::text || ') - origem: agenda da clinica.' END,\n  true, 'quente', 'fundo', 'agendar', NOW(), NOW())\nON CONFLICT (phone) DO UPDATE SET\n  nome            = COALESCE(l.nome, EXCLUDED.nome),\n  agendamento     = EXCLUDED.agendamento,\n  proxima_acao    = EXCLUDED.proxima_acao,\n  followup_due_at = CASE WHEN $4::boolean AND NOT COALESCE(l.opt_out, false)\n                         THEN NOW() + INTERVAL '2 hours' END,\n  resumo_interno  = EXCLUDED.resumo_interno,\n  updated_at      = NOW()",
+        "query": "-- Um unico parametro JSONB. O n8n resolve o queryReplacement e DIVIDE POR VIRGULA:\n-- com o nome vazio some um parametro (\"Variable $7 out of range\") e um titulo de evento\n-- com virgula deslocaria todos os campos. Este e o padrao usado no resto do sistema.\nINSERT INTO ana_leads AS l (\n  phone, nome, agendamento, proxima_acao, followup_due_at,\n  resumo_interno, bot_ativo, temperatura, funil, intencao, created_at, updated_at)\nSELECT\n  p->>'phone',\n  NULLIF(p->>'nome',''),\n  jsonb_build_object(\n    'status', CASE WHEN (p->>'cancelado')::boolean THEN 'cancelado' ELSE 'confirmado' END,\n    'data', p->>'data', 'turno', p->>'turno', 'hora', p->>'hora',\n    'origem','google_agenda','evento', p->>'evento'),\n  CASE WHEN (p->>'cancelado')::boolean THEN 'follow_up_d1' ELSE 'agendado' END,\n  CASE WHEN (p->>'cancelado')::boolean THEN now() + interval '2 hours' END,\n  CASE WHEN (p->>'cancelado')::boolean\n    THEN 'Agendamento CANCELADO no Google Agenda - retomar contato para reagendar.'\n    ELSE 'Agendamento CONFIRMADO via Google Agenda para ' || (p->>'data') || ' as ' || (p->>'hora')\n         || ' (' || (p->>'turno') || ') - origem: agenda da clinica.' END,\n  true, 'quente', 'fundo', 'agendar', now(), now()\nFROM (SELECT $1::jsonb AS p) t\nON CONFLICT (phone) DO UPDATE SET\n  nome            = COALESCE(l.nome, EXCLUDED.nome),\n  agendamento     = EXCLUDED.agendamento,\n  proxima_acao    = EXCLUDED.proxima_acao,\n  followup_due_at = CASE WHEN (EXCLUDED.agendamento->>'status') = 'cancelado'\n                          AND NOT COALESCE(l.opt_out,false)\n                         THEN now() + interval '2 hours' END,\n  resumo_interno  = EXCLUDED.resumo_interno,\n  updated_at      = now()",
         "options": {
           "queryBatching": "independently",
-          "queryReplacement": "={{ $json.phone }},={{ $json.data }},={{ $json.turno }},={{ $json.cancelado }},={{ $json.evento }},={{ $json.hora }},={{ $json.nome }}"
+          "queryReplacement": "={{ JSON.stringify($json) }}"
         }
       },
       "id": "a05-pg",
@@ -80,7 +86,67 @@
         -128,
         300
       ],
-      "notes": "Mesma credencial Postgres (Supabase) do ANA-01/02. UPSERT: cria o lead quando o agendamento veio do balcao (22 de 54 telefones da agenda nao tinham cadastro). Nome existente nunca e sobrescrito. Cancelamento nao dispara follow-up para opt-out (LGPD)."
+      "notes": "UPSERT com um unico parametro JSONB. Cria o lead quando o agendamento veio do balcao e nunca sobrescreve nome ja cadastrado.",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/2 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "a05-cron-full",
+      "name": "Reconciliacao diaria",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -800,
+        480
+      ],
+      "notes": "TEMPORARIO a cada 2 min para validar a carga inicial; passa para 05:00 depois."
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "sac@totalquality.med.br",
+          "mode": "list",
+          "cachedResultName": "sac@totalquality.med.br"
+        },
+        "returnAll": true,
+        "options": {
+          "timeMin": "={{ $now.minus({ days: 1 }).toISO() }}",
+          "timeMax": "={{ $now.plus({ days: 60 }).toISO() }}",
+          "singleEvents": true,
+          "showDeleted": true
+        }
+      },
+      "id": "a05-gcal-full",
+      "name": "Ler agenda completa (60 dias)",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -576,
+        480
+      ],
+      "notes": "Reconciliacao: le a janela inteira, sem updatedMin. O no de 15 minutos so enxerga evento ALTERADO na ultima meia hora e por isso nunca fazia a carga inicial — o banco ficou com 19 agendamentos enquanto a agenda tinha ~55 identificaveis.",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "O6Uj5bEN2ESNl5Sy",
+          "name": "Google Calendar account"
+        }
+      }
     }
   ],
   "connections": {
@@ -116,9 +182,32 @@
           }
         ]
       ]
+    },
+    "Reconciliacao diaria": {
+      "main": [
+        [
+          {
+            "node": "Ler agenda completa (60 dias)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler agenda completa (60 dias)": {
+      "main": [
+        [
+          {
+            "node": "Extrair telefone e horario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo"
   }
 }
