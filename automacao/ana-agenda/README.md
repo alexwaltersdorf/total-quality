@@ -11,6 +11,9 @@ confirma o exame com o paciente na véspera.
 | `modelo-agenda-total-quality.ics` | 3 eventos-modelo para importar na agenda e treinar a recepção. |
 | `GUIA-RECEPCAO-agenda.md` | O padrão de preenchimento, em uma página. |
 | `ANA-05-validacao-agenda-real.md` | Validação contra os 90 eventos reais da agenda. |
+| `ANA-02-followup-v2.json` | ANA-02 com as quatro correções + cache de prompt + prompt reduzido. |
+| `AUDITORIA-FLUXOS-ANA.md` | Auditoria conjunta dos cinco fluxos (31/08). |
+| `correcoes-31-08.sql` | Correções já aplicadas no banco em 31/08. |
 
 ## ANA-05 — sincronização (a cada 15 minutos)
 
