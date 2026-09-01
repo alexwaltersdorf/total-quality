@@ -228,430 +228,233 @@
 <div class="wrap">
 
   <header>
-    <div class="eyebrow">Total Quality · 31 de agosto de 2026</div>
+    <div class="eyebrow">Total Quality · 2ª auditoria · 1 de setembro de 2026</div>
     <h1>Auditoria dos Fluxos da Ana</h1>
     <p class="lede">
-      Os cinco fluxos foram desenhados um de cada vez e nunca foram olhados em conjunto.
-      Vistos juntos, aparecem duas coisas: a corrente que liga a agenda ao atendimento está
-      partida em dois pontos, e quase todo o custo de processamento vem de reenviar a mesma
-      informação a cada mensagem.
+      Segunda passagem, depois das correções implantadas. Três dos quatro achados críticos
+      estão fechados e verificados. O quarto continua aberto — e a causa é uma decisão minha
+      de projeto, não um erro de configuração de vocês.
     </p>
   </header>
 
   <section>
-    <h2>Onde cada fluxo está hoje</h2>
+    <h2>Situação de cada fluxo</h2>
     <div class="fluxos">
-      <div class="fluxo">
-        <b>ANA-01</b>
-        <div class="nome">Atendimento no WhatsApp</div>
-        <span class="chip c-ok">no ar</span>
+      <div class="fluxo"><b>ANA-01</b><div class="nome">Atendimento</div><span class="chip c-ok">no ar</span></div>
+      <div class="fluxo"><b>ANA-02</b><div class="nome">Follow-up · v2</div><span class="chip c-warn">parado por ordem</span></div>
+      <div class="fluxo"><b>ANA-03</b><div class="nome">Resumo diário</div><span class="chip c-ok">no ar</span></div>
+      <div class="fluxo"><b>ANA-04</b><div class="nome">Auditoria</div><span class="chip c-ok">corrigido</span></div>
+      <div class="fluxo"><b>ANA-05</b><div class="nome">Agenda</div><span class="chip c-crit">ativo, sem efeito</span></div>
+      <div class="fluxo"><b>ANA-06</b><div class="nome">Confirmação</div><span class="chip c-warn">parado por ordem</span></div>
+      <div class="fluxo"><b>SDR</b><div class="nome">Campanha de check-up</div><span class="chip c-ok">desligado</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>O que ficou pronto e está verificado</h2>
+
+    <div class="achado">
+      <div class="sev c-ok">fechado</div>
+      <div>
+        <h3>A origem dos check-ups foi desligada</h3>
+        <p>
+          Era o fluxo <em>Followup - SDR</em>, invisível para todas as análises anteriores porque
+          usa outro conjunto de tabelas e <strong>outra instância da Evolution</strong>
+          (<code>187.127.13.63</code>, HTTP puro). Disparava <strong>até 50 mensagens em bloco</strong>,
+          todo dia às 09:00, numa cadência própria de 30 dias sobre saúde preventiva.
+        </p>
       </div>
-      <div class="fluxo">
-        <b>ANA-02</b>
-        <div class="nome">Follow-up da cadência</div>
-        <span class="chip c-crit">desligado</span>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-ok">fechado</div>
+      <div>
+        <h3>A auditoria voltou a funcionar</h3>
+        <p>
+          O ANA-04 falhava com <code>invalid syntax</code> em <strong>toda</strong> execução desde 27/08.
+          A migração Anthropic → OpenAI ficou pela metade: o cabeçalho tinha
+          <code>ANTHROPIC_API_KEYBearer …</code> e o corpo concatenava dois <code>JSON.stringify</code>.
+          Corrigido; a próxima nota sai amanhã às 07:10.
+        </p>
       </div>
-      <div class="fluxo">
-        <b>ANA-03</b>
-        <div class="nome">Resumo diário</div>
-        <span class="chip c-warn">sem entregar</span>
-      </div>
-      <div class="fluxo">
-        <b>ANA-04</b>
-        <div class="nome">Auditoria de atendimento</div>
-        <span class="chip c-crit">parou em 24/08</span>
-      </div>
-      <div class="fluxo">
-        <b>ANA-05 / 06</b>
-        <div class="nome">Agenda e confirmação</div>
-        <span class="chip c-crit">nunca publicados</span>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-ok">fechado</div>
+      <div>
+        <h3>A retomada do atendimento saiu do fluxo de envio</h3>
+        <p>
+          Roda por <code>pg_cron</code> a cada 15 minutos, dentro do banco. O indicador
+          <code>retomada_travada</code> está em <strong>0</strong> — eram 12 quando o painel foi criado,
+          e a correção liberou 13 pacientes travados desde 17/08, entre eles gente que só não
+          conseguia falar com a Ana porque <em>tinha exame confirmado</em>.
+        </p>
       </div>
     </div>
   </section>
 
   <section>
-    <h2>A dinâmica: tudo gira em torno do estado do lead</h2>
+    <h2>Consumo de tokens: o quadro real</h2>
     <p>
-      Nenhum fluxo conversa diretamente com outro. Todos escrevem e leem a mesma tabela —
-      <code>ana_leads</code> é o único ponto de encontro. É por isso que desligar um fluxo
-      derruba funções que pareciam não ter relação com ele.
-    </p>
-
-    <figure>
-      <div class="fig-box">
-        <svg viewBox="0 0 940 520" role="img"
-             aria-label="Diagrama: ANA-01 e ANA-05 escrevem no estado compartilhado ana_leads; ANA-02, ANA-06, ANA-03 e ANA-04 leem dele. As setas de ANA-05, ANA-06 e ANA-04 estão cortadas, e a rotina de retomada do bot está presa dentro do ANA-02, que está desligado.">
-          <defs>
-            <marker id="seta" viewBox="0 0 10 10" refX="9" refY="5"
-                    markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
-            </marker>
-            <marker id="setaMorta" viewBox="0 0 10 10" refX="9" refY="5"
-                    markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#B4442E"/>
-            </marker>
-          </defs>
-
-          <g font-family="IBM Plex Sans, sans-serif" fill="currentColor">
-
-            <!-- coluna: escrita -->
-            <text x="20" y="26" font-family="IBM Plex Mono, monospace" font-size="11"
-                  letter-spacing="1.6" opacity=".55">QUEM ESCREVE</text>
-
-            <rect x="20" y="46" width="216" height="76" rx="7"
-                  fill="none" stroke="currentColor" stroke-width="1.4"/>
-            <text x="36" y="72" font-size="14" font-weight="600">ANA-01 · Atendimento</text>
-            <text x="36" y="93" font-size="11.5" opacity=".7">paciente escreve no WhatsApp</text>
-            <text x="36" y="110" font-size="11.5" opacity=".7">a Ana responde e classifica</text>
-
-            <rect x="20" y="330" width="216" height="76" rx="7"
-                  fill="none" stroke="#B4442E" stroke-width="1.4" stroke-dasharray="5 4"/>
-            <text x="36" y="356" font-size="14" font-weight="600" fill="#B4442E">ANA-05 · Agenda</text>
-            <text x="36" y="377" font-size="11.5" fill="#B4442E" opacity=".85">lê o Google Agenda</text>
-            <text x="36" y="394" font-size="11.5" fill="#B4442E" opacity=".85">nunca foi publicado</text>
-
-            <!-- hub -->
-            <rect x="330" y="188" width="238" height="126" rx="9"
-                  fill="none" stroke="currentColor" stroke-width="2"/>
-            <text x="449" y="222" font-size="12" text-anchor="middle"
-                  font-family="IBM Plex Mono, monospace" letter-spacing="1.4" opacity=".55">ESTADO COMPARTILHADO</text>
-            <text x="449" y="252" font-size="15" font-weight="600" text-anchor="middle"
-                  font-family="IBM Plex Mono, monospace">ana_leads</text>
-            <text x="449" y="275" font-size="15" font-weight="600" text-anchor="middle"
-                  font-family="IBM Plex Mono, monospace">ana_mensagens</text>
-            <text x="449" y="298" font-size="11.5" text-anchor="middle" opacity=".7">524 leads · 11.394 mensagens</text>
-
-            <!-- setas de escrita -->
-            <line x1="236" y1="84" x2="330" y2="212" stroke="currentColor" stroke-width="1.4"
-                  marker-end="url(#seta)"/>
-            <text x="248" y="130" font-size="11" opacity=".75">grava lead</text>
-            <text x="248" y="146" font-size="11" opacity=".75">e mensagem</text>
-
-            <line x1="236" y1="368" x2="330" y2="292" stroke="#B4442E" stroke-width="1.4"
-                  stroke-dasharray="5 4" marker-end="url(#setaMorta)"/>
-            <text x="246" y="336" font-size="11" fill="#B4442E">grava agendamento</text>
-            <line x1="272" y1="316" x2="292" y2="344" stroke="#B4442E" stroke-width="2.2"/>
-            <line x1="292" y1="316" x2="272" y2="344" stroke="#B4442E" stroke-width="2.2"/>
-
-            <!-- coluna: leitura -->
-            <text x="662" y="26" font-family="IBM Plex Mono, monospace" font-size="11"
-                  letter-spacing="1.6" opacity=".55">QUEM LÊ E AGE</text>
-
-            <rect x="662" y="46" width="256" height="96" rx="7"
-                  fill="none" stroke="#B4442E" stroke-width="1.4" stroke-dasharray="5 4"/>
-            <text x="678" y="72" font-size="14" font-weight="600" fill="#B4442E">ANA-02 · Follow-up</text>
-            <text x="678" y="93" font-size="11.5" fill="#B4442E" opacity=".85">desligado após o bloqueio</text>
-            <line x1="678" y1="104" x2="902" y2="104" stroke="#B4442E" stroke-width="1" opacity=".45"/>
-            <text x="678" y="122" font-size="11.5" fill="#B4442E" opacity=".85">contém: retomar o bot 24h</text>
-            <text x="678" y="136" font-size="11.5" fill="#B4442E" opacity=".85">após atendimento humano</text>
-
-            <rect x="662" y="164" width="256" height="60" rx="7"
-                  fill="none" stroke="#B4442E" stroke-width="1.4" stroke-dasharray="5 4"/>
-            <text x="678" y="190" font-size="14" font-weight="600" fill="#B4442E">ANA-06 · Confirmação</text>
-            <text x="678" y="210" font-size="11.5" fill="#B4442E" opacity=".85">nunca foi publicado</text>
-
-            <rect x="662" y="246" width="256" height="60" rx="7"
-                  fill="none" stroke="currentColor" stroke-width="1.4"/>
-            <text x="678" y="272" font-size="14" font-weight="600">ANA-03 · Resumo diário</text>
-            <text x="678" y="292" font-size="11.5" opacity=".7">no ar, sem conseguir entregar</text>
-
-            <rect x="662" y="328" width="256" height="60" rx="7"
-                  fill="none" stroke="#B4442E" stroke-width="1.4" stroke-dasharray="5 4"/>
-            <text x="678" y="354" font-size="14" font-weight="600" fill="#B4442E">ANA-04 · Auditoria</text>
-            <text x="678" y="374" font-size="11.5" fill="#B4442E" opacity=".85">última nota: 24/08</text>
-
-            <!-- setas de leitura -->
-            <line x1="568" y1="216" x2="662" y2="94" stroke="#B4442E" stroke-width="1.4"
-                  stroke-dasharray="5 4" marker-end="url(#setaMorta)"/>
-            <text x="578" y="150" font-size="11" fill="#B4442E">guarda libera</text>
-            <text x="578" y="166" font-size="11" fill="#B4442E">1 por vez</text>
-            <line x1="600" y1="132" x2="620" y2="160" stroke="#B4442E" stroke-width="2.2"/>
-            <line x1="620" y1="132" x2="600" y2="160" stroke="#B4442E" stroke-width="2.2"/>
-
-            <line x1="568" y1="238" x2="662" y2="194" stroke="#B4442E" stroke-width="1.4"
-                  stroke-dasharray="5 4" marker-end="url(#setaMorta)"/>
-
-            <line x1="568" y1="270" x2="662" y2="276" stroke="currentColor" stroke-width="1.4"
-                  marker-end="url(#seta)"/>
-            <text x="580" y="264" font-size="11" opacity=".75">lê o dia</text>
-
-            <line x1="568" y1="300" x2="662" y2="356" stroke="#B4442E" stroke-width="1.4"
-                  stroke-dasharray="5 4" marker-end="url(#setaMorta)"/>
-
-            <!-- rodapé do diagrama -->
-            <text x="20" y="466" font-size="11.5" opacity=".72">
-              Linha cheia = funcionando. Linha tracejada em vermelho = caminho morto hoje.
-            </text>
-            <text x="20" y="490" font-size="11.5" fill="#B4442E">
-              ✕ marca os dois cortes que ninguém pediu: a agenda não chega ao banco, e a
-            </text>
-            <text x="20" y="506" font-size="11.5" fill="#B4442E">
-              retomada do bot após atendimento humano foi junto com o ANA-02.
-            </text>
-          </g>
-        </svg>
-      </div>
-      <figcaption>
-        A rotina que devolve o atendimento à Ana 24h depois de um humano assumir mora
-        <em>dentro</em> do ANA-02. Desligar o envio desligou também a retomada — hoje há
-        <strong>14 leads elegíveis</strong> que nunca voltarão sozinhos, e o número cresce todo dia.
-      </figcaption>
-    </figure>
-  </section>
-
-  <section>
-    <h2>Custo de processamento: 95% é repetição</h2>
-    <p>
-      A conta não está no volume de conversa — está no que viaja junto com cada mensagem.
-      O prompt da Ana tem <strong>47.715 caracteres</strong> (cerca de 13 mil tokens) e é
-      reenviado <strong>inteiro, a cada turno</strong>, sem cache.
+      A primeira auditoria errou aqui, e a correção é grande o suficiente para valer o registro.
+      <strong>ANA-01 e ANA-04 rodam em OpenAI</strong> — só o ANA-02 usa a API da Anthropic. E o
+      ANA-01 <strong>já agrupava</strong> mensagens em rajada; eu disse que não agrupava.
     </p>
 
     <div class="tabela">
       <table>
-        <thead>
-          <tr><th>Medida (últimos 14 dias)</th><th>Valor</th><th>O que significa</th></tr>
-        </thead>
+        <thead><tr><th>Dia</th><th>Mensagens recebidas</th><th>Chamadas ao modelo</th><th>Agrupadas por chamada</th></tr></thead>
         <tbody>
-          <tr>
-            <td>Chamadas ao modelo</td>
-            <td class="num">1.524</td>
-            <td>≈ 109 por dia</td>
-          </tr>
-          <tr>
-            <td>Prompt reenviado por chamada</td>
-            <td class="num">~13.000 tokens</td>
-            <td>idêntico em todas elas</td>
-          </tr>
-          <tr>
-            <td>Total estimado de entrada</td>
-            <td class="num">~20 milhões</td>
-            <td><strong>~19 milhões são o mesmo texto</strong></td>
-          </tr>
-          <tr>
-            <td>Mensagens do paciente</td>
-            <td class="num">3.881</td>
-            <td>—</td>
-          </tr>
-          <tr>
-            <td>Chegaram em rajada (&lt; 60s da anterior)</td>
-            <td class="num">1.975 · 51%</td>
-            <td>metade poderia ser respondida junto</td>
-          </tr>
+          <tr><td>qua 26/08</td><td class="num">398</td><td class="num">67</td><td class="num">5,94</td></tr>
+          <tr><td>qui 27/08</td><td class="num">357</td><td class="num">80</td><td class="num">4,46</td></tr>
+          <tr><td>sex 28/08</td><td class="num">441</td><td class="num">114</td><td class="num">3,87</td></tr>
+          <tr><td>sáb 29/08</td><td class="num">62</td><td class="num">43</td><td class="num">1,44</td></tr>
+          <tr><td>dom 30/08</td><td class="num">36</td><td class="num">29</td><td class="num">1,24</td></tr>
+          <tr><td>seg 31/08</td><td class="num">740</td><td class="num">158</td><td class="num">4,68</td></tr>
+          <tr><td>ter 01/09</td><td class="num">457</td><td class="num">130</td><td class="num">3,52</td></tr>
         </tbody>
       </table>
     </div>
 
-    <p style="margin-top:20px">
-      Três mudanças resolvem quase tudo, e nenhuma altera o comportamento da Ana:
+    <p style="margin-top:18px">
+      Em dia útil o sistema já junta de <strong>3,5 a 5,9 mensagens do paciente em uma única
+      chamada</strong>. Sem esse agrupamento seriam 400 a 700 chamadas por dia em vez de 130 a 158.
+      Nos fins de semana a taxa cai para 1,2 porque as mensagens chegam espaçadas — não há o que agrupar.
     </p>
 
     <div class="achado">
-      <div class="sev c-crit">cache</div>
+      <div class="sev c-ok">ok</div>
       <div>
-        <h3>Marcar o prompt como cacheável</h3>
+        <h3>O cache do prompt já estava certo no ANA-01</h3>
         <p>
-          No nó <code>Chamar Ana</code>, o bloco <code>system</code> passa a ser enviado como lista
-          com <code>cache_control</code> do tipo efêmero. A partir da segunda chamada dentro da
-          janela, a leitura do prompt custa uma fração do preço cheio.
+          Fui verificar como o corpo é montado: o prompt vai em <code>instructions</code> e o
+          carimbo de data/hora vai no <code>input</code>. É exatamente o que o cache automático de
+          prefixo do OpenAI exige — se o horário estivesse dentro das instruções, o cache
+          quebraria a cada minuto. <strong>Não havia o que corrigir aqui.</strong>
+        </p>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-warn">a medir</div>
+      <div>
+        <h3>Os dois ajustes que fiz ainda não têm leitura</h3>
+        <p>
+          Subi a janela de agrupamento de 8s para 15s e reduzi a busca de histórico de 24 para 12
+          mensagens — ele buscava 24 e usava só 12. As mudanças entraram às 20:35 de ontem, com a
+          clínica já fechada: <strong>não há um único dia útil de dados depois delas</strong>.
+          A leitura honesta sai na quarta-feira.
+        </p>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-ok">ok</div>
+      <div>
+        <h3>ANA-02: prompt reduzido pela metade</h3>
+        <p>
+          De 47.715 para 21.620 caracteres, mantendo cadência, compliance e contrato de saída.
+          A redução é feita por SQL sobre o prompt original — não existe um segundo prompt para
+          manter atualizado. Somado ao <code>cache_control</code>, é a maior economia do conjunto,
+          e entra em vigor quando o follow-up for religado.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>O achado desta auditoria: o ANA-05 não escreveu nada</h2>
+
+    <div class="achado">
+      <div class="sev c-crit">crítico</div>
+      <div>
+        <h3>Ele está ativo e correto — e mesmo assim inútil como está</h3>
+        <p>
+          Desde que foi ligado, o ANA-05 gravou <strong>zero</strong> agendamentos. Não é falha de
+          credencial nem de parser: eu configurei o nó com <code>updatedMin</code> de 30 minutos,
+          para não reprocessar 90 eventos a cada 15 minutos. O efeito colateral é que ele só
+          enxerga eventos <em>alterados</em> na última meia hora — e <strong>nunca faz a carga
+          inicial</strong>.
+        </p>
+        <p>
+          Resultado prático: o banco segue com <strong>19 agendamentos</strong>, dos quais 1 é o
+          evento de teste. Na agenda há cerca de 55 exames com paciente identificável. A Ana
+          continua sem saber quem já tem exame marcado — que era exatamente o problema que o
+          ANA-05 existia para resolver.
         </p>
         <div class="fix">
-          <code>system: [{ type: "text", text: PROMPT, cache_control: { type: "ephemeral" } }]</code>
+          Correção: um segundo gatilho diário, de madrugada, lendo a janela inteira de 60 dias sem
+          <code>updatedMin</code>. O de 15 minutos continua pegando as mudanças do dia; o diário
+          reconcilia tudo. Precisa de acesso ao n8n para entrar.
         </div>
       </div>
     </div>
+  </section>
+
+  <section>
+    <h2>Aberto, e nada disso é técnico</h2>
 
     <div class="achado">
-      <div class="sev c-crit">rajada</div>
+      <div class="sev c-crit">pessoas</div>
       <div>
-        <h3>Esperar 15 segundos antes de responder</h3>
+        <h3>15 escaladas esperando, a mais antiga há 16 dias</h3>
         <p>
-          Metade das mensagens chega em sequência rápida — o paciente pensa em voz alta. Uma janela
-          curta de espera junta o que veio e responde tudo de uma vez: menos chamadas, e uma resposta
-          que soa como quem leu até o fim em vez de reagir a cada frase solta.
+          Cresceu de 14 para 15 desde a auditoria anterior. São pacientes que a Ana passou para a
+          equipe e que ninguém retomou. Nenhum ajuste de fluxo resolve isso.
         </p>
       </div>
     </div>
 
     <div class="achado">
-      <div class="sev c-warn">follow-up</div>
+      <div class="sev c-warn">arquitetura</div>
       <div>
-        <h3>Prompt curto para o follow-up</h3>
+        <h3>A pilha legada continua de pé</h3>
         <p>
-          O ANA-02 carrega os mesmos 47 mil caracteres para escrever duas linhas. Um prompt
-          dedicado de ~2 mil, com só o tom e as regras da cadência, faz o mesmo trabalho por
-          uma fração do custo.
+          O <em>Relatório Diario - 07:00</em> ainda usa a instância <code>187.127.13.63</code> e as
+          tabelas <code>conversations</code>/<code>messages</code>. Não fala com paciente, então
+          deixei no ar — mas é a mesma infraestrutura de onde saiu a campanha que derrubou o número.
+          Enquanto ela existir, existe um caminho fora de todas as travas.
         </p>
       </div>
     </div>
 
-    <p style="margin-top:6px">
-      Já apliquei na base de conhecimento o bloco <code>&lt;economia_de_turnos&gt;</code>, que instrui a
-      Ana a não repetir o que já está no histórico: não perguntar de novo o que o paciente respondeu,
-      não reenviar preço ou preparo já enviados, responder mensagens em rajada de uma vez só, e não
-      gastar mensagem em "ok!" sem conteúdo.
+    <div class="achado">
+      <div class="sev c-ok">por ordem</div>
+      <div>
+        <h3>ANA-02 e ANA-06 parados</h3>
+        <p>
+          Os dois enviam mensagem e seguem desligados até você liberar. A trava de banco
+          (<code>followup_envios_suspensos = true</code>) continua valendo por cima, então nem
+          um religamento acidental dispara algo.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sinais vitais agora</h2>
+    <div class="tabela">
+      <table>
+        <thead><tr><th>Indicador</th><th>Valor</th><th>Leitura</th></tr></thead>
+        <tbody>
+          <tr><td>envios suspensos</td><td class="num">true</td><td>nada proativo sai</td></tr>
+          <tr><td>follow-ups liberados hoje</td><td class="num">0</td><td>a guarda nunca liberou nenhum</td></tr>
+          <tr><td>razão enviadas / recebidas</td><td class="num">1,06</td><td>conversa saudável — no dia do bloqueio foi 58,8</td></tr>
+          <tr><td>retomada travada</td><td class="num">0</td><td>corrigido nesta rodada</td></tr>
+          <tr><td>bot pausado</td><td class="num">76</td><td>atendimento humano em curso</td></tr>
+          <tr><td>agendamentos no banco</td><td class="num">19</td><td>deveria estar subindo — ver ANA-05</td></tr>
+          <tr><td>escaladas abertas</td><td class="num">15</td><td>a mais antiga há 16 dias</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:16px">
+      Consulta única: <code>SELECT * FROM ana_saude;</code>
     </p>
-  </section>
-
-  <section>
-    <h2>Achados por gravidade</h2>
-
-    <div class="achado">
-      <div class="sev c-crit">crítico</div>
-      <div>
-        <h3>A agenda da clínica não chega ao banco</h3>
-        <p>
-          ANA-05 e ANA-06 nunca foram publicados. Resultado: dos 524 leads, apenas
-          <strong>19 têm agendamento registrado</strong>, enquanto a agenda real tem dezenas por semana.
-          A Ana trabalha cega — não sabe quem já marcou, e por isso o follow-up já cobrou paciente
-          que tinha exame marcado.
-        </p>
-        <div class="fix">Publicar ANA-05 v4.1 e ANA-06 no n8n. Os arquivos estão prontos no PR #2.</div>
-      </div>
-    </div>
-
-    <div class="achado">
-      <div class="sev c-crit">crítico</div>
-      <div>
-        <h3>A retomada do bot está presa dentro do ANA-02</h3>
-        <p>
-          O nó <em>Retomar Pós-Humano (24h)</em> devolve o atendimento à Ana depois que um humano
-          assume. Ele mora dentro do fluxo de envio — que está desligado. Hoje há
-          <strong>101 leads com o bot pausado</strong> (19% da base) e 14 já passaram das 24h sem
-          que nada os devolva.
-        </p>
-        <div class="fix">Separar em um fluxo próprio, com gatilho próprio. Retomar atendimento não é enviar campanha.</div>
-      </div>
-    </div>
-
-    <div class="achado">
-      <div class="sev c-crit">crítico</div>
-      <div>
-        <h3>O passo da cadência é contado duas vezes</h3>
-        <p>
-          O nó <em>Montar Payload FU</em> faz <code>followup_step + 1</code>, mas a função do banco
-          já incrementou antes de devolver. O paciente pula o D+1 acolhedor e recebe o xeque-mate
-          do D+14 como <strong>segunda</strong> mensagem.
-        </p>
-        <div class="fix"><code>const step = Number(lead.followup_step) || 1;</code> — sem o <code>+ 1</code>.</div>
-      </div>
-    </div>
-
-    <div class="achado">
-      <div class="sev c-crit">crítico</div>
-      <div>
-        <h3>Retentativa nasce morta e queima a cota do dia</h3>
-        <p>
-          <em>Adiar Retentativa</em> e <em>Reverter Passo</em> reagendam para +1h mas não apagam a
-          linha do <code>ana_envios_log</code>. Como vale 1 mensagem por paciente por dia, a
-          retentativa nunca dispara — e a mensagem que não chegou continua ocupando uma das 20.
-        </p>
-        <div class="fix">Adicionar o <code>DELETE FROM ana_envios_log</code> nos dois nós (SQL já entregue).</div>
-      </div>
-    </div>
-
-    <div class="achado">
-      <div class="sev c-warn">atenção</div>
-      <div>
-        <h3>A auditoria parou de rodar</h3>
-        <p>
-          O ANA-04 gera nota e relatório todo dia às 07:11. A última é de <strong>24/08</strong> —
-          seis dias sem auditoria. Faltou também o dia 22/08, e o 18/08 saiu duplicado. Perdemos
-          justamente a leitura dos dias do bloqueio.
-        </p>
-      </div>
-    </div>
-
-    <div class="achado">
-      <div class="sev c-warn">atenção</div>
-      <div>
-        <h3>Mensagem gravada como enviada antes de sair</h3>
-        <p>
-          O ANA-02 grava em <code>ana_mensagens</code> e só depois chama a Evolution. Se o envio
-          falha, o histórico mente: a Ana lê que já falou aquilo e não repete. Parte dos números da
-          auditoria de agosto vem daí.
-        </p>
-      </div>
-    </div>
-
-    <div class="achado">
-      <div class="sev c-warn">atenção</div>
-      <div>
-        <h3>Outro sistema dispara no mesmo número</h3>
-        <p>
-          Entrega de laudo, pesquisa de satisfação e confirmação de agendamento saem em rajada
-          templada e entram no banco marcadas como <code>humano</code> — não são da Ana. Algumas vão
-          para números que <strong>nunca escreveram</strong> para a clínica: é o mesmo padrão que
-          derrubou o WhatsApp, vindo de fora da guarda.
-        </p>
-      </div>
-    </div>
-
-    <div class="achado">
-      <div class="sev c-ok">baixo</div>
-      <div>
-        <h3>Coluna de preço PIX vazia em toda a tabela</h3>
-        <p>
-          São 1.895 exames ativos e <strong>nenhum</strong> com <code>preco_pix</code> preenchido.
-          Hoje a Ana calcula os 10% pela regra do prompt, o que funciona — mas a coluna existir vazia
-          convida alguém a confiar nela um dia.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <h2>Plano, na ordem que faz sentido</h2>
-    <ol class="plano">
-      <li>
-        <div>
-          <div class="t">Descobrir e desligar o outro disparador</div>
-          <div class="d">Enquanto ele estiver ativo, tudo o mais é enxugar gelo — é ele que está
-          abordando quem nunca escreveu.</div>
-        </div>
-      </li>
-      <li>
-        <div>
-          <div class="t">Tirar a retomada do bot de dentro do ANA-02</div>
-          <div class="d">Fluxo próprio, gatilho próprio. Devolve os 101 leads pausados ao
-          atendimento sem religar nenhum envio.</div>
-        </div>
-      </li>
-      <li>
-        <div>
-          <div class="t">Publicar ANA-05 e ANA-06</div>
-          <div class="d">A Ana passa a saber quem já tem exame marcado. Sem isso, qualquer
-          follow-up religado volta a cobrar quem já agendou.</div>
-        </div>
-      </li>
-      <li>
-        <div>
-          <div class="t">Aplicar o cache do prompt e a janela de 15s</div>
-          <div class="d">Corta a maior parte do custo de processamento sem mudar uma linha do que
-          a Ana diz.</div>
-        </div>
-      </li>
-      <li>
-        <div>
-          <div class="t">Corrigir os quatro bugs do ANA-02</div>
-          <div class="d">Passo em dobro, retentativa morta, mensagem gravada antes do envio e
-          detecção de falha frágil. Só então faz sentido pensar em religar.</div>
-        </div>
-      </li>
-      <li>
-        <div>
-          <div class="t">Voltar a auditoria e o resumo diário</div>
-          <div class="d">Sem eles, a única forma de saber que algo quebrou é o paciente reclamar —
-          ou o número cair de novo.</div>
-        </div>
-      </li>
-    </ol>
   </section>
 
   <footer>
-    Fonte: <code>ana_leads</code>, <code>ana_mensagens</code>, <code>ana_config</code>,
-    <code>ana_auditorias</code>, <code>ana_precos</code> e o JSON do fluxo ANA-02.
-    Período analisado: 15/08 a 31/08/2026 · 11.394 mensagens · 524 leads.
+    2ª auditoria · 01/09/2026 · fontes: <code>ana_leads</code>, <code>ana_mensagens</code>,
+    <code>ana_saude</code>, <code>ana_auditorias</code> e os JSON dos fluxos publicados no n8n.
   </footer>
 
 </div>
