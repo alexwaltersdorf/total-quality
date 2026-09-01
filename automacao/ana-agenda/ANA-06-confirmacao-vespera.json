@@ -79,20 +79,32 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://SUA-EVOLUTION-API/message/sendText/SUA-INSTANCIA",
+        "url": "={{ $env.EVOLUTION_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE }}",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "apikey",
-              "value": "COLE_AQUI_A_APIKEY_DA_EVOLUTION"
+              "value": "={{ $env.EVOLUTION_APIKEY }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
             }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ number: $json.phone, text: $json.texto, delay: 1200, linkPreview: false }) }}",
-        "options": {}
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
       },
       "id": "a06-envia",
       "name": "Enviar pelo WhatsApp (Evolution)",
@@ -102,7 +114,7 @@
         -100,
         420
       ],
-      "notes": "PREENCHER: a URL base da Evolution, o nome da instancia e a apikey - os mesmos do ANA-02."
+      "notes": "Usa as mesmas variaveis de ambiente do ANA-02: EVOLUTION_URL, EVOLUTION_INSTANCE e EVOLUTION_APIKEY. Nada a preencher."
     },
     {
       "parameters": {
@@ -138,6 +150,39 @@
       ],
       "webhookId": "a06-wait-webhook",
       "notes": "90s entre mensagens. O bloqueio de 21/08 veio de rajadas de 5 a 11 conversas novas em menos de 1 minuto, a cada 30 minutos."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.statusCode || 0 }}",
+              "rightValue": 300,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a06-ok",
+      "name": "Enviou mesmo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        10,
+        420
+      ],
+      "notes": "So registra o envio quando a Evolution confirmou. Falhou = volta ao loop sem marcar."
     }
   ],
   "connections": {
@@ -196,7 +241,7 @@
       "main": [
         [
           {
-            "node": "Registrar envio",
+            "node": "Enviou mesmo?",
             "type": "main",
             "index": 0
           }
@@ -219,6 +264,24 @@
         [
           {
             "node": "Um paciente por vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviou mesmo?": {
+      "main": [
+        [
+          {
+            "node": "Registrar envio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Aguardar 20s",
             "type": "main",
             "index": 0
           }
