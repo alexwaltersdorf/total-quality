@@ -72,7 +72,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "-- Um unico parametro JSONB. O n8n resolve o queryReplacement e DIVIDE POR VIRGULA:\n-- com o nome vazio some um parametro (\"Variable $7 out of range\") e um titulo de evento\n-- com virgula deslocaria todos os campos. Este e o padrao usado no resto do sistema.\nINSERT INTO ana_leads AS l (\n  phone, nome, agendamento, proxima_acao, followup_due_at,\n  resumo_interno, bot_ativo, temperatura, funil, intencao, created_at, updated_at)\nSELECT\n  p->>'phone',\n  NULLIF(p->>'nome',''),\n  jsonb_build_object(\n    'status', CASE WHEN (p->>'cancelado')::boolean THEN 'cancelado' ELSE 'confirmado' END,\n    'data', p->>'data', 'turno', p->>'turno', 'hora', p->>'hora',\n    'origem','google_agenda','evento', p->>'evento'),\n  CASE WHEN (p->>'cancelado')::boolean THEN 'follow_up_d1' ELSE 'agendado' END,\n  CASE WHEN (p->>'cancelado')::boolean THEN now() + interval '2 hours' END,\n  CASE WHEN (p->>'cancelado')::boolean\n    THEN 'Agendamento CANCELADO no Google Agenda - retomar contato para reagendar.'\n    ELSE 'Agendamento CONFIRMADO via Google Agenda para ' || (p->>'data') || ' as ' || (p->>'hora')\n         || ' (' || (p->>'turno') || ') - origem: agenda da clinica.' END,\n  true, 'quente', 'fundo', 'agendar', now(), now()\nFROM (SELECT $1::jsonb AS p) t\nON CONFLICT (phone) DO UPDATE SET\n  nome            = COALESCE(l.nome, EXCLUDED.nome),\n  agendamento     = EXCLUDED.agendamento,\n  proxima_acao    = EXCLUDED.proxima_acao,\n  followup_due_at = CASE WHEN (EXCLUDED.agendamento->>'status') = 'cancelado'\n                          AND NOT COALESCE(l.opt_out,false)\n                         THEN now() + interval '2 hours' END,\n  resumo_interno  = EXCLUDED.resumo_interno,\n  updated_at      = now()",
+        "query": "-- Um unico parametro JSONB. O n8n resolve o queryReplacement e divide a string\n-- por virgula: com o nome do paciente vazio some um parametro, e um titulo de\n-- evento com virgula deslocaria todos os campos. Este e o padrao do resto do\n-- sistema. (Cuidado: o n8n le placeholders de parametro ate dentro de comentario.)\nINSERT INTO ana_leads AS l (\n  phone, nome, agendamento, proxima_acao, followup_due_at,\n  resumo_interno, bot_ativo, temperatura, funil, intencao, created_at, updated_at)\nSELECT\n  p->>'phone',\n  NULLIF(p->>'nome',''),\n  jsonb_build_object(\n    'status', CASE WHEN (p->>'cancelado')::boolean THEN 'cancelado' ELSE 'confirmado' END,\n    'data', p->>'data', 'turno', p->>'turno', 'hora', p->>'hora',\n    'origem','google_agenda','evento', p->>'evento',\n    'paciente', NULLIF(p->>'nome','')),\n  CASE WHEN (p->>'cancelado')::boolean THEN 'follow_up_d1' ELSE 'agendado' END,\n  CASE WHEN (p->>'cancelado')::boolean THEN now() + interval '2 hours' END,\n  CASE WHEN (p->>'cancelado')::boolean\n    THEN 'Agendamento CANCELADO no Google Agenda - retomar contato para reagendar.'\n    ELSE 'Agendamento CONFIRMADO via Google Agenda para ' || (p->>'data') || ' as ' || (p->>'hora')\n         || ' (' || (p->>'turno') || ') - origem: agenda da clinica.' END,\n  true, 'quente', 'fundo', 'agendar', now(), now()\nFROM (SELECT $1::jsonb AS p) t\nON CONFLICT (phone) DO UPDATE SET\n  nome            = COALESCE(l.nome, EXCLUDED.nome),\n  agendamento     = EXCLUDED.agendamento,\n  proxima_acao    = EXCLUDED.proxima_acao,\n  followup_due_at = CASE WHEN (EXCLUDED.agendamento->>'status') = 'cancelado'\n                          AND NOT COALESCE(l.opt_out,false)\n                         THEN now() + interval '2 hours' END,\n  resumo_interno  = EXCLUDED.resumo_interno,\n  updated_at      = now()",
         "options": {
           "queryBatching": "independently",
           "queryReplacement": "={{ JSON.stringify($json) }}"
@@ -100,20 +100,20 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "*/2 * * * *"
+              "expression": "0 5 * * *"
             }
           ]
         }
       },
       "id": "a05-cron-full",
-      "name": "Reconciliacao diaria",
+      "name": "Reconciliacao diaria 05:00",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
         -800,
         480
       ],
-      "notes": "TEMPORARIO a cada 2 min para validar a carga inicial; passa para 05:00 depois."
+      "notes": "Le a janela inteira de 60 dias, sem updatedMin. O gatilho de 15 minutos so enxerga evento alterado na ultima meia hora e nunca faria a carga inicial."
     },
     {
       "parameters": {
@@ -183,7 +183,7 @@
         ]
       ]
     },
-    "Reconciliacao diaria": {
+    "Reconciliacao diaria 05:00": {
       "main": [
         [
           {
