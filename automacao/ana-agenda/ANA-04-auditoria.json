@@ -1,0 +1,334 @@
+{
+  "name": "ANA — 04 Auditoria de Atendimento (IA)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 0,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "a1",
+      "name": "Diário 00h00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "notes": "Roda a meia-noite: o dia acabou de fechar e a funcao audita CURRENT_DATE-1. A instancia do n8n roda em America/Sao_Paulo (o gatilho de 07h10 disparava as 10:10 UTC)."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ana_auditoria_conversas() AS dados, (SELECT texto FROM ana_auditorias ORDER BY id DESC LIMIT 1) AS auditoria_anterior;",
+        "options": {}
+      },
+      "id": "a2",
+      "name": "Extrair Conversas",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        208,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ Array.isArray($json.dados.conversas) && $json.dados.conversas.length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a3",
+      "name": "Tem Conversas?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst dados = $json.dados || {};\nconst convs = Array.isArray(dados.conversas) ? dados.conversas : [];\nconst LIMITE_PACIENTES = 40;\nconst LIMITE_TRANSCRICAO = 6000;\nconst LIMITE_TOTAL = 100000;\nlet corpo = 'Conversas do WhatsApp da clínica em ' + (dados.data_referencia || 'data não informada') + ' (' + convs.length + ' pacientes):\\n\\n';\nlet usados = 0;\nfor (const [i, c] of convs.slice(0, LIMITE_PACIENTES).entries()) {\n  const primeiroNome = String(c.nome || 'não informado').trim().split(/\\s+/)[0];\n  const transcript = String(c.transcript || '[sem transcript]').slice(-LIMITE_TRANSCRICAO);\n  const bloco = '=== PACIENTE ' + (i + 1) + ' (' + primeiroNome + ') — temperatura: ' + c.temperatura + ' · funil: ' + c.funil + ' · agendamento: ' + c.agendamento + (c.escalado ? ' · ESCALADO' : '') + (c.opt_out ? ' · OPT-OUT' : '') + '\\n' + transcript + '\\n\\n';\n  if (corpo.length + bloco.length > LIMITE_TOTAL) break;\n  corpo += bloco;\n  usados++;\n}\nif (usados < convs.length) corpo += '[Observação interna: ' + (convs.length - usados) + ' conversa(s) omitida(s) pelo limite de contexto.]\\n';\nconst anterior = $json.auditoria_anterior;\nif (anterior) corpo += '\\n--- AUDITORIA ANTERIOR ---\\n' + String(anterior).slice(0, 3000);\nconst system = 'Você é auditor sênior de atendimento e vendas por WhatsApp de uma clínica de medicina diagnóstica. Audite: humanização e rapport; método Vende-C; precisão de preços, exames e horários; compliance CFM e LGPD; conversão; oportunidades perdidas; e atuação humana. A clínica não agenda pelo bot e não realiza densitometria, ressonância, mamografia, colonoscopia/endoscopia ou eletroneuromiografia. Não exponha telefones nem outros identificadores. Responda em português para WhatsApp, máximo 40 linhas: nota geral e notas por critério; 2-3 destaques positivos; 2-3 pontos de atenção com exemplo curto; e 3 melhorias acionáveis. Se houver auditoria anterior, comece comparando a evolução e pendências. Seja específico, honesto e não invente fatos.';\nconst body = { model: 'gpt-5.6-luna', instructions: system,\n  input: [{ role: 'user', content: corpo }], reasoning: { effort: 'low' },\n  max_output_tokens: 2200, store: false };\nreturn [{ json: { openai_body: body, pacientes_total: convs.length, pacientes_analisados: usados } }];\n"
+      },
+      "id": "a4",
+      "name": "Montar Análise",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/responses",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.OPENAI_API_KEY }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.openai_body) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "a5",
+      "name": "Chamar Claude",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        768,
+        -96
+      ],
+      "notes": "Corrigido em 01/09: a migracao Anthropic->OpenAI deixou a substituicao pela metade — o header virou 'ANTHROPIC_API_KEYBearer {{...}}' e o body concatenava payload com openai_body. Erro 'invalid syntax' desde 27/08."
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst texto = ($json.output || []).flatMap(o => o.content || [])\n  .filter(c => c.type === 'output_text').map(c => c.text).join('\\n').trim();\nconst t = texto || 'Falha ao gerar análise.';\nreturn [{ json: { texto: '🔍 *ANA — Auditoria de Atendimento*\\n\\n' + t } }];\n"
+      },
+      "id": "a6",
+      "name": "Extrair Análise",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        944,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json: {texto: '🔍 *ANA — Auditoria de Atendimento* · ' + $json.dados.data_referencia + '\\n\\nNenhuma conversa registrada no dia — nada a auditar.'}}];"
+      },
+      "id": "a7",
+      "name": "Sem Conversas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const texto = $input.first().json.texto;\nconst numeros = ['5512996010017','5512997743535','551238873535'];\nreturn numeros.map(n => ({json: {number: n, texto}}));"
+      },
+      "id": "a8",
+      "name": "Destinatários",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_APIKEY }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $json.number, text: $json.texto }) }}",
+        "options": {}
+      },
+      "id": "a9",
+      "name": "Enviar WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1488,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO ana_auditorias (data_ref, nota_geral, texto)\nSELECT CURRENT_DATE - 1,\n       NULLIF(replace(substring($1::jsonb->>'texto' from 'ota geral[^0-9]{0,25}([0-9]{1,2}[.,][0-9]|10|[0-9])'), ',', '.'), '')::numeric,\n       $1::jsonb->>'texto'\nRETURNING texto\nON CONFLICT (data_ref) DO UPDATE SET\n  nota_geral = EXCLUDED.nota_geral,\n  texto      = EXCLUDED.texto,\n  created_at = now()",
+        "options": {
+          "queryReplacement": "={{ JSON.stringify($json) }}"
+        }
+      },
+      "id": "g1",
+      "name": "Gravar Auditoria",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1104,
+        -96
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      },
+      "notes": "Upsert por data_ref: um disparo repetido atualiza a auditoria do dia em vez de criar linha nova. Indice unico ana_auditorias_data_ref_key garante isso no banco."
+    }
+  ],
+  "connections": {
+    "Diário 00h00": {
+      "main": [
+        [
+          {
+            "node": "Extrair Conversas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair Conversas": {
+      "main": [
+        [
+          {
+            "node": "Tem Conversas?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tem Conversas?": {
+      "main": [
+        [
+          {
+            "node": "Montar Análise",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sem Conversas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar Análise": {
+      "main": [
+        [
+          {
+            "node": "Chamar Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chamar Claude": {
+      "main": [
+        [
+          {
+            "node": "Extrair Análise",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair Análise": {
+      "main": [
+        [
+          {
+            "node": "Gravar Auditoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sem Conversas": {
+      "main": [
+        [
+          {
+            "node": "Destinatários",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Destinatários": {
+      "main": [
+        [
+          {
+            "node": "Enviar WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gravar Auditoria": {
+      "main": [
+        [
+          {
+            "node": "Destinatários",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "binaryMode": "separate"
+  }
+}

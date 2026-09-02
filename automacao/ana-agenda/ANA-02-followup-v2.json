@@ -1,0 +1,578 @@
+{
+  "name": "ANA — 02 Follow-up Carinhoso (v2 corrigido)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "name": "A cada 5 min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -656,
+        160
+      ],
+      "id": "4caa6dbe-1986-4535-8d3d-4647c7784c5d",
+      "notes": "5 minutos e o certo: a funcao libera no maximo 1 mensagem por chamada e decide sozinha se ja e hora."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM ana_claim_followups();",
+        "options": {}
+      },
+      "name": "Buscar Leads com Follow-up Devido",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -448,
+        160
+      ],
+      "id": "a2897de2-cc72-4a58-ba17-15e7eeb69f3a",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      },
+      "notes": "Toda a regra de envio esta dentro da funcao: suspensao, janela seg-sex 08:00-17:30, teto de 20/dia, teto de 4/hora, intervalo sorteado, 1 por paciente por dia, parada apos 2 sem resposta. Devolve o lead JA marcado como enviado."
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Um Lead por Vez",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -224,
+        160
+      ],
+      "id": "201a7cb5-f63e-4172-8496-1403a83f345d"
+    },
+    {
+      "parameters": {},
+      "name": "Fim do Ciclo",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "50f7e4a9-a483-4214-9767-ad90a6f8543e"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Prompt REDUZIDO para follow-up: mantem identidade, fatos da clinica,\n-- regras de cadencia, estilo, compliance e contrato de saida; remove os\n-- blocos que so servem para conversa ao vivo (classificacao, jornada,\n-- objecoes, tecnicas e os exemplos few-shot).\n-- Fonte unica: ana_config.system_prompt. Nao ha prompt duplicado para manter.\nSELECT coalesce(\n  nullif(\n    regexp_replace(\n      regexp_replace(\n        regexp_replace(\n          regexp_replace(\n            regexp_replace(valor,\n              '<motor_de_classificacao>.*?</motor_de_classificacao>', '', 'gs'),\n            '<jornada_do_paciente>.*?</jornada_do_paciente>', '', 'gs'),\n          '<tecnicas_de_conversao>.*?</tecnicas_de_conversao>', '', 'gs'),\n        '<objecoes>.*?</objecoes>', '', 'gs'),\n      '## EXEMPLOS DE REFERÊNCIA.*$', '', 'gs'),\n    ''),\n  'Você é a Ana, atendente virtual da Total Quality Medicina Diagnóstica (Caraguatatuba/SP). MODO DE EMERGÊNCIA: prompt não encontrado. Não invente informações; escale para a equipe.'\n) AS valor\nFROM ana_config WHERE chave = 'system_prompt';",
+        "options": {}
+      },
+      "name": "Carregar System Prompt FU",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        272
+      ],
+      "id": "ed9ef507-c9de-4021-adc2-cba5f854163d",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      },
+      "notes": "Prompt reduzido: o ANA-02 carregava os 47 mil caracteres do prompt completo para escrever 2 linhas."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT role, conteudo FROM (SELECT role, conteudo, created_at FROM ana_mensagens WHERE phone = ($1::jsonb->>'phone') ORDER BY created_at DESC LIMIT 16) t ORDER BY created_at ASC;",
+        "options": {
+          "queryReplacement": "={{ JSON.stringify({ phone: $('Um Lead por Vez').first().json.phone }) }}"
+        }
+      },
+      "name": "Carregar Histórico FU",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        208,
+        272
+      ],
+      "id": "ca3473cd-2dd4-45f8-a34d-f0d6079deb8a",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      },
+      "notes": "16 mensagens bastam para o contexto de um follow-up (eram 24)."
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// Gatilho de follow-up: sem mensagem nova do paciente — a Ana redige o toque da cadência.\n// CORREÇÃO: a função ana_claim_followups() JÁ incrementou followup_step antes de devolver.\n// Somar 1 aqui contava o passo em dobro — o paciente pulava o D+1 e recebia o xeque-mate\n// do D+14 como segunda mensagem.\nconst lead = $('Um Lead por Vez').first().json;\nconst hist = $('Carregar Histórico FU').all().map(i => i.json);\nconst sys  = $('Carregar System Prompt FU').first().json.valor;\nconst step = Number(lead.followup_step) || 1;\nconst rotulos = {\n  1: 'follow_up:D+1 — retome com uma dúvida leve e acolhedora (ex.: se ficou alguma dúvida no orçamento). NÃO cobre decisão.',\n  2: 'follow_up:D+3 — traga um MOTIVO NOVO (oferecer verificar um horário da preferência dele, condição de pacote se já citada no histórico, facilidade do processo).',\n  3: 'follow_up:D+7 — prova social leve e verdadeira + uma pergunta direta e gentil.',\n  4: 'follow_up:D+14 — XEQUE-MATE ACOLHEDOR conforme o system prompt: facilite o não com elegância (\"seu não também me ajuda\").',\n  5: 'follow_up:D+30 — último toque: gancho de calendário/rotina de saúde, porta aberta, sem pressão. Depois deste, a cadência encerra.',\n};\nconst agora = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', weekday: 'long', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });\nconst ctx = [\n  '[CONTEXTO DA AUTOMAÇÃO — o paciente NÃO vê este bloco]',\n  'Data/hora: ' + agora + ' (America/Sao_Paulo)',\n  'Evento AUTOMÁTICO (o paciente NÃO enviou mensagem nova): ' + (rotulos[step] || 'follow_up'),\n  'Nome: ' + (lead.nome || 'não informado') + ' · Exames em conversa: ' + JSON.stringify(lead.exames || []) + ' · Resumo interno: ' + (lead.resumo_interno || '-'),\n  'Redija SOMENTE a mensagem deste passo, seguindo o bloco <follow_up> do seu prompt: curta (1 a 3 linhas), tom de quem se importa de verdade com a saúde do paciente, motivo novo, UMA pergunta, ZERO cobrança (\"e aí, já decidiu?\" é proibido). Não repita mensagens anteriores.',\n  'Não cite valores que não estejam no histórico. NUNCA afirme que um horário está livre — ofereça verificar.',\n  'Finalize com o bloco ###DADOS### em linha única.',\n].join('\\n');\nconst msgs = [];\nfor (const h of hist) {\n  const role = h.role === 'assistant' ? 'assistant' : 'user';\n  const c = String(h.conteudo || '').trim();\n  if (!c) continue;\n  if (msgs.length && msgs[msgs.length - 1].role === role) msgs[msgs.length - 1].content += '\\n\\n' + c;\n  else msgs.push({ role, content: c });\n}\nwhile (msgs.length && msgs[0].role !== 'user') msgs.shift();\nif (msgs.length && msgs[msgs.length - 1].role === 'user') msgs[msgs.length - 1].content += '\\n\\n' + ctx;\nelse msgs.push({ role: 'user', content: ctx });\n\n// system como lista + cache_control: a partir da 2a chamada dentro da janela,\n// a leitura do prompt custa uma fração do preço cheio.\nconst body = {\n  model: $env.ANTHROPIC_MODEL || 'claude-sonnet-4-5',\n  max_tokens: 700,\n  system: [{ type: 'text', text: sys, cache_control: { type: 'ephemeral' } }],\n  messages: msgs,\n};\nreturn [{ json: { anthropic_body: body, phone: lead.phone, step } }];\n"
+      },
+      "name": "Montar Payload FU",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        272
+      ],
+      "id": "b34de857-a2f3-4a0f-8c9a-437d5b799390",
+      "notes": "CORRIGIDO: step sem o +1 (a funcao ja incrementou) e system com cache_control."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $env.ANTHROPIC_API_KEY }}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.anthropic_body) }}",
+        "options": {
+          "timeout": 90000
+        }
+      },
+      "name": "Chamar Ana FU",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        608,
+        272
+      ],
+      "id": "9307d4dd-bad2-4dd9-9052-45440b2c9c1a",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst resp = $json;\nconst base = $('Montar Payload FU').first().json;\nconst phone = base.phone, step = base.step;\nlet texto = '';\ntry { texto = (resp.content || []).filter(c => c.type === 'text').map(c => c.text).join('\\n').trim(); } catch (e) {}\nlet dados = { temperatura: 'morno', funil: 'fundo', consciencia: null, intencao: 'orcamento', exames_mencionados: [], convenio: null, agendamento: { status: 'nenhum', data: null, turno: null }, opt_out: false, proxima_acao: 'aguardar_resposta', escalar: false, motivo_escalada: null, resumo_interno: '' };\nlet msg = texto;\nconst ix = texto.indexOf('###DADOS###');\nif (ix >= 0) {\n  msg = texto.slice(0, ix).trim();\n  const m = texto.slice(ix).match(/\\{[\\s\\S]*\\}/);\n  if (m) { try { dados = Object.assign(dados, JSON.parse(m[0])); } catch (e) {} }\n}\nif (!msg) return [{ json: { skip: true, phone } }]; // falha da IA: devolve o passo e retenta\n// Espaçamento da cadência: D+1 → D+3 → D+7 → D+14 → D+30 → encerra\nconst gaps = { 1: 2, 2: 4, 3: 7, 4: 16, 5: null };\nlet due = gaps[step] ? new Date(Date.now() + gaps[step] * 86400000).toISOString() : null;\nif (dados.opt_out || dados.escalar || ['agendado', 'encerrar'].includes(dados.proxima_acao)) due = null;\nreturn [{ json: {\n  phone, mensagem: msg, step,\n  pg_msg: JSON.stringify({ phone, conteudo: msg, dados }),\n  pg_lead: JSON.stringify({ phone, step, followup_due: due, temperatura: dados.temperatura, proxima_acao: dados.proxima_acao, opt_out: !!dados.opt_out, escalado: !!dados.escalar, motivo_escalada: dados.motivo_escalada, resumo_interno: dados.resumo_interno || '' }),\n} }];\n"
+      },
+      "name": "Extrair Resposta FU",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        272
+      ],
+      "id": "71d9d584-2730-4e4d-ba79-21d78f45460b"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.mensagem }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Gerou Mensagem?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        992,
+        272
+      ],
+      "id": "a01dd6ff-391f-472c-af1f-2f50021247ed"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- CORREÇÃO: a função ja consumiu a vaga, incrementou o passo e gravou em\n-- ana_envios_log. Sem apagar o log, a regra de 1 mensagem por paciente por dia\n-- bloqueia a retentativa ate o dia seguinte — e a mensagem que nao saiu ainda\n-- ocupa uma das 20 do dia.\nWITH limpa AS (\n  DELETE FROM ana_envios_log\n   WHERE phone = ($1::jsonb->>'phone') AND tipo = 'follow_up'\n     AND enviado_em > now() - interval '2 hours'\n  RETURNING phone\n)\nUPDATE ana_leads\n   SET followup_step   = GREATEST(COALESCE(followup_step, 1) - 1, 0),\n       followup_due_at = now() + interval '1 hour',\n       updated_at      = now()\n WHERE phone = ($1::jsonb->>'phone')\n RETURNING phone;",
+        "options": {
+          "queryReplacement": "={{ JSON.stringify({ phone: $json.phone }) }}"
+        }
+      },
+      "name": "Adiar Retentativa (1h)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        992,
+        480
+      ],
+      "id": "125271b8-14ac-47c2-bd1b-55da0db7e01d",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      },
+      "notes": "CORRIGIDO: apaga ana_envios_log e devolve o passo, senao a retentativa nunca dispara."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO ana_mensagens (phone, role, tipo, conteudo, dados) SELECT p->>'phone', 'assistant', 'texto', p->>'conteudo', (p->'dados') FROM (SELECT $1::jsonb AS p) t RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ $json.pg_msg }}"
+        }
+      },
+      "name": "Salvar Resposta FU",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1168,
+        272
+      ],
+      "id": "3b267be7-e80e-4e87-8a62-f38af38e82e4",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE ana_leads SET followup_step = (p->>'step')::int, followup_due_at = NULLIF(p->>'followup_due','')::timestamptz, temperatura = COALESCE(p->>'temperatura', temperatura), proxima_acao = p->>'proxima_acao', opt_out = COALESCE((p->>'opt_out')::boolean, opt_out), escalado = COALESCE((p->>'escalado')::boolean, escalado), motivo_escalada = p->>'motivo_escalada', resumo_interno = COALESCE(NULLIF(p->>'resumo_interno',''), resumo_interno), last_bot_msg_at = now(), updated_at = now() FROM (SELECT $1::jsonb AS p) t WHERE phone = p->>'phone' RETURNING phone;",
+        "options": {
+          "queryReplacement": "={{ $('Extrair Resposta FU').first().json.pg_lead }}"
+        }
+      },
+      "name": "Atualizar Lead FU",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1344,
+        272
+      ],
+      "id": "670b054d-f19e-4300-9889-63ec6cc7d698",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      },
+      "notes": "Agenda o PROXIMO passo numa data futura. Nao incrementa o contador: quem incrementa e a funcao."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_APIKEY }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $('Extrair Resposta FU').first().json.phone, text: $('Extrair Resposta FU').first().json.mensagem, delay: 3500 }) }}",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "name": "Enviar Follow-up",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1520,
+        272
+      ],
+      "id": "e0b73a91-cbb2-43ed-b4df-8a2dc4b7797a",
+      "onError": "continueRegularOutput",
+      "notes": "fullResponse + neverError: expoe statusCode para a deteccao de falha funcionar de verdade."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.statusCode || 0 }}",
+              "rightValue": 300,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Falhou o Envio?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1712,
+        272
+      ],
+      "id": "6c6326e5-718b-4f24-bcec-04853a054964",
+      "notes": "CORRIGIDO: testa o codigo HTTP. A versao antiga procurava a chave 'error' e deixava passar 4xx com corpo JSON."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- CORREÇÃO: alem de devolver o passo, apaga o registro de envio (senao a\n-- retentativa nunca dispara) e a mensagem que ficou gravada como enviada\n-- antes de a Evolution confirmar (senao o historico mente para a Ana).\nWITH limpa_log AS (\n  DELETE FROM ana_envios_log\n   WHERE phone = ($1::jsonb->>'phone') AND tipo = 'follow_up'\n     AND enviado_em > now() - interval '2 hours'\n  RETURNING phone\n),\nlimpa_msg AS (\n  DELETE FROM ana_mensagens\n   WHERE id = NULLIF($1::jsonb->>'msg_id','')::bigint\n  RETURNING phone\n)\nUPDATE ana_leads\n   SET followup_step   = GREATEST(COALESCE(followup_step, 1) - 1, 0),\n       followup_due_at = now() + interval '1 hour',\n       updated_at      = now()\n WHERE phone = ($1::jsonb->>'phone')\n RETURNING phone;",
+        "options": {
+          "queryReplacement": "={{ JSON.stringify({ phone: $('Extrair Resposta FU').first().json.phone, msg_id: $('Salvar Resposta FU').first().json.id }) }}"
+        }
+      },
+      "name": "Reverter Passo (retenta em 1h)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1888,
+        432
+      ],
+      "id": "8ca4d49e-d666-4910-9a22-bb428f8d6fdc",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      },
+      "notes": "CORRIGIDO: apaga o registro de envio e a mensagem gravada antes do envio confirmar."
+    }
+  ],
+  "connections": {
+    "A cada 5 min": {
+      "main": [
+        [
+          {
+            "node": "Buscar Leads com Follow-up Devido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Leads com Follow-up Devido": {
+      "main": [
+        [
+          {
+            "node": "Um Lead por Vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Um Lead por Vez": {
+      "main": [
+        [
+          {
+            "node": "Fim do Ciclo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Carregar System Prompt FU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Carregar System Prompt FU": {
+      "main": [
+        [
+          {
+            "node": "Carregar Histórico FU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Carregar Histórico FU": {
+      "main": [
+        [
+          {
+            "node": "Montar Payload FU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar Payload FU": {
+      "main": [
+        [
+          {
+            "node": "Chamar Ana FU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chamar Ana FU": {
+      "main": [
+        [
+          {
+            "node": "Extrair Resposta FU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair Resposta FU": {
+      "main": [
+        [
+          {
+            "node": "Gerou Mensagem?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerou Mensagem?": {
+      "main": [
+        [
+          {
+            "node": "Salvar Resposta FU",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Adiar Retentativa (1h)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiar Retentativa (1h)": {
+      "main": [
+        [
+          {
+            "node": "Um Lead por Vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar Resposta FU": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Lead FU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar Lead FU": {
+      "main": [
+        [
+          {
+            "node": "Enviar Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Falhou o Envio?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Falhou o Envio?": {
+      "main": [
+        [
+          {
+            "node": "Reverter Passo (retenta em 1h)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Um Lead por Vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reverter Passo (retenta em 1h)": {
+      "main": [
+        [
+          {
+            "node": "Um Lead por Vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo"
+  }
+}
