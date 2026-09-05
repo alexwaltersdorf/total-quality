@@ -377,7 +377,7 @@ describe("GUARD-RAIL: pagina /convenios (auditoria ago/2026, fila C6)", () => {
     // seo-content.ts (usa node:fs). Se este teste falhar, alguem atualizou
     // um lado e esqueceu o outro — sincronizar os dois arquivos.
     expect(CONVENIOS).toEqual(CONVENIOS_CLIENT);
-    expect(CONVENIOS.length).toBeGreaterThanOrEqual(10);
+    expect(CONVENIOS.length).toBeGreaterThan(0);
   });
 
   it("todo convenio da lista aparece no HTML pre-renderizado", () => {
@@ -385,6 +385,62 @@ describe("GUARD-RAIL: pagina /convenios (auditoria ago/2026, fila C6)", () => {
     for (const convenio of CONVENIOS) {
       expect(html, `convenio ${convenio} sumiu da pagina`).toContain(convenio);
     }
+  });
+});
+
+describe("GUARD-RAIL: convenio nao atendido nunca volta a peca publica (set/2026)", () => {
+  // Em 05/09/2026 o Alex reduziu a lista a Cartao de Todos, Solumedi e Leader.
+  // Antes disso o site anunciava 12 planos de saude que a clinica nao atende —
+  // uma paciente com Hapvida ligou, ouviu "nao atendemos" e cobrou publicamente
+  // numa avaliacao de 3 estrelas em 26/08. Anunciar convenio nao atendido custa
+  // paciente, custa estrela e e o mesmo problema do ecocardiograma.
+  const REMOVIDOS = [
+    "Unimed", "Bradesco Saúde", "SulAmérica", "Amil", "Porto Seguro",
+    "NotreDame Intermédica", "Hapvida", "Cassi", "Geap", "Postal Saúde",
+    "Economus", "Funasa",
+  ];
+
+  it("nenhum convenio removido aparece na lista oficial", () => {
+    for (const nome of REMOVIDOS) {
+      expect(CONVENIOS, `${nome} voltou para a lista de convenios`).not.toContain(nome);
+    }
+  });
+
+  it("nenhum convenio removido aparece no HTML pre-renderizado de /convenios", () => {
+    const html = getSeoContentForPath("/convenios")!;
+    for (const nome of REMOVIDOS) {
+      expect(html, `${nome} voltou ao prerender de /convenios`).not.toContain(nome);
+    }
+  });
+
+  it("nenhum convenio removido aparece em conteudo do client nem em metadados", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const raiz = path.resolve(import.meta.dirname, "..");
+    const alvos = [
+      "client/src/pages/Convenios.tsx",
+      "client/src/pages/LaboratorioCaraguatatuba.tsx",
+      "client/src/lib/conveniosData.ts",
+      "client/src/content/blog/convenios-laboratorio-caraguatatuba.json",
+      "client/src/content/blog/index.json",
+      "server/_core/routes-metadata.ts",
+    ];
+    const problemas: string[] = [];
+    for (const rel of alvos) {
+      const texto = fs.readFileSync(path.resolve(raiz, rel), "utf-8");
+      for (const nome of REMOVIDOS) {
+        if (texto.includes(nome)) problemas.push(`${rel}: ainda cita "${nome}"`);
+      }
+    }
+    expect(problemas, problemas.join("\n")).toEqual([]);
+  });
+
+  it("a pagina nao promete convenios alem dos atendidos", () => {
+    const html = getSeoContentForPath("/convenios")!;
+    // "Outros planos regionais e nacionais" sugeria lista aberta; com tres
+    // convenios fechados isso volta a ser promessa que a recepcao nao cumpre.
+    expect(html).not.toContain("Outros planos regionais");
+    expect(html).toContain("atendimento é particular");
   });
 });
 

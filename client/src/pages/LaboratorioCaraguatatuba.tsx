@@ -66,8 +66,7 @@ const examesImagem: Array<ExamLink & { icon: typeof Microscope }> = [
 ];
 
 const convenios = [
-  "Unimed", "Bradesco Saúde", "SulAmérica", "Amil", "Porto Seguro",
-  "NotreDame Intermédica", "Hapvida", "Cassi", "Geap", "Outros",
+  "Cartão de Todos", "Solumedi", "Leader",
 ];
 
 export default function LaboratorioCaraguatatuba() {
@@ -342,15 +341,15 @@ export default function LaboratorioCaraguatatuba() {
               CONVÊNIOS ACEITOS NO LABORATÓRIO EM <span className="text-brand">CARAGUATATUBA</span>
             </h2>
             <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
-              O laboratório Total Quality em Caraguatatuba aceita diversos convênios de saúde. Veja a{" "}
+              O laboratório Total Quality em Caraguatatuba atende Cartão de Todos, Solumedi e Leader. Veja a{" "}
               <Link
                 href="/convenios"
                 className="text-brand hover:underline"
               >
                 lista completa de convênios aceitos
               </Link>{" "}
-              ou entre em contato pelo WhatsApp para verificar se o seu plano é aceito e tirar
-              suas dúvidas com praticidade.
+              ou fale pelo WhatsApp para confirmar condições e valores. Fora desses, o
+              atendimento é particular.
             </p>
 
             <div className="flex flex-wrap gap-3 mb-10">
