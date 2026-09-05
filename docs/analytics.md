@@ -11,8 +11,27 @@ não no código; e nenhum PR precisa carregar ID de plataforma nova.
 
 O carregamento do GTM passa pelo **gateway first-party**: `client/index.html`
 pede `/metrics/?id=GTM-WLR7JD57`, e `server/_core/tag-gateway.ts` faz proxy para
-`GTM-WLR7JD57.fps.goog`. Se o gateway falhar, o `onerror` do script cai para
-`googletagmanager.com` — a medição não para.
+`GTM-WLR7JD57.fps.goog`. A tag de configuracao do GA4 deve usar obrigatoriamente
+`transport_url: https://totalquality.med.br/metrics`. O fallback do HTML para
+`googletagmanager.com` recupera somente o carregamento do container; ele nao
+recupera hits enviados para um `transport_url` indisponivel.
+
+O workflow `Measurement health` verifica a cada 30 minutos o loader, o endpoint
+`/metrics/healthy`, o ID do GA4 dentro do container publicado, o transporte de
+coleta e a ausencia do endpoint Cloud Run aposentado.
+
+## Incidente de 03/08/2026
+
+As versoes 8 e 9 do GTM, publicadas em 02/08, estavam vazias. A versao 10
+restaurou as tags em 04/08, mas a configuracao do GA4 continuou com
+`transport_url` apontando para
+`server-side-tagging-ie4lymzpwa-uc.a.run.app`, que respondia 500/503. Isso
+explica a queda abrupta no GA4 enquanto Search Console e Google Ads continuaram
+registrando demanda.
+
+Tambem foi removida a sobrescrita de `window.dataLayer.push` no navegador. A
+captura do painel proprio agora recebe uma copia antes do `push` normal, sem
+desconectar o listener instalado pelo GTM.
 
 Todo rastreamento sai de **`client/src/lib/tracking.ts`**. Não existe
 `dataLayer.push` em componente, e o teste `server/seo-content.test.ts` quebra se

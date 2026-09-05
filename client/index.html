@@ -32,8 +32,9 @@
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;
     /* Gateway da tag (first-party): serve o GTM por /metrics no nosso dominio
-       (proxy em server/_core/tag-gateway.ts). Se o gateway falhar, cai
-       automaticamente para o dominio do Google — a medicao nunca para. */
+       (proxy em server/_core/tag-gateway.ts). Se o loader falhar, tenta o
+       dominio do Google. O transporte dos hits continua sendo monitorado
+       separadamente, pois o fallback do loader nao o recupera. */
     j.src='/metrics/?id='+i+dl;
     j.onerror=function(){var k=d.createElement(s);k.async=true;
     k.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;

@@ -41,23 +41,9 @@ export async function collectGA4Metrics(dateRange: GA4DateRange): Promise<Monito
     };
   } catch (error) {
     console.error("[Monitoring GA4] Erro ao coletar métricas:", error);
-
-    // Retornar métricas vazias em caso de erro
-    return {
-      pageViews: 0,
-      users: 0,
-      sessions: 0,
-      bounceRate: 0,
-      avgSessionDuration: 0,
-      conversions: 0,
-      conversionRate: 0,
-      errorCount: 0,
-      errorRate: 0,
-      timestamp: new Date(),
-      period: dateRange,
-      uptime: 0,
-      responseTime: 0,
-    };
+    // Zero e um dado valido; usa-lo como fallback transforma indisponibilidade
+    // da API em uma falsa queda de trafego. O chamador deve alertar a falha.
+    throw error;
   }
 }
 

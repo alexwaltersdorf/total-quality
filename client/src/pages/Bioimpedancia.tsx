@@ -42,11 +42,11 @@ export default function Bioimpedancia() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "Bioimpedância em Caraguatatuba | Total Quality Medicina Diagnóstica";
+    document.title = "Bioimpedância em Caraguatatuba | Total Quality";
   }, []);
 
   // SEO: Meta description e canonical
-  useMetaDescription("Exame de bioimpedância em Caraguatatuba - SP na Total Quality Medicina Diagnóstica. Análise precisa de gordura corporal, massa muscular, água corporal, gordura visceral e taxa metabólica basal. Rápido e indolor. Agende pelo WhatsApp.");
+  useMetaDescription("Faça sua bioimpedância em Caraguatatuba no Total Quality e avalie a composição corporal, gordura visceral e taxa metabólica basal. Consulte informações e agende atendimento.");
   useCanonical("/bioimpedancia");
 
   // SEO: Structured Data — FAQPage + MedicalTest

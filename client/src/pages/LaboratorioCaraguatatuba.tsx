@@ -74,11 +74,11 @@ export default function LaboratorioCaraguatatuba() {
   const scrollRef = useScrollReveal();
 
   useEffect(() => {
-    document.title = "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality";
+    document.title = "Laboratório em Caraguatatuba | Total Quality";
   }, []);
 
   useCanonical("https://totalquality.med.br/laboratorio-caraguatatuba");
-  useMetaDescription("Laboratório de análises clínicas e diagnósticos em Caraguatatuba - SP. Hemograma, tomografia, ultrassom, mamografia e mais de 3.000 exames. Agende agora!");
+  useMetaDescription("Conheça o Total Quality, laboratório em Caraguatatuba com exames de Hemograma, tomografia, ultrassom, mamografia e mais serviços para cuidar da sua saúde. Agende agora!");
 
   // Inject BreadcrumbList schema
   useEffect(() => {

@@ -29,6 +29,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     priority: 0.9,
     changefreq: "monthly",
   },
+
   "tomografia-computadorizada": {
     title: "Tomografia Computadorizada em Caraguatatuba | Total Quality",
     description: "Tomografia computadorizada em Caraguatatuba - SP na Total Quality. Tomógrafo multislice para crânio, tórax, abdômen e coluna. Laudo rápido. Agende.",
@@ -40,6 +41,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     priority: 0.9,
     changefreq: "monthly",
   },
+
   "raio-x": {
     title: "Raio-X em Caraguatatuba | Clínica Total Quality",
     description: "Raio-X digital em Caraguatatuba - SP. Diagnóstico rápido e preciso com tecnologia digital de última geração. Agende seu exame.",
@@ -50,6 +52,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     priority: 0.9,
     changefreq: "monthly",
   },
+
   "ultrassonografia": {
     title: "Ultrassonografia em Caraguatatuba | Total Quality",
     description: "Ultrassonografia em Caraguatatuba - SP. Exame de imagem com equipamento de última geração. Ultrassom geral, doppler e especializado.",
@@ -60,6 +63,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     priority: 0.9,
     changefreq: "monthly",
   },
+
   "mapa": {
     title: "MAPA - Monitoramento Ambulatorial da Pressão Arterial em Caraguatatuba",
     description: "MAPA em Caraguatatuba - SP. Monitoramento de pressão arterial por 24 horas. Diagnóstico de hipertensão. Agende seu exame.",
@@ -70,6 +74,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     priority: 0.8,
     changefreq: "monthly",
   },
+
   "holter": {
     title: "Holter - Monitoramento Cardíaco em Caraguatatuba | Total Quality",
     description: "Holter 24h em Caraguatatuba - SP. Monitoramento contínuo do coração. Diagnóstico de arritmias. Agende seu exame.",
@@ -80,6 +85,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     priority: 0.8,
     changefreq: "monthly",
   },
+
   "espirometria": {
     title: "Espirometria em Caraguatatuba | Teste de Função Pulmonar",
     description: "Espirometria em Caraguatatuba - SP. Teste de função pulmonar para diagnóstico de doenças respiratórias. Agende seu exame.",
@@ -90,6 +96,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     priority: 0.8,
     changefreq: "monthly",
   },
+
   "eletrocardiograma": {
     title: "Eletrocardiograma (ECG) em Caraguatatuba | Total Quality",
     description: "Eletrocardiograma em Caraguatatuba - SP. Diagnóstico de problemas cardíacos. Exame rápido e não invasivo. Agende.",
@@ -100,6 +107,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     priority: 0.8,
     changefreq: "monthly",
   },
+
   "eletroencefalograma": {
     title: "Eletroencefalograma (EEG) em Caraguatatuba | Total Quality",
     description: "Eletroencefalograma em Caraguatatuba - SP. Diagnóstico de problemas neurológicos. Exame não invasivo. Agende seu EEG.",
@@ -110,6 +118,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     priority: 0.8,
     changefreq: "monthly",
   },
+
   "exame-toxicologico": {
     title: "Exame Toxicológico em Caraguatatuba | Total Quality",
     description: "Exame toxicológico em Caraguatatuba - SP. Teste de drogas. Resultado rápido e confiável. Agende seu exame.",
@@ -120,6 +129,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     priority: 0.8,
     changefreq: "monthly",
   },
+
   "hemograma": {
     title: "Hemograma Completo: O Que É, Jejum e Resultado | Total Quality",
     description: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Faça na Total Quality, resultado em até 24h.",
@@ -130,6 +140,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     priority: 0.9,
     changefreq: "monthly",
   },
+
   "exame-admissional": {
     title: "Exame Admissional em Caraguatatuba | ASO e Ocupacionais | Total Quality",
     description: "Exame admissional, periódico, demissional e ASO em Caraguatatuba. Medicina ocupacional completa para empresas do Litoral Norte, com agilidade. Agende.",
@@ -140,6 +151,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     priority: 0.9,
     changefreq: "monthly",
   },
+
   "mamografia": {
     title: "Mamografia Digital em Caraguatatuba | Total Quality",
     description: "Mamografia digital em Caraguatatuba - SP. Diagnóstico de câncer de mama. Tecnologia de última geração. Agende seu exame.",
@@ -164,6 +176,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.7,
     changefreq: "monthly",
   },
+
   "hemograma-caraguatatuba": {
     title: "Hemograma em Caraguatatuba: O que é e Por que Fazer | Total Quality",
     description: "Hemograma em Caraguatatuba: entenda o que é, para que serve e como é realizado. Resultados rápidos na Total Quality.",
@@ -174,6 +187,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.7,
     changefreq: "monthly",
   },
+
   "ultrassonografia-caraguatatuba": {
     title: "Ultrassonografia em Caraguatatuba: Guia Completo | Total Quality",
     description: "Ultrassonografia em Caraguatatuba: tipos, indicações, preparo e como é realizado. Diagnóstico rápido e preciso.",
@@ -184,6 +198,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.7,
     changefreq: "monthly",
   },
+
   "tomografia-caraguatatuba": {
     title: "Tomografia em Caraguatatuba: Tudo que Você Precisa Saber | Total Quality",
     description: "Tomografia em Caraguatatuba: indicações, preparo, como funciona e segurança. Diagnóstico preciso com tecnologia de ponta.",
@@ -194,12 +209,13 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.7,
     changefreq: "monthly",
   },
+
   "exame-de-sangue-caraguatatuba": {
     // Reposicionado (auditoria 01/08): a intencao transacional "onde fazer"
     // canibalizava a pagina de servico /exames/exames-de-sangue. O artigo vira
     // informacional (tipos e preparo); a pagina de servico e o destino comercial.
-    title: "Exame de Sangue: Tipos, Preparo e Jejum — Guia Total Quality",
-    description: "Guia completo sobre exames de sangue: quais os principais tipos, como se preparar, quanto tempo de jejum e como ler o pedido médico. Por Total Quality Caraguatatuba.",
+    title: "Exame de Sangue em Caraguatatuba: Onde Fazer?",
+    description: "Saiba onde fazer exame de sangue em Caraguatatuba, quais cuidados podem ser necessários e como escolher um laboratório para realizar seus exames.",
     keywords: "exame de sangue, laboratório Caraguatatuba, hemograma, análises clínicas",
     ogTitle: "Exame de Sangue em Caraguatatuba",
     ogDescription: "Tudo o que você precisa saber sobre exames de sangue em Caraguatatuba.",
@@ -207,6 +223,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.8,
     changefreq: "monthly",
   },
+
   "alimentacao-e-exames-laboratoriais": {
     title: "Como a Alimentação Influencia Seus Exames Laboratoriais | Total Quality",
     description: "Saiba como a alimentação afeta seus exames de sangue. Guia completo sobre jejum, alimentos que interferem e preparo correto para exames precisos.",
@@ -217,6 +234,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.7,
     changefreq: "monthly",
   },
+
   "vitamina-d-importancia-saude": {
     title: "Vitamina D: Por Que Você Provavelmente Está Com Deficiência | Total Quality",
     description: "60% dos brasileiros têm deficiência de vitamina D. Saiba por que, os riscos e como manter seus níveis adequados. Dicas de especialistas.",
@@ -227,6 +245,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.7,
     changefreq: "monthly",
   },
+
   "saude-do-coracao-prevencao": {
     title: "Saúde do Coração: 7 Hábitos Que Podem Salvar Sua Vida | Total Quality",
     description: "Doenças cardiovasculares são a principal causa de morte no Brasil. Conheça os 7 hábitos comprovados que protegem seu coração.",
@@ -237,6 +256,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.7,
     changefreq: "monthly",
   },
+
   "exames-de-sangue-guia-completo": {
     title: "Exames de Sangue: Guia Completo Para Entender Seus Resultados | Total Quality",
     description: "Hemograma, glicemia, colesterol e mais — o que cada exame revela sobre sua saúde. Guia completo para entender seus resultados.",
@@ -247,6 +267,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.7,
     changefreq: "monthly",
   },
+
   "convenios-laboratorio-caraguatatuba": {
     title: "Convênios Aceitos no Laboratório em Caraguatatuba | Total Quality",
     description: "Veja todos os convênios e planos de saúde aceitos no laboratório Total Quality em Caraguatatuba - SP. Unimed, Bradesco, SulAmérica e outros.",
@@ -254,6 +275,18 @@ const blogMetadata: Record<string, RouteMetadata> = {
     ogTitle: "Convênios Aceitos | Total Quality",
     ogDescription: "Confira a lista completa de convênios aceitos no laboratório.",
     canonical: "https://totalquality.med.br/blog/convenios-laboratorio-caraguatatuba",
+    priority: 0.7,
+    changefreq: "monthly",
+  },
+
+  "hemograma-completo-o-que-avalia": {
+    title: "Hemograma Completo: O Que o Exame Avalia? | Total Quality",
+    description: "Entenda o que o hemograma completo avalia, quais células são analisadas, para que serve e se o exame precisa de jejum.",
+    keywords: "hemograma completo, hemograma, exame de sangue, hemácias, leucócitos, plaquetas, Caraguatatuba",
+    ogTitle: "Hemograma Completo: O Que o Exame Avalia?",
+    ogDescription: "Entenda quais células e parâmetros são analisados no hemograma completo.",
+    ogImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/blog-checkup-preventivo-H3wYYGRF5gsNjaJi3J89XG.webp",
+    canonical: "https://totalquality.med.br/blog/hemograma-completo-o-que-avalia",
     priority: 0.7,
     changefreq: "monthly",
   },
@@ -272,6 +305,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
     priority: 1.0,
     changefreq: "weekly",
   },
+
   "/checkup": {
     title: "Check-up Preventivo em Caraguatatuba | Planos e Preços | Total Quality",
     description: "Check-up preventivo em Caraguatatuba: planos básico, select e premium. Exames completos com resultados rápidos. Agende agora.",
@@ -282,6 +316,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
     priority: 0.9,
     changefreq: "monthly",
   },
+
   "/bioimpedancia": {
     title: "Bioimpedância - Análise de Composição Corporal em Caraguatatuba",
     description: "Bioimpedância em Caraguatatuba - SP. Análise de composição corporal (gordura, músculo, água). Agende seu exame.",
@@ -292,6 +327,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
     priority: 0.8,
     changefreq: "monthly",
   },
+
   "/blog": {
     title: "Blog Total Quality | Artigos sobre Saúde e Diagnóstico",
     description: "Blog Total Quality: artigos sobre saúde, diagnóstico, exames preventivos e bem-estar. Informações de especialistas.",
@@ -302,6 +338,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
     priority: 0.8,
     changefreq: "weekly",
   },
+
   "/privacidade": {
     title: "Política de Privacidade | Total Quality Medicina Diagnóstica",
     description: "Como a Total Quality coleta, usa e protege seus dados pessoais e de saúde, conforme a LGPD. Seus direitos e como exercê-los.",
@@ -312,6 +349,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
     priority: 0.3,
     changefreq: "yearly",
   },
+
   "/exames": {
     title: "Exames Laboratoriais e de Imagem em Caraguatatuba | Total Quality",
     description: "Todos os exames da Total Quality em Caraguatatuba: exames laboratoriais, hemograma, ultrassom, tomografia, cardiológicos, ocupacionais e mais. Veja a lista completa.",
@@ -322,6 +360,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
     priority: 0.9,
     changefreq: "weekly",
   },
+
   "/convenios": {
     title: "Convênios Aceitos | Laboratório Total Quality Caraguatatuba",
     description: "Veja os convênios e planos de saúde aceitos no laboratório Total Quality em Caraguatatuba: Unimed, Bradesco Saúde, SulAmérica, Amil e mais. Confirme pelo WhatsApp.",
@@ -332,6 +371,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
     priority: 0.7,
     changefreq: "monthly",
   },
+
   "/laboratorio-caraguatatuba": {
     // Intencao distinta da home para evitar canibalizacao: home = "laboratório em
     // caraguatatuba" (transacional); esta pagina = "laboratório de análises clínicas".
@@ -344,6 +384,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
     priority: 0.8,
     changefreq: "monthly",
   },
+
   "/cartao": {
     title: "Cartão Total Quality Care | Benefícios e Cashback",
     description: "Cartão Total Quality Care: benefícios, cashback, planos e preços. Saúde preventiva com vantagens financeiras.",
@@ -487,5 +528,6 @@ function escapeHtml(text: string): string {
     '"': "&quot;",
     "'": "&#039;",
   };
+
   return text.replace(/[&<>"']/g, (char) => map[char]);
 }
