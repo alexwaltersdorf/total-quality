@@ -3,6 +3,7 @@
  * Sincroniza artigos da API do AutoSEO e publica automaticamente no blog
  */
 
+import { refreshAutoSeoSlugs } from "./autoseo-slugs";
 import {
   getAutoSeoArticleByAutoSeoId,
   createAutoSeoArticle,
@@ -124,6 +125,10 @@ export async function syncAutoSeoArticles(): Promise<{
     }
 
     console.log(`[AutoSEO] Sincronização concluída: ${newArticles} novos, ${updatedArticles} atualizados, ${publishedArticles} publicados`);
+
+    // A lista de slugs decide quem responde 200 e quem responde 404 real
+    // (server/_core/autoseo-slugs.ts). Sem isso, artigo novo cairia em 404.
+    await refreshAutoSeoSlugs();
 
     return {
       success: true,

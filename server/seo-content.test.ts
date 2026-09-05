@@ -693,3 +693,64 @@ describe("GUARD-RAIL: peso do bundle — sem destaque de sintaxe (ago/2026)", ()
     expect(src).not.toContain("dangerouslySetInnerHTML");
   });
 });
+
+describe("GUARD-RAIL: soft 404 do catch-all de artigos (Search Console, ago/2026)", () => {
+  // O Search Console reportou 13 URLs em "Soft 404". As legadas (/sobre,
+  // /medicos, /mapa, /login...) ganharam 301 em legacy-redirects.ts. Sobrava a
+  // fabrica: a rota `/:slug` do wouter devolvia **200 para qualquer caminho de
+  // primeiro nivel**, servindo a home com status 200 — soft 404 por definicao,
+  // renovavel para toda URL nova que o Google descobrisse.
+  const blogSlugs = getKnownBlogSlugs();
+
+  it("caminho de primeiro nível inexistente responde 404 real", () => {
+    const publicados = new Set(["guia-de-exames-2026"]);
+    expect(resolveHttpStatus("/pagina-que-nao-existe", blogSlugs, publicados)).toBe(404);
+    expect(resolveHttpStatus("/promo-antiga", blogSlugs, publicados)).toBe(404);
+  });
+
+  it("artigo AutoSEO publicado continua respondendo 200", () => {
+    const publicados = new Set(["guia-de-exames-2026"]);
+    expect(resolveHttpStatus("/guia-de-exames-2026", blogSlugs, publicados)).toBe(200);
+    expect(resolveHttpStatus("/guia-de-exames-2026/", blogSlugs, publicados)).toBe(200);
+  });
+
+  it("rota estática nunca é confundida com slug de artigo", () => {
+    // Sem artigo nenhum publicado, as rotas do site seguem 200.
+    const vazio = new Set<string>();
+    for (const rota of ["/", "/checkup", "/bioimpedancia", "/cartao", "/convenios", "/privacidade", "/blog", "/exames"]) {
+      expect(resolveHttpStatus(rota, blogSlugs, vazio), `${rota} virou 404`).toBe(200);
+    }
+  });
+
+  it("lista ainda não carregada mantém o comportamento antigo (nunca 404 por banco fora)", () => {
+    // `null` = cache nunca carregou. Preferimos soft 404 transitório a
+    // devolver 404 num artigo real porque o banco estava indisponível.
+    expect(resolveHttpStatus("/qualquer-coisa", blogSlugs, null)).toBe(200);
+    expect(resolveHttpStatus("/qualquer-coisa", blogSlugs)).toBe(200);
+  });
+
+  it("as 13 URLs do relatório de soft 404 têm 301 ou são rota válida", () => {
+    // Lista exata do relatório do Search Console (validação falhou em 11/08,
+    // quando o deploy estava quebrado e o código nunca chegou à produção).
+    const reportadas = [
+      "/blog/index",
+      "/blog/privacidade",
+      "/mapa",
+      "/medicos",
+      "/login",
+      "/sobre",
+      "/contato",
+      "/cartao-desconto",
+    ];
+    for (const url of reportadas) {
+      const destino = getLegacyRedirect(url);
+      expect(destino, `${url} perdeu o 301 e volta a ser soft 404`).toBeTruthy();
+      // O destino do 301 precisa existir de verdade.
+      const alvo = destino!.split("#")[0] || "/";
+      expect(
+        resolveHttpStatus(alvo, blogSlugs, new Set<string>()),
+        `${url} redireciona para ${alvo}, que não responde 200`
+      ).toBe(200);
+    }
+  });
+});
