@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { FUNDACAO_ISO } from "@shared/const";
 
 /**
  * Hook para adicionar Schema.org LocalBusiness estruturado em JSON-LD.
@@ -170,7 +171,7 @@ export function useSchemaOrganization(options?: any) {
       url: "https://totalquality.med.br/",
       logo: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/logo.png",
       description: "Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba",
-      foundingDate: "2003",
+      foundingDate: FUNDACAO_ISO,
       telephone: "+55 (12) 3887-3535",
       email: "contato@totalquality.med.br",
       sameAs: [

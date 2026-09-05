@@ -18,6 +18,7 @@ import nodePath from "node:path";
 import { examesData, type ExamData } from "../../client/src/lib/examesData";
 import { linkifyText } from "../../client/src/lib/internalLinkTargets";
 import blogIndex from "../../client/src/content/blog/index.json";
+import { anosDeAtuacao } from "@shared/const";
 
 type BlogPost = (typeof blogIndex)[number] & { content: string[] };
 
@@ -227,7 +228,7 @@ function renderExamHtml(exam: ExamData): string {
 
 const laboratorioHtml = `
     <h1>Laboratório de Análises Clínicas em Caraguatatuba</h1>
-    <p>A Total Quality é um laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba – SP, com mais de 23 anos de atuação no Litoral Norte. Realizamos mais de 3.000 tipos de exames laboratoriais e de imagem em um só lugar, com equipamentos automatizados de alta precisão, equipe especializada e resultados disponíveis online.</p>
+    <p>A Total Quality é um laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba – SP, com mais de ${anosDeAtuacao()} anos de atuação no Litoral Norte. Realizamos mais de 3.000 tipos de exames laboratoriais e de imagem em um só lugar, com equipamentos automatizados de alta precisão, equipe especializada e resultados disponíveis online.</p>
     <h2>Exames laboratoriais realizados</h2>
     <ul>
       <li><a href="/exames/hemograma">Hemograma completo</a> e <a href="/exames/exames-de-sangue">exames de sangue</a> em geral</li>
@@ -252,7 +253,7 @@ const laboratorioHtml = `
     </ul>
     <h2>Por que escolher a Total Quality</h2>
     <ul>
-      <li>Mais de 23 anos de experiência em Caraguatatuba</li>
+      <li>Mais de ${anosDeAtuacao()} anos de experiência em Caraguatatuba</li>
       <li>Mais de 340 avaliações no Google com nota 4,5</li>
       <li>Coleta rápida, ambiente confortável e estacionamento no Centro</li>
       <li>Resultados online em até 24 horas para a maioria dos exames</li>
@@ -388,7 +389,7 @@ function conveniosHtml(): string {
 
 const homeHtml = `
     <h1>Laboratório em Caraguatatuba — Total Quality Medicina Diagnóstica</h1>
-    <p>Há mais de 23 anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">laboratório de análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>.</p>
+    <p>Há mais de ${anosDeAtuacao()} anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">laboratório de análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>.</p>
     <ul>
       <li>Resultados online em até 24 horas para a maioria dos exames</li>
       <li>Coleta laboratorial sem agendamento, por ordem de chegada — e coleta domiciliar mediante agendamento</li>
@@ -509,7 +510,7 @@ function examesHubHtml(): string {
     .join("");
   return `
     <h1>Exames Laboratoriais e de Imagem em Caraguatatuba</h1>
-    <p>A Total Quality reúne em um só endereço, no Centro de Caraguatatuba, mais de 3.000 tipos de exames laboratoriais, exames de imagem, cardiológicos e ocupacionais — com resultados online em até 24 horas para a maioria dos exames laboratoriais e equipe especializada há mais de 23 anos no Litoral Norte.</p>
+    <p>A Total Quality reúne em um só endereço, no Centro de Caraguatatuba, mais de 3.000 tipos de exames laboratoriais, exames de imagem, cardiológicos e ocupacionais — com resultados online em até 24 horas para a maioria dos exames laboratoriais e equipe especializada há mais de ${anosDeAtuacao()} anos no Litoral Norte.</p>
     ${sections}
     <p><a href="/bioimpedancia">Bioimpedância</a> — análise completa de composição corporal.</p>
     <p><a href="/checkup">Check-up preventivo</a> — pacotes completos por faixa etária.</p>
