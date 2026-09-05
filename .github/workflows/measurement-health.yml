@@ -1,0 +1,23 @@
+name: Measurement health
+
+on:
+  schedule:
+    - cron: "17,47 * * * *"
+  workflow_dispatch:
+
+jobs:
+  measurement-health:
+    name: GTM and GA4 transport
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate production measurement path
+        run: node scripts/check-measurement-health.mjs

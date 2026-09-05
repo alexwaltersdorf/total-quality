@@ -14,6 +14,7 @@
  */
 import { resolveLeadValue } from "@/lib/leadValues";
 import { buildUserData } from "@/lib/userData";
+import { captureAnalyticsEvent } from "@/lib/analyticsStore";
 
 // Tipagem do dataLayer
 declare global {
@@ -27,7 +28,7 @@ declare global {
 // ============================================================
 function pushToDataLayer(event: string, params: Record<string, unknown> = {}) {
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({
+  const payload = {
     event,
     ...params,
     event_timestamp: new Date().toISOString(),
@@ -36,7 +37,12 @@ function pushToDataLayer(event: string, params: Record<string, unknown> = {}) {
     page_title: document.title,
     page_hostname: window.location.hostname,
     page_referrer: document.referrer,
-  });
+  };
+
+  // O painel proprio recebe uma copia; o push original permanece sob controle
+  // do GTM para que GA4, Google Ads e Meta recebam o mesmo evento.
+  captureAnalyticsEvent(payload);
+  window.dataLayer.push(payload);
 }
 
 // ============================================================

@@ -1,191 +1,187 @@
-import { notifyOwner } from "./notification";
 import { format, subDays } from "date-fns";
+import { getSessionsCount } from "../db";
+import { notifyOwner } from "./notification";
 import { collectGA4Metrics, getPreviousPeriod } from "./monitoring-ga4";
+import type { GA4DateRange } from "./ga4-client";
+
+export type DataQualityStatus = "ok" | "warning" | "critical";
 
 export interface PerformanceMetrics {
   timestamp: Date;
-  uptime: number; // percentage
-  avgResponseTime: number; // ms
-  errorRate: number; // percentage
-  totalRequests: number;
-  totalErrors: number;
+  period: GA4DateRange;
   pageViews: number;
   uniqueUsers: number;
-  conversionRate: number; // percentage
-  campaignSpend: number; // R$
-  campaignConversions: number;
-  campaignROAS: number;
+  sessions: number;
+  conversions: number;
+  conversionRate: number;
+  errorCount: number;
+  errorsPerThousandViews: number;
+  internalSessions: number;
+  ga4ToInternalRatio: number | null;
+  dataQualityStatus: DataQualityStatus;
+  dataQualityReasons: string[];
 }
 
-/**
- * Coleta métricas de desempenho do site com GA4
- */
-export async function collectPerformanceMetrics(useGA4 = true): Promise<PerformanceMetrics> {
-  const now = new Date();
-  const weekAgo = subDays(now, 7);
+function databaseRange(period: GA4DateRange): { since: Date; until: Date } {
+  return {
+    // A propriedade e a operacao da clinica usam America/Sao_Paulo.
+    since: new Date(`${period.startDate}T00:00:00-03:00`),
+    until: new Date(`${period.endDate}T23:59:59.999-03:00`),
+  };
+}
 
-  // Tentar coletar do GA4 primeiro
-  if (useGA4) {
-    try {
-      const currentPeriod = {
-        startDate: format(weekAgo, "yyyy-MM-dd"),
-        endDate: format(now, "yyyy-MM-dd"),
-      };
+function initialQuality(
+  ga4Sessions: number,
+  internalSessions: number
+): Pick<PerformanceMetrics, "ga4ToInternalRatio" | "dataQualityStatus" | "dataQualityReasons"> {
+  const ratio = internalSessions > 0 ? ga4Sessions / internalSessions : null;
+  const reasons: string[] = [];
+  let status: DataQualityStatus = "ok";
 
-      const ga4Metrics = await collectGA4Metrics(currentPeriod);
-
-      return {
-        timestamp: now,
-        uptime: 100 - ga4Metrics.errorRate,
-        avgResponseTime: 245,
-        errorRate: ga4Metrics.errorRate,
-        totalRequests: ga4Metrics.pageViews,
-        totalErrors: ga4Metrics.errorCount,
-        pageViews: ga4Metrics.pageViews,
-        uniqueUsers: ga4Metrics.users,
-        conversionRate: ga4Metrics.conversionRate,
-        campaignSpend: 4250.50,
-        campaignConversions: ga4Metrics.conversions,
-        campaignROAS: 5.8,
-      };
-    } catch (error) {
-      console.error("[Monitoring] Erro ao coletar GA4, usando simulação:", error);
-    }
+  if (internalSessions >= 10 && (ga4Sessions === 0 || (ratio !== null && ratio < 0.35))) {
+    status = "critical";
+    reasons.push("GA4 registrou menos de 35% das sessoes independentes do site");
+  } else if (internalSessions >= 10 && ratio !== null && ratio < 0.6) {
+    status = "warning";
+    reasons.push("GA4 registrou menos de 60% das sessoes independentes do site");
   }
 
-  // Fallback para métricas simuladas
-  const metrics: PerformanceMetrics = {
-    timestamp: now,
-    uptime: 99.8,
-    avgResponseTime: 245,
-    errorRate: 0.2,
-    totalRequests: 15420,
-    totalErrors: 31,
-    pageViews: 8950,
-    uniqueUsers: 2340,
-    conversionRate: 3.2,
-    campaignSpend: 4250.50,
-    campaignConversions: 142,
-    campaignROAS: 5.8,
+  return {
+    ga4ToInternalRatio: ratio,
+    dataQualityStatus: status,
+    dataQualityReasons: reasons,
   };
-
-  return metrics;
 }
 
-/**
- * Calcula delta entre duas semanas
- */
-export function calculateMetricsDelta(
-  current: PerformanceMetrics,
-  previous: PerformanceMetrics
-): Record<string, { delta: number; percentage: number; trend: "up" | "down" | "neutral" }> {
-  const calculateDelta = (curr: number, prev: number, isInversed = false) => {
-    if (prev === 0) {
-      return {
-        delta: curr,
-        percentage: curr > 0 ? 100 : 0,
-        trend: (curr > 0 ? "up" : "neutral") as "up" | "down" | "neutral",
-      };
-    }
-
-    const delta = curr - prev;
-    const percentage = (delta / prev) * 100;
-
-    let trend: "up" | "down" | "neutral" = "neutral";
-    if (isInversed) {
-      trend = delta < 0 ? "up" : delta > 0 ? "down" : "neutral";
-    } else {
-      trend = delta > 0 ? "up" : delta < 0 ? "down" : "neutral";
-    }
-
-    return {
-      delta,
-      percentage: Math.round(percentage * 100) / 100,
-      trend,
-    };
-  };
+/** Coleta somente dados reais. Falhas do GA4 interrompem o relatorio. */
+export async function collectPerformanceMetrics(period: GA4DateRange): Promise<PerformanceMetrics> {
+  const range = databaseRange(period);
+  const [ga4Metrics, internalSessions] = await Promise.all([
+    collectGA4Metrics(period),
+    getSessionsCount(range.since, range.until),
+  ]);
+  const quality = initialQuality(ga4Metrics.sessions, internalSessions);
 
   return {
-    uptime: calculateDelta(current.uptime, previous.uptime),
-    errorRate: calculateDelta(current.errorRate, previous.errorRate, true),
-    pageViews: calculateDelta(current.pageViews, previous.pageViews),
-    uniqueUsers: calculateDelta(current.uniqueUsers, previous.uniqueUsers),
-    conversionRate: calculateDelta(current.conversionRate, previous.conversionRate),
-    campaignConversions: calculateDelta(current.campaignConversions, previous.campaignConversions),
-    campaignROAS: calculateDelta(current.campaignROAS, previous.campaignROAS),
+    timestamp: new Date(),
+    period,
+    pageViews: ga4Metrics.pageViews,
+    uniqueUsers: ga4Metrics.users,
+    sessions: ga4Metrics.sessions,
+    conversions: ga4Metrics.conversions,
+    conversionRate: ga4Metrics.conversionRate,
+    errorCount: ga4Metrics.errorCount,
+    errorsPerThousandViews: ga4Metrics.errorRate,
+    internalSessions,
+    ...quality,
   };
 }
 
-/**
- * Gera relatório de monitoramento
- */
+function percentageDelta(current: number, previous: number): number | null {
+  if (previous === 0) return current === 0 ? 0 : null;
+  return Math.round(((current - previous) / previous) * 10_000) / 100;
+}
+
+function formatDelta(delta: number | null): string {
+  if (delta === null) return "sem base comparavel";
+  return `${delta > 0 ? "+" : ""}${delta.toFixed(2)}%`;
+}
+
+/** Cruza GA4 com a telemetria independente para detectar apagao de mensuracao. */
+export function assessMeasurementContinuity(
+  current: PerformanceMetrics,
+  previous: PerformanceMetrics
+): PerformanceMetrics {
+  const ga4Delta = percentageDelta(current.sessions, previous.sessions);
+  const internalDelta = percentageDelta(current.internalSessions, previous.internalSessions);
+  const reasons = [...current.dataQualityReasons];
+  let status = current.dataQualityStatus;
+
+  if (
+    ga4Delta !== null &&
+    internalDelta !== null &&
+    ga4Delta <= -60 &&
+    internalDelta > -30
+  ) {
+    status = "critical";
+    reasons.push(
+      `sessoes GA4 cairam ${Math.abs(ga4Delta).toFixed(1)}%, mas as sessoes independentes variaram ${internalDelta.toFixed(1)}%`
+    );
+  }
+
+  return { ...current, dataQualityStatus: status, dataQualityReasons: reasons };
+}
+
+/** Gera um relatorio operacional sem inventar uptime, investimento ou ROAS. */
 export async function generateWeeklyReport(
   current: PerformanceMetrics,
   previous: PerformanceMetrics
 ): Promise<string> {
-  const deltas = calculateMetricsDelta(current, previous);
+  const pageViewsDelta = percentageDelta(current.pageViews, previous.pageViews);
+  const usersDelta = percentageDelta(current.uniqueUsers, previous.uniqueUsers);
+  const sessionsDelta = percentageDelta(current.sessions, previous.sessions);
+  const conversionsDelta = percentageDelta(current.conversions, previous.conversions);
+  const internalDelta = percentageDelta(current.internalSessions, previous.internalSessions);
+  const ratio = current.ga4ToInternalRatio === null
+    ? "sem base independente"
+    : `${(current.ga4ToInternalRatio * 100).toFixed(1)}%`;
+  const reasons = current.dataQualityReasons.length > 0
+    ? current.dataQualityReasons.map(reason => `- ${reason}`).join("\n")
+    : "- Nenhuma divergencia relevante detectada.";
 
-  const report = `
-# 📊 Relatório Semanal de Desempenho - Total Quality
+  return `
+# Relatorio semanal de mensuracao - Total Quality
 
-**Período:** ${format(subDays(current.timestamp, 7), "dd/MM/yyyy")} a ${format(current.timestamp, "dd/MM/yyyy")}
+**Periodo:** ${current.period.startDate} a ${current.period.endDate}
+**Qualidade da mensuracao:** ${current.dataQualityStatus.toUpperCase()}
 
-## 📈 Métricas Principais
+## GA4
+- Page views: ${current.pageViews.toLocaleString("pt-BR")} (${formatDelta(pageViewsDelta)})
+- Usuarios: ${current.uniqueUsers.toLocaleString("pt-BR")} (${formatDelta(usersDelta)})
+- Sessoes: ${current.sessions.toLocaleString("pt-BR")} (${formatDelta(sessionsDelta)})
+- Conversoes: ${current.conversions.toLocaleString("pt-BR")} (${formatDelta(conversionsDelta)})
+- Taxa de conversao: ${current.conversionRate.toFixed(2)}%
+- Eventos de erro: ${current.errorCount} (${current.errorsPerThousandViews.toFixed(2)} por mil page views)
 
-### Saúde do Site
-- **Uptime:** ${current.uptime.toFixed(2)}% ${deltas.uptime.trend === "up" ? "📈" : deltas.uptime.trend === "down" ? "📉" : "➡️"} (${deltas.uptime.percentage > 0 ? "+" : ""}${deltas.uptime.percentage.toFixed(2)}%)
-- **Taxa de Erro:** ${current.errorRate.toFixed(2)}% ${deltas.errorRate.trend === "up" ? "⚠️" : deltas.errorRate.trend === "down" ? "✅" : "➡️"} (${deltas.errorRate.percentage > 0 ? "+" : ""}${deltas.errorRate.percentage.toFixed(2)}%)
-- **Tempo de Resposta Médio:** ${current.avgResponseTime}ms
+## Verificacao independente
+- Sessoes registradas pelo site: ${current.internalSessions.toLocaleString("pt-BR")} (${formatDelta(internalDelta)})
+- Razao GA4/site: ${ratio}
 
-### Tráfego
-- **Page Views:** ${current.pageViews.toLocaleString("pt-BR")} ${deltas.pageViews.trend === "up" ? "📈" : deltas.pageViews.trend === "down" ? "📉" : "➡️"} (${deltas.pageViews.percentage > 0 ? "+" : ""}${deltas.pageViews.percentage.toFixed(2)}%)
-- **Usuários Únicos:** ${current.uniqueUsers.toLocaleString("pt-BR")} ${deltas.uniqueUsers.trend === "up" ? "📈" : deltas.uniqueUsers.trend === "down" ? "📉" : "➡️"} (${deltas.uniqueUsers.percentage > 0 ? "+" : ""}${deltas.uniqueUsers.percentage.toFixed(2)}%)
+## Diagnostico
+${reasons}
 
-### Conversões
-- **Taxa de Conversão:** ${current.conversionRate.toFixed(2)}% ${deltas.conversionRate.trend === "up" ? "📈" : deltas.conversionRate.trend === "down" ? "📉" : "➡️"} (${deltas.conversionRate.percentage > 0 ? "+" : ""}${deltas.conversionRate.percentage.toFixed(2)}%)
-- **Conversões:** ${current.campaignConversions} ${deltas.campaignConversions.trend === "up" ? "📈" : deltas.campaignConversions.trend === "down" ? "📉" : "➡️"} (${deltas.campaignConversions.percentage > 0 ? "+" : ""}${deltas.campaignConversions.percentage.toFixed(2)}%)
-- **ROAS:** ${current.campaignROAS.toFixed(2)}x ${deltas.campaignROAS.trend === "up" ? "📈" : deltas.campaignROAS.trend === "down" ? "📉" : "➡️"} (${deltas.campaignROAS.percentage > 0 ? "+" : ""}${deltas.campaignROAS.percentage.toFixed(2)}%)
-
-## 📊 Comparação com Período Anterior
-
-| Métrica | Atual | Anterior | Variação |
-|---------|-------|----------|----------|
-| Uptime | ${current.uptime.toFixed(2)}% | ${previous.uptime.toFixed(2)}% | ${deltas.uptime.percentage > 0 ? "+" : ""}${deltas.uptime.percentage.toFixed(2)}% |
-| Taxa de Erro | ${current.errorRate.toFixed(2)}% | ${previous.errorRate.toFixed(2)}% | ${deltas.errorRate.percentage > 0 ? "+" : ""}${deltas.errorRate.percentage.toFixed(2)}% |
-| Page Views | ${current.pageViews} | ${previous.pageViews} | ${deltas.pageViews.percentage > 0 ? "+" : ""}${deltas.pageViews.percentage.toFixed(2)}% |
-| Taxa de Conversão | ${current.conversionRate.toFixed(2)}% | ${previous.conversionRate.toFixed(2)}% | ${deltas.conversionRate.percentage > 0 ? "+" : ""}${deltas.conversionRate.percentage.toFixed(2)}% |
-| ROAS | ${current.campaignROAS.toFixed(2)}x | ${previous.campaignROAS.toFixed(2)}x | ${deltas.campaignROAS.percentage > 0 ? "+" : ""}${deltas.campaignROAS.percentage.toFixed(2)}% |
+Investimento, ROAS, uptime e tempo de resposta nao aparecem aqui porque este
+monitor nao possui fontes confiaveis para essas metricas.
 
 ---
-*Relatório gerado em ${format(new Date(), "dd/MM/yyyy HH:mm:ss")}*
+Relatorio gerado em ${format(new Date(), "dd/MM/yyyy HH:mm:ss")}
   `.trim();
-
-  return report;
 }
 
-/**
- * Executa monitoramento semanal completo
- */
+/** Executa o monitoramento semanal completo. */
 export async function executeWeeklyMonitoring() {
   try {
-    console.log("[Monitoring] Iniciando coleta de métricas semanais...");
+    console.log("[Monitoring] Iniciando coleta de metricas semanais...");
+    const now = new Date();
+    const currentPeriod: GA4DateRange = {
+      startDate: format(subDays(now, 6), "yyyy-MM-dd"),
+      endDate: format(now, "yyyy-MM-dd"),
+    };
+    const previousPeriod = getPreviousPeriod(currentPeriod);
 
-    // Coleta métricas atuais
-    const currentMetrics = await collectPerformanceMetrics(true);
-
-    // Coleta métricas da semana anterior
-    const previousMetrics = await collectPerformanceMetrics(false);
-
-    // Gera relatório
+    const [rawCurrent, previousMetrics] = await Promise.all([
+      collectPerformanceMetrics(currentPeriod),
+      collectPerformanceMetrics(previousPeriod),
+    ]);
+    const currentMetrics = assessMeasurementContinuity(rawCurrent, previousMetrics);
     const report = await generateWeeklyReport(currentMetrics, previousMetrics);
 
-    // Envia notificação ao proprietário
     await notifyOwner({
-      title: "📊 Relatório Semanal de Desempenho",
+      title: currentMetrics.dataQualityStatus === "critical"
+        ? "ALERTA: falha provavel na mensuracao"
+        : "Relatorio semanal de mensuracao",
       content: report,
     });
-
-    console.log("[Monitoring] Relatório enviado com sucesso");
 
     return {
       success: true,
@@ -194,8 +190,7 @@ export async function executeWeeklyMonitoring() {
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error("[Monitoring] Erro ao executar monitoramento:", error);
-
+    console.error("[Monitoring] Falha na coleta; relatorio nao foi simulado:", error);
     return {
       success: false,
       metrics: null,
