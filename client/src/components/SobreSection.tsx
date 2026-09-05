@@ -6,6 +6,7 @@ import ResponsiveImage from "@/components/ResponsiveImage";
 import { Target, Eye, Heart, ShieldCheck, Leaf, GraduationCap } from "lucide-react";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
+import { anosDeAtuacao } from "@shared/const";
 
 
 const values = [
@@ -67,7 +68,7 @@ export default function SobreSection() {
             <p className="text-lg text-text-light leading-relaxed mb-8">
               Fundada em 2003 em Caraguatatuba - SP, a Total Quality Medicina Diagnóstica é reconhecida como
               <strong className="text-text"> "a clínica mais completa do Litoral Norte de São Paulo"</strong>. Nossa trajetória de
-              mais de 20 anos é marcada pela excelência em{" "}
+              mais de {anosDeAtuacao()} anos é marcada pela excelência em{" "}
               <Link href="/exames/tomografia-computadorizada" className="text-brand hover:underline">
                 tomografia
               </Link>

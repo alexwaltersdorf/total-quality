@@ -11,11 +11,12 @@ import {
   GraduationCap,
   Globe,
 } from "lucide-react";
+import { anosDeAtuacao } from "@shared/const";
 
 const diferenciais = [
   {
     icon: Award,
-    title: "Mais de 20 anos de experiência em medicina diagnóstica",
+    title: `Mais de ${anosDeAtuacao()} anos de experiência em medicina diagnóstica`,
     description: "Tradição e confiança no cuidado com sua saúde desde 2003 em Caraguatatuba e Litoral Norte de São Paulo.",
   },
   {

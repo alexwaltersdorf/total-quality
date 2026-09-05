@@ -261,6 +261,23 @@ describe("GUARD-RAIL: tempo de atuacao sempre calculado (nao remover)", () => {
     }
   });
 
+  it("nenhum componente do cliente volta a fixar o numero de anos", async () => {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    // Em 05/09/2026 tres componentes diziam "mais de 20 anos" enquanto o
+    // prerender ja calculava 23: numero errado, e invisivel para o guard-rail
+    // acima, que so varre o server. O texto que o visitante le conta tanto
+    // quanto o que o Google le.
+    const dir = nodePath.resolve(import.meta.dirname, "../client/src/components");
+    for (const nome of fs.readdirSync(dir)) {
+      if (!nome.endsWith(".tsx")) continue;
+      const conteudo = fs.readFileSync(nodePath.join(dir, nome), "utf-8");
+      expect(conteudo, `${nome} fixa o numero de anos em vez de usar anosDeAtuacao()`).not.toMatch(
+        ANOS_FIXOS
+      );
+    }
+  });
+
   it("o prerender publica o numero calculado, nao um literal", () => {
     const html = getSeoContentForPath("/")!;
     expect(html).toContain(`Há mais de ${anosDeAtuacao()} anos no Litoral Norte`);
