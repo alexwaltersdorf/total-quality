@@ -158,13 +158,18 @@ export default function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-black/10">
-        <div className="container py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-text-muted text-xs">
-            &copy; {new Date().getFullYear()} Total Quality Medicina Diagnóstica. Todos os direitos reservados.
-          </p>
+        <div className="container py-6 flex flex-col items-center gap-3">
           <p className="text-text-muted text-xs text-center">
-            Exames de Sangue • Tomografia • Raio-X • Ultrassonografia • Eletrocardiograma • Caraguatatuba - SP
+            Total Quality Medicina Diagnóstica — CRM 970616 | Responsável Técnico: Alex Waltersdorf — CRM 267.339
           </p>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 w-full">
+            <p className="text-text-muted text-xs">
+              &copy; {new Date().getFullYear()} Total Quality Medicina Diagnóstica. Todos os direitos reservados.
+            </p>
+            <p className="text-text-muted text-xs text-center">
+              Exames de Sangue • Tomografia • Raio-X • Ultrassom • Eletrocardiograma • Caraguatatuba - SP
+            </p>
+          </div>
         </div>
       </div>
     </footer>

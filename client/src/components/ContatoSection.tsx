@@ -125,7 +125,7 @@ export default function ContatoSection() {
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
-            Agende seu exame de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma ou check-up na Total Quality em Caraguatatuba - SP. Atendemos de segunda a sexta, das 08h às 18h.
+            Agende seu exame de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, eletrocardiograma ou check-up na Total Quality em Caraguatatuba - SP. Atendemos de segunda a sexta, das 08h às 18h.
           </p>
         </div>
 

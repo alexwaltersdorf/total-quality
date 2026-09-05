@@ -55,8 +55,8 @@ export const examesData: ExamData[] = [
     metaDescription: "Exames de sangue em Caraguatatuba - SP na Total Quality: hemograma, glicemia, colesterol, hormônios, vitamina D, PSA e TSH. Resultados rápidos. Agende.",
     heroDescription: "Realizamos mais de 3.000 tipos de exames de sangue e análises clínicas com equipamentos de última geração e equipe especializada. Hemograma, glicemia, colesterol, hormônios, marcadores tumorais, sorologias e muito mais.",
     backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/researcher-working-laboratory_292dac6f.webp",
-    whatIs: "Os exames de sangue são análises laboratoriais realizadas a partir de uma amostra de sangue coletada por punção venosa. São fundamentais para avaliar o funcionamento dos órgãos, detectar doenças, monitorar tratamentos e realizar check-ups preventivos. Na Total Quality, utilizamos equipamentos automatizados de alta precisão para garantir resultados confiáveis.",
-    howItWorks: "A coleta é realizada por profissionais treinados em ambiente confortável e seguro. O sangue é processado em nosso laboratório com equipamentos automatizados que garantem precisão e rapidez. Os resultados ficam disponíveis online em até 24 horas para a maioria dos exames.",
+    whatIs: "Os exames de sangue são análises laboratoriais realizadas a partir de uma amostra de sangue coletada por punção venosa. São fundamentais para avaliar o funcionamento dos órgãos, detectar doenças, monitorar tratamentos e realizar check-ups preventivos. Na Total Quality, utilizamos equipamentos automatizados de alta precisão, com rigoroso controle de qualidade para resultados confiáveis.",
+    howItWorks: "A coleta é realizada por profissionais treinados em ambiente confortável e seguro. O sangue é processado em nosso laboratório com equipamentos automatizados de alta precisão e rigoroso controle de qualidade. Os resultados ficam disponíveis online em até 24 horas para a maioria dos exames.",
     indications: [
       "Check-up preventivo anual",
       "Acompanhamento de doenças crônicas (diabetes, colesterol alto, tireoide)",
@@ -329,7 +329,7 @@ export const examesData: ExamData[] = [
     heroDescription: "A espirometria é o exame padrão-ouro para avaliação da função pulmonar. Mede volumes e fluxos de ar nos pulmões, sendo essencial para diagnóstico e acompanhamento de doenças respiratórias como asma e DPOC.",
     backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "A Espirometria (prova de função pulmonar) é um exame que mede a quantidade e a velocidade do ar que entra e sai dos pulmões. Avalia a capacidade pulmonar e detecta obstruções ou restrições nas vias aéreas. É fundamental para diagnóstico de asma, DPOC, fibrose pulmonar e outras doenças respiratórias.",
-    howItWorks: "O paciente sopra com força máxima em um bocal conectado ao espirômetro. O aparelho mede o volume de ar expirado e a velocidade do fluxo. São realizadas várias manobras para garantir resultados confiáveis. O exame pode incluir teste com broncodilatador para avaliar a reversibilidade de obstruções.",
+    howItWorks: "O paciente sopra com força máxima em um bocal conectado ao espirômetro. O aparelho mede o volume de ar expirado e a velocidade do fluxo. São realizadas várias manobras para que os resultados sejam consistentes e confiáveis. O exame pode incluir teste com broncodilatador para avaliar a reversibilidade de obstruções.",
     indications: [
       "Diagnóstico de asma brônquica",
       "Diagnóstico e acompanhamento de DPOC",

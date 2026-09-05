@@ -10,7 +10,7 @@ const diferenciais = [
   {
     icon: Microscope,
     title: "Tecnologia de Última Geração",
-    text: "Nosso laboratório em Caraguatatuba conta com equipamentos automatizados de alta precisão para análises clínicas e diagnósticos por imagem, garantindo resultados confiáveis e rápidos.",
+    text: "Nosso laboratório em Caraguatatuba conta com equipamentos automatizados de alta precisão para análises clínicas e diagnósticos por imagem, com rigoroso controle de qualidade para resultados confiáveis e rápidos.",
   },
   {
     icon: Award,
@@ -20,7 +20,7 @@ const diferenciais = [
   {
     icon: Users,
     title: "Mais de 30.000 Famílias Atendidas",
-    text: "Somos o laboratório de análises clínicas mais completo de Caraguatatuba - SP, com mais de 3.000 tipos de exames laboratoriais e diagnósticos por imagem disponíveis.",
+    text: "Somos um laboratório de análises clínicas em Caraguatatuba - SP com mais de 3.000 tipos de exames laboratoriais e diagnósticos por imagem disponíveis.",
   },
   {
     icon: Clock,
@@ -84,7 +84,7 @@ export default function PorQueEscolherSection() {
               hemograma completo, glicemia em jejum, colesterol total e frações, triglicerídeos, TSH, T4 livre,
               PSA total e livre, vitamina D, hemoglobina glicada, ureia, creatinina, TGO, TGP, ácido úrico,
               hormônios e marcadores tumorais. Todos os exames laboratoriais em Caraguatatuba - SP são realizados
-              com equipamentos automatizados que garantem precisão e confiabilidade nos resultados.
+              com equipamentos automatizados e rigoroso controle de qualidade em todas as etapas da análise.
             </p>
             <p className="reveal text-text-light leading-relaxed">
               Além dos exames de sangue, realizamos exames de urina, exames de fezes (parasitológico),
@@ -98,16 +98,16 @@ export default function PorQueEscolherSection() {
               DIAGNÓSTICO POR IMAGEM EM <span className="text-brand">CARAGUATATUBA</span>
             </h3>
             <p className="reveal text-text-light leading-relaxed mb-4">
-              A Total Quality é a clínica de medicina diagnóstica mais completa de Caraguatatuba, oferecendo
-              tomografia computadorizada multislice, ultrassonografia geral e Doppler, mamografia digital,
-              raio-X digital, ecocardiograma, holter 24h, MAPA 24h, eletrocardiograma, espirometria,
+              A Total Quality reúne em um só lugar os principais exames de imagem de Caraguatatuba:
+              tomografia computadorizada multislice, ultrassom geral e Doppler, mamografia digital,
+              raio-X digital, holter 24h, MAPA 24h, eletrocardiograma, teste ergométrico, espirometria,
               eletroencefalograma e bioimpedância. Nossos equipamentos de diagnóstico por imagem em
               Caraguatatuba são de última geração, proporcionando imagens de alta resolução para diagnósticos
               mais precisos.
             </p>
             <p className="reveal text-text-light leading-relaxed">
-              Contamos com equipe médica especializada em radiologia, cardiologia e neurologia, garantindo
-              laudos detalhados e confiáveis. O check-up preventivo em Caraguatatuba inclui uma combinação
+              Contamos com equipe médica especializada em radiologia, cardiologia e neurologia, responsável
+              por laudos detalhados e confiáveis. O check-up preventivo em Caraguatatuba inclui uma combinação
               personalizada de exames laboratoriais e de imagem, adaptada às necessidades de cada paciente.
             </p>
           </div>

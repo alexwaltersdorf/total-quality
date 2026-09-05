@@ -104,7 +104,7 @@ export function useSchemaLocalBusiness(options?: {
         "Glicemia",
         "Tomografia",
         "Ultrassom",
-        "Ecocardiograma",
+        "Eletrocardiograma",
         "Check-up preventivo",
         "Exames de sangue",
       ],

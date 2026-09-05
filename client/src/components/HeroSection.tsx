@@ -49,7 +49,7 @@ export default function HeroSection() {
             </div>
 
             <p className="reveal text-lg text-text-light leading-relaxed max-w-md mb-10" style={{ transitionDelay: "200ms" }}>
-              Desde 2003, mais de 30.000 famílias confiam no nosso laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba. Realizamos exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, ecocardiograma e check-up preventivo com tecnologia de última geração.
+              Desde 2003, mais de 30.000 famílias confiam no nosso laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba. Realizamos exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia, eletrocardiograma e check-up preventivo com tecnologia de última geração.
             </p>
 
             <div className="reveal flex flex-wrap gap-4 mb-16" style={{ transitionDelay: "300ms" }}>

@@ -237,7 +237,7 @@ curl -s http://localhost:3000/sua-nova-rota | grep 'property="og:url"'
 | `/cartao` | Cartão Total Quality Care | 0.8 |
 | `/laboratorio-caraguatatuba` | Laboratório em Caraguatatuba | 0.8 |
 
-### Rotas de Exames (11)
+### Rotas de Exames (13)
 
 Padrão: `/exames/{slug}`
 
@@ -246,16 +246,18 @@ Padrão: `/exames/{slug}`
 | Exames de Sangue | `exames-de-sangue` | 0.9 |
 | Tomografia | `tomografia-computadorizada` | 0.9 |
 | Raio-X | `raio-x` | 0.9 |
-| Ultrassom | `ultrassom` | 0.9 |
+| Ultrassom | `ultrassonografia` | 0.9 |
 | Mamografia | `mamografia` | 0.9 |
-| Ecocardiograma | `ecocardiograma` | 0.9 |
-| Eletrocardiograma | `eletrocardiograma` | 0.9 |
-| Bioimpedância | `bioimpedancia` | 0.9 |
-| Densitometria Óssea | `densitometria-ossea` | 0.9 |
-| Teste de Esforço | `teste-esforco` | 0.9 |
-| Holter 24h | `holter-24h` | 0.9 |
+| MAPA 24h | `mapa` | 0.8 |
+| Holter 24h | `holter` | 0.8 |
+| Espirometria | `espirometria` | 0.8 |
+| Eletrocardiograma | `eletrocardiograma` | 0.8 |
+| Teste Ergométrico | `teste-ergometrico` | 0.9 |
+| Exames Ocupacionais | `exame-admissional` | 0.9 |
+| Eletroencefalograma | `eletroencefalograma` | 0.8 |
+| Exame Toxicológico | `exame-toxicologico` | 0.8 |
 
-### Rotas de Blog (11)
+### Rotas de Blog (10)
 
 Padrão: `/blog/{slug}`
 
@@ -271,7 +273,9 @@ Padrão: `/blog/{slug}`
 | Hemograma | `hemograma-caraguatatuba` | 0.8 |
 | Ultrassonografia | `ultrassonografia-caraguatatuba` | 0.7 |
 | Tomografia | `tomografia-caraguatatuba` | 0.7 |
-| Convênios (alt) | `convênios-laboratório-caraguatatuba` | 0.6 |
+
+> A rota acentuada `convênios-laboratório-caraguatatuba` foi removida por duplicar
+> `convenios-laboratorio-caraguatatuba` (conteúdo duplicado no sitemap).
 
 ---
 

@@ -204,16 +204,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.7,
     changefreq: "monthly",
   },
-  "convênios-laboratório-caraguatatuba": {
-    title: "Convênios Aceitos no Laboratório em Caraguatatuba | Total Quality",
-    description: "Veja todos os convênios de saúde aceitos no laboratório Total Quality em Caraguatatuba. Cobertura completa de planos.",
-    keywords: "convênios, planos de saúde, laboratório, Caraguatatuba",
-    ogTitle: "Convênios Aceitos | Total Quality",
-    ogDescription: "Confira todos os convênios de saúde aceitos no laboratório Total Quality.",
-    canonical: "https://totalquality.med.br/blog/convênios-laboratório-caraguatatuba",
-    priority: 0.6,
-    changefreq: "monthly",
-  },
   "exame-de-sangue-caraguatatuba": {
     title: "Onde Fazer Exame de Sangue em Caraguatatuba — Guia Completo 2026",
     description: "Descubra onde fazer exame de sangue em Caraguatatuba - SP com qualidade. Guia completo com tipos de exames, preparo, preços e como agendar.",

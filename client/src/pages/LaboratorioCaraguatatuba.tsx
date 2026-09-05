@@ -119,7 +119,7 @@ export default function LaboratorioCaraguatatuba() {
                 </h1>
 
                 <p className="reveal text-lg text-text-light leading-relaxed max-w-2xl mb-8">
-                  A Total Quality é o laboratório de análises clínicas e medicina diagnóstica mais completo de
+                  A Total Quality é laboratório de análises clínicas e clínica de medicina diagnóstica em
                   Caraguatatuba - SP. Desde 2003, realizamos mais de 3.000 tipos de exames com tecnologia de
                   última geração, equipe médica especializada e resultados disponíveis online. Localizado no
                   centro de Caraguatatuba, com fácil acesso e atendimento humanizado.
@@ -191,7 +191,7 @@ export default function LaboratorioCaraguatatuba() {
               DIAGNÓSTICO POR IMAGEM EM <span className="text-brand">CARAGUATATUBA</span>
             </h2>
             <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
-              A Total Quality é a clínica de diagnóstico por imagem mais completa de Caraguatatuba - SP.
+              A Total Quality reúne em um só lugar os principais exames de imagem de Caraguatatuba - SP.
               Contamos com equipamentos de última geração e equipe médica especializada em radiologia,
               cardiologia e neurologia para laudos detalhados e confiáveis.
             </p>

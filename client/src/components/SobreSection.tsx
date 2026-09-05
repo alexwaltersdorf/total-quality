@@ -61,8 +61,8 @@ export default function SobreSection() {
               <span className="text-brand">TOTAL QUALITY</span>
             </h2>
             <p className="text-lg text-text-light leading-relaxed mb-8">
-              Fundada em 2003 em Caraguatatuba - SP, a Total Quality Medicina Diagnóstica é reconhecida como
-              <strong className="text-text"> "a clínica mais completa do Litoral Norte de São Paulo"</strong>. Nossa trajetória de mais de 20 anos é marcada pela excelência em tomografia, ultrassonografia, mamografia, ecocardiograma, exames laboratoriais e atendimento humanizado.
+              Fundada em 2003 em Caraguatatuba - SP, a Total Quality Medicina Diagnóstica atende famílias de
+              <strong className="text-text"> todo o Litoral Norte de São Paulo há mais de 20 anos</strong>. Nossa trajetória é marcada pela excelência em tomografia, ultrassonografia, mamografia, eletrocardiograma, exames laboratoriais e atendimento humanizado.
             </p>
 
             {/* Highlight cards */}

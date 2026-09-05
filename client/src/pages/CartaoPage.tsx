@@ -424,8 +424,8 @@ export default function CartaoPage() {
             {[
               { badge: "20+", label: "Anos de Experiência" },
               { badge: "30K+", label: "Clientes Ativos" },
-              { badge: "100%", label: "Satisfação" },
-              { badge: "24/7", label: "Suporte Ativo" }
+              { badge: "3.000+", label: "Tipos de Exames" },
+              { badge: "24h", label: "Resultados Online" }
             ].map((item, idx) => (
               <div key={idx} className="text-center">
                 <div className="bg-brand/10 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-4">
