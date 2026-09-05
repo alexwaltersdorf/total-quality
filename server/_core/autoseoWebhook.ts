@@ -7,6 +7,7 @@
 import { getDb } from "../db";
 import { autoSeoArticles } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
+import { refreshAutoSeoSlugs } from "./autoseo-slugs";
 
 export interface AutoSeoWebhookPayload {
   id: string;
@@ -106,6 +107,8 @@ export async function processAutoSeoWebhook(
         .where(eq(autoSeoArticles.autoSeoId, payload.id));
 
       console.log(`[AutoSEO Webhook] Artigo atualizado: ${payload.slug}`);
+      // Mantem a lista que decide 200 x 404 real das rotas de artigo.
+      await refreshAutoSeoSlugs();
 
       return {
         success: true,
@@ -127,6 +130,8 @@ export async function processAutoSeoWebhook(
       });
 
       console.log(`[AutoSEO Webhook] Novo artigo criado: ${payload.slug}`);
+      // Mantem a lista que decide 200 x 404 real das rotas de artigo.
+      await refreshAutoSeoSlugs();
 
       return {
         success: true,

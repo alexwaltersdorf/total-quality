@@ -15,6 +15,7 @@ import { weeklyMonitoringHandler } from "./monitoring-handler";
 import { generateSitemap } from "./sitemap-handler";
 import { registerTagGateway } from "./tag-gateway";
 import { getLegacyRedirect, isGone } from "./legacy-redirects";
+import { refreshAutoSeoSlugs } from "./autoseo-slugs";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -77,6 +78,12 @@ function setupAutoSeoSync() {
 async function startServer() {
   const app = express();
   const server = createServer(app);
+
+  // Carrega os slugs de artigo AutoSEO publicados antes de comecar a responder.
+  // Enquanto essa lista nao existir, qualquer caminho de primeiro nivel volta
+  // 200 (soft 404). Falha nao derruba o boot — o cache fica null e o
+  // comportamento antigo permanece.
+  void refreshAutoSeoSlugs();
   // Canonical host redirect — force https://totalquality.med.br (non-www)
   // Combines:
   //   - www → apex (www.totalquality.med.br → totalquality.med.br)

@@ -6,6 +6,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import viteConfig from "../../vite.config";
 import { getKnownBlogSlugs, getRouteMetadata, injectMetaTags } from "./routes-metadata";
+import { getKnownAutoSeoSlugs } from "./autoseo-slugs";
 import { getSeoContentForPath, injectSeoContent, resolveHttpStatus } from "./seo-content";
 
 export async function setupVite(app: Express, server: Server) {
@@ -55,7 +56,7 @@ export async function setupVite(app: Express, server: Server) {
       }
 
       const page = await vite.transformIndexHtml(url, template);
-      const status = resolveHttpStatus(pathname, getKnownBlogSlugs());
+      const status = resolveHttpStatus(pathname, getKnownBlogSlugs(), getKnownAutoSeoSlugs());
       res.status(status).set({ "Content-Type": "text/html" }).end(page);
     } catch (e) {
       vite.ssrFixStacktrace(e as Error);
@@ -101,7 +102,7 @@ export function serveStatic(app: Express) {
     }
 
     // Rotas inexistentes devolvem 404 real (corrige soft-404)
-    const status = resolveHttpStatus(pathname, getKnownBlogSlugs());
+    const status = resolveHttpStatus(pathname, getKnownBlogSlugs(), getKnownAutoSeoSlugs());
     res.status(status).set({ "Content-Type": "text/html" }).send(html);
   });
 }

@@ -601,7 +601,8 @@ const VALID_EXAM_SLUGS = new Set(examesData.map((exam) => exam.slug));
  */
 export function resolveHttpStatus(
   pathname: string,
-  knownBlogSlugs: Set<string>
+  knownBlogSlugs: Set<string>,
+  knownAutoSeoSlugs?: Set<string> | null
 ): number {
   const path = pathname.split("?")[0].replace(/\/$/, "") || "/";
 
@@ -619,8 +620,14 @@ export function resolveHttpStatus(
   const blogMatch = path.match(/^\/blog\/([a-z0-9\-]+)$/);
   if (blogMatch) return knownBlogSlugs.has(blogMatch[1]) ? 200 : 404;
 
-  // Slug de primeiro nível: pode ser artigo AutoSEO dinâmico
-  if (/^\/[a-z0-9\-]+$/i.test(path)) return 200;
+  // Slug de primeiro nivel: rota catch-all dos artigos AutoSEO. So devolve 200
+  // se o slug existir de fato. Quando a lista ainda nao carregou (banco fora do
+  // ar, boot em andamento) `knownAutoSeoSlugs` vem null e mantemos o 200 antigo
+  // — melhor um soft 404 transitorio que 404 num artigo real.
+  if (/^\/[a-z0-9\-]+$/i.test(path)) {
+    if (!knownAutoSeoSlugs) return 200;
+    return knownAutoSeoSlugs.has(path.slice(1)) ? 200 : 404;
+  }
 
   return 404;
 }
