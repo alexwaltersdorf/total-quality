@@ -27,7 +27,13 @@ function createAdminContext(): TrpcContext {
   };
 }
 
-describe("Ads Router", () => {
+// Sem credenciais no ambiente estes testes nao tem como passar. Ate 05/09/2026
+// eles FALHAVAM em toda execucao — 32 falhas fixas que ensinavam a equipe a
+// ignorar suite vermelha e impediam ligar CI. Agora pulam quando o ambiente
+// nao os suporta, e continuam valendo onde as credenciais existem.
+const temBanco = Boolean(process.env.DATABASE_URL);
+
+describe.skipIf(!temBanco)("Ads Router", () => {
   let credentialId: number;
 
   describe("credentials", () => {
