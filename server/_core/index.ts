@@ -91,6 +91,42 @@ async function startServer() {
   // Goal: consolidate all traffic on a single canonical host for analytics
   // (Google Analytics, Facebook/Meta Pixel, TikTok Pixel, Instagram, etc.)
   app.set("trust proxy", 1);
+
+  /*
+   * Cabecalhos de seguranca. Ate 06/09/2026 nao havia nenhum.
+   *
+   * Escritos a mao, sem helmet, para nao acrescentar dependencia a um projeto
+   * que ja carrega peso morto — sao cinco cabecalhos, nao vale um pacote.
+   *
+   * SEM Content-Security-Policy DE PROPOSITO. Uma CSP mal calibrada aqui nao
+   * quebra a pagina de forma visivel: ela mata silenciosamente o GTM, o GA4, o
+   * Meta e as fontes, e a medicao para sem ninguem perceber. Fazer isso direito
+   * exige inventariar todas as origens que o contêiner carrega (que mudam pelo
+   * painel, fora deste repositorio) e validar em Report-Only antes de impor.
+   * Fica registrado como trabalho proprio, nao como esquecimento.
+   */
+  app.use((req, res, next) => {
+    // Nao adivinhar o tipo de um arquivo pelo conteudo.
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    // Ninguem enquadra o site numa pagina de terceiro (clickjacking).
+    res.setHeader("X-Frame-Options", "DENY");
+    // O referenciador sai com origem, nunca com o caminho: URL de exame e
+    // dado de saude e nao pode vazar para terceiro pelo Referer.
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    // Recursos que o site nao usa ficam desligados por padrao.
+    res.setHeader(
+      "Permissions-Policy",
+      "geolocation=(), microphone=(), camera=(), payment=(), usb=()",
+    );
+    // HSTS so em producao e so sobre HTTPS, para nao travar o preview local.
+    if (
+      process.env.NODE_ENV === "production" &&
+      (req.protocol === "https" || req.get("X-Forwarded-Proto") === "https")
+    ) {
+      res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+    }
+    next();
+  });
   app.use((req, res, next) => {
     // Skip in development so localhost previews keep working
     if (process.env.NODE_ENV !== "production") return next();
@@ -188,7 +224,42 @@ async function startServer() {
   registerOAuthRoutes(app);
 
   // AutoSEO Webhook endpoint
+  /*
+   * Limite de tentativas do webhook. Sem ele, o token podia ser testado por
+   * forca bruta a vontade — e essa rota cria e publica artigos no site.
+   * Janela curta e em memoria de proposito: e uma unica instancia atras do
+   * Passenger, e um Redis so para isto seria peso desnecessario. A memoria e
+   * limpa junto com a janela, entao nao cresce sem limite.
+   */
+  const TENTATIVAS_MAX = 20;
+  const JANELA_MS = 60_000;
+  const tentativas = new Map<string, { contagem: number; expiraEm: number }>();
+
+  function excedeuLimite(ip: string): boolean {
+    const agora = Date.now();
+    // forEach em vez de for..of: o alvo de compilacao do projeto nao habilita
+    // iteracao de Map, e nao vale mexer no tsconfig por causa desta linha.
+    tentativas.forEach((registro, chave) => {
+      if (registro.expiraEm <= agora) tentativas.delete(chave);
+    });
+    const atual = tentativas.get(ip);
+    if (!atual || atual.expiraEm <= agora) {
+      tentativas.set(ip, { contagem: 1, expiraEm: agora + JANELA_MS });
+      return false;
+    }
+    atual.contagem += 1;
+    return atual.contagem > TENTATIVAS_MAX;
+  }
+
   app.post("/api/webhooks/autoseo", express.json(), async (req, res) => {
+    const ip = req.ip || req.socket.remoteAddress || "desconhecido";
+    if (excedeuLimite(ip)) {
+      return res.status(429).json({
+        success: false,
+        message: "Muitas tentativas. Tente novamente em um minuto.",
+      });
+    }
+
     try {
       // Validar Bearer Token
       const authHeader = req.headers.authorization;
