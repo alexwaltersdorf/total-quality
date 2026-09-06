@@ -5,7 +5,13 @@ import { describe, it, expect, beforeAll } from "vitest";
  * Valida credenciais e conexão com GA4 Data API
  */
 
-describe("Google Analytics 4 Integration", () => {
+// Sem credenciais no ambiente estes testes nao tem como passar. Ate 05/09/2026
+// eles FALHAVAM em toda execucao — 32 falhas fixas que ensinavam a equipe a
+// ignorar suite vermelha e impediam ligar CI. Agora pulam quando o ambiente
+// nao os suporta, e continuam valendo onde as credenciais existem.
+const temCredenciaisGa4 = Boolean(process.env.VITE_GA4_MEASUREMENT_ID && process.env.GA4_OAUTH_CLIENT_ID);
+
+describe.skipIf(!temCredenciaisGa4)("Google Analytics 4 Integration", () => {
   const measurementId = process.env.VITE_GA4_MEASUREMENT_ID;
   const propertyId = process.env.VITE_GA4_PROPERTY_ID;
   const clientId = process.env.GA4_OAUTH_CLIENT_ID;

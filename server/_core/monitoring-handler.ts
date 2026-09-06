@@ -30,14 +30,14 @@ export async function weeklyMonitoringHandler(req: Request, res: Response) {
   } catch (error: any) {
     console.error("[Monitoring Handler] Error:", error);
 
-    // Retorna erro em formato esperado pela plataforma
+    /*
+     * O rastro de pilha vai para o log do servidor, NUNCA para o corpo da
+     * resposta. Ate 06/09/2026 ele era devolvido ao chamador com caminhos de
+     * arquivo e estrutura interna — e como a autenticacao acontece dentro
+     * deste mesmo try, quem nem estava autenticado tambem o recebia.
+     */
     res.status(500).json({
-      error: error.message || "Unknown error",
-      stack: error.stack,
-      context: {
-        url: req.url,
-        taskUid: user?.taskUid,
-      },
+      error: "internal-error",
       timestamp: new Date().toISOString(),
     });
   }

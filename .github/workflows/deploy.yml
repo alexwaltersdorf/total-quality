@@ -93,3 +93,32 @@ jobs:
             echo "==> Deploy OK em $(date '+%Y-%m-%d %H:%M:%S')"
             echo "    Node:  $(node --version)"
             echo "    Bundle: $(ls dist/public/assets/index-*.js 2>/dev/null | head -1)"
+
+      # Ate 05/09/2026 o workflow declarava sucesso assim que o SSH saia com 0,
+      # sem olhar para o site. Em 05/09 dois deploys "success" seguidos levaram
+      # minutos de investigacao ate ficar claro que um tinha subido e o outro
+      # nao. O passo abaixo pergunta ao site, nao ao servidor.
+      - name: Verificar a producao (o site, nao o servidor)
+        run: |
+          set -e
+          ESPERADO=$(basename "$(ls dist/public/assets/index-*.js | head -1)")
+          echo "Bundle esperado: $ESPERADO"
+
+          # O CDN da Hostinger cacheia HTML por 300s; sem furar o cache a
+          # verificacao leria a versao anterior e mentiria nas duas direcoes.
+          for TENTATIVA in 1 2 3 4 5 6 7 8 9 10; do
+            HTML=$(curl -fsS --max-time 25 -H "Cache-Control: no-cache"                    "https://totalquality.med.br/?deploy_check=${GITHUB_SHA}${TENTATIVA}" || true)
+            if printf '%s' "$HTML" | grep -q "$ESPERADO"; then
+              echo "OK: producao servindo $ESPERADO"
+              printf '%s' "$HTML" | grep -q '<div id="root"' \
+                && echo "OK: HTML integro" \
+                || { echo "::error::HTML sem #root — build corrompido"; exit 1; }
+              exit 0
+            fi
+            echo "  tentativa $TENTATIVA: bundle antigo ainda no ar, aguardando 20s"
+            sleep 20
+          done
+
+          echo "::error::Apos ~3min a producao nao serve $ESPERADO. O deploy \
+          reportou sucesso mas o site nao mudou — verificar Passenger e o swap do dist."
+          exit 1

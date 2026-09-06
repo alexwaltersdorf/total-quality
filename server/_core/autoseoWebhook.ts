@@ -8,6 +8,7 @@ import { getDb } from "../db";
 import { autoSeoArticles } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { refreshAutoSeoSlugs } from "./autoseo-slugs";
+import { timingSafeEqual } from "node:crypto";
 
 export interface AutoSeoWebhookPayload {
   id: string;
@@ -46,7 +47,18 @@ export function validateWebhookToken(authHeader: string | undefined): boolean {
   }
 
   const token = parts[1];
-  const isValid = token === expectedToken;
+
+  /*
+   * Comparacao de tempo constante. Igualdade simples (===) retorna mais rapido
+   * quanto antes os caracteres divergem, o que permite descobrir o token byte a
+   * byte medindo o tempo de resposta. Combinado com a ausencia de limite de
+   * tentativas (corrigida em _core/index.ts), deixava de ser teorico.
+   * timingSafeEqual exige buffers do mesmo tamanho, por isso a checagem antes.
+   */
+  const recebido = Buffer.from(token, "utf8");
+  const esperado = Buffer.from(expectedToken, "utf8");
+  const isValid =
+    recebido.length === esperado.length && timingSafeEqual(recebido, esperado);
 
   if (!isValid) {
     console.error("[AutoSEO Webhook] Token inválido");
