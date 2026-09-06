@@ -6,6 +6,7 @@
 import { ArrowUpRight, CheckCircle, Award, Users, Microscope, MapPin, Clock } from "lucide-react";
 import { Link } from "wouter";
 import { trackScheduleExam } from "@/lib/tracking";
+import { anosDeAtuacao } from "@shared/const";
 
 const diferenciais = [
   {
@@ -15,7 +16,7 @@ const diferenciais = [
   },
   {
     icon: Award,
-    title: "Mais de 20 Anos de Experiência",
+    title: `Mais de ${anosDeAtuacao()} Anos de Experiência`,
     text: "Desde 2003, a Total Quality é referência em medicina diagnóstica no litoral norte paulista, com parceria acadêmica com a UNITAU e equipe médica altamente qualificada.",
   },
   {
@@ -51,7 +52,7 @@ export default function PorQueEscolherSection() {
           <div className="lg:col-span-7 flex items-end">
             <p className="reveal text-text-light text-lg leading-relaxed">
               A Total Quality é referência em laboratório de análises clínicas em Caraguatatuba - SP desde 2003.
-              Com mais de 20 anos de experiência e mais de 30.000 famílias atendidas, oferecemos a maior
+              Com mais de {anosDeAtuacao()} anos de experiência e mais de 30.000 famílias atendidas, oferecemos a maior
               estrutura de medicina diagnóstica do litoral norte paulista. Nosso laboratório em Caraguatatuba
               realiza mais de 3.000 tipos de exames laboratoriais e diagnósticos por imagem, com resultados
               precisos, rápidos e disponíveis online.

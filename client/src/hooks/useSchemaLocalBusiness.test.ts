@@ -119,7 +119,7 @@ describe("Schema.org Hooks", () => {
 
       expect(data["@type"]).toBe("Organization");
       expect(data.name).toBe("Total Quality Medicina Diagnóstica");
-      expect(data.foundingDate).toBe("2003");
+      expect(data.foundingDate).toBe("2003-07-08");
     });
 
     it("deve conter redes sociais", () => {

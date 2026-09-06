@@ -23,7 +23,6 @@ import {
   initTimeTracking,
   initSectionObserver,
 } from "@/lib/tracking";
-import { initAnalyticsCapture } from "@/lib/analyticsStore";
 import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
 import { captureUTMParams, getUTMForAPI } from "@/lib/utmTracker";
 import { startPageTracking } from "@/lib/engagementTracker";
@@ -37,9 +36,6 @@ export default function Home() {
     if (metaDesc) {
       metaDesc.setAttribute("content", "Laboratório de análises clínicas em Caraguatatuba - SP. Exames de sangue, tomografia, ultrassom e check-up. Agende pelo WhatsApp (12) 3887-3535.");
     }
-
-    // Initialize analytics capture for dashboard
-    initAnalyticsCapture();
 
     // Capture UTM params and track session
     const utmData = captureUTMParams();

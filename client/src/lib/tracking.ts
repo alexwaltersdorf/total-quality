@@ -14,7 +14,6 @@
  */
 import { resolveLeadValue } from "@/lib/leadValues";
 import { buildUserData } from "@/lib/userData";
-import { captureAnalyticsEvent } from "@/lib/analyticsStore";
 
 // Tipagem do dataLayer
 declare global {
@@ -26,11 +25,31 @@ declare global {
 // ============================================================
 // CORE: Push para dataLayer
 // ============================================================
+/**
+ * Identificador unico do evento, para o Meta deduplicar o mesmo acontecimento
+ * quando ele chega pelos dois caminhos (pixel no navegador e API de Conversoes
+ * no servidor). Sem ele, uma conversao vira duas: o relatorio infla e a
+ * otimizacao treina em evento que nao existiu.
+ *
+ * No contêiner, a tag do Meta deve ler este campo como "ID do evento" e a API
+ * de Conversoes precisa enviar o MESMO valor no campo event_id.
+ *
+ * LGPD: valor aleatorio, novo a cada evento. Nao identifica pessoa, nao
+ * persiste e nao permite religar eventos do mesmo visitante.
+ */
+function novoEventId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
 function pushToDataLayer(event: string, params: Record<string, unknown> = {}) {
   window.dataLayer = window.dataLayer || [];
   const payload = {
     event,
     ...params,
+    event_id: novoEventId(),
     event_timestamp: new Date().toISOString(),
     page_location: window.location.href,
     page_path: window.location.pathname,
@@ -39,9 +58,16 @@ function pushToDataLayer(event: string, params: Record<string, unknown> = {}) {
     page_referrer: document.referrer,
   };
 
-  // O painel proprio recebe uma copia; o push original permanece sob controle
-  // do GTM para que GA4, Google Ads e Meta recebam o mesmo evento.
-  captureAnalyticsEvent(payload);
+  /*
+   * Ate 06/09/2026 havia aqui uma copia local de cada evento em localStorage
+   * (lib/analyticsStore.ts), gravada ANTES do push e — ao contrario de todo o
+   * resto da medicao — sem passar pelo consentimento. Guardava ate 5.000
+   * eventos por visitante com o exame procurado, sem prazo de expiracao.
+   * Alimentava um painel proprio que foi removido em jul/2026: desde entao
+   * ninguem lia esses dados. Dado de saude acumulado no dispositivo, sem
+   * consentimento e sem finalidade, e o que os arts. 6 e 11 da LGPD vedam.
+   * Removido. Nao reintroduzir: quem precisa desses numeros e o GA4.
+   */
   window.dataLayer.push(payload);
 }
 
