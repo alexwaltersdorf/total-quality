@@ -10,7 +10,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
-import { useSchemaLocalBusiness, useSchemaBreadcrumb } from "@/hooks/useSchemaLocalBusiness";
+import { useSchemaBreadcrumb } from "@/hooks/useSchemaLocalBusiness";
 
 const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/checkup-hero-DYtfLmtu8bZzaLQHsJcbup.webp";
 const PROCESS_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/checkup-process-5wKyH9PSvZxL2VqGetV3Ee.webp";
@@ -116,7 +116,18 @@ export default function CheckUp() {
   useCanonical("/checkup");
 
   // SEO: Schema.org LocalBusiness para melhorar visibilidade local
-  useSchemaLocalBusiness();
+  /*
+   * REMOVIDO EM 06/09/2026 — duplicava o @id do schema.
+   *
+   * O hook injetava um segundo bloco MedicalBusiness com o MESMO @id
+   * (#medicalbusiness) do bloco que ja vem no index.html em todas as paginas,
+   * mas com conteudo diferente. Dois nos com o mesmo @id e dados conflitantes
+   * sao ambiguos para o Google, e /checkup era uma das 12 paginas que o Semrush
+   * marcou com dado estruturado invalido em 06/09.
+   *
+   * O bloco do index.html e mais completo e, por vir no HTML pre-renderizado,
+   * o rastreador ve mesmo sem executar JavaScript. Nao reintroduzir aqui.
+   */
 
   // SEO: Breadcrumb para navegação estruturada
   useSchemaBreadcrumb([

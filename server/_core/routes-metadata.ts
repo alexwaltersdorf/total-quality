@@ -144,7 +144,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
   },
 
   "exame-admissional": {
-    title: "Exame Admissional em Caraguatatuba | ASO e Ocupacionais | Total Quality",
+    title: "Exame Admissional e ASO em Caraguatatuba | Total Quality",
     description: "Exame admissional, periódico, demissional e ASO em Caraguatatuba. Medicina ocupacional completa para empresas do Litoral Norte, com agilidade. Agende.",
     keywords: "exame admissional, ASO, exame ocupacional, exame demissional, medicina do trabalho, Caraguatatuba",
     ogTitle: "Exames Ocupacionais e ASO | Total Quality",
@@ -202,7 +202,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
   },
 
   "tomografia-caraguatatuba": {
-    title: "Tomografia em Caraguatatuba: Tudo que Você Precisa Saber | Total Quality",
+    title: "Tomografia em Caraguatatuba: O que Saber | Total Quality",
     description: "Tomografia em Caraguatatuba: indicações, preparo, como funciona e segurança. Diagnóstico preciso com tecnologia de ponta.",
     keywords: "tomografia, tomografia computadorizada, diagnóstico por imagem, Caraguatatuba",
     ogTitle: "Tomografia em Caraguatatuba",
@@ -227,7 +227,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
   },
 
   "alimentacao-e-exames-laboratoriais": {
-    title: "Como a Alimentação Influencia Seus Exames Laboratoriais | Total Quality",
+    title: "Como a Alimentação Influencia Seus Exames | Total Quality",
     description: "Saiba como a alimentação afeta seus exames de sangue. Guia completo sobre jejum, alimentos que interferem e preparo correto para exames precisos.",
     keywords: "alimentação, exames laboratoriais, jejum, nutrição, preparo para exames",
     ogTitle: "Alimentação e Exames Laboratoriais",
@@ -238,7 +238,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
   },
 
   "vitamina-d-importancia-saude": {
-    title: "Vitamina D: Por Que Você Provavelmente Está Com Deficiência | Total Quality",
+    title: "Vitamina D: Por Que a Deficiência é Tão Comum | Total Quality",
     description: "60% dos brasileiros têm deficiência de vitamina D. Saiba por que, os riscos e como manter seus níveis adequados. Dicas de especialistas.",
     keywords: "vitamina D, deficiência, saúde óssea, imunidade, bem-estar",
     ogTitle: "Vitamina D: Deficiência e Importância",
@@ -260,7 +260,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
   },
 
   "exames-de-sangue-guia-completo": {
-    title: "Exames de Sangue: Guia Completo Para Entender Seus Resultados | Total Quality",
+    title: "Exames de Sangue: Guia Para Entender os Resultados | Total Quality",
     description: "Hemograma, glicemia, colesterol e mais — o que cada exame revela sobre sua saúde. Guia completo para entender seus resultados.",
     keywords: "exames de sangue, hemograma, glicemia, colesterol, laboratório",
     ogTitle: "Exames de Sangue: Guia Completo",
