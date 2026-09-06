@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { getSeoContentForPath } from "./_core/seo-content";
 
 const ler = (p: string) => readFileSync(resolve(__dirname, "..", p), "utf-8");
 
@@ -107,5 +108,31 @@ describe("GUARD-RAIL: nome canonico do Perfil da Empresa (nao remover)", () => {
   it("o hook do client nao volta a divergir do perfil", () => {
     const hook = ler("client/src/hooks/useSchemaLocalBusiness.ts");
     expect(hook).not.toMatch(/name:\s*"Total Quality Medicina Diagnóstica"/);
+  });
+});
+
+describe("GUARD-RAIL: proporcao texto/HTML das paginas sinalizadas (nao remover)", () => {
+  // O Site Audit de 06/09 marcou /bioimpedancia com 9,1% de texto/HTML, abaixo
+  // do piso de 10% do Semrush. A correcao foi conteudo real -- contraindicacoes
+  // do exame, que era lacuna de seguranca, mais perguntas que o paciente faz --
+  // e nao enchimento. Este teste impede que a pagina volte a encolher.
+  it("/bioimpedancia mantem conteudo suficiente no prerender", () => {
+    const html = getSeoContentForPath("/bioimpedancia")!;
+    const texto = html
+      .replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    expect(texto.split(" ").length).toBeGreaterThan(300);
+  });
+
+  it("/bioimpedancia declara as contraindicacoes do exame", () => {
+    const html = getSeoContentForPath("/bioimpedancia")!;
+    expect(html).toMatch(/marca-passo/i);
+    expect(html).toMatch(/desfibrilador/i);
+  });
+
+  it("nao promete diagnostico a partir da bioimpedancia (CFM 2.336/2023)", () => {
+    const html = getSeoContentForPath("/bioimpedancia")!;
+    expect(html).toMatch(/n[ãa]o um diagn[óo]stico/i);
   });
 });
