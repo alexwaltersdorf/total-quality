@@ -20,6 +20,10 @@ describe("GUARD-RAIL: valor por tipo de lead (nao remover)", () => {
     laboratorio: 135,
     exames: 135,
     "exame-toxicologico": 160,
+    mamografia: 200,
+    "exame-admissional": 70,
+    bioimpedancia: 100,
+    cartao: 29.9,
     "tomografia-computadorizada": 300,
     ultrassonografia: 150,
     "raio-x": 120,
@@ -71,8 +75,13 @@ describe("GUARD-RAIL: valor por tipo de lead (nao remover)", () => {
   });
 
   it("todo exame publicado tem valor OU cai no padrao de forma consciente", () => {
-    // Quebra quando um exame novo entra em examesData sem decisao de valor.
-    const CONHECIDOS_SEM_VALOR = ["mamografia", "exame-admissional"];
+    /*
+     * Ate 06/09/2026 mamografia e exame-admissional caiam no padrao por falta
+     * de ticket informado. O Alex informou os dois nesse dia, e agora NENHUM
+     * exame publicado fica sem valor proprio. A lista vazia e o estado certo:
+     * exame novo sem valor quebra o build, que e o ponto da trava.
+     */
+    const CONHECIDOS_SEM_VALOR: string[] = [];
     const fonte = ler("client/src/lib/examesData.ts");
     const slugs = [...fonte.matchAll(/slug:\s*"([^"]+)"/g)].map((m) => m[1]);
     expect(slugs.length).toBeGreaterThan(5);

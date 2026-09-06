@@ -57,7 +57,7 @@ const blogPosts = blogIndex;
 
 const NAP = {
   name: "Total Quality Laboratório e Medicina Diagnóstica",
-  street: "R. Padre Anchieta, 1010 – Centro",
+  street: "Rua Padre Anchieta, 1010 – Centro",
   city: "Caraguatatuba – SP, 11660-010",
   phoneDisplay: "(12) 3887-3535",
   phoneHref: "tel:+551238873535",
@@ -402,7 +402,7 @@ const homeHtml = `
       },
       {
         q: "Qual o endereço do laboratório em Caraguatatuba?",
-        a: "O laboratório Total Quality está localizado na R. Padre Anchieta, 1010 - Centro, Caraguatatuba - SP. Funcionamento de segunda a sexta, das 07h30 às 18h.",
+        a: "O laboratório Total Quality está localizado na Rua Padre Anchieta, 1010 - Centro, Caraguatatuba - SP. Funcionamento de segunda a sexta, das 07h30 às 18h.",
       },
       {
         q: "Como agendar exames no laboratório em Caraguatatuba?",

@@ -31,7 +31,7 @@ export function useSchemaLocalBusiness(options?: {
   useEffect(() => {
     // Dados padrão para Total Quality
     const defaultData = {
-      name: "Total Quality Medicina Diagnóstica",
+      name: "Total Quality Laboratório e Medicina Diagnóstica Caraguatatuba",
       description: "Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba",
       url: "https://totalquality.med.br/",
       phone: "+55 (12) 3887-3535",
@@ -167,7 +167,7 @@ export function useSchemaLocalBusiness(options?: {
 export function useSchemaOrganization(options?: any) {
   useEffect(() => {
     const defaultData = {
-      name: "Total Quality Medicina Diagnóstica",
+      name: "Total Quality Laboratório e Medicina Diagnóstica Caraguatatuba",
       url: "https://totalquality.med.br/",
       logo: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/logo.png",
       description: "Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba",
