@@ -24,16 +24,16 @@ const WHATSAPP_HREF =
 
 const FAQS = [
   {
-    q: "Meu convênio cobre exame de sangue e exames laboratoriais?",
-    a: "Pela regulamentação da ANS, os planos de saúde cobrem os exames do Rol de Procedimentos, o que inclui a grande maioria dos exames laboratoriais de rotina (hemograma, glicemia, colesterol, hormônios) e exames de imagem como tomografia, ultrassonografia e mamografia. Confirme a cobertura do seu plano pelo WhatsApp (12) 3887-3535.",
+    q: "Quais convênios a Total Quality atende?",
+    a: "Atendemos Cartão de Todos, Solumedi e Leader. Fora desses, o atendimento é particular, com tabela própria. Confirme condições e valores pelo WhatsApp (12) 3887-3535 antes de vir.",
   },
   {
-    q: "Preciso de autorização prévia do convênio?",
-    a: "Alguns convênios exigem autorização prévia para exames de maior complexidade, como tomografia. Nossa equipe orienta sobre a necessidade de autorização para o seu caso no momento do agendamento.",
+    q: "Preciso de liberação prévia?",
+    a: "Alguns exames de maior complexidade, como tomografia e mamografia, podem exigir procedimento próprio de liberação. Nossa equipe orienta sobre o seu caso no momento do agendamento.",
   },
   {
     q: "O que preciso levar para usar o convênio?",
-    a: "Carteirinha do plano de saúde atualizada, documento de identidade com foto e o pedido médico original.",
+    a: "O cartão do convênio, um documento de identidade com foto e o pedido médico.",
   },
   {
     q: "E se eu não tiver convênio?",
@@ -44,7 +44,7 @@ const FAQS = [
 export default function Convenios() {
   useCanonical("https://totalquality.med.br/convenios");
   useMetaDescription(
-    "Convênios aceitos no laboratório Total Quality em Caraguatatuba: Unimed, Bradesco Saúde, SulAmérica, Amil e outros. Confirme seu plano e agende pelo WhatsApp."
+    "Convênios aceitos no laboratório Total Quality em Caraguatatuba: Cartão de Todos, Solumedi e Leader. Nos demais casos, atendimento particular."
   );
 
   return (
@@ -58,8 +58,8 @@ export default function Convenios() {
 
           <div className="space-y-8 text-text-light leading-relaxed">
             <p>
-              A Total Quality Medicina Diagnóstica aceita os principais convênios e planos de
-              saúde em Caraguatatuba – SP, para{" "}
+              A Total Quality Medicina Diagnóstica atende Cartão de Todos, Solumedi e Leader
+              em Caraguatatuba – SP, para{" "}
               <Link href="/exames/exames-de-sangue" className="text-primary underline">
                 exames de sangue
               </Link>
@@ -88,19 +88,16 @@ export default function Convenios() {
 
             <section>
               <h2 className="heading-display text-2xl text-text mb-4">
-                Planos de saúde atendidos
+                Convênios e cartões atendidos
               </h2>
               <ul className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2 list-disc pl-5">
                 {CONVENIOS.map((c) => (
                   <li key={c}>{c}</li>
                 ))}
-                <li className="col-span-2 sm:col-span-3">
-                  Outros planos regionais e nacionais — consulte o seu
-                </li>
               </ul>
               <p className="mt-4">
-                A lista é atualizada periodicamente. Confirme a aceitação do seu plano pelo
-                WhatsApp{" "}
+                Não trabalhamos com outros convênios ou planos de saúde: fora dessa lista, o
+                atendimento é particular. Confirme condições e valores pelo WhatsApp{" "}
                 <a href={WHATSAPP_HREF} className="text-primary underline" target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsAppConversion("convenios_link", "convenios")}>
                   (12) 3887-3535
                 </a>{" "}

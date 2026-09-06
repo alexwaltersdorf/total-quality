@@ -8,7 +8,5 @@
  * e falha se divergirem.
  */
 export const CONVENIOS = [
-  "Unimed", "Bradesco Saúde", "SulAmérica", "Amil", "Porto Seguro Saúde",
-  "NotreDame Intermédica", "Hapvida", "Cassi", "Geap", "Postal Saúde",
-  "Economus", "Funasa",
+  "Cartão de Todos", "Solumedi", "Leader",
 ];
