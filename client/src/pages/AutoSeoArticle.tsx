@@ -253,7 +253,7 @@ export default function AutoSeoArticle() {
               Na Total Quality em Caraguatatuba, cuidamos da sua saúde com tecnologia de ponta e atendimento humanizado.
             </p>
             <a
-              onClick={() => trackWhatsAppConversion("artigo_cta", "blog", "geral")}
+              onClick={() => trackWhatsAppConversion("artigo_cta", "blog")}
             href={`https://wa.me/551238873535?text=Olá! Li o artigo sobre ${article.title} e gostaria de agendar um exame.`}
               target="_blank"
               rel="noopener noreferrer"

@@ -14,6 +14,7 @@
  */
 import { resolveLeadValue } from "@/lib/leadValues";
 import { buildUserData } from "@/lib/userData";
+import { examTypeAtual } from "@/lib/pageContext";
 
 // Tipagem do dataLayer
 declare global {
@@ -149,15 +150,18 @@ export function trackSectionView(sectionName: string) {
  * pixel direto — o GTM converte whatsapp_click em Lead (Meta) e em
  * conversao (Google Ads).
  */
-export function trackWhatsAppConversion(label: string, source: string, examType: string = "geral") {
+export function trackWhatsAppConversion(label: string, source: string, examType?: string) {
+  // Sem tipo explicito, deriva da rota: um clique no botao flutuante dentro da
+  // pagina de tomografia vale como tomografia, nao como "geral".
+  const tipo = examType ?? examTypeAtual();
   pushToDataLayer("whatsapp_click", {
     event_category: "conversion",
     event_label: label,
     lead_source: source,
-    exam_type: examType,
+    exam_type: tipo,
     currency: "BRL",
-    // Ticket medio informado pelo Alex — ver lib/leadValues.ts.
-    value: resolveLeadValue(source, examType),
+    // Ticket por tipo informado pelo Alex — ver lib/leadValues.ts.
+    value: resolveLeadValue(source, tipo),
   });
 }
 
@@ -189,7 +193,7 @@ export async function trackWhatsAppConversionWithLead(
 }
 
 export function trackScheduleExam(source: string, examType?: string) {
-  trackWhatsAppConversion(source, source.replace(/_(cta|section)$/, ""), examType || "geral");
+  trackWhatsAppConversion(source, source.replace(/_(cta|section)$/, ""), examType || examTypeAtual());
 }
 
 /** Rastreia clique em "Agendar Check-Up" */
