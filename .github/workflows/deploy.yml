@@ -92,7 +92,7 @@ jobs:
 
             echo "==> Deploy OK em $(date '+%Y-%m-%d %H:%M:%S')"
             echo "    Node:  $(node --version)"
-            echo "    Bundle: $(ls dist/public/assets/index-*.js 2>/dev/null | head -1)"
+            echo "    Bundle: $(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' dist/public/index.html 2>/dev/null | head -1)"
 
       # Ate 05/09/2026 o workflow declarava sucesso assim que o SSH saia com 0,
       # sem olhar para o site. Em 05/09 dois deploys "success" seguidos levaram
@@ -101,12 +101,24 @@ jobs:
       - name: Verificar a producao (o site, nao o servidor)
         run: |
           set -e
-          ESPERADO=$(basename "$(ls dist/public/assets/index-*.js | head -1)")
-          echo "Bundle esperado: $ESPERADO"
+          # O build gera MAIS DE UM arquivo assets/index-*.js (entry + chunk).
+          # Escolher com `ls | head -1` e ordem alfabetica, nao referencia: em
+          # 06/09 isso elegeu o chunk errado e pendurou a verificacao por 10
+          # tentativas ate falhar um deploy que estava correto. A unica fonte
+          # autoritativa e o proprio index.html construido.
+          ESPERADO=$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' dist/public/index.html | head -1)
+          if [ -z "$ESPERADO" ]; then
+            echo "::error::Nao foi possivel extrair o bundle de dist/public/index.html"
+            exit 1
+          fi
+          echo "Bundle esperado (lido do index.html construido): $ESPERADO"
 
           # O CDN da Hostinger cacheia HTML por 300s; sem furar o cache a
           # verificacao leria a versao anterior e mentiria nas duas direcoes.
-          for TENTATIVA in 1 2 3 4 5 6 7 8 9 10; do
+          # 12 x 30s = 360s. Precisa ser MAIOR que o max-age=300 do CDN da
+          # Hostinger: com uma janela menor que o TTL, uma resposta cacheada
+          # antes do swap reprovaria um deploy correto.
+          for TENTATIVA in $(seq 1 12); do
             HTML=$(curl -fsS --max-time 25 -H "Cache-Control: no-cache"                    "https://totalquality.med.br/?deploy_check=${GITHUB_SHA}${TENTATIVA}" || true)
             if printf '%s' "$HTML" | grep -q "$ESPERADO"; then
               echo "OK: producao servindo $ESPERADO"
@@ -115,10 +127,10 @@ jobs:
                 || { echo "::error::HTML sem #root — build corrompido"; exit 1; }
               exit 0
             fi
-            echo "  tentativa $TENTATIVA: bundle antigo ainda no ar, aguardando 20s"
-            sleep 20
+            echo "  tentativa $TENTATIVA/12: no ar ainda $(printf '%s' "$HTML" | grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' | head -1) — aguardando 30s"
+            sleep 30
           done
 
-          echo "::error::Apos ~3min a producao nao serve $ESPERADO. O deploy \
+          echo "::error::Apos ~6min a producao nao serve $ESPERADO. O deploy \
           reportou sucesso mas o site nao mudou — verificar Passenger e o swap do dist."
           exit 1
