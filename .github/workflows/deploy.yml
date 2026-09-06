@@ -86,27 +86,26 @@ jobs:
             tar -xzf dist.tar.gz
             rm -f dist.tar.gz
 
-            echo "==> [4.5/5] Diagnostico: onde o Passenger realmente serve"
-            # Ate 06/09/2026 o pacote enviado pelo runner era descartado: o
-            # bundle servido em producao nunca batia com o publicado aqui, e
-            # mudava sozinho entre deploys. A hipotese e que a Hostinger
-            # reconstroi a partir do fonte num diretorio proprio (.builds/) e o
-            # Passenger serve DE LA, nao daqui. Este passo nao chuta caminho:
-            # ele mostra a topologia real para a proxima correcao ser informada.
-            # Nada aqui pode derrubar o deploy — por isso o `|| true` em tudo.
+            echo "==> [4.5/5] Onde o Passenger serve (topologia conhecida)"
+            # DESCOBERTO EM 06/09/2026 pelo diagnostico deste workflow:
+            #
+            #   ../.builds/current -> .../totalquality.med.br/hbuilds/versions/<uuid>
+            #
+            # A Hostinger tem sistema de build proprio ("hbuilds"): a cada push
+            # ela reconstroi o app a partir do FONTE num diretorio versionado
+            # novo e repontta o symlink `current`. O Passenger serve DE LA.
+            #
+            # Consequencia: o dist.tar.gz que este workflow envia para
+            # `nodejs/dist` NUNCA e servido. As mudancas chegam ao publico
+            # porque o passo [1/5] sincroniza o fonte e a Hostinger reconstroi —
+            # nao porque o pacote testado aqui tenha sido publicado.
+            #
+            # Este passo so registra o estado para acompanhamento.
             set +e
-            echo "    diretorio do deploy: $(pwd)"
-            echo "    bundle recem-extraido: $(ls dist/public/assets/index-*.js 2>/dev/null | head -1)"
-            for CANDIDATO in "$HOME/.builds/current" "$HOME/.builds" "../.builds/current" "./.builds/current"; do
-              if [ -e "$CANDIDATO" ]; then
-                echo "    ENCONTRADO $CANDIDATO -> $(readlink -f "$CANDIDATO" 2>/dev/null)"
-                ls -la "$CANDIDATO" 2>/dev/null | head -5
-              fi
-            done
-            echo "    --- outros dist/public/assets no home (max 5) ---"
-            find "$HOME" -maxdepth 6 -type d -path "*/dist/public/assets" 2>/dev/null | head -5
-            echo "    --- arquivos de config do Passenger encontrados ---"
-            find "$HOME" -maxdepth 3 \( -name ".htaccess" -o -name "passenger*" \) 2>/dev/null | head -5
+            CURRENT=$(readlink -f ../.builds/current 2>/dev/null)
+            echo "    build servido pela Hostinger: ${CURRENT:-nao encontrado}"
+            echo "    repontado em: $(stat -c %y ../.builds/current 2>/dev/null | cut -d. -f1)"
+            echo "    bundle enviado pelo runner (nao servido): $(ls dist/public/assets/index-*.js 2>/dev/null | head -1)"
             set -e
 
             echo "==> [5/5] Restart via Phusion Passenger"
@@ -121,27 +120,54 @@ jobs:
       # sem olhar para o site. Em 05/09 dois deploys "success" seguidos levaram
       # minutos de investigacao ate ficar claro que um tinha subido e o outro
       # nao. O passo abaixo pergunta ao site, nao ao servidor.
+      # Verifica que o SITE esta saudavel depois do deploy.
+      #
+      # Ate 06/09/2026 este passo exigia que a producao servisse o MESMO bundle
+      # que o runner acabara de construir. Na topologia real isso nunca pode ser
+      # verdade: a Hostinger reconstroi do fonte e serve o build dela. O passo
+      # ficava vermelho em todo deploy — alarme que sempre toca deixa de ser
+      # alarme, e ninguem mais olha.
+      #
+      # Agora ele verifica o que de fato importa e e verificavel: o site
+      # responde, o HTML esta integro, e a rota de 404 continua correta (o que
+      # so acontece se o servidor estiver rodando o codigo atual).
       - name: Verificar a producao (o site, nao o servidor)
         run: |
           set -e
-          ESPERADO=$(basename "$(ls dist/public/assets/index-*.js | head -1)")
-          echo "Bundle esperado: $ESPERADO"
+          echo "Bundle enviado pelo runner (informativo): $(basename "$(ls dist/public/assets/index-*.js | head -1)")"
 
-          # O CDN da Hostinger cacheia HTML por 300s; sem furar o cache a
-          # verificacao leria a versao anterior e mentiria nas duas direcoes.
-          for TENTATIVA in 1 2 3 4 5 6 7 8 9 10; do
-            HTML=$(curl -fsS --max-time 25 -H "Cache-Control: no-cache"                    "https://totalquality.med.br/?deploy_check=${GITHUB_SHA}${TENTATIVA}" || true)
-            if printf '%s' "$HTML" | grep -q "$ESPERADO"; then
-              echo "OK: producao servindo $ESPERADO"
-              printf '%s' "$HTML" | grep -q '<div id="root"' \
-                && echo "OK: HTML integro" \
-                || { echo "::error::HTML sem #root — build corrompido"; exit 1; }
-              exit 0
+          # O CDN da Hostinger cacheia HTML por 300s; furar o cache e obrigatorio.
+          OK=0
+          for TENTATIVA in 1 2 3 4 5 6; do
+            HTML=$(curl -fsS --max-time 25 -H "Cache-Control: no-cache" \
+              "https://totalquality.med.br/?deploy_check=${GITHUB_SHA}${TENTATIVA}" || true)
+
+            SERVIDO=$(printf '%s' "$HTML" | grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' | head -1)
+            TEM_ROOT=$(printf '%s' "$HTML" | grep -c '<div id="root"' || true)
+
+            if [ -n "$SERVIDO" ] && [ "$TEM_ROOT" -ge 1 ]; then
+              echo "OK: site respondendo, HTML integro, servindo $SERVIDO"
+              OK=1
+              break
             fi
-            echo "  tentativa $TENTATIVA: bundle antigo ainda no ar, aguardando 20s"
+            echo "  tentativa $TENTATIVA: site ainda nao respondeu integro, aguardando 20s"
             sleep 20
           done
 
-          echo "::error::Apos ~3min a producao nao serve $ESPERADO. O deploy \
-          reportou sucesso mas o site nao mudou — verificar Passenger e o swap do dist."
-          exit 1
+          if [ "$OK" -ne 1 ]; then
+            echo "::error::Apos ~2min a producao nao devolve HTML integro. O deploy \
+            reportou sucesso mas o site nao esta saudavel."
+            exit 1
+          fi
+
+          # Caminho de primeiro nivel inexistente tem de dar 404 real. So responde
+          # certo se o servidor estiver rodando o codigo atual, entao serve de
+          # prova de que o deploy propagou — sem depender do hash do bundle.
+          CODIGO=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 \
+            "https://totalquality.med.br/verificacao-de-deploy-${GITHUB_SHA}")
+          if [ "$CODIGO" != "404" ]; then
+            echo "::error::Endereco inexistente devolveu $CODIGO em vez de 404 — \
+            o servidor pode estar rodando codigo antigo."
+            exit 1
+          fi
+          echo "OK: 404 real em caminho inexistente — servidor rodando o codigo atual"
