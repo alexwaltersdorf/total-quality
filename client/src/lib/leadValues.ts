@@ -33,6 +33,10 @@ const ELETROCARDIOGRAMA = 100.0;
 const ELETROENCEFALOGRAMA = 200.0;
 const ESPIROMETRIA = 165.0;
 const CHECKUP = 399.0;
+const MAMOGRAFIA = 200.0;
+const ADMISSIONAL = 70.0;
+const BIOIMPEDANCIA = 100.0;
+const CARTAO = 29.9;
 
 export const LEAD_VALUES: Record<string, number> = {
   // --- Slugs das paginas de exame (exam_type vem do slug) ---
@@ -47,11 +51,15 @@ export const LEAD_VALUES: Record<string, number> = {
   eletrocardiograma: ELETROCARDIOGRAMA,
   eletroencefalograma: ELETROENCEFALOGRAMA,
   espirometria: ESPIROMETRIA,
+  mamografia: MAMOGRAFIA,
+  "exame-admissional": ADMISSIONAL,
 
   // --- Categorias de origem (lead_source) ---
   laboratorio: LABORATORIO,
   exames: LABORATORIO,
   checkup: CHECKUP,
+  bioimpedancia: BIOIMPEDANCIA,
+  cartao: CARTAO,
 };
 
 /*
@@ -63,11 +71,14 @@ export const LEAD_VALUES: Record<string, number> = {
  * lead frio faz o algoritmo gastar orcamento perseguindo contato que nao se
  * paga, e esse erro custa mais caro que o inverso.
  *
- * Cai aqui hoje, por falta de valor informado pelo Alex:
- *   - "mamografia" e "exame-admissional" (paginas de exame existentes);
- *   - "bioimpedancia" e "cartao" (paginas tematicas);
- *   - "geral", "blog" e "convenios" (origens informacionais, intencao fria).
- * Quando ele informar o ticket desses, trocar linha a linha.
+ * Em 06/09/2026 o Alex informou os quatro que faltavam — mamografia (200),
+ * exame admissional (70), bioimpedancia (100) e cartao (29,90) — e todos
+ * passaram a ter valor proprio.
+ *
+ * Cai aqui hoje apenas o que nao E um servico: "geral", "blog" e "convenios",
+ * origens informacionais de intencao fria. Para essas, o ticket de laboratorio
+ * e a estimativa certa: e o desfecho mais provavel de um contato que ainda nao
+ * disse o que quer.
  */
 export const LEAD_VALUE_PADRAO = LABORATORIO;
 

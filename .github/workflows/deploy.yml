@@ -86,6 +86,29 @@ jobs:
             tar -xzf dist.tar.gz
             rm -f dist.tar.gz
 
+            echo "==> [4.5/5] Diagnostico: onde o Passenger realmente serve"
+            # Ate 06/09/2026 o pacote enviado pelo runner era descartado: o
+            # bundle servido em producao nunca batia com o publicado aqui, e
+            # mudava sozinho entre deploys. A hipotese e que a Hostinger
+            # reconstroi a partir do fonte num diretorio proprio (.builds/) e o
+            # Passenger serve DE LA, nao daqui. Este passo nao chuta caminho:
+            # ele mostra a topologia real para a proxima correcao ser informada.
+            # Nada aqui pode derrubar o deploy — por isso o `|| true` em tudo.
+            set +e
+            echo "    diretorio do deploy: $(pwd)"
+            echo "    bundle recem-extraido: $(ls dist/public/assets/index-*.js 2>/dev/null | head -1)"
+            for CANDIDATO in "$HOME/.builds/current" "$HOME/.builds" "../.builds/current" "./.builds/current"; do
+              if [ -e "$CANDIDATO" ]; then
+                echo "    ENCONTRADO $CANDIDATO -> $(readlink -f "$CANDIDATO" 2>/dev/null)"
+                ls -la "$CANDIDATO" 2>/dev/null | head -5
+              fi
+            done
+            echo "    --- outros dist/public/assets no home (max 5) ---"
+            find "$HOME" -maxdepth 6 -type d -path "*/dist/public/assets" 2>/dev/null | head -5
+            echo "    --- arquivos de config do Passenger encontrados ---"
+            find "$HOME" -maxdepth 3 \( -name ".htaccess" -o -name "passenger*" \) 2>/dev/null | head -5
+            set -e
+
             echo "==> [5/5] Restart via Phusion Passenger"
             mkdir -p tmp
             touch tmp/restart.txt
