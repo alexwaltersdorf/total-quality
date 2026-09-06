@@ -7,17 +7,39 @@ function source(path: string): string {
 
 describe("guardrails de mensuracao", () => {
   it("nao substitui o push instalado pelo GTM", () => {
-    const store = source("client/src/lib/analyticsStore.ts");
-    expect(store).not.toMatch(/dataLayer\.push\s*=/);
-    expect(store).not.toContain("Array.prototype.push");
+    const tracking = source("client/src/lib/tracking.ts");
+    expect(tracking).not.toMatch(/dataLayer\.push\s*=/);
+    expect(tracking).not.toContain("Array.prototype.push");
   });
 
-  it("captura localmente e depois entrega o evento ao GTM", () => {
+  /*
+   * Ate 06/09/2026 esta trava exigia o CONTRARIO: que o evento fosse copiado
+   * para localStorage antes de ir ao GTM. A copia alimentava um painel proprio
+   * removido em jul/2026 e, ao contrario do resto da medicao, nao passava pelo
+   * consentimento — guardava ate 5.000 eventos por visitante com o exame
+   * procurado, sem prazo de expiracao. Dado de saude sem consentimento e sem
+   * finalidade (LGPD, arts. 6 e 11). A regra mudou; a trava mudou com ela.
+   */
+  it("nenhum evento e persistido no navegador", () => {
     const tracking = source("client/src/lib/tracking.ts");
-    const capture = tracking.indexOf("captureAnalyticsEvent(payload)");
-    const push = tracking.indexOf("window.dataLayer.push(payload)");
-    expect(capture).toBeGreaterThan(-1);
-    expect(push).toBeGreaterThan(capture);
+    expect(tracking).not.toContain("captureAnalyticsEvent");
+    expect(tracking).not.toMatch(/localStorage\.setItem/);
+    expect(tracking).not.toMatch(/sessionStorage\.setItem/);
+  });
+
+  it("o modulo de captura local nao volta a existir", () => {
+    expect(() => source("client/src/lib/analyticsStore.ts")).toThrow();
+  });
+
+  /*
+   * Sem event_id o Meta recebe o mesmo acontecimento pelo pixel e pela API de
+   * Conversoes sem saber que e o mesmo: a conversao conta duas vezes, o
+   * relatorio infla e a otimizacao treina em evento que nao existiu.
+   */
+  it("todo evento leva event_id para o Meta deduplicar", () => {
+    const tracking = source("client/src/lib/tracking.ts");
+    expect(tracking).toContain("event_id: novoEventId()");
+    expect(tracking).toMatch(/crypto\.randomUUID/);
   });
 
   it("monitoramento nao usa metricas simuladas", () => {
