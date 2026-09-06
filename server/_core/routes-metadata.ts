@@ -272,8 +272,8 @@ const blogMetadata: Record<string, RouteMetadata> = {
 
   "convenios-laboratorio-caraguatatuba": {
     title: "Convênios Aceitos no Laboratório em Caraguatatuba | Total Quality",
-    description: "Veja todos os convênios e planos de saúde aceitos no laboratório Total Quality em Caraguatatuba - SP. Unimed, Bradesco, SulAmérica e outros.",
-    keywords: "convênios, planos de saúde, laboratório Caraguatatuba, Unimed",
+    description: "Veja os convênios aceitos no laboratório Total Quality em Caraguatatuba - SP: Cartão de Todos, Solumedi e Leader. Nos demais casos, atendimento particular.",
+    keywords: "convênios, laboratório Caraguatatuba, Cartão de Todos, Solumedi, Leader",
     ogTitle: "Convênios Aceitos | Total Quality",
     ogDescription: "Confira a lista completa de convênios aceitos no laboratório.",
     canonical: "https://totalquality.med.br/blog/convenios-laboratorio-caraguatatuba",
@@ -365,10 +365,10 @@ const staticRoutes: Record<string, RouteMetadata> = {
 
   "/convenios": {
     title: "Convênios Aceitos | Laboratório Total Quality Caraguatatuba",
-    description: "Veja os convênios e planos de saúde aceitos no laboratório Total Quality em Caraguatatuba: Unimed, Bradesco Saúde, SulAmérica, Amil e mais. Confirme pelo WhatsApp.",
-    keywords: "convênios laboratório Caraguatatuba, plano de saúde exames, Unimed Caraguatatuba",
+    description: "Convênios aceitos no laboratório Total Quality em Caraguatatuba: Cartão de Todos, Solumedi e Leader. Fora deles, atendimento particular. Confirme pelo WhatsApp.",
+    keywords: "convênios laboratório Caraguatatuba, Cartão de Todos Caraguatatuba, Solumedi, Leader",
     ogTitle: "Convênios Aceitos | Total Quality Caraguatatuba",
-    ogDescription: "Principais convênios e planos de saúde aceitos para exames laboratoriais e de imagem em Caraguatatuba.",
+    ogDescription: "Convênios aceitos para exames laboratoriais e de imagem em Caraguatatuba: Cartão de Todos, Solumedi e Leader.",
     canonical: "https://totalquality.med.br/convenios",
     priority: 0.7,
     changefreq: "monthly",

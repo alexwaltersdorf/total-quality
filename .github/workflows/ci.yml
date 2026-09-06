@@ -1,0 +1,55 @@
+name: CI
+
+# Ate 05/09/2026 nenhum workflow rodava em pull request: o unico gatilho era
+# push na main (deploy). Todo PR era mergeado sem verificacao automatica, e a
+# suite tinha 32 falhas fixas de credenciais que tornavam o vermelho inutil.
+# Com os testes de credencial pulando quando o ambiente nao os suporta, a
+# suite fica verde por padrao e o vermelho volta a significar alguma coisa.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    name: Testes, tipos e build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Ativar corepack
+        run: corepack enable
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Testes
+        run: pnpm vitest run
+
+      # tsc tem 13 erros herdados (drizzle, google-ads-api, ga4-client) que nao
+      # sao deste PR nem de nenhum outro. Bloquear neles pararia a operacao, e
+      # ignorar tipos por completo deixaria passar regressao nova. Entao o
+      # limite e numerico: se passar de 13, alguem introduziu erro novo.
+      - name: Tipos (nao pode passar de 13 erros herdados)
+        run: |
+          ERROS=$(npx tsc --noEmit 2>&1 | grep -c "error TS" || true)
+          echo "Erros de tipo: $ERROS (teto herdado: 13)"
+          if [ "$ERROS" -gt 13 ]; then
+            echo "::error::Erros de tipo subiram de 13 para $ERROS — ha regressao nova neste diff."
+            npx tsc --noEmit 2>&1 | grep "error TS" || true
+            exit 1
+          fi
+
+      - name: Build
+        run: pnpm build
