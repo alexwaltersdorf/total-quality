@@ -10,7 +10,6 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { syncAutoSeoArticles } from "./syncAutoSeo";
-import { validateWebhookToken, processAutoSeoWebhook, processAutoSeoWebhookBatch } from "./autoseoWebhook";
 import { weeklyMonitoringHandler } from "./monitoring-handler";
 import { generateSitemap } from "./sitemap-handler";
 import { registerTagGateway } from "./tag-gateway";
@@ -225,86 +224,19 @@ async function startServer() {
 
   // AutoSEO Webhook endpoint
   /*
-   * Limite de tentativas do webhook. Sem ele, o token podia ser testado por
-   * forca bruta a vontade — e essa rota cria e publica artigos no site.
-   * Janela curta e em memoria de proposito: e uma unica instancia atras do
-   * Passenger, e um Redis so para isto seria peso desnecessario. A memoria e
-   * limpa junto com a janela, entao nao cresce sem limite.
+   * ENDPOINT DO WEBHOOK DO AUTOSEO — REMOVIDO EM 06/09/2026.
+   *
+   * A rota POST /api/webhooks/autoseo criava e publicava artigos no site. Seu
+   * token estava em texto claro no repositorio (corrigido no PR #13), mas
+   * remover do HEAD nao desfaz a exposicao: o valor segue no historico do git.
+   *
+   * O Alex informou que nao usa o AutoSEO. Com a ferramenta fora de uso, a rota
+   * era superficie de ataque sem contrapartida — e removida ela vale mais que
+   * rotacionada, porque o token vazado deixa de autenticar qualquer coisa.
+   *
+   * Para religar: reintroduzir a rota, marcar AUTOSEO_ATIVO = true em
+   * _core/autoseo-slugs.ts e gerar um token NOVO. Nunca reaproveitar o antigo.
    */
-  const TENTATIVAS_MAX = 20;
-  const JANELA_MS = 60_000;
-  const tentativas = new Map<string, { contagem: number; expiraEm: number }>();
-
-  function excedeuLimite(ip: string): boolean {
-    const agora = Date.now();
-    // forEach em vez de for..of: o alvo de compilacao do projeto nao habilita
-    // iteracao de Map, e nao vale mexer no tsconfig por causa desta linha.
-    tentativas.forEach((registro, chave) => {
-      if (registro.expiraEm <= agora) tentativas.delete(chave);
-    });
-    const atual = tentativas.get(ip);
-    if (!atual || atual.expiraEm <= agora) {
-      tentativas.set(ip, { contagem: 1, expiraEm: agora + JANELA_MS });
-      return false;
-    }
-    atual.contagem += 1;
-    return atual.contagem > TENTATIVAS_MAX;
-  }
-
-  app.post("/api/webhooks/autoseo", express.json(), async (req, res) => {
-    const ip = req.ip || req.socket.remoteAddress || "desconhecido";
-    if (excedeuLimite(ip)) {
-      return res.status(429).json({
-        success: false,
-        message: "Muitas tentativas. Tente novamente em um minuto.",
-      });
-    }
-
-    try {
-      // Validar Bearer Token
-      const authHeader = req.headers.authorization;
-      if (!validateWebhookToken(authHeader)) {
-        return res.status(401).json({
-          success: false,
-          message: "Token de autorizacao invalido ou ausente",
-        });
-      }
-
-      // Processar webhook
-      const { articles } = req.body;
-
-      if (!articles || !Array.isArray(articles)) {
-        return res.status(400).json({
-          success: false,
-          message: "Campo 'articles' eh obrigatorio e deve ser um array",
-        });
-      }
-
-      // Se eh um unico artigo, converter para array
-      const articlesToProcess = Array.isArray(articles) ? articles : [articles];
-
-      // Processar em batch
-      const result = await processAutoSeoWebhookBatch(articlesToProcess);
-
-      console.log(`[AutoSEO Webhook] Processados ${result.processed} artigos, ${result.failed} falharam`);
-
-      return res.status(result.success ? 200 : 207).json({
-        success: result.success,
-        processed: result.processed,
-        failed: result.failed,
-        errors: result.errors.length > 0 ? result.errors : undefined,
-        message: result.success
-          ? `${result.processed} artigo(s) sincronizado(s) com sucesso`
-          : `${result.processed} artigo(s) sincronizado(s), ${result.failed} falharam`,
-      });
-    } catch (error) {
-      console.error("[AutoSEO Webhook] Erro ao processar webhook:", error);
-      return res.status(500).json({
-        success: false,
-        message: `Erro ao processar webhook: ${error instanceof Error ? error.message : "Erro desconhecido"}`,
-      });
-    }
-  });
 
   // Weekly Monitoring endpoint
   app.post("/api/scheduled/weekly-monitoring", weeklyMonitoringHandler);

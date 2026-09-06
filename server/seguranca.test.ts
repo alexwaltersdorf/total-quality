@@ -25,10 +25,28 @@ describe("GUARD-RAIL: seguranca do servidor (nao remover)", () => {
     expect(webhook).not.toMatch(/token\s*===\s*expectedToken/);
   });
 
-  it("o webhook tem limite de tentativas", () => {
+  /*
+   * Ate 06/09/2026 esta trava exigia limite de tentativas no webhook do
+   * AutoSEO. A rota foi REMOVIDA no mesmo dia — o Alex nao usa a ferramenta e
+   * o token dela vazou no historico publico do repositorio. A garantia agora e
+   * mais forte que o limite: a rota nao existe, entao o token vazado nao
+   * autentica coisa nenhuma. Se alguem reintroduzir o endpoint, esta trava
+   * quebra e obriga a decisao consciente (com token novo e limite de
+   * tentativas de volta).
+   */
+  it("o endpoint do webhook do AutoSEO nao existe", () => {
     const index = ler("server/_core/index.ts");
-    expect(index).toContain("excedeuLimite");
-    expect(index).toContain("429");
+    expect(index).not.toMatch(/app\.post\(\s*["'`]\/api\/webhooks\/autoseo/);
+    expect(index).not.toContain("validateWebhookToken");
+  });
+
+  it("a integracao do AutoSEO esta desligada e nao depende de banco", () => {
+    // Com AUTOSEO_ATIVO=false a lista de slugs e vazia, nunca null: caminho de
+    // primeiro nivel inexistente da 404 real sem consultar o banco. Era a
+    // degradacao segura (null -> 200) que mantinha o soft 404 aberto.
+    const slugs = ler("server/_core/autoseo-slugs.ts");
+    expect(slugs).toMatch(/AUTOSEO_ATIVO\s*=\s*false/);
+    expect(slugs).toMatch(/AUTOSEO_ATIVO \? null : new Set/);
   });
 
   it("os cabecalhos de seguranca estao presentes", () => {
