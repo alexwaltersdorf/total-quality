@@ -329,6 +329,16 @@ const bioimpedanciaHtml = `
     <p>O exame dura poucos minutos e o resultado sai na hora, com laudo detalhado da composição corporal.</p>
     <h3>Preciso de pedido médico?</h3>
     <p>Não é obrigatório: a bioimpedância pode ser feita por indicação médica, nutricional ou por interesse próprio no acompanhamento da saúde.</p>
+    <h3>Quem não deve fazer o exame?</h3>
+    <p>A bioimpedância funciona com a passagem de uma corrente elétrica de baixa intensidade pelo corpo. Por isso, não é indicada para pessoas com marca-passo, desfibrilador implantável ou outros dispositivos eletrônicos internos. Gestantes devem consultar o médico antes de realizar o exame. Informe a nossa equipe no agendamento se algum desses casos se aplica a você.</p>
+    <h3>Qual a diferença entre bioimpedância e IMC?</h3>
+    <p>O IMC relaciona apenas peso e altura, sem distinguir do que o peso é feito. A bioimpedância separa esse total em gordura, massa muscular e água, o que permite acompanhar mudanças na composição corporal mesmo quando o peso na balança não muda.</p>
+    <h3>De quanto em quanto tempo posso repetir?</h3>
+    <p>O intervalo depende do objetivo do acompanhamento e de quem o conduz. Em geral, repetições muito próximas mostram variações pouco significativas, já que a composição corporal muda de forma gradual. O profissional que acompanha o seu caso é quem define a periodicidade adequada.</p>
+    <h3>A bioimpedância substitui exames de sangue?</h3>
+    <p>Não. Ela descreve a composição corporal e não investiga alterações metabólicas, hormonais ou nutricionais, que dependem de <a href="/exames/exames-de-sangue">exames laboratoriais</a>. Os dois se complementam, e a interpretação conjunta cabe ao profissional que acompanha você.</p>
+    <h3>O resultado serve para diagnóstico?</h3>
+    <p>O laudo da bioimpedância é um dado de acompanhamento, não um diagnóstico. Ele ganha sentido quando lido pelo médico ou nutricionista junto ao histórico e ao restante da avaliação clínica.</p>
     ${napHtml("Agende sua bioimpedância pelo WhatsApp e acompanhe sua composição corporal com precisão.")}
     ${internalLinksHtml("/bioimpedancia")}`;
 
