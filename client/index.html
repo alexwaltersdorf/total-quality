@@ -145,7 +145,21 @@
     }
     </script>
 
-    <!-- SEO: Schema.org JSON-LD — MedicalBusiness (Serviços Médicos) -->
+    <!-- SEO: Schema.org JSON-LD — MedicalBusiness (Serviços Médicos)
+
+         medicalSpecialty espera valores da ENUMERACAO MedicalSpecialty do
+         schema.org, nao texto livre. Ate 06/09/2026 havia aqui "Diagnostic
+         Imaging", "Cardiology" e "Clinical Laboratory" — nenhum dos tres e
+         membro da enumeracao, e era o que fazia o Semrush marcar o bloco como
+         invalido em 12 paginas.
+
+         Cada especialidade abaixo corresponde a exame que a clinica REALMENTE
+         faz. Nao acrescentar especialidade sem servico correspondente: vale a
+         mesma regra do guard-rail de servico nao prestado.
+
+         A explicacao fica AQUI, em comentario HTML, e nao dentro do JSON: JSON
+         nao tem comentario, e um campo inventado poluiria o dado estruturado
+         com propriedade que nao existe no schema. -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -178,9 +192,12 @@
         "closes": "18:00"
       },
       "medicalSpecialty": [
-        "Diagnostic Imaging",
-        "Cardiology",
-        "Clinical Laboratory"
+        "https://schema.org/Radiography",
+        "https://schema.org/LaboratoryScience",
+        "https://schema.org/Cardiovascular",
+        "https://schema.org/Pulmonary",
+        "https://schema.org/Neurologic",
+        "https://schema.org/Toxicologic"
       ],
       "availableService": [
         { "@type": "MedicalTest", "name": "Tomografia Computadorizada Multislice" },
