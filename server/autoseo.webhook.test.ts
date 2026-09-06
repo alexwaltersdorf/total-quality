@@ -3,16 +3,16 @@
  * Valida a autenticação com Bearer Token e processamento de artigos
  */
 
-import { describe, it, expect, beforeAll } from "vitest";
+import { describe, it, expect } from "vitest";
 import { validateWebhookToken, processAutoSeoWebhook } from "./_core/autoseoWebhook";
 
-describe("AutoSEO Webhook", () => {
-  const validToken = process.env.AUTOSEO_WEBHOOK_TOKEN;
+// O valor do token NAO entra neste arquivo. Ate 05/09/2026 ele estava fixado
+// aqui como literal, num repositorio publico — qualquer pessoa podia ler e
+// publicar artigos no site. O teste valida o MECANISMO de autenticacao, nunca
+// o segredo; sem AUTOSEO_WEBHOOK_TOKEN no ambiente, a suite pula.
+const validToken = process.env.AUTOSEO_WEBHOOK_TOKEN;
 
-  beforeAll(() => {
-    expect(validToken).toBeDefined();
-    expect(validToken).toBe("aseo_wh_3e45279ebbff6bc29474d6aefd9e2c78");
-  });
+describe.skipIf(!validToken)("AutoSEO Webhook", () => {
 
   describe("validateWebhookToken", () => {
     it("deve aceitar token válido com formato Bearer", () => {

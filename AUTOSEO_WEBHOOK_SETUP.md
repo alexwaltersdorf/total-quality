@@ -15,7 +15,7 @@ POST https://totalquality.med.br/api/webhooks/autoseo
 O webhook usa **Bearer Token** para validação segura:
 
 ```
-Authorization: Bearer aseo_wh_3e45279ebbff6bc29474d6aefd9e2c78
+Authorization: Bearer $AUTOSEO_WEBHOOK_TOKEN
 ```
 
 ## Formato do Payload
@@ -103,7 +103,7 @@ O AutoSEO envia um JSON com a seguinte estrutura:
 3. Clique em **Adicionar Webhook**
 4. Preencha os campos:
    - **URL**: `https://totalquality.med.br/api/webhooks/autoseo`
-   - **Token**: `aseo_wh_3e45279ebbff6bc29474d6aefd9e2c78`
+   - **Token**: `$AUTOSEO_WEBHOOK_TOKEN`
    - **Eventos**: Selecione "Artigo Publicado"
 5. Clique em **Salvar**
 
@@ -113,7 +113,7 @@ Para testar o webhook, você pode usar `curl`:
 
 ```bash
 curl -X POST https://totalquality.med.br/api/webhooks/autoseo \
-  -H "Authorization: Bearer aseo_wh_3e45279ebbff6bc29474d6aefd9e2c78" \
+  -H "Authorization: Bearer $AUTOSEO_WEBHOOK_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "articles": [
