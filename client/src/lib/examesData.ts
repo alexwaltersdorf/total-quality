@@ -162,7 +162,7 @@ export const examesData: ExamData[] = [
     subtitle: "Diagnóstico por Imagem",
     description: "Exame de imagem por ultrassom para avaliação de órgãos e tecidos.",
     metaTitle: "Ultrassonografia em Caraguatatuba | Total Quality Diagnóstica",
-    metaDescription: "Ultrassonografia em Caraguatatuba - SP na Total Quality: abdominal, pélvica, transvaginal, obstétrica, tireoide, mama, próstata, musculoesquelética e Doppler.",
+    metaDescription: "Ultrassonografia em Caraguatatuba - SP na Total Quality: abdominal, pélvica, transvaginal, obstétrica, tireoide, mama, próstata, musculoesquelética e Doppler de carótidas, membros, tireoide, mamas e rins.",
     heroDescription: "A ultrassonografia é um exame seguro e indolor que utiliza ondas sonoras para produzir imagens em tempo real dos órgãos internos. Na Total Quality, contamos com equipamentos de última geração para diagnósticos precisos.",
     backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "A Ultrassonografia (ecografia) é um exame de diagnóstico por imagem que utiliza ondas sonoras de alta frequência para criar imagens dos órgãos e estruturas internas do corpo. É um método seguro, indolor, não invasivo e que não utiliza radiação ionizante, sendo seguro inclusive para gestantes.",
@@ -176,7 +176,9 @@ export const examesData: ExamData[] = [
       "Avaliação de mama",
       "Ultrassom de próstata",
       "Avaliação musculoesquelética (ombro, joelho, punho, cotovelo, tornozelo, pé e tendões)",
-      "Avaliação vascular (Doppler)",
+      "Doppler de carótidas e vertebrais",
+      "Doppler de membros inferiores e superiores",
+      "Doppler de tireoide, mamas e rins",
     ],
     preparations: [
       { icon: Droplets, text: "Ultrassom pélvico: bexiga cheia (beber 4 copos de água 1h antes)" },
@@ -192,7 +194,7 @@ export const examesData: ExamData[] = [
     ],
     whatsappMessage: "Olá! Gostaria de agendar uma ultrassonografia.",
     category: "imagem",
-    keywords: ["ultrassonografia", "ecografia", "ultrassom", "ultrassom abdominal", "ultrassom obstétrico", "ultrassom transvaginal", "ultrassom musculoesquelético", "ultrassom de tendão", "diagnóstico por imagem", "Caraguatatuba"],
+    keywords: ["ultrassonografia", "ecografia", "ultrassom", "ultrassom abdominal", "ultrassom obstétrico", "ultrassom transvaginal", "ultrassom musculoesquelético", "ultrassom de tendão", "doppler de carótidas", "doppler de membros inferiores", "doppler de tireoide", "diagnóstico por imagem", "Caraguatatuba"],
   },
   {
     slug: "mamografia",

@@ -191,7 +191,9 @@ describe("GUARD-RAIL: pagina de ultrassom cobre o que os anuncios prometem (nao 
     ["USG Mamas", /mama/i],
     ["USG Prostata", /pr[óo]stata/i],
     ["USG Articulacoes (MSK)", /musculoesquel[ée]tic/i],
-    ["Doppler Generico (campanha Doppler)", /doppler/i],
+    ["Doppler Vascular | Carotidas e Membros", /doppler de car[óo]tidas/i],
+    ["Doppler Vascular | Carotidas e Membros", /doppler de membros/i],
+    ["Doppler Tireoide e Mamas", /doppler de tireoide, mamas e rins/i],
   ];
 
   it.each(ANUNCIADOS)(
@@ -202,6 +204,43 @@ describe("GUARD-RAIL: pagina de ultrassom cobre o que os anuncios prometem (nao 
       expect(html!, `a pagina nao descreve ${termo}`).toMatch(termo);
     }
   );
+});
+
+describe("GUARD-RAIL: Doppler sim, Doppler cardiaco nao (nao remover)", () => {
+  // Decisao do Alex em 07/09/2026: a clinica realiza Doppler de carotidas e
+  // vertebrais, membros inferiores e superiores, tireoide, mamas e rins — mas
+  // NAO realiza ecodopplercardiograma. A distincao importa porque "Doppler"
+  // sozinho e ambiguo: em uso corrente no Brasil, "ecodoppler" costuma se
+  // referir ao exame cardiaco.
+  //
+  // A campanha [TQ] Ultrassom com Doppler tem bloqueio equivalente no Google
+  // Ads (negativas cardiaco/coracao/ecocardiograma). Este teste guarda o outro
+  // lado: a pagina nao pode passar a sugerir o exame cardiaco.
+  const CARDIACO_NAO_OFERECIDO = [
+    /ecodopplercardiograma/i,
+    /doppler card[íi]ac/i,
+    /doppler do cora[çc][ãa]o/i,
+  ];
+
+  it("a pagina de ultrassonografia oferece Doppler, mas nao o cardiaco", () => {
+    const html = getSeoContentForPath("/exames/ultrassonografia");
+    expect(html).toBeTruthy();
+    // o Doppler vascular e ofertado e precisa continuar descrito
+    expect(html!).toMatch(/doppler/i);
+    for (const termo of CARDIACO_NAO_OFERECIDO) {
+      expect(html!, `a pagina sugere ${termo}, que a clinica nao realiza`).not.toMatch(termo);
+    }
+  });
+
+  it.each(
+    getAllRoutes().map((r) => new URL(r.canonical).pathname)
+  )("%s nao sugere Doppler cardiaco", (pathname) => {
+    const html = getSeoContentForPath(pathname);
+    if (!html) return;
+    for (const termo of CARDIACO_NAO_OFERECIDO) {
+      expect(html, `${pathname} sugere ${termo}`).not.toMatch(termo);
+    }
+  });
 });
 
 describe("GUARD-RAIL: horario oficial unico (nao remover)", () => {
