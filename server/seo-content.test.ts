@@ -233,6 +233,27 @@ describe("GUARD-RAIL: horario oficial unico (nao remover)", () => {
     expect(indexHtml).toContain('og:image" content="https://totalquality.med.br/images/');
     expect(indexHtml).toContain('"image": ["https://totalquality.med.br/images/');
   });
+
+  it("o og:image que VENCE em runtime tambem sai do dominio proprio", async () => {
+    // O teste acima olhava so o index.html — e passava. Mas quem vence em
+    // runtime e o ogImage de routes-metadata.ts, que injectMetaTags sobrescreve
+    // por cima do estatico. Ate 07/09/2026 a home servia em producao o PNG de
+    // 5,7 MB do CloudFront enquanto o index.html declarava a foto certa: fonte
+    // correta, producao errada, e o guard-rail apontado para o arquivo que nao
+    // decide. Verificado por curl na producao, nao no repositorio.
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const metadata = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "_core/routes-metadata.ts"),
+      "utf-8"
+    );
+    expect(metadata).not.toContain("cloudfront.net");
+    for (const [, url] of metadata.matchAll(/ogImage:\s*"([^"]+)"/g)) {
+      expect(url, `ogImage fora do dominio proprio: ${url}`).toMatch(
+        /^https:\/\/totalquality\.med\.br\/images\//
+      );
+    }
+  });
 });
 
 describe("GUARD-RAIL: tempo de atuacao sempre calculado (nao remover)", () => {
