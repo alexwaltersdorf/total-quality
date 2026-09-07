@@ -46,7 +46,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
 
   "raio-x": {
     title: "Raio-X em Caraguatatuba | Clínica Total Quality",
-    description: "Raio-X digital em Caraguatatuba - SP. Diagnóstico rápido e preciso com tecnologia digital de última geração. Agende seu exame.",
+    description: "Raio-X digital em Caraguatatuba na Total Quality. Faça exame de tórax, coluna, membros e seios da face com alta resolução. Agende o seu atendimento online.",
     keywords: "raio-x, radiografia, diagnóstico por imagem, raio-x digital, Caraguatatuba",
     ogTitle: "Raio-X Digital | Total Quality",
     ogDescription: "Exame de radiografia com tecnologia digital de alta definição.",
