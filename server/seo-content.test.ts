@@ -172,6 +172,38 @@ describe("GUARD-RAIL: nunca anunciar servico nao prestado (nao remover)", () => 
   });
 });
 
+describe("GUARD-RAIL: pagina de ultrassom cobre o que os anuncios prometem (nao remover)", () => {
+  // A auditoria de 07/09/2026 apontou todas as campanhas de ultrassom do
+  // Google Ads para /exames/ultrassonografia. Anunciar um exame que a pagina
+  // de destino nao descreve derruba a experiencia na pagina de destino (parte
+  // do Indice de Qualidade) e encarece o clique — foi exatamente o problema
+  // que a campanha Modo B tinha ao apontar para o WhatsApp.
+  //
+  // Cada termo abaixo tem grupo de anuncios ativo apontando para esta pagina.
+  // Ao desligar um grupo, remova a linha correspondente; ao criar um grupo
+  // novo, adicione a linha ANTES de subir o anuncio.
+  const ANUNCIADOS: Array<[string, RegExp]> = [
+    ["USG Abdome Total", /abdominais|abdominal/i],
+    ["USG Obstetrico (campanha Obstetrica)", /obst[ée]trico/i],
+    ["USG Tireoide", /tireoide/i],
+    ["USG Pelve", /p[ée]lvic/i],
+    ["USG Pelve e Transvaginal", /transvaginal/i],
+    ["USG Mamas", /mama/i],
+    ["USG Prostata", /pr[óo]stata/i],
+    ["USG Articulacoes (MSK)", /musculoesquel[ée]tic/i],
+    ["Doppler Generico (campanha Doppler)", /doppler/i],
+  ];
+
+  it.each(ANUNCIADOS)(
+    "grupo %s encontra o exame descrito em /exames/ultrassonografia",
+    (_grupo, termo) => {
+      const html = getSeoContentForPath("/exames/ultrassonografia");
+      expect(html).toBeTruthy();
+      expect(html!, `a pagina nao descreve ${termo}`).toMatch(termo);
+    }
+  );
+});
+
 describe("GUARD-RAIL: horario oficial unico (nao remover)", () => {
   // Decisao do Alex em 02/08/2026: segunda a sexta, 07h30 as 18h; sabado e
   // domingo FECHADOS. O perfil do Google ja esta assim. Antes desta correcao o
