@@ -43,7 +43,7 @@ export function useSchemaLocalBusiness(options?: {
         postalCode: "11660-010",
         addressCountry: "BR",
       },
-      image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/checkup-hero-DYtfLmtu8bZzaLQHsJcbup.webp",
+      image: "https://totalquality.med.br/images/hero-clinica-1440.webp",
       priceRange: "$$",
     };
 
@@ -169,7 +169,7 @@ export function useSchemaOrganization(options?: any) {
     const defaultData = {
       name: "Total Quality Laboratório e Medicina Diagnóstica Caraguatatuba",
       url: "https://totalquality.med.br/",
-      logo: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/logo.png",
+      logo: "https://totalquality.med.br/images/logo-414.webp",
       description: "Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba",
       foundingDate: FUNDACAO_ISO,
       telephone: "+55 (12) 3887-3535",

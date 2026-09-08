@@ -10,8 +10,8 @@ import { Link } from "wouter";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription, useFAQSchema, useMedicalTestSchema } from "@/components/SEOHead";
 
-const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/bioimpedancia-hero-JBi4rGhcubZh8PJVdKomAz.webp";
-const DETAIL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/bioimpedancia-detail-impYZJEExk9frRXt9avf3V.webp";
+const HERO_IMG = "/images/hero-clinica-1440.webp";
+const DETAIL_IMG = "/images/laboratorio-1024.webp";
 
 const metrics = [
   { icon: Scale, title: "Massa Muscular", desc: "Quantidade total de músculo esquelético no corpo, essencial para metabolismo e mobilidade." },

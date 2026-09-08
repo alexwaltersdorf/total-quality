@@ -10,9 +10,17 @@ import { useParams, useLocation, Link } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
-import { getExamBySlug, examesData } from "@/lib/examesData";
+import { getExamBySlug, examesData, type ExamData } from "@/lib/examesData";
 import { useBreadcrumbSchema, useFAQSchema, useMedicalTestSchema, useCanonical } from "@/components/SEOHead";
 const ScrollVideo = lazy(() => import("@/components/ScrollVideo"));
+
+const CATEGORY_BACKGROUNDS: Record<ExamData["category"], string> = {
+  laboratorio: "/images/laboratorio-1440.webp",
+  imagem: "/images/tomografia-1440.webp",
+  cardiologia: "/images/cardiologia-1440.webp",
+  neurologia: "/images/hero-clinica-1440.webp",
+  outros: "/images/recepcao-1024.webp",
+};
 
 export default function ExamePage() {
   const params = useParams<{ slug: string }>();
@@ -71,6 +79,7 @@ export default function ExamePage() {
   }
 
   const otherExams = examesData.filter((e) => e.slug !== exam.slug).slice(0, 4);
+  const backgroundImage = exam.backgroundImage || CATEGORY_BACKGROUNDS[exam.category];
 
   return (
     <div ref={wrapperRef} className="min-h-screen bg-white">
@@ -79,11 +88,11 @@ export default function ExamePage() {
       {/* Hero Section */}
       <section className="pt-24 lg:pt-28 relative overflow-hidden">
         {/* Background Image with Transparency */}
-        {exam.backgroundImage && (
+        {backgroundImage && (
           <div
             className="absolute inset-0 opacity-15 pointer-events-none"
             style={{
-              backgroundImage: `url(${exam.backgroundImage})`,
+              backgroundImage: `url(${backgroundImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center right',
               backgroundAttachment: 'fixed',
