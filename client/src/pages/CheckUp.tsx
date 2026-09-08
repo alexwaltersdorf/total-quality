@@ -12,9 +12,9 @@ import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { useSchemaBreadcrumb } from "@/hooks/useSchemaLocalBusiness";
 
-const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/checkup-hero-DYtfLmtu8bZzaLQHsJcbup.webp";
-const PROCESS_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/checkup-process-5wKyH9PSvZxL2VqGetV3Ee.webp";
-const BENEFITS_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/checkup-benefits-njjKnjogX8LscDAYEdH4o9.webp";
+const HERO_IMG = "/images/hero-clinica-1440.webp";
+const PROCESS_IMG = "/images/laboratorio-1024.webp";
+const BENEFITS_IMG = "/images/recepcao-1024.webp";
 
 const checkupPackages = [
   {

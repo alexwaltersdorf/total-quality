@@ -47,7 +47,6 @@ export const examesData: ExamData[] = [
     metaTitle: "Exames de Sangue em Caraguatatuba | Total Quality",
     metaDescription: "Faça exames de sangue em Caraguatatuba com segurança e praticidade no Total Quality. Consulte os exames disponíveis e agende seu atendimento.",
     heroDescription: "Realizamos mais de 3.000 tipos de exames de sangue e análises clínicas com equipamentos de última geração e equipe especializada. Hemograma, glicemia, colesterol, hormônios, marcadores tumorais, sorologias e muito mais.",
-    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/researcher-working-laboratory_292dac6f.webp",
     whatIs: "Os exames de sangue são análises laboratoriais realizadas a partir de uma amostra de sangue coletada por punção venosa. São fundamentais para avaliar o funcionamento dos órgãos, detectar doenças, monitorar tratamentos e realizar check-ups preventivos. Na Total Quality, utilizamos equipamentos automatizados de alta precisão para garantir resultados confiáveis.",
     howItWorks: "A coleta é realizada por profissionais treinados em ambiente confortável e seguro. O sangue é processado em nosso laboratório com equipamentos automatizados que garantem precisão e rapidez. Os resultados ficam disponíveis online em até 24 horas para a maioria dos exames.",
     indications: [
@@ -88,7 +87,6 @@ export const examesData: ExamData[] = [
     metaTitle: "Tomografia Computadorizada em Caraguatatuba | Total Quality",
     metaDescription: "Tomografia computadorizada em Caraguatatuba - SP na Total Quality. Tomógrafo multislice para crânio, tórax, abdômen e coluna. Laudo rápido. Agende.",
     heroDescription: "A tomografia computadorizada é um dos exames de imagem mais completos e precisos da medicina moderna. Na Total Quality, contamos com equipamento multislice que produz imagens de alta resolução em poucos minutos.",
-    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "A Tomografia Computadorizada (TC) é um exame de diagnóstico por imagem que utiliza raios-X e processamento computadorizado para produzir imagens detalhadas em cortes transversais do corpo. Permite visualizar ossos, órgãos internos, vasos sanguíneos e tecidos moles com grande precisão.",
     howItWorks: "O paciente deita em uma mesa que desliza para dentro do aparelho em formato de anel. O tubo de raios-X gira ao redor do corpo, capturando múltiplas imagens que são processadas por computador para criar imagens tridimensionais detalhadas. O exame dura entre 10 e 30 minutos.",
     indications: [
@@ -113,8 +111,7 @@ export const examesData: ExamData[] = [
       { q: "Posso fazer tomografia com prótese metálica?", a: "Sim. A tomografia pode ser realizada em pacientes com próteses metálicas, marcapassos e implantes." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar uma tomografia computadorizada.",
-    heroImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/tomografia-computadorizada_c4982f52.png",
-    videoUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/tomografia_5e4bcd8d.mp4",
+    heroImage: "/images/tomografia-1440.webp",
     category: "imagem",
     keywords: ["tomografia computadorizada", "TC", "tomografia de crânio", "tomografia de tórax", "diagnóstico por imagem", "Caraguatatuba"],
   },
@@ -127,7 +124,6 @@ export const examesData: ExamData[] = [
     metaTitle: "Raio-X em Caraguatatuba | Total Quality",
     metaDescription: "Raio-X digital em Caraguatatuba na Total Quality. Faça exame de tórax, coluna, membros e seios da face com alta resolução. Agende o seu atendimento online.",
     heroDescription: "O Raio-X é um dos exames de imagem mais utilizados na medicina, essencial para diagnóstico de fraturas, doenças pulmonares e diversas condições. Na Total Quality, utilizamos equipamento digital de última geração para imagens de alta resolução.",
-    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "O Raio-X (radiografia) é um exame de diagnóstico por imagem que utiliza radiação ionizante em doses baixas para produzir imagens do interior do corpo. É especialmente eficaz para visualizar ossos, pulmões e certas condições dos tecidos moles. A tecnologia digital permite imagens de alta qualidade com menor exposição à radiação.",
     howItWorks: "O paciente é posicionado entre o emissor de raios-X e o detector digital. A radiação atravessa o corpo e é captada pelo detector, gerando uma imagem digital instantânea. O exame é rápido, durando apenas alguns segundos por incidência.",
     indications: [
@@ -164,7 +160,6 @@ export const examesData: ExamData[] = [
     metaTitle: "Ultrassonografia em Caraguatatuba | Total Quality Diagnóstica",
     metaDescription: "Ultrassonografia em Caraguatatuba - SP na Total Quality: abdominal, pélvica, obstétrica, tireoide, mama e Doppler. Radiologistas experientes. Agende.",
     heroDescription: "A ultrassonografia é um exame seguro e indolor que utiliza ondas sonoras para produzir imagens em tempo real dos órgãos internos. Na Total Quality, contamos com equipamentos de última geração para diagnósticos precisos.",
-    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "A Ultrassonografia (ecografia) é um exame de diagnóstico por imagem que utiliza ondas sonoras de alta frequência para criar imagens dos órgãos e estruturas internas do corpo. É um método seguro, indolor, não invasivo e que não utiliza radiação ionizante, sendo seguro inclusive para gestantes.",
     howItWorks: "Um transdutor (sonda) é colocado sobre a pele com gel condutor. O transdutor emite ondas sonoras que penetram no corpo e retornam ao encontrar diferentes tecidos, criando imagens em tempo real no monitor. O médico analisa as imagens durante o exame.",
     indications: [
@@ -201,7 +196,6 @@ export const examesData: ExamData[] = [
     metaTitle: "Mamografia Digital em Caraguatatuba | Total Quality",
     metaDescription: "Mamografia digital em Caraguatatuba - SP na Total Quality. Detecção precoce do câncer de mama com alta resolução e conforto. Laudo rápido. Agende.",
     heroDescription: "A mamografia digital é o principal exame para o rastreamento e a detecção precoce do câncer de mama. Na Total Quality, contamos com mamógrafo digital de última geração, que oferece imagens nítidas com menor dose de radiação e mais conforto durante o exame.",
-    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "A Mamografia é um exame de diagnóstico por imagem que utiliza raios-X em baixa dose para avaliar o tecido mamário. É a ferramenta mais eficaz para identificar nódulos, microcalcificações e outras alterações ainda não palpáveis, permitindo o diagnóstico precoce do câncer de mama, quando as chances de cura são maiores. A versão digital gera imagens de alta resolução com mais conforto e menor exposição à radiação.",
     howItWorks: "A mama é posicionada e levemente comprimida entre duas placas do mamógrafo por alguns segundos, o tempo necessário para capturar as imagens. A compressão é fundamental para obter imagens nítidas e reduzir a dose de radiação. São feitas, em geral, duas incidências de cada mama. O exame é rápido, durando cerca de 10 a 15 minutos.",
     indications: [
@@ -237,7 +231,6 @@ export const examesData: ExamData[] = [
     metaTitle: "MAPA 24h - Pressão Arterial em Caraguatatuba | Total Quality",
     metaDescription: "MAPA 24h em Caraguatatuba - SP na Total Quality. Monitorização da pressão arterial para diagnóstico preciso de hipertensão. Agende pelo WhatsApp.",
     heroDescription: "O MAPA é um exame que monitora a pressão arterial continuamente durante 24 horas, registrando medições automáticas durante as atividades do dia a dia e durante o sono. É o exame mais preciso para diagnóstico e acompanhamento da hipertensão arterial.",
-    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "O MAPA (Monitorização Ambulatorial da Pressão Arterial) é um exame que registra a pressão arterial automaticamente a cada 15-20 minutos durante o dia e a cada 30 minutos durante a noite, ao longo de 24 horas. Permite avaliar o comportamento da pressão arterial em condições reais do cotidiano do paciente.",
     howItWorks: "Um aparelho portátil com manguito é instalado no braço do paciente. O equipamento realiza medições automáticas programadas ao longo de 24 horas. O paciente mantém suas atividades normais e registra em um diário os horários de sono, refeições e atividades. Após 24 horas, o aparelho é retirado e os dados são analisados por software especializado.",
     indications: [
@@ -274,7 +267,6 @@ export const examesData: ExamData[] = [
     metaTitle: "Holter em Caraguatatuba 24hrs | Total Quality",
     metaDescription: "Faça o exame Holter em Caraguatatuba no Total Quality. O monitoramento registra a atividade cardíaca por período prolongado para avaliação médica.",
     heroDescription: "O Holter é um exame que registra continuamente a atividade elétrica do coração durante 24 horas, permitindo detectar arritmias e alterações que podem não aparecer em um eletrocardiograma convencional.",
-    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "O Holter é um exame de monitorização eletrocardiográfica contínua por 24 horas. Um pequeno gravador portátil registra todos os batimentos cardíacos durante as atividades diárias e o sono, permitindo identificar arritmias, isquemias e outras alterações do ritmo cardíaco que podem ser intermitentes.",
     howItWorks: "Eletrodos adesivos são colocados no tórax do paciente e conectados a um pequeno gravador digital portátil. O aparelho registra continuamente o eletrocardiograma durante 24 horas. O paciente mantém suas atividades normais e registra sintomas em um diário. Após 24 horas, o aparelho é retirado e os dados são analisados.",
     indications: [
@@ -311,7 +303,6 @@ export const examesData: ExamData[] = [
     metaTitle: "Espirometria em Caraguatatuba | Total Quality",
     metaDescription: "Faça espirometria em Caraguatatuba no Total Quality. O exame avalia a função pulmonar, DPOC, bronquite e auxilia no acompanhamento respiratório. Avaliação pré-operatória",
     heroDescription: "A espirometria é o exame padrão-ouro para avaliação da função pulmonar. Mede volumes e fluxos de ar nos pulmões, sendo essencial para diagnóstico e acompanhamento de doenças respiratórias como asma e DPOC.",
-    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "A Espirometria (prova de função pulmonar) é um exame que mede a quantidade e a velocidade do ar que entra e sai dos pulmões. Avalia a capacidade pulmonar e detecta obstruções ou restrições nas vias aéreas. É fundamental para diagnóstico de asma, DPOC, fibrose pulmonar e outras doenças respiratórias.",
     howItWorks: "O paciente sopra com força máxima em um bocal conectado ao espirômetro. O aparelho mede o volume de ar expirado e a velocidade do fluxo. São realizadas várias manobras para garantir resultados confiáveis. O exame pode incluir teste com broncodilatador para avaliar a reversibilidade de obstruções.",
     indications: [
@@ -348,7 +339,6 @@ export const examesData: ExamData[] = [
     metaTitle: "Eletrocardiograma (ECG) em Caraguatatuba | Total Quality",
     metaDescription: "Eletrocardiograma (ECG) em Caraguatatuba - SP na Total Quality. Avaliação cardíaca rápida e indolor para arritmias e doenças do coração. Agende.",
     heroDescription: "O Eletrocardiograma (ECG) é um exame rápido, indolor e fundamental para avaliação da saúde do coração. Registra a atividade elétrica cardíaca e permite diagnosticar arritmias, isquemias e outras condições cardíacas.",
-    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "O Eletrocardiograma (ECG) é um exame que registra a atividade elétrica do coração através de eletrodos colocados na pele. Produz um traçado gráfico que mostra o ritmo cardíaco, a frequência dos batimentos e possíveis alterações na condução elétrica do coração. É um dos exames mais realizados na cardiologia.",
     howItWorks: "Eletrodos adesivos são colocados no tórax, braços e pernas do paciente. Esses eletrodos captam os sinais elétricos do coração e os transmitem ao aparelho, que produz um traçado em papel ou digital. O exame é rápido, durando apenas 5 a 10 minutos, e é completamente indolor.",
     indications: [
@@ -385,7 +375,6 @@ export const examesData: ExamData[] = [
     metaTitle: "Eletroencefalograma em Caraguatatuba | Total Quality",
     metaDescription: "Faça eletroencefalograma em Caraguatatuba no Total Quality. O EEG registra a atividade elétrica cerebral e auxilia na avaliação neurológica.",
     heroDescription: "O Eletroencefalograma (EEG) é um exame que registra a atividade elétrica do cérebro, sendo fundamental para diagnóstico de epilepsia, convulsões e outros distúrbios neurológicos. Na Total Quality, realizamos o exame com equipamento digital de alta sensibilidade.",
-    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "O Eletroencefalograma (EEG) é um exame neurofisiológico que registra a atividade elétrica do cérebro através de eletrodos colocados no couro cabeludo. Produz um traçado que mostra padrões de ondas cerebrais, permitindo identificar alterações associadas a epilepsia, distúrbios do sono, encefalopatias e outras condições neurológicas.",
     howItWorks: "Eletrodos são posicionados no couro cabeludo com pasta condutora. O paciente permanece deitado ou sentado confortavelmente enquanto o aparelho registra a atividade elétrica cerebral. Durante o exame, podem ser realizadas estimulações como hiperventilação e fotoestimulação para provocar respostas cerebrais específicas.",
     indications: [
@@ -422,7 +411,6 @@ export const examesData: ExamData[] = [
     metaTitle: "Exame Toxicológico em Caraguatatuba | Total Quality",
     metaDescription: "Realize seu exame toxicológico em Caraguatatuba com praticidade e segurança no Total Quality. Consulte informações para CNH categorias C, D e E e agende atendimento! ",
     heroDescription: "O exame toxicológico é obrigatório para motoristas profissionais (categorias C, D e E) e pode ser solicitado em processos admissionais e demissionais. Na Total Quality, realizamos o exame com laboratório credenciado e resultados rápidos.",
-    backgroundImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/background-imagem-9mCCH6jfPEzq5u2ufWFQtc.webp",
     whatIs: "O Exame Toxicológico é uma análise laboratorial que detecta o uso de substâncias psicoativas (drogas) através de amostras de cabelo, pelo ou unha. Possui janela de detecção de até 90 a 180 dias, sendo muito mais abrangente que o exame de urina. É obrigatório por lei para motoristas profissionais das categorias C, D e E.",
     howItWorks: "Uma pequena amostra de cabelo (ou pelo corporal) é coletada e enviada ao laboratório credenciado. A análise identifica metabólitos de substâncias como maconha, cocaína, anfetaminas, metanfetaminas, opiáceos e outras drogas. O resultado é emitido em formato padronizado e aceito pelo DETRAN.",
     indications: [
