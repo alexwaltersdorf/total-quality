@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { trackWhatsAppConversionWithLead } from "@/lib/tracking";
+import { trackLeadDirect } from "@/lib/leadTracker";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
@@ -53,6 +54,11 @@ export default function LeadsFormModal({
       const message = `Olá! Meu nome é ${formData.name}. Email: ${formData.email}. Telefone: ${formData.phone}. Mensagem: ${formData.message}`;
       // Conversão identificada (o paciente preencheu nome, e-mail e telefone):
       // o hash do contato alimenta as conversões aprimoradas do Ads.
+      void trackLeadDirect("leads_modal", {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+      }, "form_submit");
       void trackWhatsAppConversionWithLead("leads_modal", "modal", "cartao", {
         email: formData.email,
         telefone: formData.phone,

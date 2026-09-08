@@ -23,11 +23,17 @@ const UTM_STORAGE_KEY = "tq_utm_params";
 export function detectChannel(
   utmSource: string | null,
   utmMedium: string | null,
-  referrer: string
+  referrer: string,
+  paidClickId?: "google" | "bing" | null
 ): string {
   const src = (utmSource || "").toLowerCase();
   const med = (utmMedium || "").toLowerCase();
   const ref = referrer.toLowerCase();
+
+  // Auto-tagging de mídia paga: sem esta precedência, um clique de anúncio
+  // com gclid e referrer do Google poderia parecer busca orgânica.
+  if (paidClickId === "google") return "Google Ads";
+  if (paidClickId === "bing") return "Bing Ads";
 
   // Facebook / Meta
   if (src.includes("facebook") || src.includes("fb") || src.includes("meta")) {
@@ -146,8 +152,14 @@ export function captureUTMParams(): UTMParams {
   const utmTerm = params.get("utm_term");
   const utmContent = params.get("utm_content");
 
+  const paidClickId = params.has("gclid") || params.has("gbraid") || params.has("wbraid")
+    ? "google"
+    : params.has("msclkid")
+      ? "bing"
+      : null;
+
   // Detectar canal automaticamente
-  const channel = detectChannel(utmSource, utmMedium, referrer);
+  const channel = detectChannel(utmSource, utmMedium, referrer, paidClickId);
 
   const utmData: UTMParams = {
     utmSource,
@@ -193,5 +205,6 @@ export function getUTMForAPI(): Record<string, string | undefined> {
     utmContent: utm.utmContent || undefined,
     channel: utm.channel || undefined,
     referrer: utm.referrer || undefined,
+    landingPage: utm.landingPage || undefined,
   };
 }

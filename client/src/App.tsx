@@ -3,6 +3,8 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { usePageViewTracking } from "@/hooks/usePageViewTracking";
+import { getTrackingSessionId } from "@/lib/leadTracker";
+import { captureUTMParams, getUTMForAPI } from "@/lib/utmTracker";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 
@@ -55,6 +57,36 @@ const Toaster = lazy(() => import("@/components/ui/sonner").then((m) => ({ defau
 const CookieConsent = lazy(() => import("@/components/CookieConsent"));
 
 /**
+ * Captura a primeira origem da visita em qualquer rota de entrada. Antes isso
+ * existia apenas na Home, então uma entrada orgânica direta em /blog ou
+ * /exames perdia a atribuição antes da conversão.
+ */
+function useAttributionSession() {
+  useEffect(() => {
+    captureUTMParams();
+    const utm = getUTMForAPI();
+    const sessionId = getTrackingSessionId();
+
+    fetch("/api/trpc/session.track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      keepalive: true,
+      body: JSON.stringify({ json: {
+        sessionId,
+        ...utm,
+        landingPage: utm.landingPage || window.location.pathname,
+        device: /Mobi|Android/i.test(navigator.userAgent) ? "mobile" : /Tablet|iPad/i.test(navigator.userAgent) ? "tablet" : "desktop",
+        browser: navigator.userAgent.match(/(Chrome|Firefox|Safari|Edge|Opera)/)?.[1] || "Outro",
+        os: navigator.platform || "Desconhecido",
+      }}),
+    }).catch(() => {
+      // A medição nunca pode impedir o carregamento do site.
+    });
+  }, []);
+}
+
+/**
  * Carrega o Toaster (sonner) apos o navegador ficar ocioso. Toasts sempre
  * partem de uma acao do usuario (envio de formulario), que ocorre bem depois
  * do carregamento inicial — manter sonner fora do caminho critico reduz o TBT.
@@ -82,6 +114,7 @@ function DeferredToaster() {
 }
 
 function App() {
+  useAttributionSession();
   // Fonte unica de page_view do site (ver docs/analytics.md).
   usePageViewTracking();
 

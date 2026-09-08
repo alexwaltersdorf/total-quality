@@ -26,6 +26,7 @@ import {
   getPublishedAutoSeoArticles, getAutoSeoArticleBySlug, incrementAutoSeoArticleViewCount,
 } from "./db";
 import { syncAutoSeoArticles } from "./_core/syncAutoSeo";
+import { syncOrganicLeadToSheet } from "./organicLeadsSheet";
 
 // Shared date filter schema: accepts either dateFrom/dateTo or days (backward compatible)
 const dateFilterSchema = z.object({
@@ -199,15 +200,29 @@ export const appRouter = router({
         utmContent: z.string().max(500).optional(),
         channel: z.string().max(100).optional(),
         sessionId: z.string().max(100).optional(),
+        landingPage: z.string().max(255).optional(),
+        conversionType: z.enum(["whatsapp_click", "form_submit", "phone_click", "cta_click"]).optional(),
+        eventId: z.string().min(8).max(100).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
+        const { landingPage, conversionType, eventId, ...leadData } = input;
         const result = await createLead({
-          ...input,
+          ...leadData,
           userAgent: ctx.req.headers["user-agent"] ?? null,
           ipAddress: (ctx.req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? ctx.req.ip ?? null,
         });
-        // Notificação automática para sac@totalquality.med.br
-        try {
+
+        void syncOrganicLeadToSheet({
+          ...leadData,
+          landingPage,
+          conversionType,
+          eventId,
+        }).catch((error) => {
+          console.warn("[Organic Leads Sheet] Falha ao sincronizar lead:", error);
+        });
+        // Notificação automática para sac@totalquality.med.br. Cliques
+        // anônimos ficam no banco/planilha, sem multiplicar alertas por e-mail.
+        if (input.name || input.phone || input.email) try {
           const channelLabel = input.channel || input.utmSource || input.source || "Direto";
           await notifyOwner({
             title: `Novo Lead: ${input.name || "Anônimo"} via ${channelLabel}`,

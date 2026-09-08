@@ -24,7 +24,7 @@ import {
   initSectionObserver,
 } from "@/lib/tracking";
 import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
-import { captureUTMParams, getUTMForAPI } from "@/lib/utmTracker";
+import { getUTMForAPI } from "@/lib/utmTracker";
 import { startPageTracking } from "@/lib/engagementTracker";
 
 export default function Home() {
@@ -37,26 +37,9 @@ export default function Home() {
       metaDesc.setAttribute("content", "Laboratório de análises clínicas em Caraguatatuba - SP. Exames de sangue, tomografia, ultrassom e check-up. Agende pelo WhatsApp (12) 3887-3535.");
     }
 
-    // Capture UTM params and track session
-    const utmData = captureUTMParams();
+    // A origem e a sessão são inicializadas globalmente no App, inclusive
+    // quando a primeira página visitada não é a Home.
     const utmForAPI = getUTMForAPI();
-    const sessionId = sessionStorage.getItem("tq_session_id") || `sess_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-    if (!sessionStorage.getItem("tq_session_id")) sessionStorage.setItem("tq_session_id", sessionId);
-
-    // Track session with UTM data
-    fetch("/api/trpc/session.track", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ json: {
-        sessionId,
-        ...utmForAPI,
-        landingPage: window.location.pathname,
-        device: /Mobi|Android/i.test(navigator.userAgent) ? "mobile" : /Tablet|iPad/i.test(navigator.userAgent) ? "tablet" : "desktop",
-        browser: navigator.userAgent.match(/(Chrome|Firefox|Safari|Edge|Opera)/)?.[1] || "Outro",
-        os: navigator.platform || "Desconhecido",
-      }}),
-    }).catch(() => {});
 
     // Start page engagement tracking (time on page, scroll depth, quartiles)
     const cleanupEngagement = startPageTracking("/", "Home");

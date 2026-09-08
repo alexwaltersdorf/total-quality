@@ -8,7 +8,6 @@ import ResponsiveImage from "@/components/ResponsiveImage";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
 import { trackScheduleExam } from "@/lib/tracking";
-import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 
 
 const marqueeItems = [
@@ -23,7 +22,6 @@ const marqueeItems = [
 export default function HeroSection() {
   const handleScheduleClick = () => {
     trackScheduleExam("hero_cta", "geral");
-    trackLeadDirect("hero_cta");
     window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame na Total Quality.", "_blank");
   };
 

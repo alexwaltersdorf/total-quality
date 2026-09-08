@@ -15,6 +15,7 @@
 import { resolveLeadValue } from "@/lib/leadValues";
 import { buildUserData } from "@/lib/userData";
 import { examTypeAtual } from "@/lib/pageContext";
+import { trackLeadDirect } from "@/lib/leadTracker";
 
 // Tipagem do dataLayer
 declare global {
@@ -163,6 +164,10 @@ export function trackWhatsAppConversion(label: string, source: string, examType?
     // Ticket por tipo informado pelo Alex — ver lib/leadValues.ts.
     value: resolveLeadValue(source, tipo),
   });
+
+  // O dataLayer continua intacto; esta chamada apenas cria o registro
+  // operacional que poderá ser enviado à planilha quando a busca for orgânica.
+  void trackLeadDirect(label, undefined, "whatsapp_click");
 }
 
 /**
@@ -275,6 +280,8 @@ export function trackPhoneClick(source: string) {
     contact_method: "phone",
     click_source: source,
   });
+
+  void trackLeadDirect(source, undefined, "phone_click");
 
 }
 

@@ -12,6 +12,8 @@ export const ENV = {
   googleAdsDeveloperToken: process.env.GOOGLE_ADS_DEVELOPER_TOKEN ?? "",
   googleAdsRefreshToken: process.env.GOOGLE_ADS_REFRESH_TOKEN ?? "",
   metaAdsAccessToken: process.env.META_ADS_ACCESS_TOKEN ?? "",
+  organicLeadsSheetWebhookUrl: process.env.ORGANIC_LEADS_SHEET_WEBHOOK_URL ?? "",
+  organicLeadsSheetSecret: process.env.ORGANIC_LEADS_SHEET_SECRET ?? "",
 };
 
 export const GOOGLE_ADS_DEVELOPER_TOKEN = process.env.GOOGLE_ADS_DEVELOPER_TOKEN;

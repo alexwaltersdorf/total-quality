@@ -9,6 +9,22 @@ o **GTM (GTM-WLR7JD57) é o único distribuidor** para GA4, Google Ads e Meta.
 Consequência prática: para mudar o destino de um evento mexe-se no contêiner,
 não no código; e nenhum PR precisa carregar ID de plataforma nova.
 
+Os leads de busca orgânica também podem ser copiados para a planilha operacional
+da clínica. Esse fluxo é independente do `dataLayer`: o navegador registra o
+lead no banco e o servidor, depois da persistência, envia uma cópia mínima à
+planilha. Falha ou ausência da integração não interrompe formulário, WhatsApp,
+telefone, GTM ou deploy.
+
+Variáveis somente do servidor:
+
+- `ORGANIC_LEADS_SHEET_WEBHOOK_URL`: URL `/exec` publicada pelo Apps Script.
+- `ORGANIC_LEADS_SHEET_SECRET`: segredo compartilhado guardado nas propriedades
+  do script e no ambiente do servidor; nunca usar prefixo `VITE_`.
+
+O Apps Script instalável está em `docs/google-apps-script-organic-leads.gs`.
+Somente busca orgânica (Google, Bing, Yahoo, DuckDuckGo e Ecosia) entra nessa
+planilha; social orgânico permanece nos relatórios de analytics.
+
 O carregamento do GTM passa pelo **gateway first-party**: `client/index.html`
 pede `/metrics/?id=GTM-WLR7JD57`, e `server/_core/tag-gateway.ts` faz proxy para
 `GTM-WLR7JD57.fps.goog`. A tag de configuracao do GA4 deve usar obrigatoriamente

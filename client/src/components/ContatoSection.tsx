@@ -25,7 +25,7 @@ const toast = {
 };
 import { trpc } from "@/lib/trpc";
 import { trackFormStart, trackFormSubmit, trackPhoneClick, trackWhatsAppClick, trackExternalLink, trackMapInteraction } from "@/lib/tracking";
-import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
+import { trackLeadDirect } from "@/lib/leadTracker";
 import { storeLeadHandoff } from "@/lib/leadHandoff";
 
 export default function ContatoSection() {
@@ -82,11 +82,11 @@ export default function ContatoSection() {
     });
 
     // Rastrear como lead com UTM params
-    trackLeadDirect("form_contato", {
+    void trackLeadDirect("form_contato", {
       name: formData.nome,
       phone: formData.telefone || undefined,
       email: formData.email,
-    });
+    }, "form_submit");
   };
 
   const handleFormFocus = () => {
