@@ -168,7 +168,7 @@ export default function ExamePage() {
           <div className="grid lg:grid-cols-12 gap-12">
             <div className="lg:col-span-5">
               <h2 className="reveal heading-display text-4xl lg:text-5xl text-text mb-4">
-                O QUE É O <span className="text-brand">{exam.shortTitle.toUpperCase()}?</span>
+                O QUE É {exam.slug === "ultrassonografia" ? "A" : "O"}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}?</span>
               </h2>
             </div>
             <div className="lg:col-span-7">
@@ -192,7 +192,7 @@ export default function ExamePage() {
         }>
           <ScrollVideo src={exam.videoUrl} alt={`Vídeo de ${exam.shortTitle} - Total Quality`}>
             <h2 className="heading-display text-3xl xl:text-4xl text-text mb-6">
-              O QUE É O <span className="text-brand">{exam.shortTitle.toUpperCase()}?</span>
+              O QUE É {exam.slug === "ultrassonografia" ? "A" : "O"}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}?</span>
             </h2>
             <p className="text-text-light text-base xl:text-lg leading-relaxed mb-6">
               {exam.whatIs}
@@ -325,7 +325,7 @@ export default function ExamePage() {
             {exam.category === "laboratorio" ? (
               <>FAÇA SEU <span className="text-brand">{exam.shortTitle.toUpperCase()}</span> SEM AGENDAMENTO</>
             ) : (
-              <>AGENDE SEU <span className="text-brand">{exam.shortTitle.toUpperCase()}</span></>
+              <>AGENDE {exam.slug === "ultrassonografia" ? "SUA" : "SEU"}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}</span></>
             )}
           </h2>
           <p className="reveal text-text-muted text-lg mb-10 max-w-2xl mx-auto" style={{ transitionDelay: "100ms" }}>
