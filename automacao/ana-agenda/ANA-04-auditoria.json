@@ -125,7 +125,7 @@
     },
     {
       "parameters": {
-        "jsCode": "\nconst texto = ($json.output || []).flatMap(o => o.content || [])\n  .filter(c => c.type === 'output_text').map(c => c.text).join('\\n').trim();\nconst t = texto || 'Falha ao gerar análise.';\nreturn [{ json: { texto: '🔍 *ANA — Auditoria de Atendimento*\\n\\n' + t } }];\n"
+        "jsCode": "// A data auditada vem da propria consulta: ana_auditoria_conversas() escolhe o\n// ultimo dia COM conversa, nao \"ontem\" fixo. Sem isso a linha em ana_auditorias\n// ficaria carimbada com a data errada.\nconst dados = ($('Extrair Conversas').first().json || {}).dados || {};\nconst dataRef = dados.data_referencia || '';\n\nconst texto = ($json.output || []).flatMap(o => o.content || [])\n  .filter(c => c.type === 'output_text').map(c => c.text).join('\\n').trim();\nconst t = texto || 'Falha ao gerar analise.';\n\nconst cabecalho = '🔍 *ANA — Auditoria de Atendimento*' + (dataRef ? ' · ' + dataRef : '');\nreturn [{ json: { data_ref: dataRef, texto: cabecalho + '\\n\\n' + t } }];"
       },
       "id": "a6",
       "name": "Extrair Análise",
@@ -191,12 +191,16 @@
       "position": [
         1488,
         -32
-      ]
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO ana_auditorias (data_ref, nota_geral, texto)\nSELECT CURRENT_DATE - 1,\n       NULLIF(replace(substring($1::jsonb->>'texto' from 'ota geral[^0-9]{0,25}([0-9]{1,2}[.,][0-9]|10|[0-9])'), ',', '.'), '')::numeric,\n       $1::jsonb->>'texto'\nRETURNING texto\nON CONFLICT (data_ref) DO UPDATE SET\n  nota_geral = EXCLUDED.nota_geral,\n  texto      = EXCLUDED.texto,\n  created_at = now()",
+        "query": "INSERT INTO ana_auditorias (data_ref, nota_geral, texto)\nSELECT COALESCE(to_date(NULLIF($1::jsonb->>'data_ref',''), 'DD/MM/YYYY'),\n                (NOW() AT TIME ZONE 'America/Sao_Paulo')::date - 1),\n       NULLIF(replace(substring($1::jsonb->>'texto' from 'ota geral[^0-9]{0,25}([0-9]{1,2}[.,][0-9]|10|[0-9])'), ',', '.'), '')::numeric,\n       $1::jsonb->>'texto'\nON CONFLICT (data_ref) DO UPDATE SET\n  nota_geral = EXCLUDED.nota_geral,\n  texto      = EXCLUDED.texto,\n  created_at = now()\nRETURNING texto",
         "options": {
           "queryReplacement": "={{ JSON.stringify($json) }}"
         }
