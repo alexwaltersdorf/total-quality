@@ -85,16 +85,36 @@ SELECT * FROM ana_confirmacoes_bloqueadas;
 Traz paciente, data, título e **o que fazer** em cada caso. O que a Ana recusa
 não some — vira fila de tratamento humano.
 
-## Falta fazer (precisa de acesso ao n8n)
+## Aplicado no n8n
 
-O card do ANA-06 está com **MCP access desligado**, então não consegui salvar o
-fluxo. O arquivo `ANA-06-confirmacao-vespera.json` já está corrigido e testado;
-para aplicar, abra o fluxo no n8n e ligue *MCP access* no card — ou importe o
-JSON. As três mudanças no fluxo são:
+As três mudanças estão salvas **e publicadas** no ANA-06 (versão ativa
+`dd3daee5`), fluxo ativo, cron `0 9 * * 1-5` em America/Sao_Paulo:
 
 1. `Buscar exames do proximo dia util` → `SELECT * FROM ana_confirmacoes_vespera();`
-2. `Registrar envio` → um único parâmetro JSONB (corrige a quebra por vírgula
-   que derrubou o fluxo em 08/09)
-3. `Montar mensagem` → texto novo + recusa de título sujo
+2. `Registrar envio` → um único parâmetro JSONB, e o nó passou a continuar em
+   caso de erro para que uma linha ruim não derrube o lote
+3. `Montar mensagem` → texto novo, recusa de título sujo, lista de exames
+   alinhada com o banco
 
-Enquanto isso, a trigger no banco já impede que as mensagens erradas saiam.
+## Pendência operacional: 20 pacientes sem confirmação
+
+Enquanto o fluxo esteve quebrado (09 a 11/09) ninguém recebeu véspera.
+Seis deles têm exame **amanhã, sexta 11/09**, e precisam de ligação da
+recepção — a janela da véspera já passou e a Ana não vai mais alcançá-los:
+
+| Hora | Contato | Paciente |
+|---|---|---|
+| 08:00 | Janaina Belmiro Lins | Janaina Belmiro Lins |
+| 09:00 | BISPA DAMARES | Damares de Oliveira Pinto |
+| 10:00 | May Costa | Mateus Mathias Barreto dos Santos |
+| 10:30 | Walace Veloso de Oliveira | Walace Veloso de Oliveira |
+| 11:00 | Nilton dos Santos Ferreira | Nilton dos Santos Ferreira |
+| 11:00 | Isabel | Maria Antônia Ramos |
+
+A lista completa sai com:
+
+```sql
+SELECT * FROM ana_leads
+WHERE agendamento->>'confirmavel' = 'true'
+  AND (agendamento->>'data')::date >= CURRENT_DATE;
+```
