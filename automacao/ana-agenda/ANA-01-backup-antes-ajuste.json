@@ -1,0 +1,3528 @@
+{
+  "updatedAt": "2026-08-31T13:44:27.099Z",
+  "createdAt": "2026-08-15T18:20:47.384Z",
+  "id": "XRUqhdO1QCyBBHbf",
+  "name": "ANA — 01 Atendimento WhatsApp (Total Quality)",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ana-whatsapp",
+        "options": {}
+      },
+      "name": "Webhook Evolution",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1344,
+        240
+      ],
+      "id": "d1fc30e9-18f2-45f2-97f8-3ffa064c2a47",
+      "webhookId": "c195c1f8-18a2-4b04-a06e-e445df87cd03"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Filtra eventos da Evolution API e extrai os dados essenciais da mensagem\nconst body = $json.body ?? $json;\nconst event = String(body.event || '').toLowerCase().replace('.', '_');\nif (event && event !== 'messages_upsert') return [];\n\nconst data = body.data ?? body;\nconst key = data.key ?? {};\nconst jid = key.remoteJid || '';\nif (!jid) return [];\nif (jid.endsWith('@g.us') || jid === 'status@broadcast') return [];\n\nif (key.fromMe === true) {\n  const mm = data.message ?? {};\n  const txt = String(\n    mm.conversation ||\n    (mm.extendedTextMessage && mm.extendedTextMessage.text) ||\n    (mm.imageMessage && mm.imageMessage.caption) ||\n    (mm.documentMessage && mm.documentMessage.caption) ||\n    ''\n  );\n\n  // A Evolution identifica disparos feitos por API/automações como source \"unknown\".\n  // Somente mensagens originadas de um dispositivo humano pausam a ANA.\n  // O comando #assumir é um fallback explícito para instalações sem source confiável.\n  const source = String(data.source || '').trim().toLowerCase();\n  const origemHumana = ['android', 'ios', 'web'].includes(source);\n  const comandoHumano = /^\\s*(#assumir|#humano|\\/assumir)\\b/i.test(txt);\n\n  if (!origemHumana && !comandoHumano) return [];\n\n  return [{\n    json: {\n      humano: true,\n      phone: jid.split('@')[0],\n      conteudo: txt,\n      source\n    }\n  }];\n}\n\nconst phone = jid.split('@')[0];\nconst m = data.message ?? {};\nlet msgType = 'texto', texto = '', midiaCaption = '';\n\nif (m.conversation) { texto = m.conversation; }\nelse if (m.extendedTextMessage && m.extendedTextMessage.text) { texto = m.extendedTextMessage.text; }\nelse if (m.imageMessage) { msgType = 'imagem'; midiaCaption = m.imageMessage.caption || ''; }\nelse if (m.audioMessage) { msgType = 'audio'; }\nelse if (m.documentMessage || m.documentWithCaptionMessage) {\n  const dm = m.documentMessage ?? (m.documentWithCaptionMessage.message || {}).documentMessage ?? {};\n  midiaCaption = dm.caption || '';\n  if (String(dm.mimetype || '').includes('pdf')) {\n    msgType = 'pdf';\n  } else {\n    msgType = 'texto';\n    texto = (midiaCaption ? midiaCaption + ' ' : '') +\n      '[Paciente enviou um arquivo que não consigo abrir por aqui — peça para enviar como foto ou PDF]';\n  }\n}\nelse if (m.stickerMessage) {\n  msgType = 'texto';\n  texto = '[Paciente enviou uma figurinha]';\n}\nelse return [];\n\nconst placeholders = {\n  imagem: '[Paciente enviou uma imagem — processando]',\n  audio: '[Paciente enviou um áudio — processando]',\n  pdf: '[Paciente enviou um PDF — processando]'\n};\n\nconst conteudoInicial = msgType === 'texto'\n  ? texto\n  : ((midiaCaption ? midiaCaption + ' ' : '') + placeholders[msgType]);\n\nreturn [{\n  json: {\n    phone,\n    jid,\n    pushName: data.pushName || '',\n    messageId: key.id || String(Date.now()),\n    msgType,\n    texto,\n    midiaCaption,\n    conteudoInicial\n  }\n}];"
+      },
+      "name": "Filtrar Eventos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1120,
+        240
+      ],
+      "id": "a2885d00-2b1e-49ec-9282-956a39b8785a"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO ana_mensagens (phone, role, tipo, conteudo, message_id) SELECT p->>'phone', 'user', p->>'msgType', p->>'conteudoInicial', p->>'messageId' FROM (SELECT $1::jsonb AS p) t ON CONFLICT (message_id) WHERE message_id IS NOT NULL DO NOTHING RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ JSON.stringify($('Filtrar Eventos').first().json) }}"
+        }
+      },
+      "name": "Salvar Mensagem",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -928,
+        240
+      ],
+      "id": "1aadeba5-f817-455b-9db9-47e084796684",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Inseriu?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -736,
+        240
+      ],
+      "id": "843cc0f8-1d5e-436c-9777-829c2261ffb7"
+    },
+    {
+      "parameters": {},
+      "name": "Duplicada (webhook repetido)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        432
+      ],
+      "id": "ee2dc3f5-0c50-458a-8105-b91b5c5c4705"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO ana_leads (phone, nome) VALUES (($1::jsonb->>'phone'), NULLIF(($1::jsonb->>'pushName'),'')) ON CONFLICT (phone) DO UPDATE SET nome = COALESCE(ana_leads.nome, EXCLUDED.nome), followup_step = 0, last_patient_msg_at = now(), updated_at = now() RETURNING *;",
+        "options": {
+          "queryReplacement": "={{ JSON.stringify($('Filtrar Eventos').first().json) }}"
+        }
+      },
+      "name": "Upsert Lead",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -560,
+        240
+      ],
+      "id": "be05065e-b2a6-4685-b4a8-4717d5dd66de",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.bot_ativo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "id": "b333b0b1-c4a0-4434-8234-22daec68ab54"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Bot Ativo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -400,
+        240
+      ],
+      "id": "8968624b-6db3-44b7-9794-c1908aa5d223"
+    },
+    {
+      "parameters": {},
+      "name": "Pausado (humano no comando)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        432
+      ],
+      "id": "384db10c-7c8e-4310-9ff2-307c4b9c873d"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Filtrar Eventos').first().json.msgType }}",
+                    "rightValue": "texto",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Filtrar Eventos').first().json.msgType }}",
+                    "rightValue": "imagem",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "imagem"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Filtrar Eventos').first().json.msgType }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Filtrar Eventos').first().json.msgType }}",
+                    "rightValue": "pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "pdf"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Tipo de Mensagem",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -240,
+        240
+      ],
+      "id": "ce11cb7e-b1b6-4b9a-977e-1b9791753196"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst f = $('Filtrar Eventos').first().json;\nreturn [{ json: { phone: f.phone, messageId: f.messageId, texto_para_ia: f.texto, midia: 'texto' } }];\n"
+      },
+      "name": "Normalizar Texto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2528ac4b-4fa0-4d0e-bce2-53f37c237431"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_URL }}/chat/getBase64FromMediaMessage/{{ $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_APIKEY }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ message: { key: { id: $('Filtrar Eventos').first().json.messageId } }, convertToMp4: false }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "name": "Baixar Imagem",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        160
+      ],
+      "id": "837a678f-9bde-4ace-b8aa-d999f9ab70c8",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst f = $('Filtrar Eventos').first().json;\nconst r = $json;\nconst b64 = r.base64 ?? (r.media && r.media.base64) ?? (r.data && r.data.base64);\nconst mime = String(r.mimetype ?? (r.media && r.media.mimetype) ?? 'image/jpeg').split(';')[0];\nconst instr = 'Extraia somente dados de um pedido médico. Não invente. Se não for pedido médico, informe isso em observacoes.';\nconst fallback = { legivel: false, exames: [], observacoes: 'falha no download da imagem' };\nconst content = b64\n  ? [{ type: 'input_image', image_url: 'data:' + mime + ';base64,' + b64, detail: 'high' }, { type: 'input_text', text: instr }]\n  : [{ type: 'input_text', text: 'Retorne exatamente: ' + JSON.stringify(fallback) }];\nconst schema = { type: 'object', additionalProperties: false, properties: {\n  legivel: { type: 'boolean' },\n  exames: { type: 'array', items: { type: 'string' } },\n  observacoes: { type: 'string' }\n}, required: ['legivel', 'exames', 'observacoes'] };\nconst body = { model: 'gpt-5.6-luna', reasoning: { effort: 'none' }, max_output_tokens: 500,\n  input: [{ role: 'user', content }], text: { format: { type: 'json_schema', name: 'pedido_medico', strict: true, schema } }, store: false };\nreturn [{ json: { openai_body: body, phone: f.phone } }];\n"
+      },
+      "name": "Preparar Visão (Imagem)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        160
+      ],
+      "id": "1e88b281-81c1-4dc4-a611-0d63b4c00b0f"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/responses",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.OPENAI_API_KEY }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.openai_body }}",
+        "options": {
+          "timeout": 90000
+        }
+      },
+      "name": "Ler Pedido (Imagem)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        160
+      ],
+      "id": "f20046fa-4545-43be-998d-ed56b879c1e4",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst f = $('Filtrar Eventos').first().json;\nlet parsed = { legivel: false, exames: [], observacoes: '' };\ntry {\n  const txt = ($json.output || []).flatMap(o => o.content || []).filter(c => c.type === 'output_text').map(c => c.text).join('\\n');\n  if (txt) parsed = Object.assign(parsed, JSON.parse(txt));\n} catch (e) {}\nconst lista = (parsed.exames || []).filter(Boolean);\nconst cap = f.midiaCaption ? f.midiaCaption + '\\n' : '';\nlet texto_para_ia;\nif (lista.length) {\n  texto_para_ia = cap + '[O paciente enviou imagem de pedido médico. Exames identificados: ' + lista.join('; ') + '. Obs: ' + (parsed.observacoes || '-') + ' — use consultar_precos com TODOS os exames e responda com o orçamento. Exame sem preço: *valor a consultar*.]';\n} else {\n  texto_para_ia = cap + '[Não foi possível identificar exames com clareza' + (parsed.observacoes ? ' (' + parsed.observacoes + ')' : '') + '. Peça uma nova foto mais nítido.]';\n}\nreturn [{ json: { phone: f.phone, messageId: f.messageId, texto_para_ia, midia: 'imagem' } }];\n"
+      },
+      "name": "Normalizar Imagem",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        160
+      ],
+      "id": "75d046c2-dc0a-4562-a6cf-d455af08d9d4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_URL }}/chat/getBase64FromMediaMessage/{{ $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_APIKEY }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ message: { key: { id: $('Filtrar Eventos').first().json.messageId } }, convertToMp4: false }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "name": "Baixar Áudio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        352
+      ],
+      "id": "da656675-cecc-488c-8d29-760ff7bebc02",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst f = $('Filtrar Eventos').first().json;\nconst r = $json;\nconst b64 = r.base64 ?? (r.media && r.media.base64) ?? (r.data && r.data.base64);\nif (!b64) return [{ json: { phone: f.phone, sem_audio: true } }];\nreturn [{ json: { phone: f.phone }, binary: { data: { data: b64, mimeType: 'audio/ogg', fileName: 'audio.ogg' } } }];\n"
+      },
+      "name": "Preparar Áudio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        352
+      ],
+      "id": "2b8d37b5-5daf-4472-ac78-6ced1c096711"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/audio/transcriptions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.OPENAI_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "model",
+              "value": "whisper-1"
+            },
+            {
+              "name": "language",
+              "value": "pt"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "name": "Transcrever Áudio (Whisper)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        352
+      ],
+      "id": "c3822f9c-9c33-4d73-bbe2-e4828a2b8fbf",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst f = $('Filtrar Eventos').first().json;\nconst t = ($json && $json.text) ? String($json.text).trim() : '';\nconst texto_para_ia = t\n  ? '[Transcrição do áudio enviado pelo paciente]: ' + t\n  : '[O paciente enviou um áudio que não pôde ser transcrito. Responda com simpatia dizendo que o áudio não chegou direitinho e peça para escrever em texto ou reenviar.]';\nreturn [{ json: { phone: f.phone, messageId: f.messageId, texto_para_ia, midia: 'audio' } }];\n"
+      },
+      "name": "Normalizar Áudio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        352
+      ],
+      "id": "163a3994-544f-4f8d-ba40-b96b5ad29f10"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_URL }}/chat/getBase64FromMediaMessage/{{ $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_APIKEY }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ message: { key: { id: $('Filtrar Eventos').first().json.messageId } }, convertToMp4: false }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "name": "Baixar PDF",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        528
+      ],
+      "id": "8960ed80-52c3-4700-addd-3f10f647ddc7",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst f = $('Filtrar Eventos').first().json;\nconst r = $json;\nconst b64 = r.base64 ?? (r.media && r.media.base64) ?? (r.data && r.data.base64);\nconst instr = 'Extraia somente dados de um pedido médico. Não invente. Se não for pedido médico, informe isso em observacoes.';\nconst fallback = { legivel: false, exames: [], observacoes: 'falha no download do PDF' };\nconst content = b64\n  ? [{ type: 'input_file', filename: 'pedido-medico.pdf', file_data: 'data:application/pdf;base64,' + b64 }, { type: 'input_text', text: instr }]\n  : [{ type: 'input_text', text: 'Retorne exatamente: ' + JSON.stringify(fallback) }];\nconst schema = { type: 'object', additionalProperties: false, properties: {\n  legivel: { type: 'boolean' },\n  exames: { type: 'array', items: { type: 'string' } },\n  observacoes: { type: 'string' }\n}, required: ['legivel', 'exames', 'observacoes'] };\nconst body = { model: 'gpt-5.6-luna', reasoning: { effort: 'none' }, max_output_tokens: 500,\n  input: [{ role: 'user', content }], text: { format: { type: 'json_schema', name: 'pedido_medico', strict: true, schema } }, store: false };\nreturn [{ json: { openai_body: body, phone: f.phone } }];\n"
+      },
+      "name": "Preparar Leitura (PDF)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        528
+      ],
+      "id": "ec1e644a-b51b-4d91-95d5-d59cf7c5dc83"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/responses",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.OPENAI_API_KEY }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.openai_body }}",
+        "options": {
+          "timeout": 90000
+        }
+      },
+      "name": "Ler Pedido (PDF)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        528
+      ],
+      "id": "9873f2d8-ed67-4b12-9bab-2277575dafbf",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst f = $('Filtrar Eventos').first().json;\nlet parsed = { legivel: false, exames: [], observacoes: '' };\ntry {\n  const txt = ($json.output || []).flatMap(o => o.content || []).filter(c => c.type === 'output_text').map(c => c.text).join('\\n');\n  if (txt) parsed = Object.assign(parsed, JSON.parse(txt));\n} catch (e) {}\nconst lista = (parsed.exames || []).filter(Boolean);\nconst cap = f.midiaCaption ? f.midiaCaption + '\\n' : '';\nlet texto_para_ia;\nif (lista.length) {\n  texto_para_ia = cap + '[O paciente enviou pdf de pedido médico. Exames identificados: ' + lista.join('; ') + '. Obs: ' + (parsed.observacoes || '-') + ' — use consultar_precos com TODOS os exames e responda com o orçamento. Exame sem preço: *valor a consultar*.]';\n} else {\n  texto_para_ia = cap + '[Não foi possível identificar exames com clareza' + (parsed.observacoes ? ' (' + parsed.observacoes + ')' : '') + '. Peça um novo PDF mais nítido.]';\n}\nreturn [{ json: { phone: f.phone, messageId: f.messageId, texto_para_ia, midia: 'pdf' } }];\n"
+      },
+      "name": "Normalizar PDF",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        528
+      ],
+      "id": "c1a49863-8bf8-4abe-b28e-2588e7ad2701"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE ana_mensagens SET conteudo = ($1::jsonb->>'texto_para_ia') WHERE message_id = ($1::jsonb->>'messageId') RETURNING message_id;",
+        "options": {
+          "queryReplacement": "={{ JSON.stringify($json) }}"
+        }
+      },
+      "name": "Atualizar Conteúdo da Mensagem",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        832,
+        240
+      ],
+      "id": "7a31f31c-e773-4a2d-8d34-5cf89f63d93b",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 8
+      },
+      "name": "Aguardar 8s (agrupar mensagens)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1024,
+        240
+      ],
+      "id": "624bf714-8d25-457d-a6af-fde9a0e1250b",
+      "webhookId": "4eda8ba2-519a-4bfb-a7a7-474febc426f1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT (SELECT message_id FROM ana_mensagens WHERE phone = ($1::jsonb->>'phone') AND role = 'user' ORDER BY created_at DESC LIMIT 1) AS ultima, EXISTS (SELECT 1 FROM ana_mensagens WHERE phone = ($1::jsonb->>'phone') AND role = 'user' AND conteudo LIKE '%— processando]%' AND created_at > now() - interval '3 minutes') AS pendente;",
+        "options": {
+          "queryReplacement": "={{ JSON.stringify($('Filtrar Eventos').first().json) }}"
+        }
+      },
+      "name": "Última Mensagem?",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1232,
+        240
+      ],
+      "id": "a505a333-0389-4f89-9520-189f9d42e5a2",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.ultima }}",
+              "rightValue": "={{ $('Filtrar Eventos').first().json.messageId }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "É a Última?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1424,
+        240
+      ],
+      "id": "d83b9392-d8d2-4f1b-b65f-5364078c7528"
+    },
+    {
+      "parameters": {},
+      "name": "Agrupada (outra execução responde)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        512
+      ],
+      "id": "4fac2912-06da-4a89-98c5-c172886db427"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.pendente }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Mídia Pendente?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1520,
+        80
+      ],
+      "id": "6a656f81-8ac0-4fcd-b712-2767e19e40ba"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COALESCE((SELECT valor FROM ana_config WHERE chave = 'system_prompt'), 'Você é a Ana, atendente virtual da Total Quality Medicina Diagnóstica (Caraguatatuba/SP). MODO DE EMERGÊNCIA: o system prompt completo não foi encontrado no banco. Responda com acolhimento, não invente informações, preços ou horários; diga que vai confirmar com a equipe. Finalize com ###DADOS### em linha única contendo {\"temperatura\":\"morno\",\"funil\":\"meio\",\"consciencia\":null,\"intencao\":\"outro\",\"exames_mencionados\":[],\"convenio\":null,\"agendamento\":{\"status\":\"nenhum\",\"data\":null,\"turno\":null},\"opt_out\":false,\"proxima_acao\":\"aguardar_resposta\",\"escalar\":true,\"motivo_escalada\":\"system prompt ausente em ana_config\",\"resumo_interno\":\"\"}') AS valor;",
+        "options": {}
+      },
+      "name": "Carregar System Prompt",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1632,
+        240
+      ],
+      "id": "b3413079-e1e2-41df-b1ad-7dee36a6f1f5",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT role, conteudo FROM (SELECT role, conteudo, created_at FROM ana_mensagens WHERE phone = ($1::jsonb->>'phone') ORDER BY created_at DESC LIMIT 24) t ORDER BY created_at ASC;",
+        "options": {
+          "queryReplacement": "={{ JSON.stringify($('Filtrar Eventos').first().json) }}"
+        }
+      },
+      "name": "Carregar Histórico",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1824,
+        240
+      ],
+      "id": "20fd9aa7-5240-44c9-958e-9ea21f8cb9d4",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst histAll = $('Carregar Histórico').all().map(i => i.json);\nconst hist = histAll.slice(-12);\nconst sys = String($('Carregar System Prompt').first().json.valor || '').replace(/\\n/g, '\\n').replace(/\\n{3,}/g, '\\n\\n').trim();\nconst lead = $('Upsert Lead').first().json;\nconst agora = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });\nconst ctx = [\n  '[CONTEXTO INTERNO]',\n  'Agora: ' + agora + ' (America/Sao_Paulo)',\n  'Nome: ' + (lead.nome || 'não informado'),\n  lead.resumo_interno ? 'Resumo anterior: ' + lead.resumo_interno : null,\n  'Preços: use consultar_precos antes de citar valores; nunca invente.',\n  'Agenda: não confirme disponibilidade; colete dados e escale para confirmação humana.',\n  'Finalize com ###DADOS### seguido do JSON contratual em uma linha.'\n].filter(Boolean).join('\\n');\nconst msgs = [];\nfor (const h of hist) {\n  const role = h.role === 'assistant' ? 'assistant' : 'user';\n  const c = String(h.conteudo || '').trim();\n  if (!c) continue;\n  if (msgs.length && msgs[msgs.length - 1].role === role) msgs[msgs.length - 1].content += '\\n\\n' + c;\n  else msgs.push({ role, content: c });\n}\nwhile (msgs.length && msgs[0].role !== 'user') msgs.shift();\nif (!msgs.length) msgs.push({ role: 'user', content: '(primeiro contato do paciente)' });\nif (msgs[msgs.length - 1].role === 'user') msgs[msgs.length - 1].content += '\\n\\n' + ctx;\nelse msgs.push({ role: 'user', content: ctx });\nconst tools = [{ type: 'function', name: 'consultar_precos',\n  description: 'Consulta a tabela oficial. Use antes de informar valores e envie todos os exames de uma vez.',\n  parameters: { type: 'object', additionalProperties: false, properties: {\n    exames: { type: 'array', items: { type: 'string' }, description: 'Nomes completos dos exames' }\n  }, required: ['exames'] }, strict: true\n}];\nconst body = { model: 'gpt-5.6-luna', instructions: sys, input: msgs, tools, tool_choice: 'auto',\n  reasoning: { effort: 'low' }, max_output_tokens: 1200, store: false };\nreturn [{ json: { openai_body: body, phone: lead.phone } }];\n"
+      },
+      "name": "Montar Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2032,
+        240
+      ],
+      "id": "d3b5db70-261a-4f92-ab2d-a9ec62ede9ac"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/responses",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.OPENAI_API_KEY }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.openai_body) }}",
+        "options": {
+          "timeout": 90000
+        }
+      },
+      "name": "Chamar Ana",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2224,
+        240
+      ],
+      "id": "1400eff1-f42f-46af-ae9c-553e42f25f85",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ ($json.output || []).some(i => i.type === 'function_call' && i.name === 'consultar_precos') ? 'tool_use' : 'end_turn' }}",
+              "rightValue": "tool_use",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "id": "52b80051-1135-474f-b229-80bfad09d4fd"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Usou Ferramenta de Preços?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2432,
+        240
+      ],
+      "id": "d0066c33-154c-425a-84ce-3a6373d2f685"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst resp = $json;\nconst call = (resp.output || []).find(i => i.type === 'function_call' && i.name === 'consultar_precos');\nlet args = {};\ntry { args = JSON.parse((call && call.arguments) || '{}'); } catch (e) {}\nconst exames = (args.exames || []).filter(Boolean);\nreturn [{ json: { pg_payload: JSON.stringify({ exames }), tool_call_id: (call && call.call_id) || '', phone: $('Montar Payload').first().json.phone } }];\n"
+      },
+      "name": "Preparar Consulta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2624,
+        128
+      ],
+      "id": "af5cfe3c-2915-447d-b4e5-f7cf8f1bd7a0"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH resultados AS (\n  SELECT *\n  FROM ana_buscar_precos(\n    (\n      SELECT COALESCE(array_agg(x), ARRAY[]::text[])\n      FROM jsonb_array_elements_text(($1::jsonb)->'exames') AS x\n    )\n  )\n),\nnormalizados AS (\n  SELECT\n    r.*,\n    lower(trim(regexp_replace(r.termo_busca, '^\\s*dosagem\\s+d(e|o|a|os|as)\\s+', '', 'i'))) AS termo_limpo,\n    lower(r.nome_exame) AS nome_limpo,\n    lower(COALESCE(substring(r.termo_busca FROM '\\(([^)]+)\\)'), '')) AS sigla\n  FROM resultados r\n  WHERE r.encontrado = true\n    AND r.ativo = true\n    AND r.preco IS NOT NULL\n    AND r.similaridade >= 0.35\n),\nranqueados AS (\n  SELECT\n    n.*,\n    row_number() OVER (\n      PARTITION BY n.termo_busca\n      ORDER BY\n        (\n          CASE\n            WHEN n.sigla <> '' AND n.nome_limpo LIKE '%' || n.sigla || '%' THEN 3\n            ELSE 0\n          END\n          +\n          CASE\n            WHEN n.nome_limpo LIKE '%' || n.termo_limpo || '%'\n              OR n.termo_limpo LIKE '%' || n.nome_limpo || '%' THEN 2\n            ELSE 0\n          END\n          + n.similaridade\n        ) DESC,\n        n.similaridade DESC\n    ) AS rn\n  FROM normalizados n\n)\nSELECT\n  termo_busca,\n  nome_exame,\n  categoria,\n  preco,\n  preco_pix,\n  ativo,\n  similaridade,\n  encontrado\nFROM ranqueados\nWHERE rn = 1\nORDER BY termo_busca;",
+        "options": {
+          "queryReplacement": "={{ $json.pg_payload }}"
+        }
+      },
+      "name": "Consultar Preços",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        2832,
+        128
+      ],
+      "alwaysOutputData": true,
+      "id": "12acbd8e-d916-4936-9f93-6769a29348c6",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r && r.nome_exame);\nconst first = $('Chamar Ana').first().json;\nconst base = $('Montar Payload').first().json.openai_body;\nconst callId = $('Preparar Consulta').first().json.tool_call_id;\nconst resultado = rows.length\n  ? JSON.stringify(rows)\n  : JSON.stringify({ resultado: 'nenhum exame encontrado na tabela', instrucao: 'Não invente valor; informe valor a consultar e escale somente conforme as regras do sistema.' });\nconst priorOutput = (first.output || []).filter(i => i.type === 'function_call');\nconst body = Object.assign({}, base, { tool_choice: 'none', input: base.input.concat(priorOutput, [\n  { type: 'function_call_output', call_id: callId, output: resultado }\n]) });\nreturn [{ json: { openai_body: body, phone: $('Montar Payload').first().json.phone } }];"
+      },
+      "name": "Enviar Preços à Ana",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3024,
+        128
+      ],
+      "id": "ded55b3b-24d3-4989-981c-b01c3987338f"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/responses",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $env.ANTHROPIC_API_KEYBearer {{ $env.OPENAI_API_KEY }} }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.openai_body }}",
+        "options": {
+          "timeout": 90000
+        }
+      },
+      "name": "Chamar Ana (2ª rodada)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3232,
+        128
+      ],
+      "id": "057e0393-af6f-4794-820f-9b972e25b9fa",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// Separa a mensagem do paciente do bloco ###DADOS### e calcula o próximo follow-up\nconst resp = $json;\nconst phone = $('Montar Payload').first().json.phone;\nlet texto = '';\ntry { texto = (resp.output || []).flatMap(o => o.content || []).filter(c => c.type === 'output_text').map(c => c.text).join('\\n').trim(); } catch (e) {}\nlet dados = { temperatura: 'morno', funil: 'meio', consciencia: null, intencao: 'outro', exames_mencionados: [], convenio: null, agendamento: { status: 'nenhum', data: null, turno: null }, opt_out: false, proxima_acao: 'aguardar_resposta', escalar: false, motivo_escalada: null, resumo_interno: '' };\nlet msg = texto;\nconst ix = texto.indexOf('###DADOS###');\nif (ix >= 0) {\n  msg = texto.slice(0, ix).trim();\n  const m = texto.slice(ix).match(/\\{[\\s\\S]*\\}/);\n  if (m) { try { dados = Object.assign(dados, JSON.parse(m[0])); } catch (e) {} }\n}\nif (!msg) {\n  msg = 'Só um instante, vou confirmar uma informação com a equipe e já te retorno 😊';\n  dados.escalar = true;\n  dados.motivo_escalada = dados.motivo_escalada || 'Falha na geração de resposta da IA — verificar execução no N8N';\n}\nconst ci = parseInt(dados.consciencia, 10);\ndados.consciencia = (ci >= 1 && ci <= 4) ? ci : null;\nif (!dados.agendamento || typeof dados.agendamento !== 'object') dados.agendamento = { status: 'nenhum', data: null, turno: null };\nconst st = dados.agendamento.status || 'nenhum';\nconst mapa = { follow_up_d1: 1, follow_up_d3: 3, follow_up_d7: 7, xeque_mate: 7, follow_up_d30: 16 };\nlet dias = mapa[dados.proxima_acao];\nif (dias === undefined) dias = (st !== 'confirmado' && !['agendado', 'encerrar', 'escalar'].includes(dados.proxima_acao)) ? 1 : null;\nif (dados.opt_out || dados.escalar || ['agendado', 'encerrar', 'escalar'].includes(dados.proxima_acao) || st === 'confirmado') dias = null;\nconst due = dias ? new Date(Date.now() + dias * 86400000).toISOString() : null;\nconst pausar = !!dados.escalar && /(emerg|reclama|conflit|lgpd|humano|urgên|urgenc)/i.test(String(dados.motivo_escalada || ''));\nconst bolhas = msg.split(/\\n{2,}/).map(t => t.trim()).filter(Boolean)\n  .map(t => ({ texto: t, delay: Math.min(6000, Math.max(1500, t.length * 35)) }));\nreturn [{ json: {\n  phone, mensagem: msg, dados, bolhas, followup_due: due, pausar,\n  pg_msg: JSON.stringify({ phone, conteudo: msg, dados }),\n  pg_lead: JSON.stringify({ phone, temperatura: dados.temperatura, funil: dados.funil, consciencia: dados.consciencia, intencao: dados.intencao, exames: dados.exames_mencionados || [], convenio: dados.convenio, agendamento: dados.agendamento, opt_out: !!dados.opt_out, proxima_acao: dados.proxima_acao, followup_due: due, escalado: !!dados.escalar, motivo_escalada: dados.motivo_escalada, resumo_interno: dados.resumo_interno || '', pausar }),\n} }];\n"
+      },
+      "name": "Extrair Resposta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3440,
+        240
+      ],
+      "id": "46158103-fa26-4076-b33b-0520705c52f7"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO ana_mensagens (phone, role, tipo, conteudo, dados) SELECT p->>'phone', 'assistant', 'texto', p->>'conteudo', (p->'dados') FROM (SELECT $1::jsonb AS p) t RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ $json.pg_msg }}"
+        }
+      },
+      "name": "Salvar Resposta",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        3648,
+        240
+      ],
+      "id": "e825eaa4-1850-45ca-88d3-e9bba1324a30",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE ana_leads SET temperatura = COALESCE(p->>'temperatura', temperatura), funil = COALESCE(p->>'funil', funil), consciencia = NULLIF(p->>'consciencia','')::int, intencao = p->>'intencao', exames = COALESCE(p->'exames', exames), convenio = p->>'convenio', agendamento = COALESCE(p->'agendamento', agendamento), opt_out = COALESCE((p->>'opt_out')::boolean, opt_out), proxima_acao = p->>'proxima_acao', followup_step = 0, followup_due_at = NULLIF(p->>'followup_due','')::timestamptz, escalado = COALESCE((p->>'escalado')::boolean, escalado), motivo_escalada = p->>'motivo_escalada', resumo_interno = p->>'resumo_interno', bot_ativo = CASE WHEN (p->>'pausar')::boolean THEN false ELSE bot_ativo END, last_bot_msg_at = now(), updated_at = now() FROM (SELECT $1::jsonb AS p) t WHERE phone = p->>'phone' RETURNING phone;",
+        "options": {
+          "queryReplacement": "={{ $('Extrair Resposta').first().json.pg_lead }}"
+        }
+      },
+      "name": "Atualizar Lead",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        3840,
+        240
+      ],
+      "id": "6ebeafff-18f6-488f-83cf-7b95aee6a02c",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $('Extrair Resposta').first().json.dados.escalar === true && /emerg|urgen|samu|192|reclama|conflito|insatisf|lgpd|exclus|agend/i.test(String($('Extrair Resposta').first().json.dados.motivo_escalada || '')) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Escalar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4048,
+        240
+      ],
+      "id": "9d3b068e-9586-44fd-a4e1-c6b2352520b9"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_APIKEY }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: ($env.SUPERVISOR_WHATSAPP || 'CONFIGURE_A_VARIAVEL_SUPERVISOR_WHATSAPP'), text: '🔔 *ANA — Atendimento escalado*\\n\\nPaciente: +' + $('Extrair Resposta').first().json.phone + '\\nMotivo: ' + ($('Extrair Resposta').first().json.dados.motivo_escalada || '-') + '\\nResumo: ' + ($('Extrair Resposta').first().json.dados.resumo_interno || '-') + '\\n\\nAbra a conversa no WhatsApp da clínica para assumir.' }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "name": "Notificar Supervisor",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4240,
+        128
+      ],
+      "id": "2f29f6b9-7e81-4582-8711-e678101ee871",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst r = $('Extrair Resposta').first().json;\nreturn r.bolhas.map(b => ({ json: { phone: r.phone, texto: b.texto, delay: b.delay } }));\n"
+      },
+      "name": "Separar Bolhas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4448,
+        240
+      ],
+      "id": "b0fe1614-0977-4c63-aeb8-3bf5e19a82f0"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Loop Bolhas",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        4640,
+        240
+      ],
+      "id": "10b3e952-8067-4fce-a9f7-393b9184d3eb"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_APIKEY }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $json.phone, text: $json.texto, delay: $json.delay }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "name": "Enviar Mensagem",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4848,
+        352
+      ],
+      "id": "8d5d003b-d5a3-4484-a68e-0d0ff0c36f2e",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "name": "Fim",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        4848,
+        144
+      ],
+      "id": "98d9e742-dd9a-4085-9b78-c6c7ba7e1931"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.humano === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "id": "3000001d-91d7-4833-9453-116e907dffe0"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "h1",
+      "name": "Humano na Conversa?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -944,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH p AS (SELECT $1::jsonb AS j),\neco AS (\n  SELECT 1 FROM ana_mensagens m, p\n  WHERE m.phone = p.j->>'phone'\n    AND m.role = 'assistant'\n    AND m.created_at > now() - interval '10 minutes'\n    AND length(COALESCE(p.j->>'conteudo','')) > 0\n    AND position(p.j->>'conteudo' IN COALESCE(m.conteudo,'')) > 0\n  LIMIT 1\n),\nupd AS (\n  UPDATE ana_leads l\n  SET bot_ativo = false, human_msg_at = now(), escalado = false, updated_at = now()\n  FROM p\n  WHERE l.phone = p.j->>'phone'\n    AND NOT EXISTS (SELECT 1 FROM eco)\n  RETURNING l.phone\n),\nins AS (\n  INSERT INTO ana_mensagens (phone, role, tipo, conteudo)\n  SELECT p.j->>'phone', 'assistant', 'humano', COALESCE(NULLIF(p.j->>'conteudo',''), '[mensagem da equipe]')\n  FROM p\n  WHERE NOT EXISTS (SELECT 1 FROM eco)\n  RETURNING id\n)\nSELECT (SELECT count(*) FROM upd) AS pausados;",
+        "options": {
+          "queryReplacement": "={{ JSON.stringify($json) }}"
+        }
+      },
+      "id": "h2",
+      "name": "Pausar Ana (humano assumiu)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        -736,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Evolution": {
+      "main": [
+        [
+          {
+            "node": "Filtrar Eventos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar Eventos": {
+      "main": [
+        [
+          {
+            "node": "Humano na Conversa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Inseriu?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inseriu?": {
+      "main": [
+        [
+          {
+            "node": "Upsert Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Duplicada (webhook repetido)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Lead": {
+      "main": [
+        [
+          {
+            "node": "Bot Ativo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bot Ativo?": {
+      "main": [
+        [
+          {
+            "node": "Tipo de Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pausado (humano no comando)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tipo de Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Normalizar Texto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Baixar Imagem",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Baixar Áudio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Baixar PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar Imagem": {
+      "main": [
+        [
+          {
+            "node": "Preparar Visão (Imagem)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Visão (Imagem)": {
+      "main": [
+        [
+          {
+            "node": "Ler Pedido (Imagem)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler Pedido (Imagem)": {
+      "main": [
+        [
+          {
+            "node": "Normalizar Imagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar Áudio": {
+      "main": [
+        [
+          {
+            "node": "Preparar Áudio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Áudio": {
+      "main": [
+        [
+          {
+            "node": "Transcrever Áudio (Whisper)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcrever Áudio (Whisper)": {
+      "main": [
+        [
+          {
+            "node": "Normalizar Áudio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar PDF": {
+      "main": [
+        [
+          {
+            "node": "Preparar Leitura (PDF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Leitura (PDF)": {
+      "main": [
+        [
+          {
+            "node": "Ler Pedido (PDF)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler Pedido (PDF)": {
+      "main": [
+        [
+          {
+            "node": "Normalizar PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar Texto": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Conteúdo da Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar Imagem": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Conteúdo da Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar Áudio": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Conteúdo da Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar PDF": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Conteúdo da Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar Conteúdo da Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Aguardar 8s (agrupar mensagens)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aguardar 8s (agrupar mensagens)": {
+      "main": [
+        [
+          {
+            "node": "Última Mensagem?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Última Mensagem?": {
+      "main": [
+        [
+          {
+            "node": "É a Última?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "É a Última?": {
+      "main": [
+        [
+          {
+            "node": "Mídia Pendente?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agrupada (outra execução responde)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mídia Pendente?": {
+      "main": [
+        [
+          {
+            "node": "Aguardar 8s (agrupar mensagens)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Carregar System Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Carregar System Prompt": {
+      "main": [
+        [
+          {
+            "node": "Carregar Histórico",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Carregar Histórico": {
+      "main": [
+        [
+          {
+            "node": "Montar Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar Payload": {
+      "main": [
+        [
+          {
+            "node": "Chamar Ana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chamar Ana": {
+      "main": [
+        [
+          {
+            "node": "Usou Ferramenta de Preços?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Usou Ferramenta de Preços?": {
+      "main": [
+        [
+          {
+            "node": "Preparar Consulta",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extrair Resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Consulta": {
+      "main": [
+        [
+          {
+            "node": "Consultar Preços",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar Preços": {
+      "main": [
+        [
+          {
+            "node": "Enviar Preços à Ana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Preços à Ana": {
+      "main": [
+        [
+          {
+            "node": "Chamar Ana (2ª rodada)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chamar Ana (2ª rodada)": {
+      "main": [
+        [
+          {
+            "node": "Extrair Resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair Resposta": {
+      "main": [
+        [
+          {
+            "node": "Salvar Resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar Resposta": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar Lead": {
+      "main": [
+        [
+          {
+            "node": "Escalar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escalar?": {
+      "main": [
+        [
+          {
+            "node": "Notificar Supervisor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Separar Bolhas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notificar Supervisor": {
+      "main": [
+        [
+          {
+            "node": "Separar Bolhas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separar Bolhas": {
+      "main": [
+        [
+          {
+            "node": "Loop Bolhas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Bolhas": {
+      "main": [
+        [
+          {
+            "node": "Fim",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Loop Bolhas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Humano na Conversa?": {
+      "main": [
+        [
+          {
+            "node": "Pausar Ana (humano assumiu)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Salvar Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "9fc0581d-9035-48d6-9703-45a6b5ebf34c",
+  "activeVersionId": "9fc0581d-9035-48d6-9703-45a6b5ebf34c",
+  "versionCounter": 48,
+  "triggerCount": 1,
+  "sourceWorkflowId": null,
+  "shared": [
+    {
+      "updatedAt": "2026-08-15T18:20:47.388Z",
+      "createdAt": "2026-08-15T18:20:47.388Z",
+      "role": "workflow:owner",
+      "workflowId": "XRUqhdO1QCyBBHbf",
+      "projectId": "49FUN0KCAllHc2lW",
+      "project": {
+        "updatedAt": "2026-04-05T02:07:21.513Z",
+        "createdAt": "2026-04-05T02:05:00.881Z",
+        "id": "49FUN0KCAllHc2lW",
+        "name": "Alex Waltersdorf <alex@totalquality.med.br>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "f3c9783b-9bb8-48b3-9c8c-e51c5a23af23"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-08-31T13:46:44.000Z",
+    "createdAt": "2026-08-31T13:44:27.102Z",
+    "versionId": "9fc0581d-9035-48d6-9703-45a6b5ebf34c",
+    "workflowId": "XRUqhdO1QCyBBHbf",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "ana-whatsapp",
+          "options": {}
+        },
+        "name": "Webhook Evolution",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -1344,
+          240
+        ],
+        "id": "d1fc30e9-18f2-45f2-97f8-3ffa064c2a47",
+        "webhookId": "c195c1f8-18a2-4b04-a06e-e445df87cd03"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Filtra eventos da Evolution API e extrai os dados essenciais da mensagem\nconst body = $json.body ?? $json;\nconst event = String(body.event || '').toLowerCase().replace('.', '_');\nif (event && event !== 'messages_upsert') return [];\n\nconst data = body.data ?? body;\nconst key = data.key ?? {};\nconst jid = key.remoteJid || '';\nif (!jid) return [];\nif (jid.endsWith('@g.us') || jid === 'status@broadcast') return [];\n\nif (key.fromMe === true) {\n  const mm = data.message ?? {};\n  const txt = String(\n    mm.conversation ||\n    (mm.extendedTextMessage && mm.extendedTextMessage.text) ||\n    (mm.imageMessage && mm.imageMessage.caption) ||\n    (mm.documentMessage && mm.documentMessage.caption) ||\n    ''\n  );\n\n  // A Evolution identifica disparos feitos por API/automações como source \"unknown\".\n  // Somente mensagens originadas de um dispositivo humano pausam a ANA.\n  // O comando #assumir é um fallback explícito para instalações sem source confiável.\n  const source = String(data.source || '').trim().toLowerCase();\n  const origemHumana = ['android', 'ios', 'web'].includes(source);\n  const comandoHumano = /^\\s*(#assumir|#humano|\\/assumir)\\b/i.test(txt);\n\n  if (!origemHumana && !comandoHumano) return [];\n\n  return [{\n    json: {\n      humano: true,\n      phone: jid.split('@')[0],\n      conteudo: txt,\n      source\n    }\n  }];\n}\n\nconst phone = jid.split('@')[0];\nconst m = data.message ?? {};\nlet msgType = 'texto', texto = '', midiaCaption = '';\n\nif (m.conversation) { texto = m.conversation; }\nelse if (m.extendedTextMessage && m.extendedTextMessage.text) { texto = m.extendedTextMessage.text; }\nelse if (m.imageMessage) { msgType = 'imagem'; midiaCaption = m.imageMessage.caption || ''; }\nelse if (m.audioMessage) { msgType = 'audio'; }\nelse if (m.documentMessage || m.documentWithCaptionMessage) {\n  const dm = m.documentMessage ?? (m.documentWithCaptionMessage.message || {}).documentMessage ?? {};\n  midiaCaption = dm.caption || '';\n  if (String(dm.mimetype || '').includes('pdf')) {\n    msgType = 'pdf';\n  } else {\n    msgType = 'texto';\n    texto = (midiaCaption ? midiaCaption + ' ' : '') +\n      '[Paciente enviou um arquivo que não consigo abrir por aqui — peça para enviar como foto ou PDF]';\n  }\n}\nelse if (m.stickerMessage) {\n  msgType = 'texto';\n  texto = '[Paciente enviou uma figurinha]';\n}\nelse return [];\n\nconst placeholders = {\n  imagem: '[Paciente enviou uma imagem — processando]',\n  audio: '[Paciente enviou um áudio — processando]',\n  pdf: '[Paciente enviou um PDF — processando]'\n};\n\nconst conteudoInicial = msgType === 'texto'\n  ? texto\n  : ((midiaCaption ? midiaCaption + ' ' : '') + placeholders[msgType]);\n\nreturn [{\n  json: {\n    phone,\n    jid,\n    pushName: data.pushName || '',\n    messageId: key.id || String(Date.now()),\n    msgType,\n    texto,\n    midiaCaption,\n    conteudoInicial\n  }\n}];"
+        },
+        "name": "Filtrar Eventos",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1120,
+          240
+        ],
+        "id": "a2885d00-2b1e-49ec-9282-956a39b8785a"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO ana_mensagens (phone, role, tipo, conteudo, message_id) SELECT p->>'phone', 'user', p->>'msgType', p->>'conteudoInicial', p->>'messageId' FROM (SELECT $1::jsonb AS p) t ON CONFLICT (message_id) WHERE message_id IS NOT NULL DO NOTHING RETURNING id;",
+          "options": {
+            "queryReplacement": "={{ JSON.stringify($('Filtrar Eventos').first().json) }}"
+          }
+        },
+        "name": "Salvar Mensagem",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -928,
+          240
+        ],
+        "id": "1aadeba5-f817-455b-9db9-47e084796684",
+        "credentials": {
+          "postgres": {
+            "id": "yhHF1KyvjtG6Ev9q",
+            "name": "Postgres account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.id }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "number",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "name": "Inseriu?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -736,
+          240
+        ],
+        "id": "843cc0f8-1d5e-436c-9777-829c2261ffb7"
+      },
+      {
+        "parameters": {},
+        "name": "Duplicada (webhook repetido)",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -560,
+          432
+        ],
+        "id": "ee2dc3f5-0c50-458a-8105-b91b5c5c4705"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO ana_leads (phone, nome) VALUES (($1::jsonb->>'phone'), NULLIF(($1::jsonb->>'pushName'),'')) ON CONFLICT (phone) DO UPDATE SET nome = COALESCE(ana_leads.nome, EXCLUDED.nome), followup_step = 0, last_patient_msg_at = now(), updated_at = now() RETURNING *;",
+          "options": {
+            "queryReplacement": "={{ JSON.stringify($('Filtrar Eventos').first().json) }}"
+          }
+        },
+        "name": "Upsert Lead",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          -560,
+          240
+        ],
+        "id": "be05065e-b2a6-4685-b4a8-4717d5dd66de",
+        "credentials": {
+          "postgres": {
+            "id": "yhHF1KyvjtG6Ev9q",
+            "name": "Postgres account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.bot_ativo }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                },
+                "id": "b333b0b1-c4a0-4434-8234-22daec68ab54"
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "name": "Bot Ativo?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -400,
+          240
+        ],
+        "id": "8968624b-6db3-44b7-9794-c1908aa5d223"
+      },
+      {
+        "parameters": {},
+        "name": "Pausado (humano no comando)",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -240,
+          432
+        ],
+        "id": "384db10c-7c8e-4310-9ff2-307c4b9c873d"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Filtrar Eventos').first().json.msgType }}",
+                      "rightValue": "texto",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "texto"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Filtrar Eventos').first().json.msgType }}",
+                      "rightValue": "imagem",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "imagem"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Filtrar Eventos').first().json.msgType }}",
+                      "rightValue": "audio",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "audio"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Filtrar Eventos').first().json.msgType }}",
+                      "rightValue": "pdf",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "pdf"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "name": "Tipo de Mensagem",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          -240,
+          240
+        ],
+        "id": "ce11cb7e-b1b6-4b9a-977e-1b9791753196"
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst f = $('Filtrar Eventos').first().json;\nreturn [{ json: { phone: f.phone, messageId: f.messageId, texto_para_ia: f.texto, midia: 'texto' } }];\n"
+        },
+        "name": "Normalizar Texto",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "2528ac4b-4fa0-4d0e-bce2-53f37c237431"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $env.EVOLUTION_URL }}/chat/getBase64FromMediaMessage/{{ $env.EVOLUTION_INSTANCE }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "={{ $env.EVOLUTION_APIKEY }}"
+              },
+              {
+                "name": "content-type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ message: { key: { id: $('Filtrar Eventos').first().json.messageId } }, convertToMp4: false }) }}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "name": "Baixar Imagem",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          0,
+          160
+        ],
+        "id": "837a678f-9bde-4ace-b8aa-d999f9ab70c8",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst f = $('Filtrar Eventos').first().json;\nconst r = $json;\nconst b64 = r.base64 ?? (r.media && r.media.base64) ?? (r.data && r.data.base64);\nconst mime = String(r.mimetype ?? (r.media && r.media.mimetype) ?? 'image/jpeg').split(';')[0];\nconst instr = 'Extraia somente dados de um pedido médico. Não invente. Se não for pedido médico, informe isso em observacoes.';\nconst fallback = { legivel: false, exames: [], observacoes: 'falha no download da imagem' };\nconst content = b64\n  ? [{ type: 'input_image', image_url: 'data:' + mime + ';base64,' + b64, detail: 'high' }, { type: 'input_text', text: instr }]\n  : [{ type: 'input_text', text: 'Retorne exatamente: ' + JSON.stringify(fallback) }];\nconst schema = { type: 'object', additionalProperties: false, properties: {\n  legivel: { type: 'boolean' },\n  exames: { type: 'array', items: { type: 'string' } },\n  observacoes: { type: 'string' }\n}, required: ['legivel', 'exames', 'observacoes'] };\nconst body = { model: 'gpt-5.6-luna', reasoning: { effort: 'none' }, max_output_tokens: 500,\n  input: [{ role: 'user', content }], text: { format: { type: 'json_schema', name: 'pedido_medico', strict: true, schema } }, store: false };\nreturn [{ json: { openai_body: body, phone: f.phone } }];\n"
+        },
+        "name": "Preparar Visão (Imagem)",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          208,
+          160
+        ],
+        "id": "1e88b281-81c1-4dc4-a611-0d63b4c00b0f"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.openai.com/v1/responses",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer {{ $env.OPENAI_API_KEY }}"
+              },
+              {
+                "name": "content-type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ $json.openai_body }}",
+          "options": {
+            "timeout": 90000
+          }
+        },
+        "name": "Ler Pedido (Imagem)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          400,
+          160
+        ],
+        "id": "f20046fa-4545-43be-998d-ed56b879c1e4",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst f = $('Filtrar Eventos').first().json;\nlet parsed = { legivel: false, exames: [], observacoes: '' };\ntry {\n  const txt = ($json.output || []).flatMap(o => o.content || []).filter(c => c.type === 'output_text').map(c => c.text).join('\\n');\n  if (txt) parsed = Object.assign(parsed, JSON.parse(txt));\n} catch (e) {}\nconst lista = (parsed.exames || []).filter(Boolean);\nconst cap = f.midiaCaption ? f.midiaCaption + '\\n' : '';\nlet texto_para_ia;\nif (lista.length) {\n  texto_para_ia = cap + '[O paciente enviou imagem de pedido médico. Exames identificados: ' + lista.join('; ') + '. Obs: ' + (parsed.observacoes || '-') + ' — use consultar_precos com TODOS os exames e responda com o orçamento. Exame sem preço: *valor a consultar*.]';\n} else {\n  texto_para_ia = cap + '[Não foi possível identificar exames com clareza' + (parsed.observacoes ? ' (' + parsed.observacoes + ')' : '') + '. Peça uma nova foto mais nítido.]';\n}\nreturn [{ json: { phone: f.phone, messageId: f.messageId, texto_para_ia, midia: 'imagem' } }];\n"
+        },
+        "name": "Normalizar Imagem",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          608,
+          160
+        ],
+        "id": "75d046c2-dc0a-4562-a6cf-d455af08d9d4"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $env.EVOLUTION_URL }}/chat/getBase64FromMediaMessage/{{ $env.EVOLUTION_INSTANCE }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "={{ $env.EVOLUTION_APIKEY }}"
+              },
+              {
+                "name": "content-type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ message: { key: { id: $('Filtrar Eventos').first().json.messageId } }, convertToMp4: false }) }}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "name": "Baixar Áudio",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          0,
+          352
+        ],
+        "id": "da656675-cecc-488c-8d29-760ff7bebc02",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst f = $('Filtrar Eventos').first().json;\nconst r = $json;\nconst b64 = r.base64 ?? (r.media && r.media.base64) ?? (r.data && r.data.base64);\nif (!b64) return [{ json: { phone: f.phone, sem_audio: true } }];\nreturn [{ json: { phone: f.phone }, binary: { data: { data: b64, mimeType: 'audio/ogg', fileName: 'audio.ogg' } } }];\n"
+        },
+        "name": "Preparar Áudio",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          208,
+          352
+        ],
+        "id": "2b8d37b5-5daf-4472-ac78-6ced1c096711"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.openai.com/v1/audio/transcriptions",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer {{ $env.OPENAI_API_KEY }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "contentType": "multipart-form-data",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "parameterType": "formBinaryData",
+                "name": "file",
+                "inputDataFieldName": "data"
+              },
+              {
+                "name": "model",
+                "value": "whisper-1"
+              },
+              {
+                "name": "language",
+                "value": "pt"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 60000
+          }
+        },
+        "name": "Transcrever Áudio (Whisper)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          400,
+          352
+        ],
+        "id": "c3822f9c-9c33-4d73-bbe2-e4828a2b8fbf",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst f = $('Filtrar Eventos').first().json;\nconst t = ($json && $json.text) ? String($json.text).trim() : '';\nconst texto_para_ia = t\n  ? '[Transcrição do áudio enviado pelo paciente]: ' + t\n  : '[O paciente enviou um áudio que não pôde ser transcrito. Responda com simpatia dizendo que o áudio não chegou direitinho e peça para escrever em texto ou reenviar.]';\nreturn [{ json: { phone: f.phone, messageId: f.messageId, texto_para_ia, midia: 'audio' } }];\n"
+        },
+        "name": "Normalizar Áudio",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          608,
+          352
+        ],
+        "id": "163a3994-544f-4f8d-ba40-b96b5ad29f10"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $env.EVOLUTION_URL }}/chat/getBase64FromMediaMessage/{{ $env.EVOLUTION_INSTANCE }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "={{ $env.EVOLUTION_APIKEY }}"
+              },
+              {
+                "name": "content-type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ message: { key: { id: $('Filtrar Eventos').first().json.messageId } }, convertToMp4: false }) }}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "name": "Baixar PDF",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          0,
+          528
+        ],
+        "id": "8960ed80-52c3-4700-addd-3f10f647ddc7",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst f = $('Filtrar Eventos').first().json;\nconst r = $json;\nconst b64 = r.base64 ?? (r.media && r.media.base64) ?? (r.data && r.data.base64);\nconst instr = 'Extraia somente dados de um pedido médico. Não invente. Se não for pedido médico, informe isso em observacoes.';\nconst fallback = { legivel: false, exames: [], observacoes: 'falha no download do PDF' };\nconst content = b64\n  ? [{ type: 'input_file', filename: 'pedido-medico.pdf', file_data: 'data:application/pdf;base64,' + b64 }, { type: 'input_text', text: instr }]\n  : [{ type: 'input_text', text: 'Retorne exatamente: ' + JSON.stringify(fallback) }];\nconst schema = { type: 'object', additionalProperties: false, properties: {\n  legivel: { type: 'boolean' },\n  exames: { type: 'array', items: { type: 'string' } },\n  observacoes: { type: 'string' }\n}, required: ['legivel', 'exames', 'observacoes'] };\nconst body = { model: 'gpt-5.6-luna', reasoning: { effort: 'none' }, max_output_tokens: 500,\n  input: [{ role: 'user', content }], text: { format: { type: 'json_schema', name: 'pedido_medico', strict: true, schema } }, store: false };\nreturn [{ json: { openai_body: body, phone: f.phone } }];\n"
+        },
+        "name": "Preparar Leitura (PDF)",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          208,
+          528
+        ],
+        "id": "ec1e644a-b51b-4d91-95d5-d59cf7c5dc83"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.openai.com/v1/responses",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer {{ $env.OPENAI_API_KEY }}"
+              },
+              {
+                "name": "content-type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ $json.openai_body }}",
+          "options": {
+            "timeout": 90000
+          }
+        },
+        "name": "Ler Pedido (PDF)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          400,
+          528
+        ],
+        "id": "9873f2d8-ed67-4b12-9bab-2277575dafbf",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst f = $('Filtrar Eventos').first().json;\nlet parsed = { legivel: false, exames: [], observacoes: '' };\ntry {\n  const txt = ($json.output || []).flatMap(o => o.content || []).filter(c => c.type === 'output_text').map(c => c.text).join('\\n');\n  if (txt) parsed = Object.assign(parsed, JSON.parse(txt));\n} catch (e) {}\nconst lista = (parsed.exames || []).filter(Boolean);\nconst cap = f.midiaCaption ? f.midiaCaption + '\\n' : '';\nlet texto_para_ia;\nif (lista.length) {\n  texto_para_ia = cap + '[O paciente enviou pdf de pedido médico. Exames identificados: ' + lista.join('; ') + '. Obs: ' + (parsed.observacoes || '-') + ' — use consultar_precos com TODOS os exames e responda com o orçamento. Exame sem preço: *valor a consultar*.]';\n} else {\n  texto_para_ia = cap + '[Não foi possível identificar exames com clareza' + (parsed.observacoes ? ' (' + parsed.observacoes + ')' : '') + '. Peça um novo PDF mais nítido.]';\n}\nreturn [{ json: { phone: f.phone, messageId: f.messageId, texto_para_ia, midia: 'pdf' } }];\n"
+        },
+        "name": "Normalizar PDF",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          608,
+          528
+        ],
+        "id": "c1a49863-8bf8-4abe-b28e-2588e7ad2701"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE ana_mensagens SET conteudo = ($1::jsonb->>'texto_para_ia') WHERE message_id = ($1::jsonb->>'messageId') RETURNING message_id;",
+          "options": {
+            "queryReplacement": "={{ JSON.stringify($json) }}"
+          }
+        },
+        "name": "Atualizar Conteúdo da Mensagem",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          832,
+          240
+        ],
+        "id": "7a31f31c-e773-4a2d-8d34-5cf89f63d93b",
+        "credentials": {
+          "postgres": {
+            "id": "yhHF1KyvjtG6Ev9q",
+            "name": "Postgres account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "amount": 8
+        },
+        "name": "Aguardar 8s (agrupar mensagens)",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1024,
+          240
+        ],
+        "id": "624bf714-8d25-457d-a6af-fde9a0e1250b",
+        "webhookId": "4eda8ba2-519a-4bfb-a7a7-474febc426f1"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT (SELECT message_id FROM ana_mensagens WHERE phone = ($1::jsonb->>'phone') AND role = 'user' ORDER BY created_at DESC LIMIT 1) AS ultima, EXISTS (SELECT 1 FROM ana_mensagens WHERE phone = ($1::jsonb->>'phone') AND role = 'user' AND conteudo LIKE '%— processando]%' AND created_at > now() - interval '3 minutes') AS pendente;",
+          "options": {
+            "queryReplacement": "={{ JSON.stringify($('Filtrar Eventos').first().json) }}"
+          }
+        },
+        "name": "Última Mensagem?",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1232,
+          240
+        ],
+        "id": "a505a333-0389-4f89-9520-189f9d42e5a2",
+        "credentials": {
+          "postgres": {
+            "id": "yhHF1KyvjtG6Ev9q",
+            "name": "Postgres account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.ultima }}",
+                "rightValue": "={{ $('Filtrar Eventos').first().json.messageId }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "name": "É a Última?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1424,
+          240
+        ],
+        "id": "d83b9392-d8d2-4f1b-b65f-5364078c7528"
+      },
+      {
+        "parameters": {},
+        "name": "Agrupada (outra execução responde)",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1632,
+          512
+        ],
+        "id": "4fac2912-06da-4a89-98c5-c172886db427"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.pendente }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "name": "Mídia Pendente?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1520,
+          80
+        ],
+        "id": "6a656f81-8ac0-4fcd-b712-2767e19e40ba"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT COALESCE((SELECT valor FROM ana_config WHERE chave = 'system_prompt'), 'Você é a Ana, atendente virtual da Total Quality Medicina Diagnóstica (Caraguatatuba/SP). MODO DE EMERGÊNCIA: o system prompt completo não foi encontrado no banco. Responda com acolhimento, não invente informações, preços ou horários; diga que vai confirmar com a equipe. Finalize com ###DADOS### em linha única contendo {\"temperatura\":\"morno\",\"funil\":\"meio\",\"consciencia\":null,\"intencao\":\"outro\",\"exames_mencionados\":[],\"convenio\":null,\"agendamento\":{\"status\":\"nenhum\",\"data\":null,\"turno\":null},\"opt_out\":false,\"proxima_acao\":\"aguardar_resposta\",\"escalar\":true,\"motivo_escalada\":\"system prompt ausente em ana_config\",\"resumo_interno\":\"\"}') AS valor;",
+          "options": {}
+        },
+        "name": "Carregar System Prompt",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1632,
+          240
+        ],
+        "id": "b3413079-e1e2-41df-b1ad-7dee36a6f1f5",
+        "credentials": {
+          "postgres": {
+            "id": "yhHF1KyvjtG6Ev9q",
+            "name": "Postgres account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT role, conteudo FROM (SELECT role, conteudo, created_at FROM ana_mensagens WHERE phone = ($1::jsonb->>'phone') ORDER BY created_at DESC LIMIT 24) t ORDER BY created_at ASC;",
+          "options": {
+            "queryReplacement": "={{ JSON.stringify($('Filtrar Eventos').first().json) }}"
+          }
+        },
+        "name": "Carregar Histórico",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1824,
+          240
+        ],
+        "id": "20fd9aa7-5240-44c9-958e-9ea21f8cb9d4",
+        "credentials": {
+          "postgres": {
+            "id": "yhHF1KyvjtG6Ev9q",
+            "name": "Postgres account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst histAll = $('Carregar Histórico').all().map(i => i.json);\nconst hist = histAll.slice(-12);\nconst sys = String($('Carregar System Prompt').first().json.valor || '').replace(/\\n/g, '\\n').replace(/\\n{3,}/g, '\\n\\n').trim();\nconst lead = $('Upsert Lead').first().json;\nconst agora = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });\nconst ctx = [\n  '[CONTEXTO INTERNO]',\n  'Agora: ' + agora + ' (America/Sao_Paulo)',\n  'Nome: ' + (lead.nome || 'não informado'),\n  lead.resumo_interno ? 'Resumo anterior: ' + lead.resumo_interno : null,\n  'Preços: use consultar_precos antes de citar valores; nunca invente.',\n  'Agenda: não confirme disponibilidade; colete dados e escale para confirmação humana.',\n  'Finalize com ###DADOS### seguido do JSON contratual em uma linha.'\n].filter(Boolean).join('\\n');\nconst msgs = [];\nfor (const h of hist) {\n  const role = h.role === 'assistant' ? 'assistant' : 'user';\n  const c = String(h.conteudo || '').trim();\n  if (!c) continue;\n  if (msgs.length && msgs[msgs.length - 1].role === role) msgs[msgs.length - 1].content += '\\n\\n' + c;\n  else msgs.push({ role, content: c });\n}\nwhile (msgs.length && msgs[0].role !== 'user') msgs.shift();\nif (!msgs.length) msgs.push({ role: 'user', content: '(primeiro contato do paciente)' });\nif (msgs[msgs.length - 1].role === 'user') msgs[msgs.length - 1].content += '\\n\\n' + ctx;\nelse msgs.push({ role: 'user', content: ctx });\nconst tools = [{ type: 'function', name: 'consultar_precos',\n  description: 'Consulta a tabela oficial. Use antes de informar valores e envie todos os exames de uma vez.',\n  parameters: { type: 'object', additionalProperties: false, properties: {\n    exames: { type: 'array', items: { type: 'string' }, description: 'Nomes completos dos exames' }\n  }, required: ['exames'] }, strict: true\n}];\nconst body = { model: 'gpt-5.6-luna', instructions: sys, input: msgs, tools, tool_choice: 'auto',\n  reasoning: { effort: 'low' }, max_output_tokens: 1200, store: false };\nreturn [{ json: { openai_body: body, phone: lead.phone } }];\n"
+        },
+        "name": "Montar Payload",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2032,
+          240
+        ],
+        "id": "d3b5db70-261a-4f92-ab2d-a9ec62ede9ac"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.openai.com/v1/responses",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer {{ $env.OPENAI_API_KEY }}"
+              },
+              {
+                "name": "content-type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.openai_body) }}",
+          "options": {
+            "timeout": 90000
+          }
+        },
+        "name": "Chamar Ana",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2224,
+          240
+        ],
+        "id": "1400eff1-f42f-46af-ae9c-553e42f25f85",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ ($json.output || []).some(i => i.type === 'function_call' && i.name === 'consultar_precos') ? 'tool_use' : 'end_turn' }}",
+                "rightValue": "tool_use",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                },
+                "id": "52b80051-1135-474f-b229-80bfad09d4fd"
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "name": "Usou Ferramenta de Preços?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2432,
+          240
+        ],
+        "id": "d0066c33-154c-425a-84ce-3a6373d2f685"
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst resp = $json;\nconst call = (resp.output || []).find(i => i.type === 'function_call' && i.name === 'consultar_precos');\nlet args = {};\ntry { args = JSON.parse((call && call.arguments) || '{}'); } catch (e) {}\nconst exames = (args.exames || []).filter(Boolean);\nreturn [{ json: { pg_payload: JSON.stringify({ exames }), tool_call_id: (call && call.call_id) || '', phone: $('Montar Payload').first().json.phone } }];\n"
+        },
+        "name": "Preparar Consulta",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2624,
+          128
+        ],
+        "id": "af5cfe3c-2915-447d-b4e5-f7cf8f1bd7a0"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "WITH resultados AS (\n  SELECT *\n  FROM ana_buscar_precos(\n    (\n      SELECT COALESCE(array_agg(x), ARRAY[]::text[])\n      FROM jsonb_array_elements_text(($1::jsonb)->'exames') AS x\n    )\n  )\n),\nnormalizados AS (\n  SELECT\n    r.*,\n    lower(trim(regexp_replace(r.termo_busca, '^\\s*dosagem\\s+d(e|o|a|os|as)\\s+', '', 'i'))) AS termo_limpo,\n    lower(r.nome_exame) AS nome_limpo,\n    lower(COALESCE(substring(r.termo_busca FROM '\\(([^)]+)\\)'), '')) AS sigla\n  FROM resultados r\n  WHERE r.encontrado = true\n    AND r.ativo = true\n    AND r.preco IS NOT NULL\n    AND r.similaridade >= 0.35\n),\nranqueados AS (\n  SELECT\n    n.*,\n    row_number() OVER (\n      PARTITION BY n.termo_busca\n      ORDER BY\n        (\n          CASE\n            WHEN n.sigla <> '' AND n.nome_limpo LIKE '%' || n.sigla || '%' THEN 3\n            ELSE 0\n          END\n          +\n          CASE\n            WHEN n.nome_limpo LIKE '%' || n.termo_limpo || '%'\n              OR n.termo_limpo LIKE '%' || n.nome_limpo || '%' THEN 2\n            ELSE 0\n          END\n          + n.similaridade\n        ) DESC,\n        n.similaridade DESC\n    ) AS rn\n  FROM normalizados n\n)\nSELECT\n  termo_busca,\n  nome_exame,\n  categoria,\n  preco,\n  preco_pix,\n  ativo,\n  similaridade,\n  encontrado\nFROM ranqueados\nWHERE rn = 1\nORDER BY termo_busca;",
+          "options": {
+            "queryReplacement": "={{ $json.pg_payload }}"
+          }
+        },
+        "name": "Consultar Preços",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          2832,
+          128
+        ],
+        "alwaysOutputData": true,
+        "id": "12acbd8e-d916-4936-9f93-6769a29348c6",
+        "credentials": {
+          "postgres": {
+            "id": "yhHF1KyvjtG6Ev9q",
+            "name": "Postgres account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r && r.nome_exame);\nconst first = $('Chamar Ana').first().json;\nconst base = $('Montar Payload').first().json.openai_body;\nconst callId = $('Preparar Consulta').first().json.tool_call_id;\nconst resultado = rows.length\n  ? JSON.stringify(rows)\n  : JSON.stringify({ resultado: 'nenhum exame encontrado na tabela', instrucao: 'Não invente valor; informe valor a consultar e escale somente conforme as regras do sistema.' });\nconst priorOutput = (first.output || []).filter(i => i.type === 'function_call');\nconst body = Object.assign({}, base, { tool_choice: 'none', input: base.input.concat(priorOutput, [\n  { type: 'function_call_output', call_id: callId, output: resultado }\n]) });\nreturn [{ json: { openai_body: body, phone: $('Montar Payload').first().json.phone } }];"
+        },
+        "name": "Enviar Preços à Ana",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3024,
+          128
+        ],
+        "id": "ded55b3b-24d3-4989-981c-b01c3987338f"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.openai.com/v1/responses",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "={{ $env.ANTHROPIC_API_KEYBearer {{ $env.OPENAI_API_KEY }} }}"
+              },
+              {
+                "name": "content-type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ $json.openai_body }}",
+          "options": {
+            "timeout": 90000
+          }
+        },
+        "name": "Chamar Ana (2ª rodada)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3232,
+          128
+        ],
+        "id": "057e0393-af6f-4794-820f-9b972e25b9fa",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "\n// Separa a mensagem do paciente do bloco ###DADOS### e calcula o próximo follow-up\nconst resp = $json;\nconst phone = $('Montar Payload').first().json.phone;\nlet texto = '';\ntry { texto = (resp.output || []).flatMap(o => o.content || []).filter(c => c.type === 'output_text').map(c => c.text).join('\\n').trim(); } catch (e) {}\nlet dados = { temperatura: 'morno', funil: 'meio', consciencia: null, intencao: 'outro', exames_mencionados: [], convenio: null, agendamento: { status: 'nenhum', data: null, turno: null }, opt_out: false, proxima_acao: 'aguardar_resposta', escalar: false, motivo_escalada: null, resumo_interno: '' };\nlet msg = texto;\nconst ix = texto.indexOf('###DADOS###');\nif (ix >= 0) {\n  msg = texto.slice(0, ix).trim();\n  const m = texto.slice(ix).match(/\\{[\\s\\S]*\\}/);\n  if (m) { try { dados = Object.assign(dados, JSON.parse(m[0])); } catch (e) {} }\n}\nif (!msg) {\n  msg = 'Só um instante, vou confirmar uma informação com a equipe e já te retorno 😊';\n  dados.escalar = true;\n  dados.motivo_escalada = dados.motivo_escalada || 'Falha na geração de resposta da IA — verificar execução no N8N';\n}\nconst ci = parseInt(dados.consciencia, 10);\ndados.consciencia = (ci >= 1 && ci <= 4) ? ci : null;\nif (!dados.agendamento || typeof dados.agendamento !== 'object') dados.agendamento = { status: 'nenhum', data: null, turno: null };\nconst st = dados.agendamento.status || 'nenhum';\nconst mapa = { follow_up_d1: 1, follow_up_d3: 3, follow_up_d7: 7, xeque_mate: 7, follow_up_d30: 16 };\nlet dias = mapa[dados.proxima_acao];\nif (dias === undefined) dias = (st !== 'confirmado' && !['agendado', 'encerrar', 'escalar'].includes(dados.proxima_acao)) ? 1 : null;\nif (dados.opt_out || dados.escalar || ['agendado', 'encerrar', 'escalar'].includes(dados.proxima_acao) || st === 'confirmado') dias = null;\nconst due = dias ? new Date(Date.now() + dias * 86400000).toISOString() : null;\nconst pausar = !!dados.escalar && /(emerg|reclama|conflit|lgpd|humano|urgên|urgenc)/i.test(String(dados.motivo_escalada || ''));\nconst bolhas = msg.split(/\\n{2,}/).map(t => t.trim()).filter(Boolean)\n  .map(t => ({ texto: t, delay: Math.min(6000, Math.max(1500, t.length * 35)) }));\nreturn [{ json: {\n  phone, mensagem: msg, dados, bolhas, followup_due: due, pausar,\n  pg_msg: JSON.stringify({ phone, conteudo: msg, dados }),\n  pg_lead: JSON.stringify({ phone, temperatura: dados.temperatura, funil: dados.funil, consciencia: dados.consciencia, intencao: dados.intencao, exames: dados.exames_mencionados || [], convenio: dados.convenio, agendamento: dados.agendamento, opt_out: !!dados.opt_out, proxima_acao: dados.proxima_acao, followup_due: due, escalado: !!dados.escalar, motivo_escalada: dados.motivo_escalada, resumo_interno: dados.resumo_interno || '', pausar }),\n} }];\n"
+        },
+        "name": "Extrair Resposta",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3440,
+          240
+        ],
+        "id": "46158103-fa26-4076-b33b-0520705c52f7"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO ana_mensagens (phone, role, tipo, conteudo, dados) SELECT p->>'phone', 'assistant', 'texto', p->>'conteudo', (p->'dados') FROM (SELECT $1::jsonb AS p) t RETURNING id;",
+          "options": {
+            "queryReplacement": "={{ $json.pg_msg }}"
+          }
+        },
+        "name": "Salvar Resposta",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          3648,
+          240
+        ],
+        "id": "e825eaa4-1850-45ca-88d3-e9bba1324a30",
+        "credentials": {
+          "postgres": {
+            "id": "yhHF1KyvjtG6Ev9q",
+            "name": "Postgres account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE ana_leads SET temperatura = COALESCE(p->>'temperatura', temperatura), funil = COALESCE(p->>'funil', funil), consciencia = NULLIF(p->>'consciencia','')::int, intencao = p->>'intencao', exames = COALESCE(p->'exames', exames), convenio = p->>'convenio', agendamento = COALESCE(p->'agendamento', agendamento), opt_out = COALESCE((p->>'opt_out')::boolean, opt_out), proxima_acao = p->>'proxima_acao', followup_step = 0, followup_due_at = NULLIF(p->>'followup_due','')::timestamptz, escalado = COALESCE((p->>'escalado')::boolean, escalado), motivo_escalada = p->>'motivo_escalada', resumo_interno = p->>'resumo_interno', bot_ativo = CASE WHEN (p->>'pausar')::boolean THEN false ELSE bot_ativo END, last_bot_msg_at = now(), updated_at = now() FROM (SELECT $1::jsonb AS p) t WHERE phone = p->>'phone' RETURNING phone;",
+          "options": {
+            "queryReplacement": "={{ $('Extrair Resposta').first().json.pg_lead }}"
+          }
+        },
+        "name": "Atualizar Lead",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          3840,
+          240
+        ],
+        "id": "6ebeafff-18f6-488f-83cf-7b95aee6a02c",
+        "credentials": {
+          "postgres": {
+            "id": "yhHF1KyvjtG6Ev9q",
+            "name": "Postgres account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $('Extrair Resposta').first().json.dados.escalar === true && /emerg|urgen|samu|192|reclama|conflito|insatisf|lgpd|exclus|agend/i.test(String($('Extrair Resposta').first().json.dados.motivo_escalada || '')) }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "name": "Escalar?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          4048,
+          240
+        ],
+        "id": "9d3b068e-9586-44fd-a4e1-c6b2352520b9"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $env.EVOLUTION_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "={{ $env.EVOLUTION_APIKEY }}"
+              },
+              {
+                "name": "content-type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ number: ($env.SUPERVISOR_WHATSAPP || 'CONFIGURE_A_VARIAVEL_SUPERVISOR_WHATSAPP'), text: '🔔 *ANA — Atendimento escalado*\\n\\nPaciente: +' + $('Extrair Resposta').first().json.phone + '\\nMotivo: ' + ($('Extrair Resposta').first().json.dados.motivo_escalada || '-') + '\\nResumo: ' + ($('Extrair Resposta').first().json.dados.resumo_interno || '-') + '\\n\\nAbra a conversa no WhatsApp da clínica para assumir.' }) }}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "name": "Notificar Supervisor",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4240,
+          128
+        ],
+        "id": "2f29f6b9-7e81-4582-8711-e678101ee871",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst r = $('Extrair Resposta').first().json;\nreturn r.bolhas.map(b => ({ json: { phone: r.phone, texto: b.texto, delay: b.delay } }));\n"
+        },
+        "name": "Separar Bolhas",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4448,
+          240
+        ],
+        "id": "b0fe1614-0977-4c63-aeb8-3bf5e19a82f0"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "name": "Loop Bolhas",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          4640,
+          240
+        ],
+        "id": "10b3e952-8067-4fce-a9f7-393b9184d3eb"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $env.EVOLUTION_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "={{ $env.EVOLUTION_APIKEY }}"
+              },
+              {
+                "name": "content-type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ number: $json.phone, text: $json.texto, delay: $json.delay }) }}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "name": "Enviar Mensagem",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4848,
+          352
+        ],
+        "id": "8d5d003b-d5a3-4484-a68e-0d0ff0c36f2e",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {},
+        "name": "Fim",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          4848,
+          144
+        ],
+        "id": "98d9e742-dd9a-4085-9b78-c6c7ba7e1931"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.humano === true }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                },
+                "id": "3000001d-91d7-4833-9453-116e907dffe0"
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "h1",
+        "name": "Humano na Conversa?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -944,
+          112
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "WITH p AS (SELECT $1::jsonb AS j),\neco AS (\n  SELECT 1 FROM ana_mensagens m, p\n  WHERE m.phone = p.j->>'phone'\n    AND m.role = 'assistant'\n    AND m.created_at > now() - interval '10 minutes'\n    AND length(COALESCE(p.j->>'conteudo','')) > 0\n    AND position(p.j->>'conteudo' IN COALESCE(m.conteudo,'')) > 0\n  LIMIT 1\n),\nupd AS (\n  UPDATE ana_leads l\n  SET bot_ativo = false, human_msg_at = now(), escalado = false, updated_at = now()\n  FROM p\n  WHERE l.phone = p.j->>'phone'\n    AND NOT EXISTS (SELECT 1 FROM eco)\n  RETURNING l.phone\n),\nins AS (\n  INSERT INTO ana_mensagens (phone, role, tipo, conteudo)\n  SELECT p.j->>'phone', 'assistant', 'humano', COALESCE(NULLIF(p.j->>'conteudo',''), '[mensagem da equipe]')\n  FROM p\n  WHERE NOT EXISTS (SELECT 1 FROM eco)\n  RETURNING id\n)\nSELECT (SELECT count(*) FROM upd) AS pausados;",
+          "options": {
+            "queryReplacement": "={{ JSON.stringify($json) }}"
+          }
+        },
+        "id": "h2",
+        "name": "Pausar Ana (humano assumiu)",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          -736,
+          0
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "yhHF1KyvjtG6Ev9q",
+            "name": "Postgres account 2"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook Evolution": {
+        "main": [
+          [
+            {
+              "node": "Filtrar Eventos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filtrar Eventos": {
+        "main": [
+          [
+            {
+              "node": "Humano na Conversa?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Salvar Mensagem": {
+        "main": [
+          [
+            {
+              "node": "Inseriu?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Inseriu?": {
+        "main": [
+          [
+            {
+              "node": "Upsert Lead",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Duplicada (webhook repetido)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upsert Lead": {
+        "main": [
+          [
+            {
+              "node": "Bot Ativo?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Bot Ativo?": {
+        "main": [
+          [
+            {
+              "node": "Tipo de Mensagem",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Pausado (humano no comando)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tipo de Mensagem": {
+        "main": [
+          [
+            {
+              "node": "Normalizar Texto",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Baixar Imagem",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Baixar Áudio",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Baixar PDF",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Baixar Imagem": {
+        "main": [
+          [
+            {
+              "node": "Preparar Visão (Imagem)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Preparar Visão (Imagem)": {
+        "main": [
+          [
+            {
+              "node": "Ler Pedido (Imagem)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ler Pedido (Imagem)": {
+        "main": [
+          [
+            {
+              "node": "Normalizar Imagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Baixar Áudio": {
+        "main": [
+          [
+            {
+              "node": "Preparar Áudio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Preparar Áudio": {
+        "main": [
+          [
+            {
+              "node": "Transcrever Áudio (Whisper)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Transcrever Áudio (Whisper)": {
+        "main": [
+          [
+            {
+              "node": "Normalizar Áudio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Baixar PDF": {
+        "main": [
+          [
+            {
+              "node": "Preparar Leitura (PDF)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Preparar Leitura (PDF)": {
+        "main": [
+          [
+            {
+              "node": "Ler Pedido (PDF)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ler Pedido (PDF)": {
+        "main": [
+          [
+            {
+              "node": "Normalizar PDF",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalizar Texto": {
+        "main": [
+          [
+            {
+              "node": "Atualizar Conteúdo da Mensagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalizar Imagem": {
+        "main": [
+          [
+            {
+              "node": "Atualizar Conteúdo da Mensagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalizar Áudio": {
+        "main": [
+          [
+            {
+              "node": "Atualizar Conteúdo da Mensagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalizar PDF": {
+        "main": [
+          [
+            {
+              "node": "Atualizar Conteúdo da Mensagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Atualizar Conteúdo da Mensagem": {
+        "main": [
+          [
+            {
+              "node": "Aguardar 8s (agrupar mensagens)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aguardar 8s (agrupar mensagens)": {
+        "main": [
+          [
+            {
+              "node": "Última Mensagem?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Última Mensagem?": {
+        "main": [
+          [
+            {
+              "node": "É a Última?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "É a Última?": {
+        "main": [
+          [
+            {
+              "node": "Mídia Pendente?",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Agrupada (outra execução responde)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mídia Pendente?": {
+        "main": [
+          [
+            {
+              "node": "Aguardar 8s (agrupar mensagens)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Carregar System Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Carregar System Prompt": {
+        "main": [
+          [
+            {
+              "node": "Carregar Histórico",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Carregar Histórico": {
+        "main": [
+          [
+            {
+              "node": "Montar Payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Montar Payload": {
+        "main": [
+          [
+            {
+              "node": "Chamar Ana",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Chamar Ana": {
+        "main": [
+          [
+            {
+              "node": "Usou Ferramenta de Preços?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Usou Ferramenta de Preços?": {
+        "main": [
+          [
+            {
+              "node": "Preparar Consulta",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Extrair Resposta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Preparar Consulta": {
+        "main": [
+          [
+            {
+              "node": "Consultar Preços",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Consultar Preços": {
+        "main": [
+          [
+            {
+              "node": "Enviar Preços à Ana",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar Preços à Ana": {
+        "main": [
+          [
+            {
+              "node": "Chamar Ana (2ª rodada)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Chamar Ana (2ª rodada)": {
+        "main": [
+          [
+            {
+              "node": "Extrair Resposta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extrair Resposta": {
+        "main": [
+          [
+            {
+              "node": "Salvar Resposta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Salvar Resposta": {
+        "main": [
+          [
+            {
+              "node": "Atualizar Lead",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Atualizar Lead": {
+        "main": [
+          [
+            {
+              "node": "Escalar?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Escalar?": {
+        "main": [
+          [
+            {
+              "node": "Notificar Supervisor",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Separar Bolhas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Notificar Supervisor": {
+        "main": [
+          [
+            {
+              "node": "Separar Bolhas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Separar Bolhas": {
+        "main": [
+          [
+            {
+              "node": "Loop Bolhas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Bolhas": {
+        "main": [
+          [
+            {
+              "node": "Fim",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Enviar Mensagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar Mensagem": {
+        "main": [
+          [
+            {
+              "node": "Loop Bolhas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Humano na Conversa?": {
+        "main": [
+          [
+            {
+              "node": "Pausar Ana (humano assumiu)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Salvar Mensagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Alex Waltersdorf",
+    "name": "Version 9fc0581d",
+    "description": "Corrige payload da segunda chamada OpenAI removendo item reasoning sem encrypted_content.",
+    "autosaved": true,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-08-31T13:46:44.877Z",
+        "id": 133,
+        "workflowId": "XRUqhdO1QCyBBHbf",
+        "versionId": "9fc0581d-9035-48d6-9703-45a6b5ebf34c",
+        "event": "activated",
+        "userId": "f3c9783b-9bb8-48b3-9c8c-e51c5a23af23"
+      }
+    ]
+  }
+}
