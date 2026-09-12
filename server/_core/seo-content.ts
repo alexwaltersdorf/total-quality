@@ -525,8 +525,34 @@ function examesHubHtml(): string {
     ${napHtml("Não encontrou o exame que procura? Fale com a gente pelo WhatsApp — realizamos mais de 3.000 tipos de exames.")}`;
 }
 
+const PT_MONTHS: Record<string, number> = {
+  jan: 0, fev: 1, mar: 2, abr: 3, mai: 4, jun: 5,
+  jul: 6, ago: 7, set: 8, out: 9, nov: 10, dez: 11,
+};
+
+/**
+ * Mesma logica de client/src/lib/blogData.ts (duplicada, nao importada: este
+ * arquivo roda fora do Vite e blogData.ts usa import.meta.glob). O construtor
+ * nativo Date() nao reconhece meses abreviados em portugues ("12 Set 2026"),
+ * entao sem isso o /blog prerenderizado listava os artigos por ordem de
+ * insercao no index.json, nao por data.
+ */
+function parseBlogDate(date: string): number {
+  const match = date.match(/^(\d{1,2})\s+([A-Za-zçÇ]+)\s+(\d{4})$/);
+  if (match) {
+    const [, day, monthStr, year] = match;
+    const month = PT_MONTHS[monthStr.toLowerCase()];
+    if (month !== undefined) {
+      return new Date(Number(year), month, Number(day)).getTime();
+    }
+  }
+  const fallback = new Date(date).getTime();
+  return Number.isNaN(fallback) ? 0 : fallback;
+}
+
 function blogIndexHtml(): string {
-  const items = blogPosts
+  const items = [...blogPosts]
+    .sort((a, b) => parseBlogDate(b.date) - parseBlogDate(a.date))
     .map((b) => `<li><a href="/blog/${b.slug}">${escapeHtml(b.title)}</a> — ${escapeHtml(b.excerpt)}</li>`)
     .join("");
   return `

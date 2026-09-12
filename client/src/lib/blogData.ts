@@ -52,6 +52,31 @@ export const blogCategories = [
 /** Metadados de todos os artigos — leve, seguro para o chunk inicial. */
 export const blogPosts: BlogPostMeta[] = blogIndex as BlogPostMeta[];
 
+const PT_MONTHS: Record<string, number> = {
+  jan: 0, fev: 1, mar: 2, abr: 3, mai: 4, jun: 5,
+  jul: 6, ago: 7, set: 8, out: 9, nov: 10, dez: 11,
+};
+
+/**
+ * Converte a data em texto do post (ex: "12 Set 2026") para timestamp
+ * ordenável. O construtor nativo `Date()` não reconhece meses abreviados em
+ * português e devolve Invalid Date/NaN para todo post — a ordenação por
+ * "mais recente" nunca funcionou de fato, e o post em destaque/primeiro do
+ * grid ficava por ordem de inserção no index.json, não por data.
+ */
+export function parseBlogDate(date: string): number {
+  const match = date.match(/^(\d{1,2})\s+([A-Za-zçÇ]+)\s+(\d{4})$/);
+  if (match) {
+    const [, day, monthStr, year] = match;
+    const month = PT_MONTHS[monthStr.toLowerCase()];
+    if (month !== undefined) {
+      return new Date(Number(year), month, Number(day)).getTime();
+    }
+  }
+  const fallback = new Date(date).getTime();
+  return Number.isNaN(fallback) ? 0 : fallback;
+}
+
 /** Cada artigo vira um chunk próprio, carregado só quando alguém o abre. */
 const articleLoaders = import.meta.glob<{ default: BlogPost }>(
   "../content/blog/*.json"

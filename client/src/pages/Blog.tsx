@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { trackWhatsAppConversion } from "@/lib/tracking";
 import { Link } from "wouter";
 import { ArrowUpRight, ArrowLeft, Clock, Search } from "lucide-react";
-import { blogPosts, blogCategories, type BlogPostMeta } from "@/lib/blogData";
+import { blogPosts, blogCategories, parseBlogDate, type BlogPostMeta } from "@/lib/blogData";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
@@ -120,7 +120,7 @@ export default function Blog() {
     image: article.heroImage || "https://images.unsplash.com/photo-1576091160550-112173f7f869?w=800&h=500&fit=crop",
     tags: [],
     content: [],
-  }))].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }))].sort((a, b) => parseBlogDate(b.date) - parseBlogDate(a.date));
 
   const filteredPosts = allPosts.filter((post) => {
     const matchesCategory = activeCategory === "Todos" || post.category === activeCategory;
