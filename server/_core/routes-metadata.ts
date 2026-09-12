@@ -292,6 +292,18 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.7,
     changefreq: "monthly",
   },
+
+  "tomografia-computadorizada-como-funciona": {
+    title: "Tomografia Computadorizada: Como Funciona? | Total Quality",
+    description: "Entenda como funciona a tomografia computadorizada, como é feito o exame, quando o contraste é necessário, quanto tempo dura e se dói.",
+    keywords: "tomografia computadorizada, tomografia, como funciona a tomografia, contraste, diagnóstico por imagem, Caraguatatuba",
+    ogTitle: "Tomografia Computadorizada: Como Funciona?",
+    ogDescription: "Entenda como é feito o exame, se dói, quanto tempo dura e quando o contraste é necessário.",
+    ogImage: "https://totalquality.med.br/images/tomografia-1024.webp",
+    canonical: "https://totalquality.med.br/blog/tomografia-computadorizada-como-funciona",
+    priority: 0.7,
+    changefreq: "monthly",
+  },
 };
 
 // Rotas estáticas principais
