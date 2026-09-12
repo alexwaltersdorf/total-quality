@@ -219,5 +219,25 @@
       "exames laboratoriais",
       "Caraguatatuba"
     ]
+  },
+  {
+    "id": "12",
+    "slug": "tomografia-computadorizada-como-funciona",
+    "title": "Tomografia Computadorizada: Como Funciona e Quando É Indicada?",
+    "subtitle": "Entenda como é feito o exame, se dói, quanto tempo dura e quando o contraste é necessário",
+    "excerpt": "Saiba como funciona a tomografia computadorizada, como é feito o exame, quando o contraste é necessário e em quais situações o médico costuma solicitar.",
+    "category": "Medicina Preventiva",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "12 Set 2026",
+    "readTime": "8 min",
+    "image": "https://totalquality.med.br/images/tomografia-1024.webp",
+    "tags": [
+      "tomografia computadorizada",
+      "tomografia",
+      "diagnóstico por imagem",
+      "Caraguatatuba",
+      "exame de imagem"
+    ]
   }
 ]
