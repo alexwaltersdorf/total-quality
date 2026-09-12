@@ -328,6 +328,66 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.7,
     changefreq: "monthly",
   },
+
+  "diferenca-ultrassom-comum-doppler": {
+    title: "Ultrassom Comum e com Doppler: Diferença | Total Quality",
+    description: "Descubra a diferença entre ultrassom comum e ultrassom com Doppler, o que cada modalidade avalia e como pode ser o preparo.",
+    keywords: "diferença entre ultrassom e Doppler, ultrassom com Doppler, ultrassonografia, exame de imagem, Caraguatatuba",
+    ogTitle: "Ultrassom Comum e com Doppler: Qual a Diferença?",
+    ogDescription: "Entenda o que o Doppler acrescenta ao exame, quando é utilizado e como se preparar.",
+    ogImage: "https://totalquality.med.br/images/cardiologia-1024.webp",
+    canonical: "https://totalquality.med.br/blog/diferenca-ultrassom-comum-doppler",
+    priority: 0.7,
+    changefreq: "monthly",
+  },
+
+  "mamografia-ultrassom-mamas-diferencas": {
+    title: "Mamografia e Ultrassom das Mamas: Diferenças | Total Quality",
+    description: "Mamografia e ultrassom das mamas não são iguais. Entenda como cada exame funciona, suas diferenças e por que um não substitui automaticamente o outro.",
+    keywords: "diferença entre mamografia e ultrassom da mama, mamografia, ultrassom das mamas, saúde da mulher, Caraguatatuba",
+    ogTitle: "Mamografia e Ultrassom das Mamas: Diferenças",
+    ogDescription: "Por que um exame não substitui automaticamente o outro.",
+    ogImage: "https://totalquality.med.br/images/recepcao-1024.webp",
+    canonical: "https://totalquality.med.br/blog/mamografia-ultrassom-mamas-diferencas",
+    priority: 0.7,
+    changefreq: "monthly",
+  },
+
+  "diferenca-raio-x-tomografia": {
+    title: "Raio-X e Tomografia: Qual a Diferença? | Total Quality",
+    description: "Saiba como raio-X e tomografia funcionam, as diferenças nas imagens, quando o contraste pode ser usado e como é o preparo.",
+    keywords: "diferença entre raio-X e tomografia, raio-x, tomografia computadorizada, diagnóstico por imagem, Caraguatatuba",
+    ogTitle: "Raio-X e Tomografia: Quais as Diferenças?",
+    ogDescription: "Entenda quando o contraste é usado, quem tem mais detalhe e como se preparar.",
+    ogImage: "https://totalquality.med.br/images/tomografia-1024.webp",
+    canonical: "https://totalquality.med.br/blog/diferenca-raio-x-tomografia",
+    priority: 0.7,
+    changefreq: "monthly",
+  },
+
+  "aso-exames-ocupacionais": {
+    title: "ASO: O Que É e Quando Deve Ser Emitido | Total Quality",
+    description: "Entenda o que é ASO, quando o documento é emitido, sua relação com os exames ocupacionais e as responsabilidades de empresas e trabalhadores.",
+    keywords: "o que é ASO, exame ocupacional, PCMSO, NR-7, atestado de saúde ocupacional, Caraguatatuba",
+    ogTitle: "ASO: O Que É e Quando Deve Ser Emitido",
+    ogDescription: "Entenda a diferença entre o exame ocupacional e o documento, e o que a NR-7 exige.",
+    ogImage: "https://totalquality.med.br/images/hero-clinica-1024.webp",
+    canonical: "https://totalquality.med.br/blog/aso-exames-ocupacionais",
+    priority: 0.6,
+    changefreq: "monthly",
+  },
+
+  "exame-toxicologico-cnh": {
+    title: "Exame Toxicológico para CNH: Quem Precisa? | Total Quality",
+    description: "Entenda quem precisa fazer exame toxicológico para CNH, quando ele pode ser exigido, como consultar o prazo e quais documentos levar.",
+    keywords: "exame toxicológico para CNH, exame toxicológico, Senatran, Detran, CNH, Caraguatatuba",
+    ogTitle: "Exame Toxicológico para CNH: Quem Precisa Fazer?",
+    ogDescription: "Entenda a janela de detecção, como consultar o prazo e quais documentos levar.",
+    ogImage: "https://totalquality.med.br/images/recepcao-1024.webp",
+    canonical: "https://totalquality.med.br/blog/exame-toxicologico-cnh",
+    priority: 0.6,
+    changefreq: "monthly",
+  },
 };
 
 // Rotas estáticas principais

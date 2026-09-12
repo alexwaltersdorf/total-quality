@@ -45,6 +45,7 @@ export const blogCategories = [
   "Medicina Preventiva",
   "Exames Laboratoriais",
   "Saúde do Coração",
+  "Saúde Ocupacional",
   "Nutrição",
   "Bem-Estar",
 ];

@@ -1,0 +1,86 @@
+{
+  "id": "17",
+  "slug": "diferenca-raio-x-tomografia",
+  "title": "Raio-X e Tomografia: Quais São as Principais Diferenças?",
+  "subtitle": "Entenda quando o contraste é usado, quem tem mais detalhe e como se preparar",
+  "excerpt": "Saiba como raio-X e tomografia funcionam, as diferenças nas imagens, quando o contraste pode ser usado e como é o preparo.",
+  "category": "Medicina Preventiva",
+  "author": "Equipe Total Quality",
+  "authorRole": "Total Quality Medicina Diagnóstica",
+  "date": "12 Set 2026",
+  "readTime": "10 min",
+  "image": "https://totalquality.med.br/images/tomografia-1024.webp",
+  "tags": [
+    "raio-x",
+    "tomografia computadorizada",
+    "diagnóstico por imagem",
+    "Caraguatatuba",
+    "exame de imagem"
+  ],
+  "content": [
+    "O raio-X produz imagens bidimensionais e é frequentemente utilizado para observar ossos, tórax e outras estruturas. A tomografia computadorizada também utiliza raios X, mas reúne imagens obtidas de diferentes ângulos para formar cortes detalhados do interior do corpo.",
+    "A tomografia não é simplesmente um \"raio-X melhor\". Cada exame responde a necessidades diferentes, e a escolha deve ser feita pelo profissional de saúde conforme a região e a situação investigada.",
+
+    "## Qual é a diferença entre raio-X e tomografia?",
+    "| Raio-X convencional | Tomografia computadorizada |\n| --- | --- |\n| Produz uma ou mais imagens bidimensionais | Produz múltiplos cortes e reconstruções da região |\n| É geralmente rápido | Exige aquisição e processamento de mais imagens |\n| Costuma ser usado como avaliação inicial em diversas situações | Pode oferecer maior detalhamento de órgãos, vasos e estruturas internas |\n| Normalmente não utiliza contraste | Pode ser realizada com ou sem contraste, conforme o protocolo |\n| Utiliza radiação ionizante | Também utiliza radiação ionizante |",
+    "O exame mais adequado depende da pergunta clínica. Nem toda situação precisa do maior nível de detalhamento disponível.",
+
+    "## Como funciona o raio-X?",
+    "No raio-X convencional, a radiação atravessa o corpo e é registrada por um detector. Ossos, ar, órgãos e tecidos absorvem os raios X de maneiras diferentes, formando a imagem.",
+    "O paciente pode precisar ficar em pé, sentado ou deitado, dependendo da região. O profissional orienta o posicionamento e pode solicitar que a respiração seja presa por alguns segundos. A captura da imagem costuma ser rápida.",
+    "O raio-X é utilizado em diferentes contextos, como avaliação de ossos, articulações e tórax. A indicação sempre depende da análise profissional.",
+    "Veja como funciona o [raio-X na Total Quality](https://totalquality.med.br/exames/raio-x).",
+
+    "## Como funciona a tomografia?",
+    "Na tomografia, o paciente se deita em uma mesa que se movimenta através de uma abertura no equipamento. Um tubo de raios X gira ao redor da região examinada, obtendo imagens de vários ângulos.",
+    "O computador processa essas imagens e cria cortes que permitem observar estruturas internas com mais detalhes. Dependendo do caso, também podem ser feitas reconstruções em diferentes planos.",
+    "Durante a aquisição, é importante permanecer imóvel. Em exames de tórax ou abdome, a equipe pode pedir que o paciente prenda a respiração por alguns instantes.",
+    "Conheça a [tomografia computadorizada da Total Quality](https://totalquality.med.br/exames/tomografia-computadorizada).",
+
+    "## Qual exame mostra mais detalhes?",
+    "Em geral, a tomografia fornece mais detalhes e reduz a sobreposição de estruturas ao produzir imagens em cortes. Isso não significa que ela seja necessária em todos os casos.",
+    "Um raio-X pode responder adequadamente à questão clínica com um procedimento mais simples. Em outras situações, a tomografia pode ser solicitada para examinar a região com maior profundidade ou complementar uma avaliação anterior.",
+    "O profissional considera sintomas, urgência, região do corpo, exames anteriores e equilíbrio entre benefícios e riscos.",
+
+    "## Os dois exames utilizam radiação?",
+    "Sim. Tanto o raio-X quanto a tomografia utilizam radiação ionizante. A quantidade varia conforme o tipo de exame, a região, o equipamento e o protocolo aplicado.",
+    "Em geral, uma tomografia envolve uma dose maior do que uma radiografia convencional da mesma região, pois reúne várias imagens. Ainda assim, não é adequado comparar doses sem considerar o exame específico.",
+    "Quando o exame é clinicamente necessário, a equipe utiliza protocolos voltados à obtenção de imagens adequadas com a exposição necessária. Informe sempre sobre a possibilidade de gravidez e exames recentes.",
+
+    "## Quando a tomografia utiliza contraste?",
+    "Nem toda tomografia usa contraste. O material pode ser administrado por via oral ou injetado, de acordo com a região e com a informação que o médico precisa visualizar.",
+    "Antes de um exame com contraste, a equipe pode fazer perguntas sobre alergias anteriores, função dos rins, medicamentos, gestação e outras condições. Em alguns protocolos, podem ser solicitados exames laboratoriais ou jejum.",
+    "Nunca suspenda medicamentos ou faça preparo por conta própria. Siga as instruções específicas recebidas da clínica.",
+
+    "## Como se preparar?",
+    "O preparo depende da região e do protocolo:",
+    "- Leve pedido médico, documento e exames anteriores.\n- Informe a possibilidade de gravidez.\n- Informe reações anteriores a contrastes.\n- Pergunte se o exame será realizado com contraste.\n- Confirme se haverá jejum ou necessidade de exame laboratorial recente.\n- Chegue com antecedência quando orientado.",
+    "Para muitos raios X não há preparo especial. Já a tomografia pode exigir orientações adicionais.",
+
+    "## Perguntas frequentes",
+
+    "### Tomografia é um tipo de raio-X?",
+    "A tomografia utiliza raios X, mas obtém imagens de vários ângulos e as processa em cortes detalhados. Por isso, o resultado é diferente de uma radiografia convencional.",
+
+    "### Qual exame é melhor?",
+    "Não existe um exame universalmente melhor. Existe o método mais adequado para a questão que o profissional precisa investigar.",
+
+    "### Toda tomografia utiliza contraste?",
+    "Não. O contraste é utilizado apenas quando necessário para o protocolo solicitado.",
+
+    "### Raio-X e tomografia doem?",
+    "A aquisição das imagens não costuma causar dor. O posicionamento pode gerar desconforto quando já existe uma lesão, e a aplicação de contraste pode produzir sensações transitórias. Comunique qualquer desconforto à equipe.",
+
+    "### Gestantes podem realizar esses exames?",
+    "A possibilidade de gravidez deve ser informada antes do exame. A equipe médica avaliará necessidade, benefícios, alternativas e medidas adequadas para cada caso.",
+
+    "### Quem escolhe qual exame fazer?",
+    "O profissional solicitante define o método com base na avaliação clínica. O radiologista também pode orientar ajustes no protocolo quando necessário.",
+
+    "## Onde realizar raio-X e tomografia em Caraguatatuba?",
+    "A Total Quality realiza [raio-X](https://totalquality.med.br/exames/raio-x) e [tomografia computadorizada](https://totalquality.med.br/exames/tomografia-computadorizada) em Caraguatatuba.",
+    "**Confirme preparo, documentos e agendamento pelo WhatsApp ou pelo telefone (12) 3887-3535.**",
+
+    "Este conteúdo é informativo e não substitui avaliação ou indicação médica."
+  ]
+}

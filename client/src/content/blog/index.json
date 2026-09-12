@@ -280,5 +280,107 @@
       "medicina preventiva",
       "Caraguatatuba"
     ]
+  },
+  {
+    "id": "15",
+    "slug": "diferenca-ultrassom-comum-doppler",
+    "title": "Ultrassom Comum e Ultrassom com Doppler: Qual a Diferença?",
+    "subtitle": "Entenda o que o Doppler acrescenta ao exame, quando é utilizado e como se preparar",
+    "excerpt": "Descubra a diferença entre ultrassom comum e ultrassom com Doppler, o que cada modalidade avalia e como pode ser o preparo.",
+    "category": "Medicina Preventiva",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "12 Set 2026",
+    "readTime": "10 min",
+    "image": "https://totalquality.med.br/images/cardiologia-1024.webp",
+    "tags": [
+      "ultrassom",
+      "ultrassonografia",
+      "Doppler",
+      "diagnóstico por imagem",
+      "Caraguatatuba"
+    ]
+  },
+  {
+    "id": "16",
+    "slug": "mamografia-ultrassom-mamas-diferencas",
+    "title": "Mamografia e Ultrassom das Mamas: Entenda as Diferenças",
+    "subtitle": "Por que um exame não substitui automaticamente o outro",
+    "excerpt": "Mamografia e ultrassom das mamas não são iguais. Entenda como cada exame funciona, suas diferenças e por que um não substitui automaticamente o outro.",
+    "category": "Medicina Preventiva",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "12 Set 2026",
+    "readTime": "10 min",
+    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
+    "tags": [
+      "mamografia",
+      "ultrassom da mama",
+      "saúde da mulher",
+      "diagnóstico por imagem",
+      "Caraguatatuba"
+    ]
+  },
+  {
+    "id": "17",
+    "slug": "diferenca-raio-x-tomografia",
+    "title": "Raio-X e Tomografia: Quais São as Principais Diferenças?",
+    "subtitle": "Entenda quando o contraste é usado, quem tem mais detalhe e como se preparar",
+    "excerpt": "Saiba como raio-X e tomografia funcionam, as diferenças nas imagens, quando o contraste pode ser usado e como é o preparo.",
+    "category": "Medicina Preventiva",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "12 Set 2026",
+    "readTime": "10 min",
+    "image": "https://totalquality.med.br/images/tomografia-1024.webp",
+    "tags": [
+      "raio-x",
+      "tomografia computadorizada",
+      "diagnóstico por imagem",
+      "Caraguatatuba",
+      "exame de imagem"
+    ]
+  },
+  {
+    "id": "18",
+    "slug": "aso-exames-ocupacionais",
+    "title": "ASO: O Que É e Qual Sua Relação com os Exames Ocupacionais?",
+    "subtitle": "Entenda a diferença entre o exame ocupacional e o documento, e o que a NR-7 exige",
+    "excerpt": "Entenda o que é ASO, quando o documento é emitido, sua relação com os exames ocupacionais e as responsabilidades de empresas e trabalhadores.",
+    "category": "Saúde Ocupacional",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "12 Set 2026",
+    "readTime": "9 min",
+    "image": "https://totalquality.med.br/images/hero-clinica-1024.webp",
+    "tags": [
+      "ASO",
+      "exame ocupacional",
+      "PCMSO",
+      "NR-7",
+      "medicina do trabalho",
+      "Caraguatatuba"
+    ]
+  },
+  {
+    "id": "19",
+    "slug": "exame-toxicologico-cnh",
+    "title": "Exame Toxicológico para CNH: Quem Precisa e Quando Fazer?",
+    "subtitle": "Entenda a janela de detecção, como consultar o prazo e quais documentos levar",
+    "excerpt": "Entenda quem precisa fazer exame toxicológico para CNH, quando ele pode ser exigido, como consultar o prazo e quais documentos levar.",
+    "category": "Saúde Ocupacional",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "12 Set 2026",
+    "readTime": "9 min",
+    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
+    "tags": [
+      "exame toxicológico",
+      "CNH",
+      "Senatran",
+      "Detran",
+      "exames ocupacionais",
+      "Caraguatatuba"
+    ]
   }
 ]
