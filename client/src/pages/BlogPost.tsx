@@ -7,14 +7,14 @@ import { useEffect, useMemo, useState } from "react";
 import { trackWhatsAppConversion } from "@/lib/tracking";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, ArrowUpRight, Clock, Calendar, Tag, Share2 } from "lucide-react";
-import { blogPosts, loadBlogPost } from "@/lib/blogData";
+import { blogPosts, loadBlogPost, extractFaqs } from "@/lib/blogData";
 import { renderBlogContent } from "@/lib/renderBlogContent";
 import { trpc } from "@/lib/trpc";
 import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
-import { useBreadcrumbSchema, useBlogPostingSchema, useCanonical, useMetaDescription } from "@/components/SEOHead";
+import { useBreadcrumbSchema, useBlogPostingSchema, useFAQSchema, useCanonical, useMetaDescription } from "@/components/SEOHead";
 import GiscusComments from "@/components/GiscusComments";
 
 export default function BlogPost() {
@@ -97,6 +97,11 @@ export default function BlogPost() {
     authorName: post?.author || "",
     imageUrl: post?.image,
   });
+
+  // SEO: FAQPage schema — extraido da secao "## Perguntas frequentes" do
+  // corpo, quando o artigo tiver uma (mesmo padrao de ExamePage.tsx).
+  const faqs = useMemo(() => extractFaqs(post?.content ?? []), [post?.content]);
+  useFAQSchema(faqs);
 
   const handleShare = () => {
     if (navigator.share) {

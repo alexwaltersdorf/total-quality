@@ -78,6 +78,43 @@ export function parseBlogDate(date: string): number {
   return Number.isNaN(fallback) ? 0 : fallback;
 }
 
+/**
+ * Extrai os pares pergunta/resposta da seção "## Perguntas frequentes" do
+ * corpo de um artigo (títulos "### " dentro dela viram perguntas), para
+ * alimentar o FAQPage schema (useFAQSchema em SEOHead.tsx) — mesmo padrão já
+ * usado em ExamePage.tsx. Artigos sem essa seção devolvem array vazio, e
+ * useFAQSchema simplesmente não injeta nada nesse caso.
+ */
+export function extractFaqs(content: string[]): { q: string; a: string }[] {
+  const faqs: { q: string; a: string }[] = [];
+  let inFaqSection = false;
+  let current: { q: string; a: string[] } | null = null;
+
+  const flush = () => {
+    if (current && current.a.length > 0) faqs.push({ q: current.q, a: current.a.join(" ") });
+    current = null;
+  };
+
+  for (const block of content) {
+    const trimmed = block.trimStart();
+    if (trimmed.startsWith("## ")) {
+      flush();
+      inFaqSection = /perguntas frequentes/i.test(trimmed.slice(3));
+      continue;
+    }
+    if (!inFaqSection) continue;
+    if (trimmed.startsWith("### ")) {
+      flush();
+      current = { q: trimmed.slice(4), a: [] };
+      continue;
+    }
+    if (current) current.a.push(block);
+  }
+  flush();
+
+  return faqs;
+}
+
 /** Cada artigo vira um chunk próprio, carregado só quando alguém o abre. */
 const articleLoaders = import.meta.glob<{ default: BlogPost }>(
   "../content/blog/*.json"
