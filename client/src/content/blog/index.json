@@ -382,5 +382,25 @@
       "exames ocupacionais",
       "Caraguatatuba"
     ]
+  },
+  {
+    "id": "20",
+    "slug": "eletrocardiograma-o-que-e-como-e-feito",
+    "title": "Eletrocardiograma (ECG): O Que É, Para Que Serve e Como É Feito",
+    "subtitle": "Entenda como funciona o exame, se dói, quanto tempo dura e quando costuma ser solicitado",
+    "excerpt": "Entenda o que é o eletrocardiograma, como funciona, se dói, quanto tempo dura e em quais situações o médico costuma solicitar o exame.",
+    "category": "Saúde do Coração",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "12 Set 2026",
+    "readTime": "8 min",
+    "image": "https://totalquality.med.br/images/cardiologia-1024.webp",
+    "tags": [
+      "eletrocardiograma",
+      "ECG",
+      "exame cardiológico",
+      "saúde do coração",
+      "Caraguatatuba"
+    ]
   }
 ]
