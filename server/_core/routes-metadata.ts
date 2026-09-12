@@ -304,6 +304,18 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.7,
     changefreq: "monthly",
   },
+
+  "mapa-ou-holter-diferenca": {
+    title: "MAPA ou Holter: Qual a Diferença? | Total Quality",
+    description: "Entenda a diferença entre MAPA e Holter: o que cada exame monitora, para que serve, se podem ser feitos juntos e como se preparar.",
+    keywords: "MAPA, Holter, monitorização ambulatorial da pressão arterial, exame cardiológico, arritmia, Caraguatatuba",
+    ogTitle: "MAPA ou Holter: Qual a Diferença?",
+    ogDescription: "Entenda o que cada exame monitora, para que serve e como se preparar.",
+    ogImage: "https://totalquality.med.br/images/cardiologia-1024.webp",
+    canonical: "https://totalquality.med.br/blog/mapa-ou-holter-diferenca",
+    priority: 0.7,
+    changefreq: "monthly",
+  },
 };
 
 // Rotas estáticas principais
