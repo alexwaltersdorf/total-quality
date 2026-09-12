@@ -260,5 +260,25 @@
       "arritmia",
       "Caraguatatuba"
     ]
+  },
+  {
+    "id": "14",
+    "slug": "check-up-medico-quais-exames-fazer",
+    "title": "Check-up Médico: Quais Exames Fazer e Com Que Frequência?",
+    "subtitle": "Entenda como o check-up se organiza entre exames laboratoriais, cardiológicos e de imagem",
+    "excerpt": "Entenda o que compõe um check-up médico, quais exames laboratoriais, cardiológicos e de imagem podem fazer parte e com que frequência repetir.",
+    "category": "Medicina Preventiva",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "12 Set 2026",
+    "readTime": "10 min",
+    "image": "https://totalquality.med.br/images/hero-clinica-1024.webp",
+    "tags": [
+      "check-up médico",
+      "check-up preventivo",
+      "exames laboratoriais",
+      "medicina preventiva",
+      "Caraguatatuba"
+    ]
   }
 ]

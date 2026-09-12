@@ -316,6 +316,18 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.7,
     changefreq: "monthly",
   },
+
+  "check-up-medico-quais-exames-fazer": {
+    title: "Check-up Médico: Quais Exames Fazer? | Total Quality",
+    description: "Entenda o que compõe um check-up médico: exames laboratoriais, cardiológicos e de imagem, com que frequência repetir e como se preparar.",
+    keywords: "check-up médico, check-up preventivo, quais exames fazer, exames laboratoriais, medicina preventiva, Caraguatatuba",
+    ogTitle: "Check-up Médico: Quais Exames Fazer?",
+    ogDescription: "Entenda como o check-up se organiza entre exames laboratoriais, cardiológicos e de imagem.",
+    ogImage: "https://totalquality.med.br/images/hero-clinica-1024.webp",
+    canonical: "https://totalquality.med.br/blog/check-up-medico-quais-exames-fazer",
+    priority: 0.7,
+    changefreq: "monthly",
+  },
 };
 
 // Rotas estáticas principais
