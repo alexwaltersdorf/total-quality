@@ -536,28 +536,81 @@ function blogIndexHtml(): string {
     ${internalLinksHtml("/blog")}`;
 }
 
-function renderBlogHtml(post: BlogPost): string {
-  // Linkagem interna automática: o corpo dos artigos não tinha NENHUM link —
-  // a camada informacional não repassava autoridade às páginas estratégicas.
-  // Mapa e regras em client/src/lib/internalLinkTargets.ts (fonte única,
-  // compartilhada com o BlogPost.tsx).
-  const usedHrefs = new Set<string>();
-  const currentPath = `/blog/${post.slug}`;
-  const paragraphs = post.content
-    .map((par) => {
-      const spans = linkifyText(par, currentPath, usedHrefs);
-      const html = spans
+function parseMarkdownTableRow(line: string): string[] {
+  return line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((c) => c.trim());
+}
+
+function renderInlineHtml(text: string, currentPath: string, usedHrefs: Set<string>): string {
+  return text
+    .split(/(\*\*[^*]+\*\*)/g)
+    .filter((part) => part.length > 0)
+    .map((part) => {
+      const isBold = part.startsWith("**") && part.endsWith("**");
+      const raw = isBold ? part.slice(2, -2) : part;
+      const html = linkifyText(raw, currentPath, usedHrefs)
         .map((s) => (s.href ? `<a href="${s.href}">${escapeHtml(s.text)}</a>` : escapeHtml(s.text)))
         .join("");
-      return `<p>${html}</p>`;
+      return isBold ? `<strong>${html}</strong>` : html;
     })
     .join("");
+}
+
+/**
+ * Corpo do artigo em HTML: interpreta a formatacao markdown leve usada nos
+ * textos (##/### para titulos, **negrito**, listas "- item" e tabelas
+ * "| col |") e aplica a linkagem interna automatica (client/src/lib/
+ * internalLinkTargets.ts, fonte unica — mesma logica usada pelo
+ * renderBlogContent.tsx no cliente). Antes disso cada item do array virava
+ * um <p> literal, entao o crawler via os caracteres ##, ** e | crus no HTML.
+ */
+function renderBlogBodyHtml(content: string[], currentPath: string): string {
+  const usedHrefs = new Set<string>();
+
+  return content
+    .map((block) => {
+      const trimmed = block.trimStart();
+
+      if (trimmed.startsWith("### ")) {
+        return `<h3>${renderInlineHtml(trimmed.slice(4), currentPath, usedHrefs)}</h3>`;
+      }
+      if (trimmed.startsWith("## ")) {
+        return `<h2>${renderInlineHtml(trimmed.slice(3), currentPath, usedHrefs)}</h2>`;
+      }
+      if (trimmed.startsWith("|")) {
+        const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
+        const [headerLine, separatorLine, ...bodyLines] = lines;
+        const header = parseMarkdownTableRow(headerLine);
+        const isSeparator = /^\|?[\s:|-]+\|?$/.test(separatorLine ?? "");
+        const rows = (isSeparator ? bodyLines : [separatorLine, ...bodyLines].filter(Boolean)).map(parseMarkdownTableRow);
+        const thead = `<tr>${header.map((c) => `<th>${renderInlineHtml(c, currentPath, usedHrefs)}</th>`).join("")}</tr>`;
+        const tbody = rows
+          .map((r) => `<tr>${r.map((c) => `<td>${renderInlineHtml(c, currentPath, usedHrefs)}</td>`).join("")}</tr>`)
+          .join("");
+        return `<table><thead>${thead}</thead><tbody>${tbody}</tbody></table>`;
+      }
+      if (trimmed.startsWith("- ")) {
+        const items = block
+          .split("\n")
+          .map((l) => l.trim())
+          .filter((l) => l.startsWith("- "))
+          .map((l) => l.slice(2));
+        return `<ul>${items.map((it) => `<li>${renderInlineHtml(it, currentPath, usedHrefs)}</li>`).join("")}</ul>`;
+      }
+
+      return `<p>${renderInlineHtml(block, currentPath, usedHrefs)}</p>`;
+    })
+    .join("");
+}
+
+function renderBlogHtml(post: BlogPost): string {
+  const currentPath = `/blog/${post.slug}`;
+  const bodyHtml = renderBlogBodyHtml(post.content, currentPath);
   return `
     <article>
       <h1>${escapeHtml(post.title)}</h1>
       <p><em>${escapeHtml(post.subtitle)}</em></p>
       <p>${escapeHtml(post.author)} · ${escapeHtml(post.authorRole)} · ${escapeHtml(post.date)} · ${escapeHtml(post.readTime)} de leitura</p>
-      ${paragraphs}
+      ${bodyHtml}
     </article>
     ${napHtml("Precisa fazer seus exames? Agende pelo WhatsApp e tenha resultados online em até 24 horas.")}
     ${internalLinksHtml("/blog/" + post.slug)}`;
