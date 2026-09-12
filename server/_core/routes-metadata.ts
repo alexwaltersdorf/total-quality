@@ -388,6 +388,18 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.6,
     changefreq: "monthly",
   },
+
+  "eletrocardiograma-o-que-e-como-e-feito": {
+    title: "Eletrocardiograma (ECG): O Que É e Como É Feito | Total Quality",
+    description: "Entenda o que é o eletrocardiograma, como funciona, se dói, quanto tempo dura e em quais situações o médico costuma solicitar o exame.",
+    keywords: "eletrocardiograma, ECG, o que é eletrocardiograma, exame cardiológico, saúde do coração, Caraguatatuba",
+    ogTitle: "Eletrocardiograma (ECG): O Que É e Como É Feito",
+    ogDescription: "Entenda como funciona o exame, se dói, quanto tempo dura e quando costuma ser solicitado.",
+    ogImage: "https://totalquality.med.br/images/cardiologia-1024.webp",
+    canonical: "https://totalquality.med.br/blog/eletrocardiograma-o-que-e-como-e-feito",
+    priority: 0.7,
+    changefreq: "monthly",
+  },
 };
 
 // Rotas estáticas principais
