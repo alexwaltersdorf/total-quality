@@ -30,13 +30,19 @@ export async function syncLeadToSheet(lead: LeadForSheet): Promise<void> {
   if (!url) return;
 
   try {
+    // O Apps Script sempre responde com um redirect 302 para
+    // script.googleusercontent.com para entregar o corpo da resposta.
+    // O appendRow ja aconteceu antes desse redirect, entao nao seguimos
+    // (redirect: "manual") — seguir esse segundo salto se mostrou
+    // pouco confiavel dependendo da rede de saida do servidor.
     const response = await fetch(url, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(lead),
+      redirect: "manual",
     });
 
-    if (!response.ok) {
+    if (response.status >= 400) {
       console.warn(`[GoogleSheets] Falha ao sincronizar lead (${response.status})`);
     }
   } catch (error) {
