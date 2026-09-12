@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { ENV } from "./_core/env";
 import { notifyOwner } from "./_core/notification";
+import { syncLeadToSheet } from "./_core/googleSheetsSync";
 import { sdk } from "./_core/sdk";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
@@ -224,6 +225,8 @@ export const appRouter = router({
         } catch (e) {
           console.warn("[Notification] Falha ao notificar novo lead:", e);
         }
+        // Sincroniza o lead com a planilha Google Sheets (não bloqueia nem falha o lead)
+        await syncLeadToSheet(input);
         return result;
       }),
 
