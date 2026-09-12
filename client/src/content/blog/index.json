@@ -239,5 +239,26 @@
       "Caraguatatuba",
       "exame de imagem"
     ]
+  },
+  {
+    "id": "13",
+    "slug": "mapa-ou-holter-diferenca",
+    "title": "MAPA ou Holter: Qual a Diferença Entre os Exames?",
+    "subtitle": "Entenda o que cada exame monitora, para que serve e como se preparar",
+    "excerpt": "MAPA e Holter são exames cardiológicos diferentes: entenda o que cada um monitora, para que serve, se podem ser feitos juntos e como se preparar.",
+    "category": "Saúde do Coração",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "12 Set 2026",
+    "readTime": "9 min",
+    "image": "https://totalquality.med.br/images/cardiologia-1024.webp",
+    "tags": [
+      "MAPA",
+      "Holter",
+      "exame cardiológico",
+      "pressão arterial",
+      "arritmia",
+      "Caraguatatuba"
+    ]
   }
 ]
