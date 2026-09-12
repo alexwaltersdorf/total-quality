@@ -1,0 +1,96 @@
+{
+  "id": "18",
+  "slug": "aso-exames-ocupacionais",
+  "title": "ASO: O Que É e Qual Sua Relação com os Exames Ocupacionais?",
+  "subtitle": "Entenda a diferença entre o exame ocupacional e o documento, e o que a NR-7 exige",
+  "excerpt": "Entenda o que é ASO, quando o documento é emitido, sua relação com os exames ocupacionais e as responsabilidades de empresas e trabalhadores.",
+  "category": "Saúde Ocupacional",
+  "author": "Equipe Total Quality",
+  "authorRole": "Total Quality Medicina Diagnóstica",
+  "date": "12 Set 2026",
+  "readTime": "9 min",
+  "image": "https://totalquality.med.br/images/hero-clinica-1024.webp",
+  "tags": [
+    "ASO",
+    "exame ocupacional",
+    "PCMSO",
+    "NR-7",
+    "medicina do trabalho",
+    "Caraguatatuba"
+  ],
+  "content": [
+    "ASO é a sigla para Atestado de Saúde Ocupacional. O documento é emitido após a avaliação médica ocupacional e registra, entre outras informações obrigatórias, se o trabalhador está apto ou inapto para exercer determinada função naquele momento.",
+    "O ASO está relacionado ao Programa de Controle Médico de Saúde Ocupacional, o PCMSO, previsto na Norma Regulamentadora nº 7. Ele não substitui o exame ocupacional: **o exame é a avaliação realizada; o ASO é o documento emitido a partir dela**.",
+
+    "## O que é ASO?",
+    "O Atestado de Saúde Ocupacional formaliza a conclusão do exame médico relacionado ao trabalho. Seu objetivo não é declarar que uma pessoa está \"saudável para tudo\", mas registrar a aptidão para uma função específica, considerando os riscos ocupacionais identificados e as diretrizes do PCMSO da organização.",
+    "A conclusão deve ser feita por profissional habilitado. Dependendo da função, dos riscos e do planejamento médico ocupacional, a avaliação clínica pode ser acompanhada por exames complementares.",
+
+    "## ASO e exame ocupacional são a mesma coisa?",
+    "Não. Embora os termos sejam frequentemente usados como sinônimos, eles representam etapas diferentes:",
+    "- **Exame ocupacional:** avaliação clínica e, quando indicados, procedimentos complementares relacionados à saúde do trabalhador.\n- **ASO:** documento emitido após essa avaliação, com a conclusão de apto ou inapto para a função.",
+    "Assim, o trabalhador comparece para o exame e recebe o ASO correspondente, conforme o processo adotado pela empresa e pelo serviço de saúde ocupacional.",
+
+    "## Qual é a relação entre ASO, PCMSO e NR-7?",
+    "A NR-7 estabelece diretrizes para o desenvolvimento do PCMSO. O programa deve ser elaborado considerando os riscos ocupacionais identificados pela organização e orientando o acompanhamento da saúde dos trabalhadores.",
+    "O ASO faz parte desse sistema de gestão. Para que o documento seja coerente com a função, o serviço de saúde ocupacional precisa receber informações corretas sobre cargo, atividades e riscos.",
+    "Uma avaliação isolada, sem conhecer adequadamente o trabalho desempenhado, pode não responder às exigências do programa. Por isso, as empresas devem manter seu PCMSO atualizado e fornecer os dados necessários ao médico responsável.",
+
+    "## Em quais situações o ASO pode ser emitido?",
+    "Os exames médicos ocupacionais previstos na NR-7 incluem:",
+    "- **Admissional:** realizado antes de o empregado assumir suas atividades.\n- **Periódico:** feito durante o vínculo, conforme os critérios aplicáveis ao trabalhador.\n- **Retorno ao trabalho:** relacionado ao retorno após afastamentos enquadrados nas regras vigentes.\n- **Mudança de riscos ocupacionais:** realizado antes de uma mudança que exponha o trabalhador a riscos diferentes.\n- **Demissional:** relacionado ao encerramento do vínculo, observados os critérios da norma.",
+    "As circunstâncias e os prazos devem ser verificados na versão vigente da NR-7 e no PCMSO da empresa. Eles não devem ser definidos a partir de um modelo genérico encontrado na internet.",
+
+    "## Quais informações constam no ASO?",
+    "O conteúdo obrigatório deve seguir a NR-7 vigente. De forma geral, o documento reúne informações como:",
+    "- Identificação do trabalhador.\n- Função exercida.\n- Riscos ocupacionais que exigem controle médico, quando aplicável.\n- Procedimentos e exames realizados.\n- Data da avaliação.\n- Identificação do médico responsável.\n- Conclusão de apto ou inapto para a função.",
+    "Informações clínicas detalhadas pertencem ao prontuário médico e não devem ser expostas indevidamente no ASO. A empresa precisa tratar os documentos ocupacionais com confidencialidade e de acordo com as regras de proteção de dados.",
+
+    "## Quem pode emitir e assinar o ASO?",
+    "O ASO deve ser emitido e assinado pelo médico responsável pela avaliação ocupacional, conforme as exigências da regulamentação aplicável.",
+    "A empresa não pode preencher previamente a conclusão nem alterar o documento após a avaliação. Ao empregador cabe fornecer as informações ocupacionais necessárias e encaminhar o trabalhador ao serviço responsável.",
+
+    "## Quem paga o exame ocupacional?",
+    "Os procedimentos relacionados ao controle médico ocupacional são responsabilidade do empregador, nos termos da legislação trabalhista aplicável. O trabalhador não deve ser orientado a contratar por conta própria exames definidos pelo PCMSO sem alinhamento com a empresa.",
+    "Em caso de dúvida específica sobre obrigação, prazo ou responsabilidade, a organização deve consultar seus profissionais de saúde e segurança do trabalho, contabilidade ou assessoria jurídica.",
+
+    "## O ASO tem validade?",
+    "Não é adequado tratar o ASO como um documento com uma validade única para todas as pessoas e empresas. A periodicidade das avaliações e a necessidade de um novo exame dependem do evento ocupacional, dos riscos, do PCMSO e das regras vigentes.",
+    "O fato de um trabalhador possuir um ASO anterior não elimina automaticamente a necessidade de uma nova avaliação admissional, periódica, de retorno, de mudança de riscos ou demissional.",
+
+    "## Qual é a relação com o eSocial?",
+    "As informações dos exames ocupacionais podem integrar as obrigações de registro da empresa no eSocial. O envio correto depende do evento aplicável, dos dados clínicos ocupacionais e dos sistemas utilizados pela organização.",
+    "O serviço médico, o RH e a área responsável pelo eSocial devem manter um fluxo definido para evitar dados divergentes, atrasos ou falta de documentação.",
+
+    "## O que a empresa deve organizar antes do atendimento?",
+    "Antes de encaminhar trabalhadores, a empresa deve conferir:",
+    "- Se o PCMSO está atualizado.\n- Se a função, atividades e riscos foram informados corretamente.\n- Qual tipo de exame ocupacional será realizado.\n- Quais exames complementares estão previstos.\n- Como serão feitos o agendamento e a identificação do trabalhador.\n- Como o ASO e os dados necessários serão recebidos e arquivados.",
+    "Esse alinhamento reduz retrabalho e ajuda o serviço médico a conduzir a avaliação adequada à função.",
+
+    "## Perguntas frequentes",
+
+    "### ASO e exame admissional são a mesma coisa?",
+    "Não. O admissional é uma modalidade de exame ocupacional. O ASO é o documento emitido após a avaliação.",
+
+    "### Todo exame ocupacional gera um ASO?",
+    "Os exames médicos ocupacionais previstos na NR-7 devem ser documentados conforme a norma vigente. O processo e a disponibilização do documento devem ser confirmados com o serviço responsável.",
+
+    "### O trabalhador precisa pagar pelo ASO?",
+    "Os custos dos procedimentos ocupacionais exigidos pela empresa são de responsabilidade do empregador, conforme a legislação aplicável.",
+
+    "### O ASO contém o diagnóstico do trabalhador?",
+    "O documento apresenta a conclusão de aptidão e os elementos exigidos pela norma. Informações clínicas detalhadas pertencem ao prontuário e exigem tratamento confidencial.",
+
+    "### Um ASO serve para qualquer função?",
+    "Não. A conclusão considera a função e os riscos ocupacionais correspondentes. Uma mudança de riscos pode exigir nova avaliação.",
+
+    "### Quem deve guardar o ASO?",
+    "Empresa, trabalhador e serviço de saúde devem seguir as regras de emissão, disponibilização, prontuário e guarda previstas na regulamentação vigente.",
+
+    "## Exames ocupacionais em Caraguatatuba e no Litoral Norte",
+    "A Total Quality realiza [exames admissionais e ocupacionais](https://totalquality.med.br/exames/exame-admissional) para empresas e trabalhadores de Caraguatatuba, Ubatuba, São Sebastião e Ilhabela.",
+    "**Entre em contato pelo WhatsApp ou pelo telefone (12) 3887-3535 para organizar o atendimento da sua empresa.**",
+
+    "Este conteúdo é informativo e não substitui orientação médica, jurídica ou de saúde e segurança do trabalho."
+  ]
+}

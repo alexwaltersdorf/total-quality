@@ -566,17 +566,45 @@ function parseMarkdownTableRow(line: string): string[] {
   return line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((c) => c.trim());
 }
 
+const SITE_ORIGIN = "https://totalquality.med.br";
+
+function toRelativeHref(url: string): string {
+  return url.startsWith(SITE_ORIGIN) ? url.slice(SITE_ORIGIN.length) || "/" : url;
+}
+
+/**
+ * "[texto](url)" — link explicito no corpo do artigo. Registra o destino em
+ * usedHrefs (quando interno) para o auto-linker nao duplicar outro link para
+ * o mesmo alvo mais adiante no mesmo artigo.
+ */
 function renderInlineHtml(text: string, currentPath: string, usedHrefs: Set<string>): string {
   return text
-    .split(/(\*\*[^*]+\*\*)/g)
+    .split(/(\[[^\]]+\]\([^)]+\))/g)
     .filter((part) => part.length > 0)
     .map((part) => {
-      const isBold = part.startsWith("**") && part.endsWith("**");
-      const raw = isBold ? part.slice(2, -2) : part;
-      const html = linkifyText(raw, currentPath, usedHrefs)
-        .map((s) => (s.href ? `<a href="${s.href}">${escapeHtml(s.text)}</a>` : escapeHtml(s.text)))
+      const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+      if (linkMatch) {
+        const [, linkText, url] = linkMatch;
+        const isInternal = url.startsWith(SITE_ORIGIN) || url.startsWith("/");
+        const href = toRelativeHref(url);
+        if (isInternal) usedHrefs.add(href);
+        return isInternal
+          ? `<a href="${href}">${escapeHtml(linkText)}</a>`
+          : `<a href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(linkText)}</a>`;
+      }
+
+      return part
+        .split(/(\*\*[^*]+\*\*)/g)
+        .filter((p) => p.length > 0)
+        .map((bp) => {
+          const isBold = bp.startsWith("**") && bp.endsWith("**");
+          const raw = isBold ? bp.slice(2, -2) : bp;
+          const html = linkifyText(raw, currentPath, usedHrefs)
+            .map((s) => (s.href ? `<a href="${s.href}">${escapeHtml(s.text)}</a>` : escapeHtml(s.text)))
+            .join("");
+          return isBold ? `<strong>${html}</strong>` : html;
+        })
         .join("");
-      return isBold ? `<strong>${html}</strong>` : html;
     })
     .join("");
 }
