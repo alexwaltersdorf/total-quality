@@ -212,20 +212,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
 
-  "exame-de-sangue-caraguatatuba": {
-    // Reposicionado (auditoria 01/08): a intencao transacional "onde fazer"
-    // canibalizava a pagina de servico /exames/exames-de-sangue. O artigo vira
-    // informacional (tipos e preparo); a pagina de servico e o destino comercial.
-    title: "Exame de Sangue em Caraguatatuba: Onde Fazer?",
-    description: "Saiba onde fazer exame de sangue em Caraguatatuba, quais cuidados podem ser necessários e como escolher um laboratório para realizar seus exames.",
-    keywords: "exame de sangue, laboratório Caraguatatuba, hemograma, análises clínicas",
-    ogTitle: "Exame de Sangue em Caraguatatuba",
-    ogDescription: "Tudo o que você precisa saber sobre exames de sangue em Caraguatatuba.",
-    canonical: "https://totalquality.med.br/blog/exame-de-sangue-caraguatatuba",
-    priority: 0.8,
-    changefreq: "monthly",
-  },
-
   "alimentacao-e-exames-laboratoriais": {
     title: "Como a Alimentação Influencia Seus Exames | Total Quality",
     description: "Saiba como a alimentação afeta seus exames de sangue. Guia completo sobre jejum, alimentos que interferem e preparo correto para exames precisos.",
