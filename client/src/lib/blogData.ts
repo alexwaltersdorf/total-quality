@@ -45,12 +45,75 @@ export const blogCategories = [
   "Medicina Preventiva",
   "Exames Laboratoriais",
   "Saúde do Coração",
+  "Saúde Ocupacional",
   "Nutrição",
   "Bem-Estar",
 ];
 
 /** Metadados de todos os artigos — leve, seguro para o chunk inicial. */
 export const blogPosts: BlogPostMeta[] = blogIndex as BlogPostMeta[];
+
+const PT_MONTHS: Record<string, number> = {
+  jan: 0, fev: 1, mar: 2, abr: 3, mai: 4, jun: 5,
+  jul: 6, ago: 7, set: 8, out: 9, nov: 10, dez: 11,
+};
+
+/**
+ * Converte a data em texto do post (ex: "12 Set 2026") para timestamp
+ * ordenável. O construtor nativo `Date()` não reconhece meses abreviados em
+ * português e devolve Invalid Date/NaN para todo post — a ordenação por
+ * "mais recente" nunca funcionou de fato, e o post em destaque/primeiro do
+ * grid ficava por ordem de inserção no index.json, não por data.
+ */
+export function parseBlogDate(date: string): number {
+  const match = date.match(/^(\d{1,2})\s+([A-Za-zçÇ]+)\s+(\d{4})$/);
+  if (match) {
+    const [, day, monthStr, year] = match;
+    const month = PT_MONTHS[monthStr.toLowerCase()];
+    if (month !== undefined) {
+      return new Date(Number(year), month, Number(day)).getTime();
+    }
+  }
+  const fallback = new Date(date).getTime();
+  return Number.isNaN(fallback) ? 0 : fallback;
+}
+
+/**
+ * Extrai os pares pergunta/resposta da seção "## Perguntas frequentes" do
+ * corpo de um artigo (títulos "### " dentro dela viram perguntas), para
+ * alimentar o FAQPage schema (useFAQSchema em SEOHead.tsx) — mesmo padrão já
+ * usado em ExamePage.tsx. Artigos sem essa seção devolvem array vazio, e
+ * useFAQSchema simplesmente não injeta nada nesse caso.
+ */
+export function extractFaqs(content: string[]): { q: string; a: string }[] {
+  const faqs: { q: string; a: string }[] = [];
+  let inFaqSection = false;
+  let current: { q: string; a: string[] } | null = null;
+
+  const flush = () => {
+    if (current && current.a.length > 0) faqs.push({ q: current.q, a: current.a.join(" ") });
+    current = null;
+  };
+
+  for (const block of content) {
+    const trimmed = block.trimStart();
+    if (trimmed.startsWith("## ")) {
+      flush();
+      inFaqSection = /perguntas frequentes/i.test(trimmed.slice(3));
+      continue;
+    }
+    if (!inFaqSection) continue;
+    if (trimmed.startsWith("### ")) {
+      flush();
+      current = { q: trimmed.slice(4), a: [] };
+      continue;
+    }
+    if (current) current.a.push(block);
+  }
+  flush();
+
+  return faqs;
+}
 
 /** Cada artigo vira um chunk próprio, carregado só quando alguém o abre. */
 const articleLoaders = import.meta.glob<{ default: BlogPost }>(

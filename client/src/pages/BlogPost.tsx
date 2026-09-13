@@ -7,14 +7,14 @@ import { useEffect, useMemo, useState } from "react";
 import { trackWhatsAppConversion } from "@/lib/tracking";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, ArrowUpRight, Clock, Calendar, Tag, Share2 } from "lucide-react";
-import { blogPosts, loadBlogPost } from "@/lib/blogData";
-import { linkifyText } from "@/lib/internalLinkTargets";
+import { blogPosts, loadBlogPost, extractFaqs } from "@/lib/blogData";
+import { renderBlogContent } from "@/lib/renderBlogContent";
 import { trpc } from "@/lib/trpc";
 import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
-import { useBreadcrumbSchema, useBlogPostingSchema, useCanonical, useMetaDescription } from "@/components/SEOHead";
+import { useBreadcrumbSchema, useBlogPostingSchema, useFAQSchema, useCanonical, useMetaDescription } from "@/components/SEOHead";
 import GiscusComments from "@/components/GiscusComments";
 
 export default function BlogPost() {
@@ -59,10 +59,7 @@ export default function BlogPost() {
   useEffect(() => {
     window.scrollTo(0, 0);
     if (post) {
-      document.title =
-        post.slug === "exame-de-sangue-caraguatatuba"
-          ? "Exame de Sangue em Caraguatatuba: Onde Fazer?"
-          : `${post.title} | Blog Total Quality Medicina Diagnóstica`;
+      document.title = `${post.title} | Blog Total Quality Medicina Diagnóstica`;
 
       // Registrar visualização no banco de dados
       blogViewMutation.mutate({ slug: post.slug });
@@ -72,9 +69,7 @@ export default function BlogPost() {
 
   // SEO: Meta description
   useMetaDescription(
-    post?.slug === "exame-de-sangue-caraguatatuba"
-      ? "Saiba onde fazer exame de sangue em Caraguatatuba, quais cuidados podem ser necessários e como escolher um laboratório para realizar seus exames."
-      : post?.excerpt || "Blog Total Quality Medicina Diagnóstica - Artigos sobre saúde e bem-estar"
+    post?.excerpt || "Blog Total Quality Medicina Diagnóstica - Artigos sobre saúde e bem-estar"
   );
 
   // SEO: Canonical URL
@@ -97,6 +92,11 @@ export default function BlogPost() {
     authorName: post?.author || "",
     imageUrl: post?.image,
   });
+
+  // SEO: FAQPage schema — extraido da secao "## Perguntas frequentes" do
+  // corpo, quando o artigo tiver uma (mesmo padrao de ExamePage.tsx).
+  const faqs = useMemo(() => extractFaqs(post?.content ?? []), [post?.content]);
+  useFAQSchema(faqs);
 
   const handleShare = () => {
     if (navigator.share) {
@@ -202,27 +202,11 @@ export default function BlogPost() {
       <article className="pb-16">
         <div className="container max-w-3xl mx-auto">
           <div className="space-y-6">
-            {/* Linkagem interna automática (mesmo mapa do prerender —
-                internalLinkTargets.ts): informacional → página estratégica. */}
-            {(() => {
-              const usedHrefs = new Set<string>();
-              return post.content.map((paragraph, i) => (
-                <p
-                  key={i}
-                  className={`text-text leading-[1.85] ${i === 0 ? "text-lg first-letter:text-5xl first-letter:font-display first-letter:float-left first-letter:mr-2 first-letter:mt-1 first-letter:text-brand first-letter:leading-none" : "text-base"}`}
-                >
-                  {linkifyText(paragraph, `/blog/${post.slug}`, usedHrefs).map((span, j) =>
-                    span.href ? (
-                      <Link key={j} href={span.href} className="text-brand underline underline-offset-2 hover:opacity-80">
-                        {span.text}
-                      </Link>
-                    ) : (
-                      <span key={j}>{span.text}</span>
-                    )
-                  )}
-                </p>
-              ));
-            })()}
+            {/* Interpreta a formatacao markdown leve do corpo (##/###, **negrito**,
+                listas, tabelas) e aplica a linkagem interna automática (mesmo
+                mapa do prerender — internalLinkTargets.ts): informacional →
+                página estratégica. */}
+            {renderBlogContent(post.content, `/blog/${post.slug}`)}
           </div>
 
           {/* Tags */}

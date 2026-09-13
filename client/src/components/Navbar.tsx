@@ -4,12 +4,13 @@
  * Tracking: nav clicks, CTA clicks, phone clicks, results clicks
  */
 import { useState, useEffect, useRef } from "react";
+import type { MouseEvent as ReactMouseEvent } from "react";
 import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { trackNavClick, trackScheduleExam, trackResultsClick, trackPhoneClick, trackWhatsAppClick } from "@/lib/tracking";
 
 const navLinks = [
-  { label: "Início", href: "#inicio" },
+  { label: "Início", href: "/" },
   { label: "Diferenciais", href: "#diferenciais" },
   { label: "Exames", href: "#exames" },
   { label: "Sobre", href: "#sobre" },
@@ -38,6 +39,7 @@ const examSitelinks = [
 ];
 
 export default function Navbar() {
+  const [location] = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [examesDropdownOpen, setExamesDropdownOpen] = useState(false);
@@ -67,6 +69,18 @@ export default function Navbar() {
     trackNavClick(href.replace("#", ""));
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleHomeClick = (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    if (location === "/") {
+      event.preventDefault();
+      scrollTo("#inicio");
+      return;
+    }
+
+    setMobileOpen(false);
+    trackNavClick("início");
+    window.requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0 }));
   };
 
   const handleScheduleClickNavbar = () => {
@@ -137,13 +151,13 @@ export default function Navbar() {
         {/* Desktop nav links */}
         <div className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => {
-            if (link.href === "/cartao") {
+            if (link.href === "/" || link.href === "/cartao") {
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   className="text-xs font-semibold uppercase tracking-[0.15em] text-brand hover:text-brand-dark transition-colors duration-300"
-                  onClick={() => trackNavClick(link.label.toLowerCase())}
+                  onClick={link.href === "/" ? handleHomeClick : () => trackNavClick(link.label.toLowerCase())}
                 >
                   {link.label}
                 </Link>
@@ -263,13 +277,13 @@ export default function Navbar() {
         <div className="container pt-24 pb-8">
           <div className="space-y-1">
             {navLinks.map((link, i) => {
-              if (link.href === "/cartao") {
+              if (link.href === "/" || link.href === "/cartao") {
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
                     className="block w-full text-left py-4 border-b border-black/10"
-                    onClick={() => { setMobileOpen(false); trackNavClick(link.label.toLowerCase()); }}
+                    onClick={link.href === "/" ? handleHomeClick : () => { setMobileOpen(false); trackNavClick(link.label.toLowerCase()); }}
                     style={{ animationDelay: `${i * 50}ms` }}
                   >
                     <span className="heading-display text-4xl text-brand hover:text-brand-dark transition-colors">

@@ -7,11 +7,12 @@ import { useEffect, useRef } from "react";
 import { trackScheduleBioimpedancia, trackPhoneClick } from "@/lib/tracking";
 import { ArrowUpRight, ArrowLeft, Zap, TrendingUp, Droplets, Bone, Flame, Scale, Target, Users, BarChart3 } from "lucide-react";
 import { Link } from "wouter";
+import Navbar from "@/components/Navbar";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription, useFAQSchema, useMedicalTestSchema } from "@/components/SEOHead";
 
-const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/bioimpedancia-hero-JBi4rGhcubZh8PJVdKomAz.webp";
-const DETAIL_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/bioimpedancia-detail-impYZJEExk9frRXt9avf3V.webp";
+const HERO_IMG = "/images/hero-clinica-1440.webp";
+const DETAIL_IMG = "/images/laboratorio-1024.webp";
 
 const metrics = [
   { icon: Scale, title: "Massa Muscular", desc: "Quantidade total de músculo esquelético no corpo, essencial para metabolismo e mobilidade." },
@@ -71,24 +72,7 @@ export default function Bioimpedancia() {
 
   return (
     <div ref={wrapperRef} className="min-h-screen bg-white">
-      {/* Sticky top bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-black/10">
-        <div className="container flex items-center justify-between py-4">
-          <Link href="/" className="flex items-center gap-3 group">
-            <ArrowLeft className="w-5 h-5 text-text-muted group-hover:text-brand transition-colors" />
-            <span className="heading-display text-2xl tracking-tight text-text group-hover:text-brand transition-colors">
-              TOTAL QUALITY
-            </span>
-          </Link>
-          <button
-            onClick={() => { trackScheduleBioimpedancia(); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame de Bioimpedância.", "_blank"); }}
-            className="btn-pill"
-          >
-            Agendar Exame
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Section */}
       <section className="pt-24 lg:pt-28">
