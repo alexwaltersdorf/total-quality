@@ -43,6 +43,15 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
 
   // Portal de resultados: o login vive em subdomínio próprio
   "/login": "/",
+
+  // Canibalizacao de palavras-chave (auditoria de SEO, 12/09): dois artigos
+  // do blog disputavam a mesma busca ("exames de sangue") e a pagina de
+  // venda ficava atras dos dois. Consolidado no artigo mais forte.
+  "/blog/exame-de-sangue-caraguatatuba": "/blog/exames-de-sangue-guia-completo",
+
+  // Slug antigo do artigo de hemograma, de antes de uma renomeacao — ainda
+  // aparecia no relatorio do GSC com 1 impressao residual e respondia 404.
+  "/blog/hemograma-completo-como-avalia": "/blog/hemograma-completo-o-que-avalia",
 };
 
 /**
