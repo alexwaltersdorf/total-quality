@@ -21,7 +21,7 @@ export interface RouteMetadata {
 // Dados dos exames para reutilização
 const examesMetadata: Record<string, RouteMetadata> = {
   "exames-de-sangue": {
-    title: "Exames de Sangue em Caraguatatuba | Laboratório Total Quality",
+    title: "Exames de Sangue em Caraguatatuba | Total Quality",
     description: "Exames de sangue em Caraguatatuba - SP na Total Quality: hemograma, glicemia, colesterol, hormônios, vitamina D, PSA e TSH. Resultados rápidos. Agende.",
     keywords: "exames de sangue, hemograma, glicemia, colesterol, hormônios, vitamina D, PSA, laboratório, análises clínicas, Caraguatatuba",
     ogTitle: "Exames de Sangue | Total Quality Medicina Diagnóstica",
@@ -67,7 +67,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
   },
 
   "mapa": {
-    title: "MAPA - Monitoramento Ambulatorial da Pressão Arterial em Caraguatatuba",
+    title: "MAPA 24h em Caraguatatuba | Total Quality",
     description: "MAPA em Caraguatatuba - SP. Monitoramento de pressão arterial por 24 horas. Diagnóstico de hipertensão. Agende seu exame.",
     keywords: "MAPA, monitoramento ambulatorial, pressão arterial, hipertensão, Caraguatatuba",
     ogTitle: "MAPA - Monitoramento de Pressão | Total Quality",
@@ -78,7 +78,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
   },
 
   "holter": {
-    title: "Holter - Monitoramento Cardíaco em Caraguatatuba | Total Quality",
+    title: "Holter 24h em Caraguatatuba | Total Quality",
     description: "Holter 24h em Caraguatatuba - SP. Monitoramento contínuo do coração. Diagnóstico de arritmias. Agende seu exame.",
     keywords: "holter, monitoramento cardíaco, arritmia, eletrocardiograma, Caraguatatuba",
     ogTitle: "Holter 24h | Total Quality",
@@ -133,7 +133,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
   },
 
   "hemograma": {
-    title: "Hemograma Completo: O Que É, Jejum e Resultado | Total Quality",
+    title: "Hemograma Completo em Caraguatatuba | Total Quality",
     description: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Faça na Total Quality, resultado em até 24h.",
     keywords: "hemograma, hemograma completo, hemograma precisa de jejum, exame de sangue, análises clínicas, Caraguatatuba",
     ogTitle: "Hemograma Completo | Total Quality",
@@ -169,7 +169,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
 // Dados dos artigos de blog
 const blogMetadata: Record<string, RouteMetadata> = {
   "check-up-preventivo-quando-fazer": {
-    title: "Check-up Preventivo: Quando Fazer e Quais Exames | Total Quality",
+    title: "Check-up Preventivo: Quando Fazer | Total Quality",
     description: "Guia completo sobre check-up preventivo: quando fazer, quais exames incluir e como manter a saúde. Dicas de especialistas.",
     keywords: "check-up preventivo, exames preventivos, saúde preventiva, quando fazer check-up",
     ogTitle: "Check-up Preventivo: Quando Fazer",
@@ -180,7 +180,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
   },
 
   "hemograma-caraguatatuba": {
-    title: "Hemograma em Caraguatatuba: O que é e Por que Fazer | Total Quality",
+    title: "Hemograma em Caraguatatuba | Total Quality",
     description: "Hemograma em Caraguatatuba: entenda o que é, para que serve e como é realizado. Resultados rápidos na Total Quality.",
     keywords: "hemograma, hemograma completo, análise de sangue, laboratório, Caraguatatuba",
     ogTitle: "Hemograma em Caraguatatuba",
@@ -191,7 +191,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
   },
 
   "ultrassonografia-caraguatatuba": {
-    title: "Ultrassonografia em Caraguatatuba: Guia Completo | Total Quality",
+    title: "Guia de Ultrassonografia em Caraguatatuba | Total Quality",
     description: "Ultrassonografia em Caraguatatuba: tipos, indicações, preparo e como é realizado. Diagnóstico rápido e preciso.",
     keywords: "ultrassonografia, ultrassom, diagnóstico por imagem, Caraguatatuba",
     ogTitle: "Ultrassonografia em Caraguatatuba",
@@ -238,7 +238,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
   },
 
   "vitamina-d-importancia-saude": {
-    title: "Vitamina D: Por Que a Deficiência é Tão Comum | Total Quality",
+    title: "Vitamina D: Deficiência é Comum? | Total Quality",
     description: "60% dos brasileiros têm deficiência de vitamina D. Saiba por que, os riscos e como manter seus níveis adequados. Dicas de especialistas.",
     keywords: "vitamina D, deficiência, saúde óssea, imunidade, bem-estar",
     ogTitle: "Vitamina D: Deficiência e Importância",
@@ -249,7 +249,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
   },
 
   "saude-do-coracao-prevencao": {
-    title: "Saúde do Coração: 7 Hábitos Que Podem Salvar Sua Vida | Total Quality",
+    title: "Saúde do Coração: 7 Hábitos Essenciais | Total Quality",
     description: "Doenças cardiovasculares são a principal causa de morte no Brasil. Conheça os 7 hábitos comprovados que protegem seu coração.",
     keywords: "cardiologia, saúde do coração, prevenção, eletrocardiograma",
     ogTitle: "Saúde do Coração: 7 Hábitos",
@@ -260,7 +260,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
   },
 
   "exames-de-sangue-guia-completo": {
-    title: "Exames de Sangue: Guia Para Entender os Resultados | Total Quality",
+    title: "Exames de Sangue: Guia de Resultados | Total Quality",
     description: "Hemograma, glicemia, colesterol e mais — o que cada exame revela sobre sua saúde. Guia completo para entender seus resultados.",
     keywords: "exames de sangue, hemograma, glicemia, colesterol, laboratório",
     ogTitle: "Exames de Sangue: Guia Completo",
@@ -271,7 +271,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
   },
 
   "convenios-laboratorio-caraguatatuba": {
-    title: "Convênios Aceitos no Laboratório em Caraguatatuba | Total Quality",
+    title: "Convênios Aceitos em Caraguatatuba | Total Quality",
     description: "Veja os convênios aceitos no laboratório Total Quality em Caraguatatuba - SP: Cartão de Todos, Solumedi e Leader. Nos demais casos, atendimento particular.",
     keywords: "convênios, laboratório Caraguatatuba, Cartão de Todos, Solumedi, Leader",
     ogTitle: "Convênios Aceitos | Total Quality",
@@ -390,7 +390,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
   },
 
   "eletrocardiograma-o-que-e-como-e-feito": {
-    title: "Eletrocardiograma (ECG): O Que É e Como É Feito | Total Quality",
+    title: "Eletrocardiograma (ECG): O Que É | Total Quality",
     description: "Entenda o que é o eletrocardiograma, como funciona, se dói, quanto tempo dura e em quais situações o médico costuma solicitar o exame.",
     keywords: "eletrocardiograma, ECG, o que é eletrocardiograma, exame cardiológico, saúde do coração, Caraguatatuba",
     ogTitle: "Eletrocardiograma (ECG): O Que É e Como É Feito",
@@ -417,7 +417,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
   },
 
   "/checkup": {
-    title: "Check-up Preventivo em Caraguatatuba | Planos e Preços | Total Quality",
+    title: "Check-up Preventivo: Planos e Preços | Total Quality",
     description: "Check-up preventivo em Caraguatatuba: planos básico, select e premium. Exames completos com resultados rápidos. Agende agora.",
     keywords: "check-up, check-up preventivo, exames preventivos, Caraguatatuba",
     ogTitle: "Check-up Preventivo | Total Quality",
@@ -428,7 +428,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
   },
 
   "/bioimpedancia": {
-    title: "Bioimpedância - Análise de Composição Corporal em Caraguatatuba",
+    title: "Bioimpedância em Caraguatatuba | Total Quality",
     description: "Bioimpedância em Caraguatatuba - SP. Análise de composição corporal (gordura, músculo, água). Agende seu exame.",
     keywords: "bioimpedância, composição corporal, gordura corporal, análise de corpo, Caraguatatuba",
     ogTitle: "Bioimpedância | Total Quality",
@@ -461,7 +461,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
   },
 
   "/exames": {
-    title: "Exames Laboratoriais e de Imagem em Caraguatatuba | Total Quality",
+    title: "Exames Laboratoriais e de Imagem | Total Quality",
     description: "Todos os exames da Total Quality em Caraguatatuba: exames laboratoriais, hemograma, ultrassom, tomografia, cardiológicos, ocupacionais e mais. Veja a lista completa.",
     keywords: "exames laboratoriais, exames Caraguatatuba, análises clínicas, exames de imagem, lista de exames",
     ogTitle: "Exames | Total Quality Medicina Diagnóstica",
@@ -485,7 +485,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
   "/laboratorio-caraguatatuba": {
     // Intencao distinta da home para evitar canibalizacao: home = "laboratório em
     // caraguatatuba" (transacional); esta pagina = "laboratório de análises clínicas".
-    title: "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality",
+    title: "Laboratório de Análises Clínicas | Total Quality",
     description: "Laboratório de análises clínicas em Caraguatatuba: hemograma, exames de sangue, hormônios e mais de 3.000 exames. Resultados em até 24h. Agende.",
     keywords: "laboratório Caraguatatuba, análises clínicas, exames de sangue, diagnóstico",
     ogTitle: "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality",
