@@ -58,12 +58,8 @@ export default function LeadsFormModal({
         email: formData.email,
         telefone: formData.phone,
       });
-      trackLeadDirect("cartao_leads_modal", {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-      });
       // Nova aba: o paciente continua com o site aberto atras da conversa.
+      trackLeadDirect("cartao_leads_modal", { name: formData.name, email: formData.email, phone: formData.phone });
       window.open(
         `https://wa.me/551238873535?text=${encodeURIComponent(message)}`,
         "_blank",
