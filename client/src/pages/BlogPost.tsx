@@ -5,6 +5,7 @@
  */
 import { useEffect, useMemo, useState } from "react";
 import { trackWhatsAppConversion } from "@/lib/tracking";
+import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, ArrowUpRight, Clock, Calendar, Tag, Share2 } from "lucide-react";
 import { blogPosts, loadBlogPost, extractFaqs } from "@/lib/blogData";
@@ -18,6 +19,7 @@ import { useBreadcrumbSchema, useBlogPostingSchema, useFAQSchema, useCanonical, 
 import GiscusComments from "@/components/GiscusComments";
 
 export default function BlogPost() {
+  const openWhatsApp = useWhatsAppRedirect();
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
 
@@ -230,15 +232,16 @@ export default function BlogPost() {
             <p className="text-text-light text-sm mb-6 max-w-md mx-auto">
               Na Total Quality em Caraguatatuba, cuidamos da sua saúde com tecnologia de ponta e atendimento humanizado.
             </p>
-            <a
-              onClick={() => trackWhatsAppConversion("artigo_cta", "blog")}
-              href={`https://wa.me/551238873535?text=Olá! Li o artigo sobre ${post.title} e gostaria de agendar um exame.`}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={() => {
+                trackWhatsAppConversion("artigo_cta", "blog");
+                openWhatsApp("artigo_cta", `Olá! Li o artigo sobre ${post.title} e gostaria de agendar um exame.`);
+              }}
               className="btn-pill-brand inline-flex items-center gap-2"
             >
               Agendar pelo WhatsApp <ArrowUpRight className="w-4 h-4" />
-            </a>
+            </button>
           </div>
         </div>
       </article>

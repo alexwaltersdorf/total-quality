@@ -8,7 +8,7 @@ import ResponsiveImage from "@/components/ResponsiveImage";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
 import { trackScheduleExam } from "@/lib/tracking";
-import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
+import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 
 
 const marqueeItems = [
@@ -21,10 +21,10 @@ const marqueeItems = [
 ];
 
 export default function HeroSection() {
+  const openWhatsApp = useWhatsAppRedirect();
   const handleScheduleClick = () => {
     trackScheduleExam("hero_cta", "geral");
-    trackLeadDirect("hero_cta");
-    window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame na Total Quality.", "_blank");
+    openWhatsApp("hero_cta", "Olá! Gostaria de agendar um exame na Total Quality.");
   };
 
   return (

@@ -13,6 +13,7 @@ import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { trackScheduleExam, trackPhoneClick } from "@/lib/tracking";
+import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 
 
 /*
@@ -70,6 +71,7 @@ const convenios = [
 ];
 
 export default function LaboratorioCaraguatatuba() {
+  const openWhatsApp = useWhatsAppRedirect();
   const scrollRef = useScrollReveal();
 
   useEffect(() => {
@@ -97,7 +99,7 @@ export default function LaboratorioCaraguatatuba() {
 
   const handleScheduleClick = () => {
     trackScheduleExam("lab_caraguatatuba_cta", "geral");
-    window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame na Total Quality.", "_blank");
+    openWhatsApp("lab_caraguatatuba_cta", "Olá! Gostaria de agendar um exame na Total Quality.");
   };
 
   return (

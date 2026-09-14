@@ -5,6 +5,7 @@
  */
 import { useEffect, useRef, useMemo, lazy, Suspense } from "react";
 import { trackScheduleExam, trackPhoneClick } from "@/lib/tracking";
+import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 import { ArrowUpRight, ChevronRight, CheckCircle } from "lucide-react";
 import { useParams, useLocation, Link } from "wouter";
 import Navbar from "@/components/Navbar";
@@ -23,6 +24,7 @@ const CATEGORY_BACKGROUNDS: Record<ExamData["category"], string> = {
 };
 
 export default function ExamePage() {
+  const openWhatsApp = useWhatsAppRedirect();
   const params = useParams<{ slug: string }>();
   const [, navigate] = useLocation();
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -129,7 +131,7 @@ export default function ExamePage() {
 
             <div className="reveal flex flex-wrap gap-4 mb-16" style={{ transitionDelay: "300ms" }}>
               <button
-                onClick={() => { trackScheduleExam(`exame_${exam.slug}`, exam.slug); window.open(`https://wa.me/551238873535?text=${encodeURIComponent(exam.whatsappMessage)}`, "_blank"); }}
+                onClick={() => { trackScheduleExam(`exame_${exam.slug}`, exam.slug); openWhatsApp(`exame_${exam.slug}`, exam.whatsappMessage); }}
                 className="btn-pill"
               >
                 Agendar pelo WhatsApp
@@ -335,7 +337,7 @@ export default function ExamePage() {
           </p>
           <div className="reveal flex flex-wrap gap-4 justify-center" style={{ transitionDelay: "200ms" }}>
             <button
-              onClick={() => { trackScheduleExam(`exame_${exam.slug}`, exam.slug); window.open(`https://wa.me/551238873535?text=${encodeURIComponent(exam.whatsappMessage)}`, "_blank"); }}
+              onClick={() => { trackScheduleExam(`exame_${exam.slug}`, exam.slug); openWhatsApp(`exame_${exam.slug}`, exam.whatsappMessage); }}
               className="btn-pill"
             >
               {exam.category === "laboratorio" ? "Tirar dúvidas no WhatsApp" : "Agendar pelo WhatsApp"}

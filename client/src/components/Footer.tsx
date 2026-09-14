@@ -5,6 +5,7 @@
 import { Phone, MessageCircle, Instagram, MapPin, ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
 import { trackScheduleExam, trackPhoneClick, trackWhatsAppClick, trackExternalLink } from "@/lib/tracking";
+import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 
 const footerLinks = [
   { label: "Início", href: "#inicio" },
@@ -31,6 +32,7 @@ const examSitelinks = [
 ];
 
 export default function Footer() {
+  const openWhatsApp = useWhatsAppRedirect();
   const scrollTo = (href: string) => {
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: "smooth" });
@@ -47,7 +49,7 @@ export default function Footer() {
             <span className="text-brand">EXAME AGORA</span>
           </h2>
           <button
-            onClick={() => { trackScheduleExam("footer_cta", "geral"); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame.", "_blank"); }}
+            onClick={() => { trackScheduleExam("footer_cta", "geral"); openWhatsApp("footer_cta", "Olá! Gostaria de agendar um exame."); }}
             className="btn-pill"
           >
             Agendar pelo WhatsApp
@@ -126,10 +128,14 @@ export default function Footer() {
                 <Phone className="w-4 h-4 text-brand" />
                 (12) 3887-3535
               </a>
-              <a href="https://wa.me/551238873535" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-text-light hover:text-brand text-sm transition-colors" onClick={() => trackWhatsAppClick("footer")}>
+              <button
+                type="button"
+                className="flex items-center gap-3 text-text-light hover:text-brand text-sm transition-colors"
+                onClick={() => { trackWhatsAppClick("footer"); openWhatsApp("footer_contact", "Olá! Gostaria de mais informações."); }}
+              >
                 <MessageCircle className="w-4 h-4 text-brand" />
                 (12) 3887-3535
-              </a>
+              </button>
             </div>
           </div>
 

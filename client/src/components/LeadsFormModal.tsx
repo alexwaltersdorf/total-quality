@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { trackWhatsAppConversionWithLead } from "@/lib/tracking";
+import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
@@ -56,6 +57,11 @@ export default function LeadsFormModal({
       void trackWhatsAppConversionWithLead("leads_modal", "modal", "cartao", {
         email: formData.email,
         telefone: formData.phone,
+      });
+      trackLeadDirect("cartao_leads_modal", {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
       });
       // Nova aba: o paciente continua com o site aberto atras da conversa.
       window.open(

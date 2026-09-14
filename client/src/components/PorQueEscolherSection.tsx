@@ -7,6 +7,7 @@ import { ArrowUpRight, CheckCircle, Award, Users, Microscope, MapPin, Clock } fr
 import { Link } from "wouter";
 import { trackScheduleExam } from "@/lib/tracking";
 import { anosDeAtuacao } from "@shared/const";
+import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 
 const diferenciais = [
   {
@@ -32,9 +33,10 @@ const diferenciais = [
 ];
 
 export default function PorQueEscolherSection() {
+  const openWhatsApp = useWhatsAppRedirect();
   const handleScheduleClick = () => {
     trackScheduleExam("porque_escolher_cta", "geral");
-    window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame na Total Quality.", "_blank");
+    openWhatsApp("porque_escolher_cta", "Olá! Gostaria de agendar um exame na Total Quality.");
   };
 
   return (

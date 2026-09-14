@@ -9,8 +9,10 @@ import WhatsAppFAB from "@/components/WhatsAppFAB";
 import LeadsFormModal from "@/components/LeadsFormModal";
 import { cartaoPlanos, mainBenefitsData, faqs } from "@/lib/cartaoPlanos";
 import { useMetaDescription } from "@/components/SEOHead";
+import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 
 export default function CartaoPage() {
+  const openWhatsApp = useWhatsAppRedirect();
   useEffect(() => {
     document.title = "Cartão Total Quality Care | Benefícios e Cashback";
   }, []);
@@ -33,12 +35,7 @@ export default function CartaoPage() {
     };
     const message = planMessages[planId] || `Olá! Gostaria de contratar o plano ${cartaoPlanos.find(p => p.id === planId)?.name}.`;
     trackCardInterest();
-    // Nova aba: o paciente continua com o site aberto atras da conversa.
-    window.open(
-      `https://wa.me/551238873535?text=${encodeURIComponent(message)}`,
-      "_blank",
-      "noopener,noreferrer"
-    );
+    openWhatsApp(`cartao_plan_${planId}`, message);
   };
 
   const handleCTAClick = (ctaName: string) => {
