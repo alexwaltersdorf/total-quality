@@ -18,9 +18,10 @@ import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { CONVENIOS } from "@/lib/conveniosData";
 import { trackWhatsAppConversion } from "@/lib/tracking";
+import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 
-const WHATSAPP_HREF =
-  "https://wa.me/551238873535?text=Olá! Gostaria de confirmar se meu convênio é aceito na Total Quality.";
+const WHATSAPP_MESSAGE =
+  "Olá! Gostaria de confirmar se meu convênio é aceito na Total Quality.";
 
 const FAQS = [
   {
@@ -42,6 +43,7 @@ const FAQS = [
 ];
 
 export default function Convenios() {
+  const openWhatsApp = useWhatsAppRedirect();
   useCanonical("https://totalquality.med.br/convenios");
   useMetaDescription(
     "Convênios aceitos no laboratório Total Quality em Caraguatatuba: Cartão de Todos, Solumedi e Leader. Nos demais casos, atendimento particular."
@@ -98,9 +100,13 @@ export default function Convenios() {
               <p className="mt-4">
                 Não trabalhamos com outros convênios ou planos de saúde: fora dessa lista, o
                 atendimento é particular. Confirme condições e valores pelo WhatsApp{" "}
-                <a href={WHATSAPP_HREF} className="text-primary underline" target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsAppConversion("convenios_link", "convenios")}>
+                <button
+                  type="button"
+                  className="text-primary underline"
+                  onClick={() => { trackWhatsAppConversion("convenios_link", "convenios"); openWhatsApp("convenios_link", WHATSAPP_MESSAGE); }}
+                >
                   (12) 3887-3535
-                </a>{" "}
+                </button>{" "}
                 antes de agendar.
               </p>
             </section>
@@ -126,15 +132,13 @@ export default function Convenios() {
                 sexta, das 7h30 às 18h. A coleta laboratorial é sem agendamento, por ordem de
                 chegada; exames de imagem são agendados pelo WhatsApp.
               </p>
-              <a
-                href={WHATSAPP_HREF}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackWhatsAppConversion("convenios_cta", "convenios")}
+              <button
+                type="button"
+                onClick={() => { trackWhatsAppConversion("convenios_cta", "convenios"); openWhatsApp("convenios_cta", WHATSAPP_MESSAGE); }}
                 className="inline-block bg-primary text-white font-semibold px-6 py-3 rounded-full hover:opacity-90 transition-opacity"
               >
                 Agendar pelo WhatsApp
-              </a>
+              </button>
             </section>
           </div>
         </div>

@@ -5,6 +5,7 @@
  */
 import { useEffect, useRef } from "react";
 import { trackScheduleBioimpedancia, trackPhoneClick } from "@/lib/tracking";
+import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 import { ArrowUpRight, ArrowLeft, Zap, TrendingUp, Droplets, Bone, Flame, Scale, Target, Users, BarChart3 } from "lucide-react";
 import { Link } from "wouter";
 import Navbar from "@/components/Navbar";
@@ -39,6 +40,7 @@ const faqs = [
 ];
 
 export default function Bioimpedancia() {
+  const openWhatsApp = useWhatsAppRedirect();
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -95,7 +97,7 @@ export default function Bioimpedancia() {
               </p>
               <div className="reveal flex flex-wrap gap-4 mb-12" style={{ transitionDelay: "300ms" }}>
                 <button
-                  onClick={() => { trackScheduleBioimpedancia(); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame de Bioimpedância.", "_blank"); }}
+                  onClick={() => { trackScheduleBioimpedancia(); openWhatsApp("bioimpedancia_cta", "Olá! Gostaria de agendar um exame de Bioimpedância."); }}
                   className="btn-pill-brand btn-pill"
                 >
                   Agendar Exame
@@ -302,7 +304,7 @@ export default function Bioimpedancia() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <button
-                  onClick={() => { trackScheduleBioimpedancia(); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame de Bioimpedância.", "_blank"); }}
+                  onClick={() => { trackScheduleBioimpedancia(); openWhatsApp("bioimpedancia_cta", "Olá! Gostaria de agendar um exame de Bioimpedância."); }}
                   className="btn-pill !bg-white !text-brand hover:!bg-white/90"
                 >
                   Agendar pelo WhatsApp

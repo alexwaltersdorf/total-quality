@@ -27,8 +27,10 @@ import { trpc } from "@/lib/trpc";
 import { trackFormStart, trackFormSubmit, trackPhoneClick, trackWhatsAppClick, trackExternalLink, trackMapInteraction } from "@/lib/tracking";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 import { storeLeadHandoff } from "@/lib/leadHandoff";
+import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 
 export default function ContatoSection() {
+  const openWhatsApp = useWhatsAppRedirect();
   const [formData, setFormData] = useState({
     nome: "",
     telefone: "",
@@ -187,9 +189,13 @@ export default function ContatoSection() {
                     <a href="tel:+551238873535" className="flex items-center justify-center px-6 py-3 bg-[#4A4A4A] text-white rounded-full hover:bg-[#3A3A3A] transition-colors font-semibold text-center" onClick={() => trackPhoneClick("contato_section")}>
                       LIGAR: (12) 3887-3535
                     </a>
-                    <a href="https://wa.me/551238873535?text=Olá! Gostaria de informações." target="_blank" rel="noopener noreferrer" className="flex items-center justify-center px-6 py-3 bg-[#25D366] text-white rounded-full hover:bg-[#1da851] transition-colors font-semibold text-center" onClick={() => trackWhatsAppClick("contato_section")}>
+                    <button
+                      type="button"
+                      className="flex items-center justify-center px-6 py-3 bg-[#25D366] text-white rounded-full hover:bg-[#1da851] transition-colors font-semibold text-center"
+                      onClick={() => { trackWhatsAppClick("contato_section"); openWhatsApp("contato_section", "Olá! Gostaria de informações."); }}
+                    >
                       WHATSAPP: (12) 3887-3535
-                    </a>
+                    </button>
                   </div>
                 </div>
 
@@ -214,7 +220,7 @@ export default function ContatoSection() {
               {/* Quick actions */}
               <div className="mt-10 space-y-3">
                 <button
-                  onClick={() => { trackWhatsAppClick("contato_quick_action"); window.open("https://wa.me/551238873535?text=Olá! Gostaria de informações.", "_blank"); }}
+                  onClick={() => { trackWhatsAppClick("contato_quick_action"); openWhatsApp("contato_quick_action", "Olá! Gostaria de informações."); }}
                   className="btn-pill w-full justify-center !bg-[#25D366] hover:!bg-[#1da851] !text-white"
                 >
                   <MessageCircle className="w-4 h-4" />

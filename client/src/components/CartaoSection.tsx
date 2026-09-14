@@ -5,8 +5,10 @@
 import { ArrowUpRight, CreditCard, Users, Percent } from "lucide-react";
 import { Link } from "wouter";
 import { trackCardInterest } from "@/lib/tracking";
+import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 
 export default function CartaoSection() {
+  const openWhatsApp = useWhatsAppRedirect();
   return (
     <section className="py-24 lg:py-32 bg-white relative overflow-hidden" aria-label="Cartão Total Quality - Descontos em exames de sangue, laboratoriais e diagnósticos em Caraguatatuba">
       {/* Decorative large text */}
@@ -57,7 +59,7 @@ export default function CartaoSection() {
               para toda sua família em Caraguatatuba. Faça seu cartão e aproveite benefícios especiais.
             </p>
             <button
-              onClick={() => { trackCardInterest(); window.open("https://wa.me/551238873535?text=Olá! Gostaria de saber mais sobre o Cartão Total Quality.", "_blank"); }}
+              onClick={() => { trackCardInterest(); openWhatsApp("cartao_cta", "Olá! Gostaria de saber mais sobre o Cartão Total Quality."); }}
               className="btn-pill"
             >
               Saiba Mais

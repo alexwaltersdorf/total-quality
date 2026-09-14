@@ -5,6 +5,7 @@
 import ResponsiveImage from "@/components/ResponsiveImage";
 import { useState, type ReactNode } from "react";
 import { trackExamCategorySelect, trackScheduleExam } from "@/lib/tracking";
+import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 import {
   Scan,
   HeartPulse,
@@ -140,6 +141,7 @@ const examData: Record<
 };
 
 export default function ExamesSection() {
+  const openWhatsApp = useWhatsAppRedirect();
   const [active, setActive] = useState<Category>("imagem");
   const data = examData[active];
 
@@ -236,7 +238,7 @@ Hemograma, Glicemia, Colesterol, Hormônios, Vitaminas, Tomografia Computadoriza
 
             <div className="flex flex-wrap gap-3 mt-8">
               <button
-                onClick={() => { trackScheduleExam("exames_section", active); window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame.", "_blank"); }}
+                onClick={() => { trackScheduleExam("exames_section", active); openWhatsApp("exames_section", "Olá! Gostaria de agendar um exame."); }}
                 className="btn-pill-brand btn-pill"
               >
                 Agendar Exame

@@ -8,6 +8,7 @@ import type { MouseEvent as ReactMouseEvent } from "react";
 import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { trackNavClick, trackScheduleExam, trackResultsClick, trackPhoneClick, trackWhatsAppClick } from "@/lib/tracking";
+import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 
 const navLinks = [
   { label: "Início", href: "/" },
@@ -39,6 +40,7 @@ const examSitelinks = [
 ];
 
 export default function Navbar() {
+  const openWhatsApp = useWhatsAppRedirect();
   const [location] = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -86,13 +88,13 @@ export default function Navbar() {
   const handleScheduleClickNavbar = () => {
     setMobileOpen(false);
     trackScheduleExam("navbar_cta", "geral");
-    window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame.", "_blank");
+    openWhatsApp("navbar_cta", "Olá! Gostaria de agendar um exame.");
   };
 
   const handleWhatsAppClickNavbar = () => {
     setMobileOpen(false);
     trackWhatsAppClick("navbar");
-    window.open("https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame.", "_blank");
+    openWhatsApp("navbar", "Olá! Gostaria de agendar um exame.");
   };
 
   const handlePhoneClickNavbar = () => {

@@ -5,6 +5,7 @@
  */
 import { useState, useEffect } from "react";
 import { trackWhatsAppConversion } from "@/lib/tracking";
+import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 import { Link } from "wouter";
 import { ArrowUpRight, ArrowLeft, Clock, Search } from "lucide-react";
 import { blogPosts, blogCategories, parseBlogDate, type BlogPostMeta } from "@/lib/blogData";
@@ -87,6 +88,7 @@ function BlogCard({ post, featured = false }: { post: BlogPostMeta; featured?: b
 }
 
 export default function Blog() {
+  const openWhatsApp = useWhatsAppRedirect();
   const [activeCategory, setActiveCategory] = useState("Todos");
   const [searchQuery, setSearchQuery] = useState("");
   
@@ -251,15 +253,16 @@ export default function Blog() {
             Na Total Quality em Caraguatatuba, oferecemos exames laboratoriais, diagnóstico por imagem
             e cardiologia com resultados rápidos e atendimento humanizado.
           </p>
-          <a
-            onClick={() => trackWhatsAppConversion("blog_cta", "blog")}
-            href="https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame."
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => {
+              trackWhatsAppConversion("blog_cta", "blog");
+              openWhatsApp("blog_cta", "Olá! Gostaria de agendar um exame.");
+            }}
             className="btn-pill-brand inline-flex items-center gap-2"
           >
             Agendar pelo WhatsApp <ArrowUpRight className="w-4 h-4" />
-          </a>
+          </button>
         </div>
       </section>
 

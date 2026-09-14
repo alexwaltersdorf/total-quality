@@ -5,9 +5,10 @@
 import { useState, useEffect } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { trackWhatsAppClick } from "@/lib/tracking";
-import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
+import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 
 export default function WhatsAppFAB() {
+  const openWhatsApp = useWhatsAppRedirect();
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
@@ -34,15 +35,16 @@ export default function WhatsAppFAB() {
         <div className="bg-white shadow-xl p-5 w-64 border border-black/10">
           <p className="font-semibold text-text text-sm mb-1">Precisa de ajuda?</p>
           <p className="text-text-muted text-xs mb-3">Agende seu exame pelo WhatsApp de forma rápida.</p>
-          <a
-            href="https://wa.me/551238873535?text=Olá! Gostaria de agendar um exame."
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => { trackWhatsAppClick("fab_iniciar_conversa"); trackLeadDirect("whatsapp_fab"); }}
+          <button
+            type="button"
+            onClick={() => {
+              trackWhatsAppClick("fab_iniciar_conversa");
+              openWhatsApp("whatsapp_fab", "Olá! Gostaria de agendar um exame.");
+            }}
             className="block w-full text-center bg-[#25D366] hover:bg-[#1da851] text-white text-xs font-semibold uppercase tracking-wider py-3 transition-colors"
           >
             Iniciar Conversa
-          </a>
+          </button>
         </div>
       </div>
 
