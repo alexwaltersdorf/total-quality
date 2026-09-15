@@ -468,6 +468,18 @@
 
 
 ## OTIMIZAÇÃO DE IMAGENS - Home (Performance)
+
+## Auditoria PMAX Laboratório — 14/09/2026
+
+- [x] Alinhar CTAs de exames laboratoriais à coleta sem agendamento e corrigir concordância.
+- [x] Retirar conversão indevida ao abrir menu FAB e instrumentar etapas do modal.
+- [x] Registrar linha de base, indicadores, antes/depois e reversão em docs/auditorias/google-ads/pmax-laboratorio-caraguatatuba.
+- [x] Validar testes locais (340 passaram, 34 ignorados) e build frontend.
+- [ ] Concluir salvamento no Google Ads após chave de acesso/verificação do titular.
+- [ ] Validar coleta das novas etapas no GTM e no GA4 antes de usar o funil para decisões.
+- [ ] Conciliar contatos qualificados, pacientes e receita com o atendimento.
+
+### Continuação — imagens da Home
 - [x] Auditar todas as imagens da Home
 - [x] Converter 5 imagens para WebP (hero, lab, cardiology, fachada, contato)
 - [x] Redimensionar para 900-1000px mantendo proporcao

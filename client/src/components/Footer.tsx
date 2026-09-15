@@ -31,7 +31,7 @@ const examSitelinks = [
   { label: "Exame Toxicológico", href: "/exames/exame-toxicologico" },
 ];
 
-export default function Footer() {
+export default function Footer({ laboratory = false }: { laboratory?: boolean }) {
   const openWhatsApp = useWhatsAppRedirect();
   const scrollTo = (href: string) => {
     const el = document.querySelector(href);
@@ -44,15 +44,15 @@ export default function Footer() {
       <div className="border-b border-black/10">
         <div className="container py-16 lg:py-20 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           <h2 className="heading-display text-4xl sm:text-5xl lg:text-6xl text-text">
-            AGENDE SEU{" "}
+            {laboratory ? "TIRE SUAS" : "AGENDE SEU"}{" "}
             <br />
-            <span className="text-brand">EXAME AGORA</span>
+            <span className="text-brand">{laboratory ? "DÚVIDAS" : "EXAME AGORA"}</span>
           </h2>
           <button
-            onClick={() => { trackScheduleExam("footer_cta", "geral"); openWhatsApp("footer_cta", "Olá! Gostaria de agendar um exame."); }}
+            onClick={() => { trackScheduleExam("footer_cta", "geral"); openWhatsApp("footer_cta", laboratory ? "Olá! Gostaria de consultar preparo e orçamento de exames laboratoriais." : "Olá! Gostaria de agendar um exame."); }}
             className="btn-pill"
           >
-            Agendar pelo WhatsApp
+            {laboratory ? "Consultar pelo WhatsApp" : "Agendar pelo WhatsApp"}
             <ArrowUpRight className="w-3.5 h-3.5" />
           </button>
         </div>

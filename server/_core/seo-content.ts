@@ -212,7 +212,7 @@ function renderExamHtml(exam: ExamData): string {
     ${faqSectionHtml(exam.faqs)}
     ${napHtml(
       exam.category === "laboratorio"
-        ? `Faça seu exame de ${exam.shortTitle.toLowerCase()} sem agendamento: a coleta é por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Dúvidas de preparo e convênio pelo WhatsApp.`
+        ? `Faça ${exam.slug === "exames-de-sangue" ? "seus exames de sangue" : `seu exame de ${exam.shortTitle.toLowerCase()}`} sem agendamento: a coleta é por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Dúvidas de preparo e convênio pelo WhatsApp.`
         : `Agende seu exame de ${exam.shortTitle.toLowerCase()} pelo WhatsApp ou telefone e faça em um só lugar todos os seus exames laboratoriais e de imagem.`
     )}
     ${internalLinksHtml(`/exames/${exam.slug}`)}
