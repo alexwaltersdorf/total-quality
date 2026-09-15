@@ -4,10 +4,10 @@
  */
 import { useState, useEffect } from "react";
 import { MessageCircle, X } from "lucide-react";
-import { trackWhatsAppClick } from "@/lib/tracking";
+import { trackCtaClick, trackWhatsAppClick } from "@/lib/tracking";
 import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
 
-export default function WhatsAppFAB() {
+export default function WhatsAppFAB({ laboratory = false }: { laboratory?: boolean }) {
   const openWhatsApp = useWhatsAppRedirect();
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -34,12 +34,12 @@ export default function WhatsAppFAB() {
       >
         <div className="bg-white shadow-xl p-5 w-64 border border-black/10">
           <p className="font-semibold text-text text-sm mb-1">Precisa de ajuda?</p>
-          <p className="text-text-muted text-xs mb-3">Agende seu exame pelo WhatsApp de forma rápida.</p>
+          <p className="text-text-muted text-xs mb-3">{laboratory ? "Consulte preparo e orçamento pelo WhatsApp." : "Agende seu exame pelo WhatsApp de forma rápida."}</p>
           <button
             type="button"
             onClick={() => {
               trackWhatsAppClick("fab_iniciar_conversa");
-              openWhatsApp("whatsapp_fab", "Olá! Gostaria de agendar um exame.");
+              openWhatsApp("whatsapp_fab", laboratory ? "Olá! Gostaria de consultar preparo e orçamento de exames laboratoriais." : "Olá! Gostaria de agendar um exame.");
             }}
             className="block w-full text-center bg-[#25D366] hover:bg-[#1da851] text-white text-xs font-semibold uppercase tracking-wider py-3 transition-colors"
           >
@@ -50,8 +50,8 @@ export default function WhatsAppFAB() {
 
       {/* FAB Button */}
       <button
-        onClick={() => { if (!expanded) { trackWhatsAppClick("fab_open"); } setExpanded(!expanded); }}
-        aria-label={expanded ? "Fechar opções de WhatsApp" : "Agendar exame pelo WhatsApp"}
+        onClick={() => { if (!expanded) { trackCtaClick("fab_open"); } setExpanded(!expanded); }}
+        aria-label={expanded ? "Fechar opções de WhatsApp" : laboratory ? "Consultar o laboratório pelo WhatsApp" : "Agendar exame pelo WhatsApp"}
         className={`w-14 h-14 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 ${
           expanded
             ? "bg-text hover:bg-text-light"

@@ -14,18 +14,21 @@ import {
   createContext,
   useCallback,
   useContext,
+  useRef,
   useState,
   type FormEvent,
   type ReactNode,
 } from "react";
 import { X } from "lucide-react";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
+import { trackWhatsAppModalOpen, trackWhatsAppRedirectRequested } from "@/lib/tracking";
 
 const WHATSAPP_NUMBER = "551238873535";
 
 interface PendingRedirect {
   source: string;
   message: string;
+  flowId: string;
 }
 
 type OpenWhatsApp = (source: string, message: string) => void;
@@ -49,11 +52,13 @@ export function WhatsAppLeadProvider({ children }: { children: ReactNode }) {
   const [pending, setPending] = useState<PendingRedirect | null>(null);
   const [name, setName] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const submitLock = useRef(false);
 
   const openWhatsApp = useCallback<OpenWhatsApp>((source, message) => {
     setName("");
     setSubmitting(false);
-    setPending({ source, message });
+    submitLock.current = false;
+    setPending({ source, message, flowId: trackWhatsAppModalOpen(source) });
   }, []);
 
   const close = useCallback(() => {
@@ -66,12 +71,14 @@ export function WhatsAppLeadProvider({ children }: { children: ReactNode }) {
     (e: FormEvent) => {
       e.preventDefault();
       const trimmed = name.trim();
-      if (!pending || !trimmed) return;
+      if (!pending || trimmed.length < 2 || submitLock.current) return;
 
+      submitLock.current = true;
       setSubmitting(true);
       trackLeadDirect(pending.source, { name: trimmed });
 
       const finalMessage = buildMessageWithName(trimmed, pending.message);
+      trackWhatsAppRedirectRequested(pending.source, pending.flowId);
       window.open(
         `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(finalMessage)}`,
         "_blank",

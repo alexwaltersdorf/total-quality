@@ -283,6 +283,29 @@ export function trackWhatsAppClick(source: string) {
   trackWhatsAppConversion(source, source.replace(/_(cta|section)$/, ""));
 }
 
+/** Abre uma tentativa de contato. O ID dura apenas este fluxo, sem persistência. */
+export function trackWhatsAppModalOpen(source: string): string {
+  const flowId = novoEventId();
+  if (typeof window !== "undefined") {
+    pushToDataLayer("whatsapp_modal_open", {
+      event_category: "engagement",
+      lead_source: source,
+      flow_id: flowId,
+    });
+  }
+  return flowId;
+}
+
+/** Pedido de saída após o modal; não comprova mensagem enviada nem venda. */
+export function trackWhatsAppRedirectRequested(source: string, flowId: string) {
+  if (typeof window === "undefined") return;
+  pushToDataLayer("whatsapp_redirect_requested", {
+    event_category: "engagement",
+    lead_source: source,
+    flow_id: flowId,
+  });
+}
+
 // ============================================================
 // CARTÃO TOTAL QUALITY
 // ============================================================

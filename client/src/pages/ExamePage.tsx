@@ -82,6 +82,7 @@ export default function ExamePage() {
 
   const otherExams = examesData.filter((e) => e.slug !== exam.slug).slice(0, 4);
   const backgroundImage = exam.backgroundImage || CATEGORY_BACKGROUNDS[exam.category];
+  const questionPrefix = exam.slug === "exames-de-sangue" ? "O QUE SÃO OS" : `O QUE É ${exam.slug === "ultrassonografia" ? "A" : "O"}`;
 
   return (
     <div ref={wrapperRef} className="min-h-screen bg-white">
@@ -134,7 +135,7 @@ export default function ExamePage() {
                 onClick={() => { trackScheduleExam(`exame_${exam.slug}`, exam.slug); openWhatsApp(`exame_${exam.slug}`, exam.whatsappMessage); }}
                 className="btn-pill"
               >
-                Agendar pelo WhatsApp
+                {exam.category === "laboratorio" ? "Consultar preparo e orçamento" : "Agendar pelo WhatsApp"}
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
               <a href="tel:+551238873535" onClick={() => trackPhoneClick("exame_topo")} className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">
@@ -170,7 +171,7 @@ export default function ExamePage() {
           <div className="grid lg:grid-cols-12 gap-12">
             <div className="lg:col-span-5">
               <h2 className="reveal heading-display text-4xl lg:text-5xl text-text mb-4">
-                O QUE É {exam.slug === "ultrassonografia" ? "A" : "O"}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}?</span>
+                {questionPrefix}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}?</span>
               </h2>
             </div>
             <div className="lg:col-span-7">
@@ -194,7 +195,7 @@ export default function ExamePage() {
         }>
           <ScrollVideo src={exam.videoUrl} alt={`Vídeo de ${exam.shortTitle} - Total Quality`}>
             <h2 className="heading-display text-3xl xl:text-4xl text-text mb-6">
-              O QUE É {exam.slug === "ultrassonografia" ? "A" : "O"}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}?</span>
+              {questionPrefix}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}?</span>
             </h2>
             <p className="text-text-light text-base xl:text-lg leading-relaxed mb-6">
               {exam.whatIs}
@@ -325,7 +326,7 @@ export default function ExamePage() {
         <div className="container text-center">
           <h2 className="reveal heading-display text-4xl sm:text-5xl lg:text-6xl text-text mb-6">
             {exam.category === "laboratorio" ? (
-              <>FAÇA SEU <span className="text-brand">{exam.shortTitle.toUpperCase()}</span> SEM AGENDAMENTO</>
+              <>FAÇA {exam.slug === "exames-de-sangue" ? "SEUS" : "SEU"}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}</span> SEM AGENDAMENTO</>
             ) : (
               <>AGENDE {exam.slug === "ultrassonografia" ? "SUA" : "SEU"}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}</span></>
             )}
@@ -350,9 +351,9 @@ export default function ExamePage() {
         </div>
       </section>
 
-      <Footer />
+      <Footer laboratory={exam.category === "laboratorio"} />
 
-      <WhatsAppFAB />
+      <WhatsAppFAB laboratory={exam.category === "laboratorio"} />
     </div>
   );
 }

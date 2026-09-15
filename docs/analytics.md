@@ -105,12 +105,54 @@ voltar**. Todo clique de WhatsApp virou `whatsapp_click`, com origem no
 
 ## Valor da conversão
 
-`client/src/lib/leadValues.ts` mapeia tipo de lead para valor em reais. O
-ticket médio informado pela clínica é **R$ 249,60**, aplicado a todos os tipos.
-Enquanto o valor for o mesmo para todos, o Ads otimiza por volume com o valor
-correto em reais — o que já habilita relatórios de ROAS e estratégias de lance
-por valor. Quando houver ticket médio **por tipo** de lead, trocar linha a
-linha; só a partir daí o Ads consegue preferir os leads que valem mais.
+`client/src/lib/leadValues.ts` é a fonte atual dos valores informados pela
+clínica por serviço em 06/09/2026. Laboratório e o fallback estão em R$ 135;
+o antigo ticket uniforme de R$ 249,60 não descreve mais o código atual.
+Esses valores são referências comerciais atribuídas a **cliques**, não
+receita recebida nem valor esperado calibrado pela taxa de fechamento.
+
+Não chamar `valor de conversão / custo` de ROAS financeiro enquanto a
+conversão for um clique ou uma ligação sem receita conciliada. Para lances
+por valor, usar receita real ou valor esperado validado (probabilidade de
+fechamento × margem/valor acordado) e documentar sua origem. Esta auditoria
+preserva os valores fornecidos pelo negócio; não inventa valores substitutos.
+
+## Funil de WhatsApp — revisão de 14/09/2026
+
+Abrir o menu do botão flutuante agora emite `select_content` (`fab_open`),
+sem emitir `whatsapp_click`. O botão **Iniciar Conversa** continua emitindo
+um `whatsapp_click`. Isso remove a dupla contagem daquela sequência; uma
+queda no volume de cliques após o deploy pode ser correção de medição.
+
+O provider emite duas etapas adicionais de observação:
+
+| Evento | Momento | Interpretação |
+|---|---|---|
+| `whatsapp_modal_open` | formulário de nome aberto | tentativa de contato |
+| `whatsapp_redirect_requested` | nome válido e pedido de abertura do WhatsApp | intenção de prosseguir; não comprova envio, atendimento ou venda |
+
+Ambos usam `lead_source` e um `flow_id` aleatório que existe apenas na
+tentativa, sem armazenamento no navegador. Compartilham o contexto de página
+do emissor central; não recebem nome, telefone, e-mail, texto da mensagem,
+`user_data`, `exam_type`, valor ou moeda. Não cruzar o ID com dados de paciente.
+
+**Código disponível não significa coleta validada no GA4.** No GTM, conferir
+se a tag de eventos GA4 inclui explicitamente esses dois nomes e somente os
+parâmetros necessários. Manter Consent Mode. Não adicionar esses eventos aos
+gatilhos de conversão do Ads/Meta nem marcá-los como eventos principais.
+Não cadastrar `flow_id` como dimensão personalizada de alta cardinalidade;
+usar exportação técnica aprovada para contar tentativas distintas, se houver.
+
+Validar em Preview: menu aberto → só `select_content`; Iniciar Conversa →
+um clique + uma abertura; cancelar → nenhuma saída; continuar com nome válido
+→ uma saída com o mesmo `flow_id`. O teste de continuação deve ser identificado
+como teste no CRM e excluído dos resultados comerciais. O pedido de
+redirecionamento não comprova que o navegador abriu o aplicativo.
+
+O abandono deve usar tentativas de modal com a mesma coorte e prazo de
+observação. Não dividir saídas pelo total histórico de `whatsapp_click`, que
+também inclui outros caminhos de contato. Registro da mudança e indicadores:
+[auditoria PMAX](auditorias/google-ads/pmax-laboratorio-caraguatatuba/README.md).
 
 ## Conversões aprimoradas (enhanced conversions)
 
