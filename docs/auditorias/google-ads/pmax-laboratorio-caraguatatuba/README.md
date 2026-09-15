@@ -7,7 +7,7 @@ Base histórica: **14/03/2026 a 13/09/2026**.
 
 ## Situação da execução
 
-- **Site:** correções de jornada e medição implementadas; ver [registro de execução](2026-09-14/execucao.md) para testes e publicação.
+- **Site:** correções integradas na main pelo [PR #46](https://github.com/alexwaltersdorf/total-quality/pull/46). CI e workflow de deploy concluídos com sucesso, mas a verificação pública ainda mostrou a versão anterior. A aplicação da Hostinger exige atualização pelo hPanel, cujo acesso pediu login. Ver [registro de execução](2026-09-14/execucao.md).
 - **Google Ads:** 15 substituições de texto preenchidas no editor. **Salvamento bloqueado pela exigência de chave de acesso do Google. Nenhuma alteração de campanha foi confirmada como salva.**
 - **Campanha:** permanece pausada, com orçamento de R$ 39/dia. Não houve reativação nem aumento de verba.
 - **Coleta dos novos eventos no GA4:** depende de configurar/conferir o GTM e validar Preview/GA4; não confundir código instrumentado com coleta comprovada.

@@ -32,12 +32,25 @@ Estado conhecido preservado: campanha pausada, orçamento R$39/dia, estratégia 
 - Três testes novos cobrem sequência do FAB, associação das etapas, ausência de valor/dados do formulário e nova tentativa.
 - TypeScript: **13 erros existentes**, em arquivos fora do diff; coincide com o limite documentado no CI. Nenhum erro nos arquivos alterados.
 - Build do frontend: **concluído**, Vite com `--configLoader runner`.
-- Build completo padrão será verificado pelo CI Linux. O esbuild local encontrou restrição de leitura de diretório ancestral no sandbox Windows; não se ampliaram permissões do sistema para contornar isso.
-- Verificação de publicação e links de PR/commit: registrar ao final da execução.
+- Build completo padrão **aprovado no CI Linux**, junto dos testes e tipos. O esbuild local encontrou restrição de leitura de diretório ancestral no sandbox Windows; não se ampliaram permissões do sistema para contornar isso.
+- [PR #46](https://github.com/alexwaltersdorf/total-quality/pull/46) integrado em 14/09/2026 às 22h57 (Brasília). Commit de código na main: [146e453](https://github.com/alexwaltersdorf/total-quality/commit/146e453cff5e73ce7dc9d8ebdb3de2b79ac6c059).
+- [CI da revisão](https://github.com/alexwaltersdorf/total-quality/actions/runs/34919159701) e [CI da main](https://github.com/alexwaltersdorf/total-quality/actions/runs/34919272383): sucesso.
 - Navegador local: CTA, títulos plurais e rodapé conferidos; abrir e fechar o modal funcionou, com botão Continuar desabilitado para nome vazio. Nenhum contato de teste foi enviado.
 - Nova tentativa de salvar no Ads, após o pedido “continue”, retornou erro genérico no editor. Sem confirmação de gravação; status pendente preservado.
 
 ## Limites
+
+### Publicação real — pendência da hospedagem
+
+O [workflow de deploy](https://github.com/alexwaltersdorf/total-quality/actions/runs/34919272412) terminou com sucesso às 22h57min49s. O log confirmou sincronização do fonte com 146e453. Porém, o build servido pelo hbuilds ainda tinha seu apontamento em **2026-09-14 21:10:15, horário do servidor**, anterior à intervenção.
+
+O navegador público, inclusive em URL com parâmetro de verificação, ainda mostrou “AGENDAR PELO WHATSAPP” no hero e “O QUE É O EXAMES DE SANGUE?”. Isso **não confirma publicação das correções**, apesar do workflow verde. A topologia já está descrita no deploy.yml: o pacote enviado pelo runner não é o build que o Passenger serve.
+
+O hPanel foi aberto, mas apresentou tela de login. Acesso do titular é necessário para conferir o repositório/branch da aplicação e executar Redeploy da versão atual. [Procedimento oficial da Hostinger](https://www.hostinger.com/support/how-to-redeploy-a-node-js-application/). Não alterar variáveis de ambiente, versão do Node ou integração de conta para apenas atualizar esse build.
+
+Depois do Redeploy, registrar horário, commit/build servido e verificar na URL pública sem parâmetros: CTA “Consultar preparo e orçamento”, título plural, rodapé “Tire suas dúvidas”, canonical e descrição. Então validar GTM/GA4. Até lá, não atribuir efeitos comerciais ao código novo.
+
+### Medição e mídia
 
 Os testes de código não comprovam recebimento no GA4, atribuição no Ads, ligação atendida ou venda. Nenhuma mensagem de teste foi enviada ao atendimento. A captura dos eventos novos depende do GTM; as pendências antigas de docs/analytics.md precisam ser revalidadas na versão publicada, não assumidas como atuais.
 
