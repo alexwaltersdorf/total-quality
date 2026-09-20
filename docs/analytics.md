@@ -37,6 +37,56 @@ Todo rastreamento sai de **`client/src/lib/tracking.ts`**. Não existe
 `dataLayer.push` em componente, e o teste `server/seo-content.test.ts` quebra se
 alguém reintroduzir `fbq(`, `ttq.` ou `gtag('config'`.
 
+## Formulário de qualificação de leads (20/09/2026)
+
+Todo clique de WhatsApp do site passa antes por um formulário que pede **nome,
+telefone e e-mail** (`client/src/contexts/WhatsAppLeadContext.tsx`). Até 14/09
+ele pedia só o nome.
+
+Cada envio percorre **três caminhos independentes** — nenhum derruba o seguinte:
+
+| # | Caminho | O que leva | Depende de consentimento? |
+|---|---|---|---|
+| 1 | `dataLayer` → GTM → GA4, Google Ads, Meta | evento `whatsapp_click`, valor do lead, contato **só em hash** | o contato sim; o evento não |
+| 2 | `lead.create` → banco → planilha + e-mail | tudo, em texto puro, dentro da nossa infraestrutura | não — é uso operacional próprio |
+| 3 | servidor → Meta CAPI + GA4 Measurement Protocol | hash de contato (Meta) e evento sem contato (GA4) | **sim**, cada um com o seu |
+
+**Por que o caminho 3 existe.** Até aqui toda conversão saía do navegador. O
+diagnóstico de 14/09 (`seo---total-quality`, `docs/diagnostico-queda-ga4-…`)
+mostrou o custo disso: com o Consent Mode negado por padrão e a propriedade
+abaixo do limiar de modelagem do Google, quem não aceita o banner some do
+relatório. Um lead que preencheu os três campos e pediu contato não pode sumir
+junto — ele já está no nosso banco, e o servidor consegue reportá-lo.
+
+**Deduplicação.** Os caminhos 1 e 3 carregam o **mesmo `event_id`**:
+`trackLeadQualificado()` gera e devolve o id, que viaja no `lead.create`. Sem
+isso a mesma conversão contaria duas vezes — relatório inflado e otimização
+treinando em evento que não existiu. No contêiner, a tag do Meta deve ler esse
+campo como **ID do evento**. O servidor não despacha sem o id, de propósito.
+
+**LGPD, art. 11.** A clínica é um laboratório: contato somado ao exame procurado
+é dado sensível. Por isso `exam_type` **nunca** acompanha o contato no mesmo
+destino — ele vai ao GA4 (sem contato) e é omitido do Meta (que leva o contato).
+
+### Variáveis de ambiente do caminho 3
+
+Ausentes, o envio simplesmente não acontece e os caminhos 1 e 2 seguem normais.
+
+| Variável | Onde obter |
+|---|---|
+| `META_PIXEL_ID` | Meta Events Manager → Fontes de dados → o pixel → ID |
+| `META_CONVERSIONS_API_TOKEN` | mesmo pixel → Configurações → API de Conversões → Gerar token |
+| `GA4_MEASUREMENT_ID` | GA4 → Admin → Fluxos de dados → `G-FZH25GKTJ9` |
+| `GA4_API_SECRET` | mesmo fluxo → Protocolo de medição → Criar segredo |
+
+### O que o Search Console **não** faz
+
+Não existe forma de enviar leads ou conversões ao Google Search Console: ele é
+um relatório do lado do Google sobre desempenho na busca orgânica — consultas,
+impressões, cliques e posição. Não tem API de entrada. O que se faz com ele é o
+inverso: **ler** quais buscas trazem gente ao site e cruzar com os leads que o
+banco já guarda. Conectá-lo segue pendente (P1 do diagnóstico de 14/09).
+
 ## IDs oficiais
 
 | Destino | ID | Observação |

@@ -103,7 +103,28 @@ export async function trackEventDirect(
   }
 }
 
-export async function trackLeadDirect(source: string, extraData?: { name?: string; phone?: string; email?: string }) {
+/**
+ * Grava o lead no banco (e, a partir dai, planilha + e-mail para a clinica).
+ *
+ * `conversao` e opcional e existe para o formulario de qualificacao: quando
+ * vem, o servidor tambem reporta a conversao ao Meta e ao GA4 por conta
+ * propria. O `eventId` precisa ser O MESMO ja empurrado ao dataLayer — e ele
+ * que faz as plataformas tratarem os dois envios como um evento so.
+ */
+export async function trackLeadDirect(
+  source: string,
+  extraData?: { name?: string; phone?: string; email?: string },
+  conversao?: {
+    eventId: string;
+    examType?: string;
+    value?: number;
+    clientId?: string;
+    fbc?: string;
+    fbp?: string;
+    consentMarketing: boolean;
+    consentAnalytics: boolean;
+  }
+) {
   try {
     const sessionId = getSessionId();
     const utm = getUTMForAPI();
@@ -119,6 +140,7 @@ export async function trackLeadDirect(source: string, extraData?: { name?: strin
           sessionId,
           ...utm,
           ...extraData,
+          ...(conversao ?? {}),
         },
       }),
     });

@@ -50,7 +50,10 @@ function pushToDataLayer(event: string, params: Record<string, unknown> = {}) {
   const payload = {
     event,
     ...params,
-    event_id: novoEventId(),
+    // Normalmente gerado aqui. Quando o chamador precisa conhecer o id para
+    // repassa-lo ao servidor — e so entao a deduplicacao com a API de
+    // Conversoes funciona — ele manda o seu, e este respeita.
+    event_id: (typeof params.event_id === "string" && params.event_id) || novoEventId(),
     event_timestamp: new Date().toISOString(),
     page_location: window.location.href,
     page_path: window.location.pathname,
@@ -190,6 +193,38 @@ export async function trackWhatsAppConversionWithLead(
     value: resolveLeadValue(source, examType),
     ...(userData ? { user_data: userData } : {}),
   });
+}
+
+/**
+ * Conversao do formulario de qualificacao (nome + telefone + e-mail).
+ *
+ * Difere da anterior em uma coisa so, mas decisiva: DEVOLVE o event_id. O
+ * mesmo id viaja depois para o servidor no lead.create, e e por ele que o Meta
+ * reconhece o evento do navegador e o da API de Conversoes como um unico
+ * acontecimento. Sem isso a conversao contaria duas vezes.
+ *
+ * O evento continua sendo `whatsapp_click`: o briefing de 02/08 padronizou um
+ * unico nome para toda conversao do site e aposentou os demais, com guard-rail
+ * que quebra o build se algum voltar.
+ */
+export async function trackLeadQualificado(
+  source: string,
+  examType: string,
+  contato: { email?: string; telefone?: string }
+): Promise<string> {
+  const eventId = novoEventId();
+  const userData = await buildUserData(contato);
+  pushToDataLayer("whatsapp_click", {
+    event_id: eventId,
+    event_category: "conversion",
+    event_label: "formulario_qualificacao",
+    lead_source: source,
+    exam_type: examType,
+    currency: "BRL",
+    value: resolveLeadValue(source, examType),
+    ...(userData ? { user_data: userData } : {}),
+  });
+  return eventId;
 }
 
 export function trackScheduleExam(source: string, examType?: string) {
