@@ -124,7 +124,18 @@ export const appRouter = router({
       }))
       .mutation(async ({ input }) => {
         const result = await createContact(input);
-        // Notificação automática para sac@totalquality.med.br
+        /*
+         * ATENCAO: isto NAO envia e-mail. Ate 21/09/2026 o comentario aqui
+         * nomeava um endereco da clinica como destinatario automatico, e nao
+         * era verdade: notifyOwner publica no servico de notificacao do Manus
+         * (BUILT_IN_FORGE_API_URL) e o payload nao tem destinatario nenhum —
+         * so titulo e conteudo. O site nao tem biblioteca de e-mail, nem
+         * dependencia de SMTP, e nao roda mais no Manus. Ou seja: na pratica
+         * esta chamada nao avisa ninguem.
+         *
+         * Enquanto nao houver envio de verdade, quem avisa a clinica e a
+         * planilha (googleSheetsSync.ts). Ver docs/notificacao-de-leads.md.
+         */
         try {
           await notifyOwner({
             title: `Novo Contato: ${input.name} - ${input.subject || "Sem assunto"}`,
@@ -224,7 +235,10 @@ export const appRouter = router({
         const ipAddress =
           (ctx.req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? ctx.req.ip ?? null;
         const result = await createLead({ ...leadInput, userAgent, ipAddress });
-        // Notificação automática para sac@totalquality.med.br
+        /*
+         * Mesma ressalva do contato acima: notifyOwner NAO envia e-mail e nao
+         * tem destinatario. Ver docs/notificacao-de-leads.md.
+         */
         try {
           const channelLabel = input.channel || input.utmSource || input.source || "Direto";
           await notifyOwner({
