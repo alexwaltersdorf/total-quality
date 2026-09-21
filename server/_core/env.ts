@@ -13,6 +13,13 @@ export const ENV = {
   googleAdsRefreshToken: process.env.GOOGLE_ADS_REFRESH_TOKEN ?? "",
   metaAdsAccessToken: process.env.META_ADS_ACCESS_TOKEN ?? "",
   googleSheetsWebhookUrl: process.env.GOOGLE_SHEETS_WEBHOOK_URL ?? "",
+  // Envio de conversao pelo servidor (server/_core/conversions.ts). Ausentes,
+  // o envio simplesmente nao acontece — o lead continua indo para o banco, a
+  // planilha e o e-mail. Onde obter cada um: docs/analytics.md.
+  metaPixelId: process.env.META_PIXEL_ID ?? "",
+  metaConversionsApiToken: process.env.META_CONVERSIONS_API_TOKEN ?? "",
+  ga4MeasurementId: process.env.GA4_MEASUREMENT_ID ?? "",
+  ga4ApiSecret: process.env.GA4_API_SECRET ?? "",
 };
 
 export const GOOGLE_ADS_DEVELOPER_TOKEN = process.env.GOOGLE_ADS_DEVELOPER_TOKEN;

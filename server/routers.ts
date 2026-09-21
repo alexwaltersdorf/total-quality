@@ -5,6 +5,7 @@ import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_
 import { ENV } from "./_core/env";
 import { notifyOwner } from "./_core/notification";
 import { syncLeadToSheet } from "./_core/googleSheetsSync";
+import { dispatchLeadConversion } from "./_core/conversions";
 import { sdk } from "./_core/sdk";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
@@ -200,13 +201,28 @@ export const appRouter = router({
         utmContent: z.string().max(500).optional(),
         channel: z.string().max(100).optional(),
         sessionId: z.string().max(100).optional(),
+        // Envio de conversao pelo servidor (ver _core/conversions.ts). Todos
+        // opcionais: os pontos de captura antigos seguem chamando sem eles.
+        eventId: z.string().max(100).optional(),
+        examType: z.string().max(100).optional(),
+        value: z.number().nonnegative().max(100000).optional(),
+        clientId: z.string().max(100).optional(),
+        fbc: z.string().max(255).optional(),
+        fbp: z.string().max(255).optional(),
+        consentMarketing: z.boolean().optional(),
+        consentAnalytics: z.boolean().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
-        const result = await createLead({
-          ...input,
-          userAgent: ctx.req.headers["user-agent"] ?? null,
-          ipAddress: (ctx.req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? ctx.req.ip ?? null,
-        });
+        // O banco nao tem colunas para os campos de despacho; eles existem so
+        // para a viagem ate as plataformas.
+        const {
+          eventId, examType, value, clientId, fbc, fbp,
+          consentMarketing, consentAnalytics, ...leadInput
+        } = input;
+        const userAgent = ctx.req.headers["user-agent"] ?? null;
+        const ipAddress =
+          (ctx.req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? ctx.req.ip ?? null;
+        const result = await createLead({ ...leadInput, userAgent, ipAddress });
         // Notificação automática para sac@totalquality.med.br
         try {
           const channelLabel = input.channel || input.utmSource || input.source || "Direto";
@@ -226,7 +242,32 @@ export const appRouter = router({
           console.warn("[Notification] Falha ao notificar novo lead:", e);
         }
         // Sincroniza o lead com a planilha Google Sheets (não bloqueia nem falha o lead)
-        await syncLeadToSheet(input);
+        await syncLeadToSheet(leadInput);
+
+        // Conversao pelo servidor: Meta CAPI e GA4 Measurement Protocol.
+        // So acontece com eventId — sem ele nao ha como deduplicar contra o
+        // evento do navegador, e contar a mesma conversao duas vezes e pior
+        // que nao contar. Nunca lanca (ver _core/conversions.ts).
+        if (eventId) {
+          await dispatchLeadConversion({
+            eventId,
+            name: leadInput.name,
+            phone: leadInput.phone,
+            email: leadInput.email,
+            examType,
+            value,
+            page: leadInput.page,
+            clientId,
+            fbc,
+            fbp,
+            ipAddress,
+            userAgent,
+            consent: {
+              marketing: consentMarketing === true,
+              analytics: consentAnalytics === true,
+            },
+          });
+        }
         return result;
       }),
 
