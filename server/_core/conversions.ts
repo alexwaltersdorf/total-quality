@@ -54,6 +54,12 @@ export type LeadConversion = {
   examType?: string;
   /** Ticket do lead (client/src/lib/leadValues.ts). */
   value?: number;
+  /**
+   * "whatsapp" ou "telefone". Vai so ao GA4, como dimensao do mesmo evento —
+   * nao e dado pessoal nem de saude, mas o Meta ja recebe o contato e nao
+   * precisa disto para nada.
+   */
+  leadChannel?: "whatsapp" | "telefone";
   page: string;
   /** client_id do GA4, lido do cookie _ga pelo navegador. */
   clientId?: string;
@@ -193,6 +199,7 @@ async function sendToGA4(lead: LeadConversion): Promise<"sent" | "skipped" | "fa
           event_id: lead.eventId,
           event_category: "conversion",
           lead_source: "formulario_qualificacao",
+          ...(lead.leadChannel ? { lead_channel: lead.leadChannel } : {}),
           ...(lead.examType ? { exam_type: lead.examType } : {}),
           currency: "BRL",
           ...(lead.value ? { value: lead.value } : {}),

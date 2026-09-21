@@ -5,7 +5,7 @@
 import ResponsiveImage from "@/components/ResponsiveImage";
 import { useState, type ReactNode } from "react";
 import { trackExamCategorySelect, trackScheduleExam } from "@/lib/tracking";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 import {
   Scan,
   HeartPulse,

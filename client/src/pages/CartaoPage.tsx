@@ -9,7 +9,7 @@ import WhatsAppFAB from "@/components/WhatsAppFAB";
 import LeadsFormModal from "@/components/LeadsFormModal";
 import { cartaoPlanos, mainBenefitsData, faqs } from "@/lib/cartaoPlanos";
 import { useMetaDescription } from "@/components/SEOHead";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
 export default function CartaoPage() {
   const openWhatsApp = useWhatsAppRedirect();

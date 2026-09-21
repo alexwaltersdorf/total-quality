@@ -5,7 +5,7 @@
 import { ArrowUpRight, CreditCard, Users, Percent } from "lucide-react";
 import { Link } from "wouter";
 import { trackCardInterest } from "@/lib/tracking";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
 export default function CartaoSection() {
   const openWhatsApp = useWhatsAppRedirect();

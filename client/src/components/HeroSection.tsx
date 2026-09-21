@@ -8,7 +8,7 @@ import ResponsiveImage from "@/components/ResponsiveImage";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
 import { trackScheduleExam } from "@/lib/tracking";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
 
 const marqueeItems = [

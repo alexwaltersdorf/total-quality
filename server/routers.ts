@@ -206,6 +206,7 @@ export const appRouter = router({
         eventId: z.string().max(100).optional(),
         examType: z.string().max(100).optional(),
         value: z.number().nonnegative().max(100000).optional(),
+        leadChannel: z.enum(["whatsapp", "telefone"]).optional(),
         clientId: z.string().max(100).optional(),
         fbc: z.string().max(255).optional(),
         fbp: z.string().max(255).optional(),
@@ -216,7 +217,7 @@ export const appRouter = router({
         // O banco nao tem colunas para os campos de despacho; eles existem so
         // para a viagem ate as plataformas.
         const {
-          eventId, examType, value, clientId, fbc, fbp,
+          eventId, examType, value, leadChannel, clientId, fbc, fbp,
           consentMarketing, consentAnalytics, ...leadInput
         } = input;
         const userAgent = ctx.req.headers["user-agent"] ?? null;
@@ -256,6 +257,7 @@ export const appRouter = router({
             email: leadInput.email,
             examType,
             value,
+            leadChannel,
             page: leadInput.page,
             clientId,
             fbc,

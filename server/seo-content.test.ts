@@ -606,6 +606,92 @@ describe("GUARD-RAIL: rastreamento padronizado (briefing de 02/08/2026)", () => 
     expect(problemas, problemas.join("\n")).toEqual([]);
   });
 
+  /*
+   * Desde 21/09/2026 nenhum pedido de contato sai do site sem lead: os botoes
+   * de WhatsApp E os de ligacao passam pelo formulario de qualificacao
+   * (contexts/ContatoLeadContext.tsx). Um <a href=tel:...> solto desfaz a
+   * regra em silencio — entrega o numero ao discador e a clinica so descobre
+   * o lead se a chamada completar e alguem anotar. Foi assim que metade dos
+   * pedidos de contato ficou invisivel ate esta data.
+   *
+   * Duas excecoes, e so estas duas:
+   *   - pages/Privacidade.tsx   canal para exercer direitos do titular. A LGPD
+   *                             manda facilitar o pedido (art. 18) e nao
+   *                             coletar alem do necessario (art. 6, III);
+   *                             exigir cadastro de quem liga para pedir
+   *                             exclusao e o contrario das duas regras.
+   *   - pages/ThankYouCall.tsx  a pagina que de fato disca, no fim do fluxo.
+   *                             So disca para quem chegou pelo formulario
+   *                             (MARCA_LIGACAO_QUALIFICADA).
+   */
+  it("nenhum CTA de telefone escapa do formulario de qualificacao", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const base = path.resolve(import.meta.dirname, "..", "client", "src");
+    const EXCECOES = new Set(["pages/Privacidade.tsx", "pages/ThankYouCall.tsx"]);
+    const arquivos = fs
+      .readdirSync(base, { recursive: true, encoding: "utf-8" })
+      .filter((f) => f.endsWith(".tsx"))
+      .map((f) => f.split(path.sep).join("/"));
+
+    const problemas: string[] = [];
+    for (const rel of arquivos) {
+      if (EXCECOES.has(rel)) continue;
+      const linhas = fs.readFileSync(path.resolve(base, rel), "utf-8").split("\n");
+      linhas.forEach((linha, i) => {
+        if (/href\s*=\s*["'`]tel:/.test(linha) || /location\.href\s*=\s*["'`]tel:/.test(linha)) {
+          problemas.push(
+            `${rel}:${i + 1}: telefone sem qualificacao — use useTelefoneRedirect()`
+          );
+        }
+      });
+    }
+    expect(problemas, problemas.join("\n")).toEqual([]);
+
+    // As excecoes precisam continuar existindo: se alguem renomear ou apagar
+    // um desses arquivos, a lista acima vira letra morta e o teste passaria a
+    // permitir tudo sem ninguem perceber.
+    for (const rel of EXCECOES) {
+      expect(arquivos, `${rel} sumiu — reveja a lista de excecoes`).toContain(rel);
+    }
+  });
+
+  /*
+   * O formulario e o mesmo para os dois canais e o evento de conversao
+   * continua sendo UM SO (briefing de 02/08). Quem precisa separar ligacao de
+   * conversa usa lead_channel como dimensao — criar um evento novo obrigaria a
+   * refazer as conversoes no Ads e no Meta.
+   */
+  it("o canal do lead viaja como dimensao, nao como evento novo", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const raiz = path.resolve(import.meta.dirname, "..");
+    const leia = (rel: string) => fs.readFileSync(path.resolve(raiz, rel), "utf-8");
+    const tracking = leia("client/src/lib/tracking.ts");
+    const contexto = leia("client/src/contexts/ContatoLeadContext.tsx");
+
+    expect(tracking).toMatch(/lead_channel:\s*canal/);
+    expect(contexto).toContain("useTelefoneRedirect");
+    /*
+     * A valvula de escape documentada no topo do contexto: se o atrito custar
+     * lead, tirar "telefone" de CANAIS_QUALIFICADOS devolve o discador
+     * imediato. Enquanto ela estiver ligada, o canal precisa estar la.
+     *
+     * Aqui o array e EXTRAIDO e conferido, em vez de aferido por proximidade.
+     * Duas versoes anteriores desta trava passavam com o canal ja removido:
+     * a primeira casava com a palavra "telefone" num comentario vizinho, a
+     * segunda com o array do CAMPOS_OBRIGATORIOS logo abaixo. Trava que casa
+     * com o texto errado nao trava nada.
+     */
+    const canais = contexto.match(/CANAIS_QUALIFICADOS[^=]*=\s*\[([^\]]*)\]/)?.[1];
+    expect(canais, "CANAIS_QUALIFICADOS nao encontrado no contexto").toBeDefined();
+    expect(canais).toContain('"whatsapp"');
+    expect(canais).toContain('"telefone"');
+    // O telefone tem tipo de conversao proprio no banco; sem isso todo pedido
+    // de ligacao volta a se misturar com qualquer outro clique em "cta_click".
+    expect(leia("client/src/hooks/useAnalyticsTracker.ts")).toContain('"phone_call"');
+  });
+
   // Conversoes aprimoradas: o contato so pode entrar no dataLayer com hash
   // SHA-256 (lib/userData.ts) e com consentimento de marketing. Texto puro
   // nunca — nem no evento, nem em user_data.

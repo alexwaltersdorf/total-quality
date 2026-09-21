@@ -18,7 +18,7 @@ import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { CONVENIOS } from "@/lib/conveniosData";
 import { trackWhatsAppConversion } from "@/lib/tracking";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
 const WHATSAPP_MESSAGE =
   "Olá! Gostaria de confirmar se meu convênio é aceito na Total Quality.";

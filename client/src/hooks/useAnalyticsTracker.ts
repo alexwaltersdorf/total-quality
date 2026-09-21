@@ -18,6 +18,18 @@ function getSessionId(): string {
   return sessionId;
 }
 
+/**
+ * Tipo de conversao gravado no banco. O telefone entra com tipo proprio desde
+ * 21/09/2026: antes dele todo pedido de ligacao caia em "cta_click", junto de
+ * qualquer outro botao, e nao dava para contar ligacao separada de conversa.
+ */
+function conversionTypeFor(source: string): string {
+  if (source.startsWith("telefone")) return "phone_call";
+  if (source.includes("whatsapp")) return "whatsapp_click";
+  if (source.includes("form")) return "form_submit";
+  return "cta_click";
+}
+
 export function useAnalyticsTracker() {
   const trackMutation = trpc.analytics.track.useMutation();
   const leadMutation = trpc.lead.create.useMutation();
@@ -52,7 +64,7 @@ export function useAnalyticsTracker() {
       // Also track as conversion
       conversionMutation.mutate({
         sessionId: sessionId.current,
-        conversionType: source.includes("whatsapp") ? "whatsapp_click" : source.includes("form") ? "form_submit" : "cta_click",
+        conversionType: conversionTypeFor(source),
         page: window.location.pathname,
         ...utm,
       });
@@ -118,6 +130,8 @@ export async function trackLeadDirect(
     eventId: string;
     examType?: string;
     value?: number;
+    /** "whatsapp" ou "telefone" — vira dimensao no GA4, nunca evento novo. */
+    leadChannel?: string;
     clientId?: string;
     fbc?: string;
     fbp?: string;
@@ -152,7 +166,7 @@ export async function trackLeadDirect(
       body: JSON.stringify({
         json: {
           sessionId,
-          conversionType: source.includes("whatsapp") ? "whatsapp_click" : source.includes("form") ? "form_submit" : "cta_click",
+          conversionType: conversionTypeFor(source),
           page: window.location.pathname,
           ...utm,
         },
