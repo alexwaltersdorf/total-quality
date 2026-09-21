@@ -80,8 +80,17 @@ Cada envio percorre **três caminhos independentes** — nenhum derruba o seguin
 | # | Caminho | O que leva | Depende de consentimento? |
 |---|---|---|---|
 | 1 | `dataLayer` → GTM → GA4, Google Ads, Meta | evento `whatsapp_click`, valor do lead, contato **só em hash** | o contato sim; o evento não |
-| 2 | `lead.create` → banco → planilha + e-mail | tudo, em texto puro, dentro da nossa infraestrutura | não — é uso operacional próprio |
+| 2 | `lead.create` → banco → planilha | tudo, em texto puro, dentro da nossa infraestrutura | não — é uso operacional próprio |
 | 3 | servidor → Meta CAPI + GA4 Measurement Protocol | hash de contato (Meta) e evento sem contato (GA4) | **sim**, cada um com o seu |
+
+> **Correção de 21/09/2026 — o caminho 2 não manda e-mail.** Até esta data,
+> este documento, os comentários em `server/routers.ts` e o texto do PR #47
+> diziam "banco → planilha **+ e-mail**". Não era verdade: `notifyOwner()`
+> publica no serviço de notificação do Manus (`BUILT_IN_FORGE_API_URL`) e o
+> payload não tem destinatário — só título e conteúdo. O site não tem
+> biblioteca de e-mail nem dependência de SMTP, e não roda mais no Manus.
+> Quem avisa a clínica hoje é **só a planilha**. O conserto está em
+> `docs/notificacao-de-leads.md`.
 
 **Por que o caminho 3 existe.** Até aqui toda conversão saía do navegador. O
 diagnóstico de 14/09 (`seo---total-quality`, `docs/diagnostico-queda-ga4-…`)
