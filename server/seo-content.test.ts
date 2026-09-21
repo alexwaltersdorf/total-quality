@@ -672,9 +672,21 @@ describe("GUARD-RAIL: rastreamento padronizado (briefing de 02/08/2026)", () => 
 
     expect(tracking).toMatch(/lead_channel:\s*canal/);
     expect(contexto).toContain("useTelefoneRedirect");
-    // A valvula de escape documentada no topo do contexto: se o atrito custar
-    // lead, tirar "telefone" daqui devolve o discador imediato.
-    expect(contexto).toMatch(/CANAIS_QUALIFICADOS[\s\S]{0,160}"telefone"/);
+    /*
+     * A valvula de escape documentada no topo do contexto: se o atrito custar
+     * lead, tirar "telefone" de CANAIS_QUALIFICADOS devolve o discador
+     * imediato. Enquanto ela estiver ligada, o canal precisa estar la.
+     *
+     * Aqui o array e EXTRAIDO e conferido, em vez de aferido por proximidade.
+     * Duas versoes anteriores desta trava passavam com o canal ja removido:
+     * a primeira casava com a palavra "telefone" num comentario vizinho, a
+     * segunda com o array do CAMPOS_OBRIGATORIOS logo abaixo. Trava que casa
+     * com o texto errado nao trava nada.
+     */
+    const canais = contexto.match(/CANAIS_QUALIFICADOS[^=]*=\s*\[([^\]]*)\]/)?.[1];
+    expect(canais, "CANAIS_QUALIFICADOS nao encontrado no contexto").toBeDefined();
+    expect(canais).toContain('"whatsapp"');
+    expect(canais).toContain('"telefone"');
     // O telefone tem tipo de conversao proprio no banco; sem isso todo pedido
     // de ligacao volta a se misturar com qualquer outro clique em "cta_click".
     expect(leia("client/src/hooks/useAnalyticsTracker.ts")).toContain('"phone_call"');
