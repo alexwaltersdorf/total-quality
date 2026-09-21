@@ -76,6 +76,63 @@ publicada, e `onEdit` é um gatilho simples que roda direto do script.
 > corpo das duas numa só. Duas funções com o mesmo nome no mesmo arquivo fazem
 > a última sobrescrever a primeira, e a que você perder falha em silêncio.
 
+## Atualização automática pelos telefones
+
+O menu **Total Quality** na planilha traz duas funções novas:
+
+- **Preparar aba de agendamentos** — cria a aba `Agendamentos`;
+- **Atualizar status pelos telefones** — casa e atualiza.
+
+Na aba `Agendamentos` você cola os telefones de quem agendou, um por linha,
+**em qualquer formato**: `(12) 99999-9999`, `+55 12 99999-9999` ou
+`5512999999999`. Opcionalmente a etapa (vazio = `Agendado`), o exame e o valor.
+
+### O que o motor faz
+
+1. **Normaliza** o telefone dos dois lados. O mesmo aparelho aparece como
+   `(12) 99725-7786` aqui, `+55 12 99725-7786` no WhatsApp e `5512997257786`
+   numa exportação. Pior: o nono dígito entrou em 2012, e cadastro antigo não
+   tem — o mesmo celular existe com 10 e com 11 dígitos.
+2. **Atualiza o lead mais recente** daquele telefone e carimba a data.
+3. **Marca os anteriores como `Duplicado`**, se ainda estiverem em `Novo`.
+   Contar três leads da mesma pessoa como três agendamentos inflaria a taxa
+   exatamente no número que ela existe para medir. O Resumo usa **leads
+   únicos** como denominador.
+4. **Nunca chuta.** Quando só a comparação de 8 dígitos casa e há mais de um
+   candidato — um fixo `3887-3535` e um celular `93887-3535` colidem nela —
+   o motor reporta ambiguidade em vez de escolher.
+5. **Escreve o resultado linha a linha** na coluna Resultado.
+
+`chavesTelefone()` é testada em `server/telefone-matching.test.ts`, inclusive a
+colisão do item 4, que está lá registrada de propósito. Errar a comparação de
+telefone corrompe em silêncio o número que a coluna existe para medir: casar o
+lead errado marca como agendado quem não agendou.
+
+### Telefone sem lead não é erro
+
+É paciente que **agendou sem passar pelo site** — veio de indicação, passou na
+porta, ligou de um número que não é o do formulário. Esse número mede quanto da
+demanda o site não explica, e é uma das informações mais úteis que a planilha
+produz.
+
+## Por que a lista entra por fora
+
+Porque a conversa do WhatsApp não passa por lugar nenhum que este código
+alcance. O site abre `wa.me` e entrega a conversa ao aparelho da clínica:
+
+- **não há API de WhatsApp** no site — nenhuma Cloud API, Evolution, Z-API,
+  Twilio, Baileys ou equivalente;
+- **não há tabela de mensagens** no banco. As 15 tabelas são users, contacts,
+  leads, sessions, pageViews, videoViews, analyticsEvents, blogViews,
+  conversions, tags, leadTags, adAccountCredentials, campaignMetrics e
+  autoSeoArticles;
+- a tabela `conversions` registra que alguém **clicou** para conversar
+  (`whatsapp_click`, `form_submit`, `phone_call`), nunca o que foi conversado.
+
+Quem sabe que o paciente agendou é a pessoa que atendeu. Para o sistema saber,
+alguém precisa contar a ele — hoje colando a lista, amanhã por integração. O
+motor de comparação é o mesmo nos dois casos.
+
 ## O que este status ainda NÃO faz
 
 Ele mede, mas não **ensina** as plataformas de anúncio. Para o Google Ads

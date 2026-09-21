@@ -12,6 +12,7 @@
 
 var ABA_LEADS = 'Leads';
 var ABA_RESUMO = 'Resumo';
+var ABA_AGENDAMENTOS = 'Agendamentos';
 
 var COL_ORIGEM = 6;        // F
 var COL_STATUS = 19;       // S
@@ -27,7 +28,8 @@ var ETAPAS = [
   'Compareceu',
   'Não compareceu',
   'Sem retorno',
-  'Perdido'
+  'Perdido',
+  'Duplicado'
 ];
 
 /** Cor de fundo por etapa, para a lista ser legivel de relance. */
@@ -38,7 +40,8 @@ var CORES = {
   'Compareceu': '#b7e1cd',
   'Não compareceu': '#fce5cd',
   'Sem retorno': '#efefef',
-  'Perdido': '#f4cccc'
+  'Perdido': '#f4cccc',
+  'Duplicado': '#e0e0e0'
 };
 
 /**
@@ -153,6 +156,14 @@ function criarResumo() {
 
   var L = "'" + ABA_LEADS + "'!";
   var totalLeads = 'COUNTA(' + L + 'A2:A)';
+  /*
+   * A mesma pessoa preenche o formulario mais de uma vez (na planilha ja ha
+   * casos de duas e tres). Contar essas linhas no denominador subestima a
+   * taxa de agendamento justamente no numero que ela existe para medir, entao
+   * o denominador sao os leads UNICOS.
+   */
+  var duplicados = 'COUNTIF(' + L + 'S2:S,"Duplicado")';
+  var leadsUnicos = '(' + totalLeads + '-' + duplicados + ')';
   var qtd = function (etapa) {
     return 'COUNTIF(' + L + 'S2:S,"' + etapa + '")';
   };
@@ -165,6 +176,8 @@ function criarResumo() {
   var linhas = [
     ['FUNIL DE LEADS', ''],
     ['Total de leads', '=' + totalLeads],
+    ['Duplicados (mesmo telefone)', '=' + duplicados],
+    ['Leads únicos', '=' + leadsUnicos],
     ['Leads com telefone e e-mail', '=COUNTIFS(' + L + 'C2:C,"<>",' + L + 'D2:D,"<>")'],
     ['', ''],
     ['POR ETAPA', ''],
@@ -175,16 +188,17 @@ function criarResumo() {
     ['Não compareceu', '=' + qtd('Não compareceu')],
     ['Sem retorno', '=' + qtd('Sem retorno')],
     ['Perdido', '=' + qtd('Perdido')],
+    ['Duplicado', '=' + duplicados],
     ['', ''],
     ['TAXAS', ''],
-    ['Taxa de agendamento', pct(agendou, totalLeads)],
+    ['Taxa de agendamento', pct(agendou, leadsUnicos)],
     ['Taxa de comparecimento', pct(qtd('Compareceu'), agendou)],
     ['Receita registrada', '=IFERROR(SUM(' + L + 'W2:W),0)'],
     ['Ticket médio dos atendidos', '=IFERROR(SUM(' + L + 'W2:W)/' + qtd('Compareceu') + ',0)'],
     ['', ''],
     ['WHATSAPP x TELEFONE', ''],
     ['Leads por telefone', '=COUNTIF(' + L + 'F2:F,"telefone_*")'],
-    ['Leads por WhatsApp', '=' + totalLeads + '-COUNTIF(' + L + 'F2:F,"telefone_*")'],
+    ['Leads por WhatsApp', '=' + leadsUnicos + '-COUNTIF(' + L + 'F2:F,"telefone_*")'],
     ['Agendados vindos do telefone', '=COUNTIFS(' + L + 'F2:F,"telefone_*",' + L + 'S2:S,"Agendado")'],
     ['Agendados vindos do WhatsApp', '=' + qtd('Agendado') + '-COUNTIFS(' + L + 'F2:F,"telefone_*",' + L + 'S2:S,"Agendado")'],
     ['', ''],
@@ -200,9 +214,22 @@ function criarResumo() {
     'label E \'Canal\', count(A) \'Leads\'",0),"sem dados")'
   );
 
-  // Formatos: percentual nas taxas, moeda na receita.
-  aba.getRange(15, 2, 2, 1).setNumberFormat('0.0%');
-  aba.getRange(17, 2, 2, 1).setNumberFormat('R$ #,##0.00');
+  /*
+   * Formatacao localizada pelo ROTULO, nao por indice fixo. A primeira versao
+   * usava getRange(15, ...) e getRange(17, ...); acrescentar uma linha acima
+   * deslocaria os formatos sem nenhum aviso, e o erro so apareceria como um
+   * percentual exibido como numero solto.
+   */
+  var formatos = {
+    'Taxa de agendamento': '0.0%',
+    'Taxa de comparecimento': '0.0%',
+    'Receita registrada': 'R$ #,##0.00',
+    'Ticket médio dos atendidos': 'R$ #,##0.00'
+  };
+  for (var f = 0; f < linhas.length; f++) {
+    var formato = formatos[linhas[f][0]];
+    if (formato) aba.getRange(f + 1, 2).setNumberFormat(formato);
+  }
 
   ['FUNIL DE LEADS', 'POR ETAPA', 'TAXAS', 'WHATSAPP x TELEFONE', 'POR CANAL DE AQUISIÇÃO']
     .forEach(function (titulo) {
@@ -216,4 +243,199 @@ function criarResumo() {
   aba.setColumnWidth(1, 260);
   aba.setColumnWidth(2, 140);
   ss.toast('Aba Resumo criada.');
+}
+
+// ===========================================================================
+// ATUALIZACAO DE STATUS POR TELEFONE
+//
+// Quem sabe que o paciente agendou e a conversa do WhatsApp, e ela nao passa
+// por lugar nenhum que este codigo alcance: o site abre wa.me e entrega a
+// conversa ao aparelho da clinica. Nao ha API de WhatsApp no site, nem tabela
+// de mensagens no banco. O que o banco guarda e que alguem CLICOU para
+// conversar, nunca o que foi conversado.
+//
+// Entao o desenho e este: a lista de quem agendou entra por fora (colada da
+// conversa, exportada da agenda, ou um dia por integracao), e este motor faz
+// o resto — casa telefone com lead, atualiza o status, carimba a data e diz o
+// que nao casou.
+//
+// O QUE NAO CASOU E INFORMACAO, NAO ERRO: e paciente que agendou sem nunca ter
+// passado pelo site. Esse numero mede quanto da demanda o site nao explica.
+// ===========================================================================
+
+/** Menu proprio na planilha. Gatilho simples: nao precisa reimplantar nada. */
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu('Total Quality')
+    .addItem('Preparar aba de agendamentos', 'prepararAgendamentos')
+    .addItem('Atualizar status pelos telefones', 'atualizarStatusPorTelefone')
+    .addSeparator()
+    .addItem('Recriar o Resumo', 'criarResumo')
+    .addToUi();
+}
+
+/**
+ * Telefone brasileiro em duas chaves de comparacao.
+ *
+ * O problema real: o mesmo aparelho aparece como "(12) 99725-7786" na
+ * planilha, "+55 12 99725-7786" no WhatsApp e "5512997257786" numa
+ * exportacao. Pior, o nono digito entrou em 2012 e cadastro antigo nao tem —
+ * o mesmo celular existe com 10 e com 11 digitos.
+ *
+ *   cheia = DDD + numero como veio (10 ou 11 digitos)
+ *   curta = DDD + os 8 ultimos digitos, que sao os que nunca mudam
+ *
+ * A curta resolve o nono digito, mas pode confundir um fixo 3887-3535 com um
+ * celular 93887-3535. Por isso ela so vale quando ha UM candidato: havendo
+ * mais de um, o motor reporta ambiguidade em vez de chutar.
+ */
+function chavesTelefone(bruto) {
+  var d = String(bruto == null ? '' : bruto).replace(/\D/g, '');
+  if (!d) return null;
+  if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2);
+  if (d.length > 11 && d.charAt(0) === '0') d = d.slice(1);
+  if (d.length < 10) return null;
+  d = d.slice(-11);
+  return { cheia: d, curta: d.slice(0, 2) + d.slice(-8) };
+}
+
+/** Cria a aba onde a lista de quem agendou e colada. */
+function prepararAgendamentos() {
+  var ss = SpreadsheetApp.getActive();
+  var aba = ss.getSheetByName(ABA_AGENDAMENTOS) || ss.insertSheet(ABA_AGENDAMENTOS);
+  if (aba.getLastRow() > 1) {
+    ss.toast('A aba ' + ABA_AGENDAMENTOS + ' ja existe e tem dados. Nada foi apagado.');
+    return;
+  }
+  aba.clear();
+  aba.getRange(1, 1, 1, 5).setValues([[
+    'Telefone', 'Etapa (vazio = Agendado)', 'Exame', 'Valor (R$)', 'Resultado'
+  ]]).setFontWeight('bold').setBackground('#e8eaed');
+  aba.getRange(2, 1).setNote(
+    'Cole aqui os telefones de quem agendou, um por linha. Qualquer formato ' +
+    'serve: (12) 99999-9999, +55 12 99999-9999 ou 5512999999999.'
+  );
+  aba.setColumnWidth(1, 180);
+  aba.setColumnWidth(2, 200);
+  aba.setColumnWidth(5, 420);
+  aba.setFrozenRows(1);
+  ss.toast('Cole os telefones na aba ' + ABA_AGENDAMENTOS + ' e rode "Atualizar status pelos telefones".');
+}
+
+/**
+ * Casa os telefones da aba Agendamentos com os leads e atualiza o status.
+ *
+ * Quando o mesmo telefone tem varios leads (a pessoa preencheu o formulario
+ * mais de uma vez), atualiza o MAIS RECENTE e marca os anteriores como
+ * Duplicado. Contar tres leads da mesma pessoa como tres agendamentos
+ * inflaria a taxa exatamente no numero que ela existe para medir.
+ *
+ * Nunca sobrescreve em silencio um status ja preenchido a mao com algo
+ * diferente de Novo nas linhas antigas: quem digitou sabia de algo que este
+ * script nao sabe.
+ */
+function atualizarStatusPorTelefone() {
+  var ss = SpreadsheetApp.getActive();
+  var leads = ss.getSheetByName(ABA_LEADS);
+  var entrada = ss.getSheetByName(ABA_AGENDAMENTOS);
+  if (!leads) throw new Error('Aba "' + ABA_LEADS + '" nao encontrada.');
+  if (!entrada) throw new Error('Rode "Preparar aba de agendamentos" primeiro.');
+  if (leads.getMaxColumns() < COL_VALOR) throw new Error('Rode configurarStatus() primeiro.');
+
+  var ultimaLead = leads.getLastRow();
+  if (ultimaLead < 2) { ss.toast('Nao ha leads.'); return; }
+
+  // Indice dos leads por telefone. A ordem das linhas e cronologica (o
+  // doPost sempre acrescenta no fim), entao a ultima linha de um telefone e
+  // sempre o contato mais recente dele.
+  var telefones = leads.getRange(2, 3, ultimaLead - 1, 1).getValues();
+  var porCheia = {};
+  var porCurta = {};
+  for (var i = 0; i < telefones.length; i++) {
+    var k = chavesTelefone(telefones[i][0]);
+    if (!k) continue;
+    var linha = i + 2;
+    (porCheia[k.cheia] = porCheia[k.cheia] || []).push(linha);
+    (porCurta[k.curta] = porCurta[k.curta] || []).push(linha);
+  }
+
+  var ultimaEntrada = entrada.getLastRow();
+  if (ultimaEntrada < 2) { ss.toast('Nenhum telefone na aba ' + ABA_AGENDAMENTOS + '.'); return; }
+  var pedidos = entrada.getRange(2, 1, ultimaEntrada - 1, 4).getValues();
+
+  var agora = new Date();
+  var resultados = [];
+  var atualizados = 0, semLead = 0, ambiguos = 0;
+
+  for (var p = 0; p < pedidos.length; p++) {
+    var bruto = pedidos[p][0];
+    if (!bruto && bruto !== 0) { resultados.push(['']); continue; }
+
+    var chave = chavesTelefone(bruto);
+    if (!chave) { resultados.push(['telefone invalido']); semLead++; continue; }
+
+    var candidatos = porCheia[chave.cheia];
+    if (!candidatos) {
+      var porOito = porCurta[chave.curta];
+      if (!porOito) {
+        resultados.push(['sem lead correspondente — agendou sem passar pelo site']);
+        semLead++;
+        continue;
+      }
+      // A chave curta ignora o nono digito e pode confundir fixo com celular.
+      // Com mais de um candidato nao ha como decidir sem chutar.
+      var distintas = {};
+      for (var c = 0; c < porOito.length; c++) {
+        var kk = chavesTelefone(telefones[porOito[c] - 2][0]);
+        if (kk) distintas[kk.cheia] = true;
+      }
+      if (Object.keys(distintas).length > 1) {
+        resultados.push(['ambiguo: mais de um numero diferente casa pelos 8 digitos — confira a mao']);
+        ambiguos++;
+        continue;
+      }
+      candidatos = porOito;
+    }
+
+    var alvo = candidatos[candidatos.length - 1];
+    var etapa = String(pedidos[p][1] || '').trim() || 'Agendado';
+    if (ETAPAS.indexOf(etapa) === -1) {
+      resultados.push(['etapa "' + etapa + '" nao existe na lista']);
+      continue;
+    }
+
+    leads.getRange(alvo, COL_STATUS).setValue(etapa);
+    leads.getRange(alvo, COL_DATA_STATUS).setValue(agora);
+    if (pedidos[p][2]) leads.getRange(alvo, COL_EXAME).setValue(pedidos[p][2]);
+    if (pedidos[p][3] !== '' && pedidos[p][3] != null) {
+      leads.getRange(alvo, COL_VALOR).setValue(pedidos[p][3]);
+    }
+    atualizados++;
+
+    var anteriores = 0;
+    for (var a = 0; a < candidatos.length - 1; a++) {
+      var linhaAntiga = candidatos[a];
+      if (String(leads.getRange(linhaAntiga, COL_STATUS).getValue() || '').trim() === 'Novo') {
+        leads.getRange(linhaAntiga, COL_STATUS).setValue('Duplicado');
+        leads.getRange(linhaAntiga, COL_DATA_STATUS).setValue(agora);
+        anteriores++;
+      }
+    }
+
+    resultados.push([
+      'linha ' + alvo + ' -> ' + etapa +
+      (anteriores ? ' (' + anteriores + ' anterior(es) marcada(s) como Duplicado)' : '')
+    ]);
+  }
+
+  entrada.getRange(2, 5, resultados.length, 1).setValues(resultados);
+  SpreadsheetApp.getUi().alert(
+    'Status atualizado\n\n' +
+    atualizados + ' lead(s) atualizado(s)\n' +
+    semLead + ' telefone(s) sem lead no site\n' +
+    ambiguos + ' ambiguo(s), conferir a mao\n\n' +
+    'A coluna Resultado da aba ' + ABA_AGENDAMENTOS + ' detalha linha a linha.\n\n' +
+    'Telefone sem lead nao e erro: e paciente que agendou sem passar pelo ' +
+    'site. Esse numero mede quanto da demanda o site nao explica.'
+  );
 }
