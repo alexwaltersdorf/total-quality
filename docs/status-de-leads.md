@@ -115,33 +115,75 @@ porta, ligou de um número que não é o do formulário. Esse número mede quant
 demanda o site não explica, e é uma das informações mais úteis que a planilha
 produz.
 
-## Por que a lista entra por fora
+## Por que a lista entra por fora — e por quanto tempo ainda
 
-Porque a conversa do WhatsApp não passa por lugar nenhum que este código
-alcance. O site abre `wa.me` e entrega a conversa ao aparelho da clínica:
+> **Correção de 21/09/2026.** A versão anterior deste documento afirmava que
+> "a conversa do WhatsApp não passa por lugar nenhum" e que o `gclid` não era
+> capturado. **As duas afirmações estavam erradas**, e o erro foi meu: verifiquei
+> o repositório do site e o MySQL dele, não encontrei nada, e concluí que não
+> existia — quando o que eu podia afirmar era apenas que *não existia no site*.
+> O conector do N8N estava desconectado e eu não disse que estava olhando com
+> meio sistema fora do alcance.
 
-- **não há API de WhatsApp** no site — nenhuma Cloud API, Evolution, Z-API,
-  Twilio, Baileys ou equivalente;
-- **não há tabela de mensagens** no banco. As 15 tabelas são users, contacts,
-  leads, sessions, pageViews, videoViews, analyticsEvents, blogViews,
-  conversions, tags, leadTags, adAccountCredentials, campaignMetrics e
-  autoSeoArticles;
-- a tabela `conversions` registra que alguém **clicou** para conversar
-  (`whatsapp_click`, `form_submit`, `phone_call`), nunca o que foi conversado.
+**Existe uma stack de WhatsApp completa no N8N**, e ela está viva:
 
-Quem sabe que o paciente agendou é a pessoa que atendeu. Para o sistema saber,
-alguém precisa contar a ele — hoje colando a lista, amanhã por integração. O
-motor de comparação é o mesmo nos dois casos.
+| Workflow | Estado | Execuções |
+|---|---|---|
+| ANA-01 — Atendimento WhatsApp (Evolution API) | ativo | **6.421** |
+| ANA-02 — Follow-up Carinhoso | ativo | — |
+| ANA-03 — Resumo Diário | ativo | — |
+| ANA-04 — Auditoria de Atendimento (IA) | ativo | — |
+| ANA-05 — Sincronizar Agendamentos do Google Agenda | ativo | — |
+| ANA-06 — Confirmação de exame na véspera | ativo | — |
+| **ADS-01** — Captura de clique WhatsApp com `gclid` | ativo | **1** |
+| **ADS-02** — Conversões offline → Google Ads | **desligado** | 0 |
+
+As conversas ficam num **Postgres** próprio, em `ana_leads`, e quem agendou está
+em `ana_leads.agendamento->>'status' = 'confirmado'`, com `agendado_em` e
+`exames`. O `gclid` está em `ana_ads_clicks`, alimentado pelo ADS-01 a partir
+do GTM — não do código do site, que por isso não mostrava nada.
+
+### O elo quebrado
+
+**O ADS-01 rodou uma única vez, em 14/09 às 12:44**, o dia em que foi criado.
+Nunca mais recebeu nada. Ele espera do GTM o código `TQ-XXXXX` de cada clique
+de WhatsApp com `gclid` e UTMs; **essa tag nunca passou a enviar**.
+
+A consequência é em cadeia: sem cliques em `ana_ads_clicks`, o ADS-02 não tem
+o que mandar — por isso está desligado — e o Google Ads nunca recebe "exame
+agendado", continuando a otimizar por volume de lead.
+
+O ADS-02, aliás, está bem construído: deduplica por `transactionId`, tenta de
+novo até 5 vezes, respeita janela de 90 dias, calcula o valor somando os exames
+e classifica o que não envia (`sem_gclid`, `expirada`, `substituida`,
+`agendou_antes`). Não falta código. Falta ligar a ponta de cima.
+
+### Então por quanto tempo a colagem manual faz sentido
+
+Até o ADS-01 voltar a receber e a planilha passar a ser espelhada de
+`ana_leads`. A colagem é uma ponte enquanto a fonte de verdade existe mas não
+chega aqui — não é o desenho final. O motor de comparação de telefone continua
+valendo nos dois casos: é ele que liga um lead do site a um telefone do
+WhatsApp, venha a lista de onde vier.
 
 ## O que este status ainda NÃO faz
 
 Ele mede, mas não **ensina** as plataformas de anúncio. Para o Google Ads
 otimizar por paciente atendido em vez de por lead, ele precisa receber de volta
-a conversão offline amarrada ao clique que a originou — e isso exige o
-**`gclid`**, que o site **não captura hoje**.
+a conversão offline amarrada ao clique que a originou.
 
-Hoje guardamos o `_fbc` (clique do Meta, gravado pelo próprio pixel) e nenhum
-identificador de clique do Google. Enquanto for assim, a coluna de status é um
-relatório para a gestão, não um sinal para o leilão. Capturar o `gclid` é uma
-mudança pequena no site e uma coluna a mais aqui; é o passo que transforma este
-preenchimento em otimização de campanha.
+O caminho para isso **já está construído** (ADS-01 → `ana_ads_clicks` → ADS-02
+→ Data Manager API). O que falta não é código:
+
+1. **A tag do GTM que alimenta o ADS-01.** Sem ela não há `gclid` novo, e todo
+   o resto fica sem matéria-prima.
+2. **A ação de conversão no Google Ads** — "Exame agendado (WhatsApp)", do tipo
+   Importar › Cliques — e o `ads_conversion_action_id` correspondente em
+   `ana_config`, junto de `ads_customer_id` (9207153288).
+3. **Uma credencial Google OAuth2** com escopo
+   `https://www.googleapis.com/auth/datamanager`, num projeto com a Data Manager
+   API ativada, autorizada por quem tem acesso à conta 920-715-3288.
+4. **Ligar o ADS-02**, que hoje está desativado.
+
+Enquanto os quatro não estiverem de pé, a coluna de status é relatório para a
+gestão, não sinal para o leilão.
