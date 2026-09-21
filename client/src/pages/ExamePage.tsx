@@ -4,8 +4,8 @@
  * Page: Dynamic Exam Page (reusable for all exams)
  */
 import { useEffect, useRef, useMemo, lazy, Suspense } from "react";
-import { trackScheduleExam, trackPhoneClick } from "@/lib/tracking";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { trackScheduleExam } from "@/lib/tracking";
+import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 import { ArrowUpRight, ChevronRight, CheckCircle } from "lucide-react";
 import { useParams, useLocation, Link } from "wouter";
 import Navbar from "@/components/Navbar";
@@ -25,6 +25,7 @@ const CATEGORY_BACKGROUNDS: Record<ExamData["category"], string> = {
 
 export default function ExamePage() {
   const openWhatsApp = useWhatsAppRedirect();
+  const abrirTelefone = useTelefoneRedirect();
   const params = useParams<{ slug: string }>();
   const [, navigate] = useLocation();
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -138,9 +139,9 @@ export default function ExamePage() {
                 {exam.category === "laboratorio" ? "Consultar preparo e orçamento" : "Agendar pelo WhatsApp"}
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
-              <a href="tel:+551238873535" onClick={() => trackPhoneClick("exame_topo")} className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">
+              <button type="button" onClick={() => abrirTelefone("exame_topo")} className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">
                 Ligar: (12) 3887-3535
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -344,9 +345,9 @@ export default function ExamePage() {
               {exam.category === "laboratorio" ? "Tirar dúvidas no WhatsApp" : "Agendar pelo WhatsApp"}
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
-            <a href="tel:+551238873535" onClick={() => trackPhoneClick("exame_rodape")} className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">
+            <button type="button" onClick={() => abrirTelefone("exame_rodape")} className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">
               Ligar: (12) 3887-3535
-            </a>
+            </button>
           </div>
         </div>
       </section>

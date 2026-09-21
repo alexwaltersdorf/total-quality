@@ -7,7 +7,7 @@ import { ArrowUpRight, CheckCircle, Award, Users, Microscope, MapPin, Clock } fr
 import { Link } from "wouter";
 import { trackScheduleExam } from "@/lib/tracking";
 import { anosDeAtuacao } from "@shared/const";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
 const diferenciais = [
   {

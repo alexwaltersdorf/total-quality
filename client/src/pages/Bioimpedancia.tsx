@@ -4,8 +4,8 @@
  * Page: Bioimpedância
  */
 import { useEffect, useRef } from "react";
-import { trackScheduleBioimpedancia, trackPhoneClick } from "@/lib/tracking";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { trackScheduleBioimpedancia } from "@/lib/tracking";
+import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 import { ArrowUpRight, ArrowLeft, Zap, TrendingUp, Droplets, Bone, Flame, Scale, Target, Users, BarChart3 } from "lucide-react";
 import { Link } from "wouter";
 import Navbar from "@/components/Navbar";
@@ -41,6 +41,7 @@ const faqs = [
 
 export default function Bioimpedancia() {
   const openWhatsApp = useWhatsAppRedirect();
+  const abrirTelefone = useTelefoneRedirect();
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -310,9 +311,9 @@ export default function Bioimpedancia() {
                   Agendar pelo WhatsApp
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </button>
-                <a href="tel:+551238873535" onClick={() => trackPhoneClick("bioimpedancia_cta")} className="btn-pill bg-transparent !text-white border border-white/30 hover:!bg-white/10">
+                <button type="button" onClick={() => abrirTelefone("bioimpedancia_cta")} className="btn-pill bg-transparent !text-white border border-white/30 hover:!bg-white/10">
                   (12) 3887-3535
-                </a>
+                </button>
               </div>
             </div>
             <div className="reveal-right">

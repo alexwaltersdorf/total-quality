@@ -24,13 +24,14 @@ const toast = {
   error: (msg: string) => import("sonner").then((m) => m.toast.error(msg)),
 };
 import { trpc } from "@/lib/trpc";
-import { trackFormStart, trackFormSubmit, trackPhoneClick, trackWhatsAppClick, trackExternalLink, trackMapInteraction } from "@/lib/tracking";
+import { trackFormStart, trackFormSubmit, trackWhatsAppClick, trackExternalLink, trackMapInteraction } from "@/lib/tracking";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 import { storeLeadHandoff } from "@/lib/leadHandoff";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
 export default function ContatoSection() {
   const openWhatsApp = useWhatsAppRedirect();
+  const abrirTelefone = useTelefoneRedirect();
   const [formData, setFormData] = useState({
     nome: "",
     telefone: "",
@@ -186,9 +187,13 @@ export default function ContatoSection() {
                     <span className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted">Telefones</span>
                   </div>
                   <div className="space-y-3">
-                    <a href="tel:+551238873535" className="flex items-center justify-center px-6 py-3 bg-[#4A4A4A] text-white rounded-full hover:bg-[#3A3A3A] transition-colors font-semibold text-center" onClick={() => trackPhoneClick("contato_section")}>
+                    <button
+                      type="button"
+                      className="flex items-center justify-center w-full px-6 py-3 bg-[#4A4A4A] text-white rounded-full hover:bg-[#3A3A3A] transition-colors font-semibold text-center"
+                      onClick={() => abrirTelefone("contato_section")}
+                    >
                       LIGAR: (12) 3887-3535
-                    </a>
+                    </button>
                     <button
                       type="button"
                       className="flex items-center justify-center px-6 py-3 bg-[#25D366] text-white rounded-full hover:bg-[#1da851] transition-colors font-semibold text-center"

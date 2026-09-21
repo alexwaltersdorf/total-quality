@@ -210,7 +210,8 @@ export async function trackWhatsAppConversionWithLead(
 export async function trackLeadQualificado(
   source: string,
   examType: string,
-  contato: { email?: string; telefone?: string }
+  contato: { email?: string; telefone?: string },
+  canal: "whatsapp" | "telefone" = "whatsapp"
 ): Promise<string> {
   const eventId = novoEventId();
   const userData = await buildUserData(contato);
@@ -219,6 +220,11 @@ export async function trackLeadQualificado(
     event_category: "conversion",
     event_label: "formulario_qualificacao",
     lead_source: source,
+    // Desde 21/09/2026 o formulario tambem antecede a ligacao. O NOME do
+    // evento continua sendo um so (briefing de 02/08, com guard-rail): quem
+    // precisar separar ligacao de conversa usa este parametro como dimensao,
+    // em vez de um evento novo que exigiria refazer as conversoes no Ads.
+    lead_channel: canal,
     exam_type: examType,
     currency: "BRL",
     value: resolveLeadValue(source, examType),

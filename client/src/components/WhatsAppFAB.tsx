@@ -5,7 +5,7 @@
 import { useState, useEffect } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { trackCtaClick, trackWhatsAppClick } from "@/lib/tracking";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
 export default function WhatsAppFAB({ laboratory = false }: { laboratory?: boolean }) {
   const openWhatsApp = useWhatsAppRedirect();

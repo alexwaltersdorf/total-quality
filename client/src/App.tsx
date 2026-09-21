@@ -4,7 +4,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { usePageViewTracking } from "@/hooks/usePageViewTracking";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { WhatsAppLeadProvider } from "./contexts/WhatsAppLeadContext";
+import { ContatoLeadProvider } from "./contexts/ContatoLeadContext";
 import Home from "./pages/Home";
 
 // Rotas secundarias em lazy loading: cada pagina vira um chunk proprio,
@@ -89,13 +89,13 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
-        <WhatsAppLeadProvider>
+        <ContatoLeadProvider>
           <DeferredToaster />
           <Suspense fallback={null}>
             <CookieConsent />
           </Suspense>
           <Router />
-        </WhatsAppLeadProvider>
+        </ContatoLeadProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

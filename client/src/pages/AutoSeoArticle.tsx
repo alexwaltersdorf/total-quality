@@ -5,7 +5,7 @@
  */
 import { useEffect, useMemo } from "react";
 import { trackWhatsAppConversion } from "@/lib/tracking";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, ArrowUpRight, Clock, Calendar, Share2, Loader2 } from "lucide-react";
 import { trpc } from "@/lib/trpc";

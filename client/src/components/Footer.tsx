@@ -4,8 +4,8 @@
  */
 import { Phone, MessageCircle, Instagram, MapPin, ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
-import { trackScheduleExam, trackPhoneClick, trackWhatsAppClick, trackExternalLink } from "@/lib/tracking";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { trackScheduleExam, trackWhatsAppClick, trackExternalLink } from "@/lib/tracking";
+import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
 const footerLinks = [
   { label: "Início", href: "#inicio" },
@@ -33,6 +33,7 @@ const examSitelinks = [
 
 export default function Footer({ laboratory = false }: { laboratory?: boolean }) {
   const openWhatsApp = useWhatsAppRedirect();
+  const abrirTelefone = useTelefoneRedirect();
   const scrollTo = (href: string) => {
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: "smooth" });
@@ -124,10 +125,14 @@ export default function Footer({ laboratory = false }: { laboratory?: boolean })
                   CEP 11660-010
                 </p>
               </div>
-              <a href="tel:+551238873535" className="flex items-center gap-3 text-text-light hover:text-brand text-sm transition-colors" onClick={() => trackPhoneClick("footer")}>
+              <button
+                type="button"
+                className="flex items-center gap-3 text-text-light hover:text-brand text-sm transition-colors"
+                onClick={() => abrirTelefone("footer")}
+              >
                 <Phone className="w-4 h-4 text-brand" />
                 (12) 3887-3535
-              </a>
+              </button>
               <button
                 type="button"
                 className="flex items-center gap-3 text-text-light hover:text-brand text-sm transition-colors"

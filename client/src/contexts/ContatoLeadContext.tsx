@@ -1,21 +1,26 @@
 /*
- * Formulario de qualificacao que antecede todo clique de WhatsApp do site.
+ * Formulario de qualificacao que antecede TODO pedido de contato do site:
+ * WhatsApp e ligacao telefonica.
  *
  * Um unico provider global (montado no App.tsx) evita repetir o modal em cada
- * um dos ~15 pontos de clique: qualquer componente chama useWhatsAppRedirect()
- * e recebe a funcao que abre o formulario, monta a mensagem final e so entao
- * abre o WhatsApp — o clique em si (trackWhatsAppClick / trackScheduleExam)
- * continua disparando antes disso, sem mudanca no GTM.
+ * um dos ~25 pontos de clique: o componente chama useWhatsAppRedirect() ou
+ * useTelefoneRedirect(), recebe a funcao que abre o formulario, e so depois do
+ * envio o paciente sai para a conversa ou para o discador.
  *
- * HISTORICO. Ate 14/09/2026 pedia so o nome. Passou a pedir nome, telefone e
- * e-mail a pedido do Alex (20/09), para o lead chegar qualificado ao banco e
- * as plataformas de anuncio.
+ * HISTORICO. Ate 14/09/2026 o fluxo pedia so o nome, e so no WhatsApp. Em
+ * 20/09 passou a pedir nome, telefone e e-mail. Em 21/09, a pedido do Alex,
+ * passou a valer tambem para os botoes de ligacao — ate entao metade dos
+ * pedidos de contato saia do site sem deixar registro, porque um
+ * <a href=tel:...> entrega o numero ao sistema operacional e a clinica so
+ * descobre o lead se a chamada completar e alguem anotar.
  *
- * ATENCAO AO CUSTO. Tres campos obrigatorios antes do WhatsApp e mais atrito
- * que um, e atrito no caminho principal de conversao do site custa lead. Se os
- * numeros piorarem, a mudanca e de uma linha: `CAMPOS_OBRIGATORIOS` abaixo
- * define o que trava o envio. Deixar telefone e e-mail opcionais mantem a
- * captura de quem quiser preencher sem barrar quem nao quiser.
+ * ATENCAO AO CUSTO, E ELE E MAIOR NO TELEFONE. Tres campos obrigatorios antes
+ * do WhatsApp ja eram atrito; antes de uma ligacao sao mais, porque quem toca
+ * em "Ligar" no celular espera o discador abrir na hora. As duas valvulas de
+ * escape estao logo abaixo e valem uma linha cada:
+ *   - CAMPOS_OBRIGATORIOS  -> o que trava o envio;
+ *   - CANAIS_QUALIFICADOS  -> onde o formulario aparece. Tirar "telefone"
+ *     devolve o discador imediato e mantem o WhatsApp qualificado.
  *
  * ONDE OS DADOS VAO (nesta ordem, e nenhuma etapa derruba a seguinte):
  *   1. dataLayer -> GTM -> GA4, Google Ads e Meta, com contato so em hash
@@ -30,6 +35,7 @@ import {
   useCallback,
   useContext,
   useId,
+  useMemo,
   useRef,
   useState,
   type FormEvent,
@@ -39,6 +45,7 @@ import { X } from "lucide-react";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 import {
   trackLeadQualificado,
+  trackPhoneClick,
   trackWhatsAppModalOpen,
   trackWhatsAppRedirectRequested,
 } from "@/lib/tracking";
@@ -47,6 +54,56 @@ import { examTypeAtual } from "@/lib/pageContext";
 import { resolveLeadValue } from "@/lib/leadValues";
 
 const WHATSAPP_NUMBER = "551238873535";
+
+/**
+ * Mesmo numero, no formato que o discador entende. NAO e exportado de
+ * proposito: se qualquer componente pudesse importar a constante, poderia
+ * discar por fora do formulario sem que o guard-rail percebesse.
+ */
+const TELEFONE_HREF = "tel:+551238873535";
+
+export type Canal = "whatsapp" | "telefone";
+
+/**
+ * Marca de passagem pelo formulario, usada so pelo par /ligar ->
+ * /obrigado-chamada. A pagina que disca tem URL propria e seria um desvio
+ * trivial do formulario se bastasse abri-la; a marca fecha essa porta.
+ *
+ * Vale para UMA discagem e some ao ser lida — assim voltar para a pagina pelo
+ * historico nao disca de novo. Fica em sessionStorage, que nao sai da aba nem
+ * vira dado nosso: e controle de navegacao, nao medicao (a copia de eventos no
+ * navegador foi removida em set/2026 e ha guard-rail contra a volta dela).
+ */
+const CHAVE_LIGACAO = "tq_ligacao_qualificada";
+
+export const MARCA_LIGACAO_QUALIFICADA = {
+  marcar() {
+    try {
+      sessionStorage.setItem(CHAVE_LIGACAO, "1");
+    } catch {
+      // Navegacao anonima com storage bloqueado: sem marca, a pagina de
+      // discagem pede o formulario de novo. Pedir duas vezes e melhor que
+      // deixar passar sem lead.
+    }
+  },
+  consumir(): boolean {
+    try {
+      const marcada = sessionStorage.getItem(CHAVE_LIGACAO) === "1";
+      if (marcada) sessionStorage.removeItem(CHAVE_LIGACAO);
+      return marcada;
+    } catch {
+      return false;
+    }
+  },
+};
+
+/**
+ * Canais que passam pelo formulario. Tirar um daqui devolve o comportamento
+ * antigo (sair direto) sem mexer em nenhum ponto de clique.
+ */
+const CANAIS_QUALIFICADOS: readonly Canal[] = ["whatsapp", "telefone"];
+
+const canalQualificado = (canal: Canal) => CANAIS_QUALIFICADOS.includes(canal);
 
 /**
  * O que barra o envio. Tirar "telefone" e/ou "email" daqui transforma o campo
@@ -59,15 +116,55 @@ type Campo = "nome" | "telefone" | "email";
 const obrigatorio = (campo: Campo) =>
   (CAMPOS_OBRIGATORIOS as readonly string[]).includes(campo);
 
-interface PendingRedirect {
+/** Texto e cor do modal por canal. So muda a casca; o fluxo e o mesmo. */
+const COPY: Record<Canal, {
+  titulo: string;
+  subtitulo: string;
+  acao: string;
+  acaoCarregando: string;
+  classeBotao: string;
+}> = {
+  whatsapp: {
+    titulo: "Antes de continuar...",
+    subtitulo: "Assim conseguimos retornar mesmo se a conversa cair.",
+    acao: "Continuar para o WhatsApp",
+    acaoCarregando: "Abrindo...",
+    classeBotao: "bg-[#25D366] hover:bg-[#1da851]",
+  },
+  telefone: {
+    titulo: "Antes de ligar...",
+    subtitulo: "Assim conseguimos retornar se a ligação não completar.",
+    acao: "Continuar para a ligação",
+    acaoCarregando: "Chamando...",
+    classeBotao: "bg-brand hover:bg-brand-dark",
+  },
+};
+
+interface PendingContato {
+  canal: Canal;
+  /** Origem ja prefixada (ver abrirTelefone): e o que chega ao banco. */
   source: string;
-  message: string;
-  flowId: string;
+  /** So no WhatsApp: a mensagem que sera pre-preenchida na conversa. */
+  message?: string;
+  /** So no WhatsApp: liga o modal_open ao redirect_requested. */
+  flowId?: string;
+  /**
+   * So no telefone: substitui a discagem no fim do fluxo. Existe para a rota
+   * /ligar, que precisa passar por /obrigado-chamada antes de discar — e essa
+   * URL pode ser gatilho de conversao no GTM.
+   */
+  aposEnviar?: () => void;
 }
 
-type OpenWhatsApp = (source: string, message: string) => void;
+type AbrirWhatsApp = (source: string, message: string) => void;
+type AbrirTelefone = (source: string, aposEnviar?: () => void) => void;
 
-const WhatsAppLeadContext = createContext<OpenWhatsApp | undefined>(undefined);
+interface ContatoLead {
+  abrirWhatsApp: AbrirWhatsApp;
+  abrirTelefone: AbrirTelefone;
+}
+
+const ContatoLeadContext = createContext<ContatoLead | undefined>(undefined);
 
 /**
  * Insere "Meu nome é X" logo apos a saudacao, para a mensagem continuar
@@ -79,6 +176,28 @@ function buildMessageWithName(name: string, message: string): string {
     return message.replace(/^olá!?\s*/i, `Olá! Meu nome é ${trimmed}. `);
   }
   return `Meu nome é ${trimmed}. ${message}`;
+}
+
+/**
+ * Nova aba, sempre: tirar o paciente do site encerra a sessao e derruba a
+ * atribuicao. O trackWhatsAppRedirectRequested de quem chama fica logo acima.
+ */
+function abrirConversa(message: string) {
+  window.open(
+    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
+    "_blank",
+    "noopener,noreferrer"
+  );
+}
+
+/**
+ * Mesma aba, de proposito e ao contrario do WhatsApp: tel: nao abre aba
+ * nenhuma — entrega o numero ao discador do sistema e a pagina continua onde
+ * estava. Um window.open aqui deixaria uma aba em branco para tras no desktop
+ * e e ignorado pelo Safari no iOS.
+ */
+function abrirDiscador() {
+  window.location.href = TELEFONE_HREF;
 }
 
 /** (12) 98765-4321 — formata enquanto a pessoa digita, sem travar o apagar. */
@@ -118,8 +237,8 @@ function validar(nome: string, telefone: string, email: string): Erros {
   return erros;
 }
 
-export function WhatsAppLeadProvider({ children }: { children: ReactNode }) {
-  const [pending, setPending] = useState<PendingRedirect | null>(null);
+export function ContatoLeadProvider({ children }: { children: ReactNode }) {
+  const [pending, setPending] = useState<PendingContato | null>(null);
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [email, setEmail] = useState("");
@@ -128,15 +247,52 @@ export function WhatsAppLeadProvider({ children }: { children: ReactNode }) {
   const submitLock = useRef(false);
   const idBase = useId();
 
-  const openWhatsApp = useCallback<OpenWhatsApp>((source, message) => {
+  const limpar = useCallback(() => {
     setNome("");
     setTelefone("");
     setEmail("");
     setErros({});
     setSubmitting(false);
     submitLock.current = false;
-    setPending({ source, message, flowId: trackWhatsAppModalOpen(source) });
   }, []);
+
+  const abrirWhatsApp = useCallback<AbrirWhatsApp>(
+    (source, message) => {
+      if (!canalQualificado("whatsapp")) {
+        trackWhatsAppRedirectRequested(source, "sem_qualificacao");
+        abrirConversa(message);
+        return;
+      }
+      limpar();
+      setPending({
+        canal: "whatsapp",
+        source,
+        message,
+        flowId: trackWhatsAppModalOpen(source),
+      });
+    },
+    [limpar]
+  );
+
+  const abrirTelefone = useCallback<AbrirTelefone>(
+    (source, aposEnviar) => {
+      /*
+       * O phone_click sai no mesmo instante em que saia quando isto era um
+       * <a href=tel:...>: a serie do GTM nao tem descontinuidade, e a origem
+       * continua sendo a mesma string de antes ("footer", "checkup_topo"...).
+       */
+      trackPhoneClick(source);
+      if (!canalQualificado("telefone")) {
+        (aposEnviar ?? abrirDiscador)();
+        return;
+      }
+      limpar();
+      // Prefixo so no lead: separa no banco e na planilha quem pediu ligacao
+      // de quem pediu conversa, sem renomear a origem que o GTM ja conhece.
+      setPending({ canal: "telefone", source: `telefone_${source}`, aposEnviar });
+    },
+    [limpar]
+  );
 
   const close = useCallback(() => {
     setPending(null);
@@ -169,10 +325,12 @@ export function WhatsAppLeadProvider({ children }: { children: ReactNode }) {
        */
       let eventId: string | undefined;
       try {
-        eventId = await trackLeadQualificado(pending.source, examType, {
-          email: emailLimpo,
-          telefone: telefoneLimpo,
-        });
+        eventId = await trackLeadQualificado(
+          pending.source,
+          examType,
+          { email: emailLimpo, telefone: telefoneLimpo },
+          pending.canal
+        );
       } catch {
         eventId = undefined;
       }
@@ -187,6 +345,7 @@ export function WhatsAppLeadProvider({ children }: { children: ReactNode }) {
               eventId,
               examType,
               value: resolveLeadValue(pending.source, examType),
+              leadChannel: pending.canal,
               clientId: readGaClientId(),
               fbc,
               fbp,
@@ -196,14 +355,12 @@ export function WhatsAppLeadProvider({ children }: { children: ReactNode }) {
           : undefined
       );
 
-      const finalMessage = buildMessageWithName(nomeLimpo, pending.message);
-      trackWhatsAppRedirectRequested(pending.source, pending.flowId);
-      // Nova aba: o paciente continua com o site aberto atras da conversa.
-      window.open(
-        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(finalMessage)}`,
-        "_blank",
-        "noopener,noreferrer"
-      );
+      if (pending.canal === "telefone") {
+        (pending.aposEnviar ?? abrirDiscador)();
+      } else {
+        trackWhatsAppRedirectRequested(pending.source, pending.flowId ?? "");
+        abrirConversa(buildMessageWithName(nomeLimpo, pending.message ?? ""));
+      }
 
       close();
     },
@@ -215,10 +372,16 @@ export function WhatsAppLeadProvider({ children }: { children: ReactNode }) {
       erros[campo] ? "border-red-500" : "border-gray-300"
     }`;
 
+  const valor = useMemo<ContatoLead>(
+    () => ({ abrirWhatsApp, abrirTelefone }),
+    [abrirWhatsApp, abrirTelefone]
+  );
+  const copy = pending ? COPY[pending.canal] : null;
+
   return (
-    <WhatsAppLeadContext.Provider value={openWhatsApp}>
+    <ContatoLeadContext.Provider value={valor}>
       {children}
-      {pending && (
+      {pending && copy && (
         <div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4"
           onClick={close}
@@ -232,7 +395,7 @@ export function WhatsAppLeadProvider({ children }: { children: ReactNode }) {
           >
             <div className="flex items-start justify-between mb-1 gap-3">
               <h2 id={`${idBase}-titulo`} className="text-lg font-bold text-text-light">
-                Antes de continuar...
+                {copy.titulo}
               </h2>
               <button
                 type="button"
@@ -243,9 +406,7 @@ export function WhatsAppLeadProvider({ children }: { children: ReactNode }) {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-sm text-text-light/80 mb-4">
-              Assim conseguimos retornar mesmo se a conversa cair.
-            </p>
+            <p className="text-sm text-text-light/80 mb-4">{copy.subtitulo}</p>
 
             <form onSubmit={handleSubmit} noValidate>
               <div className="mb-3">
@@ -332,9 +493,9 @@ export function WhatsAppLeadProvider({ children }: { children: ReactNode }) {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full bg-[#25D366] hover:bg-[#1da851] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold uppercase tracking-wider py-3 rounded-lg transition-colors"
+                className={`w-full ${copy.classeBotao} disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold uppercase tracking-wider py-3 rounded-lg transition-colors`}
               >
-                {submitting ? "Abrindo..." : "Continuar para o WhatsApp"}
+                {submitting ? copy.acaoCarregando : copy.acao}
               </button>
               <p className="text-[11px] leading-snug text-text-light/60 mt-3">
                 Usamos seus dados apenas para retornar o contato. Nada é publicado
@@ -344,15 +505,24 @@ export function WhatsAppLeadProvider({ children }: { children: ReactNode }) {
           </div>
         </div>
       )}
-    </WhatsAppLeadContext.Provider>
+    </ContatoLeadContext.Provider>
   );
 }
 
-/** Retorna a funcao para abrir o fluxo de WhatsApp com qualificacao do lead. */
-export function useWhatsAppRedirect(): OpenWhatsApp {
-  const ctx = useContext(WhatsAppLeadContext);
+function useContatoLead(hook: string): ContatoLead {
+  const ctx = useContext(ContatoLeadContext);
   if (!ctx) {
-    throw new Error("useWhatsAppRedirect deve ser usado dentro de WhatsAppLeadProvider");
+    throw new Error(`${hook} deve ser usado dentro de ContatoLeadProvider`);
   }
   return ctx;
+}
+
+/** Abre o formulario e, no envio, leva a conversa do WhatsApp. */
+export function useWhatsAppRedirect(): AbrirWhatsApp {
+  return useContatoLead("useWhatsAppRedirect").abrirWhatsApp;
+}
+
+/** Abre o formulario e, no envio, entrega o numero ao discador. */
+export function useTelefoneRedirect(): AbrirTelefone {
+  return useContatoLead("useTelefoneRedirect").abrirTelefone;
 }

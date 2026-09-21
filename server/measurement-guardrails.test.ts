@@ -61,7 +61,7 @@ describe("guardrails de mensuracao", () => {
     expect(tracking).toMatch(/trackLeadQualificado[\s\S]{0,400}Promise<string>/);
     expect(tracking).toMatch(/const eventId = novoEventId\(\)/);
 
-    const contexto = source("client/src/contexts/WhatsAppLeadContext.tsx");
+    const contexto = source("client/src/contexts/ContatoLeadContext.tsx");
     expect(contexto).toContain("await trackLeadQualificado(");
     expect(contexto).toContain("eventId,");
 

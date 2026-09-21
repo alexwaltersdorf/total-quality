@@ -5,7 +5,7 @@
  */
 import { useState, useEffect } from "react";
 import { trackWhatsAppConversion } from "@/lib/tracking";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 import { Link } from "wouter";
 import { ArrowUpRight, ArrowLeft, Clock, Search } from "lucide-react";
 import { blogPosts, blogCategories, parseBlogDate, type BlogPostMeta } from "@/lib/blogData";

@@ -12,8 +12,8 @@ import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
-import { trackScheduleExam, trackPhoneClick } from "@/lib/tracking";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { trackScheduleExam } from "@/lib/tracking";
+import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
 
 /*
@@ -72,6 +72,7 @@ const convenios = [
 
 export default function LaboratorioCaraguatatuba() {
   const openWhatsApp = useWhatsAppRedirect();
+  const abrirTelefone = useTelefoneRedirect();
   const scrollRef = useScrollReveal();
 
   useEffect(() => {
@@ -144,14 +145,14 @@ export default function LaboratorioCaraguatatuba() {
                     Agendar Exame
                     <ArrowUpRight className="w-3.5 h-3.5" />
                   </button>
-                  <a
-                    href="tel:+551238873535"
-                    onClick={() => trackPhoneClick("landing_lab_hero")}
+                  <button
+                    type="button"
+                    onClick={() => abrirTelefone("landing_lab_hero")}
                     className="btn-pill !bg-transparent !text-text border border-black/15 hover:!bg-black/5"
                   >
                     <Phone className="w-3.5 h-3.5" />
                     (12) 3887-3535
-                  </a>
+                  </button>
                 </div>
               </div>
 
@@ -293,7 +294,7 @@ export default function LaboratorioCaraguatatuba() {
                       <Phone className="w-5 h-5 text-brand flex-shrink-0 mt-0.5" />
                       <div>
                         <p className="font-medium text-text">Telefone e WhatsApp</p>
-                        <a href="tel:+551238873535" onClick={() => trackPhoneClick("landing_lab_contato")} className="text-brand hover:underline">(12) 3887-3535</a>
+                        <button type="button" onClick={() => abrirTelefone("landing_lab_contato")} className="text-brand hover:underline text-left">(12) 3887-3535</button>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
@@ -419,14 +420,14 @@ export default function LaboratorioCaraguatatuba() {
                 Agendar pelo WhatsApp
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
-              <a
-                href="tel:+551238873535"
-                onClick={() => trackPhoneClick("landing_lab_cta")}
+              <button
+                type="button"
+                onClick={() => abrirTelefone("landing_lab_cta")}
                 className="btn-pill !bg-transparent !text-white border border-white/30 hover:!bg-white/10"
               >
                 <Phone className="w-3.5 h-3.5" />
                 (12) 3887-3535
-              </a>
+              </button>
             </div>
           </div>
         </section>

@@ -109,6 +109,17 @@ export default function Privacidade() {
                 consentimento e solicitar a portabilidade. Para exercer qualquer um deles, fale
                 com a gente:
               </p>
+              {/*
+                UNICA EXCECAO, junto de ThankYouCall, ao formulario de
+                qualificacao que antecede todo contato do site (21/09/2026).
+                Este e o canal para exercer os direitos do titular, e a LGPD
+                manda que o pedido seja facilitado (art. 18) e que nao se
+                colete dado alem do necessario para a finalidade (art. 6, III).
+                Exigir nome, telefone e e-mail de quem esta ligando justamente
+                para pedir a EXCLUSAO dos seus dados e o contrario das duas
+                regras. Ha guard-rail em server/seo-content.test.ts que permite
+                o tel: aqui e proibe em qualquer outro CTA.
+              */}
               <address className="not-italic mt-3">
                 Telefone: <a className="text-brand" href="tel:+551238873535" onClick={() => trackPhoneClick("privacidade")}>(12) 3887-3535</a>
                 <br />

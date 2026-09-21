@@ -1,32 +1,57 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "wouter";
-import { trackPhoneClick } from "@/lib/tracking";
+import { MARCA_LIGACAO_QUALIFICADA, useTelefoneRedirect } from "@/contexts/ContatoLeadContext";
 
 /**
- * Página de redirecionamento para chamada telefônica
- * Rota: /ligar
- * Redireciona para: /obrigado-chamada (página de agradecimento)
- * Depois a página de agradecimento redireciona para: tel:+551238873535
+ * Rota /ligar — porta de entrada para pedidos de ligacao que vem de FORA do
+ * site (extensao de chamada do Google Ads, perfil do Google, links avulsos).
+ * Nenhuma pagina do site aponta para ca.
  *
- * Fluxo: Clique em "Ligar" → /ligar → /obrigado-chamada (3s) → tel:+551238873535
- * Uso: <a href="/ligar">Ligar</a>
+ * Ate 21/09/2026 esta pagina apenas redirecionava e o numero ia direto para o
+ * discador, sem deixar lead nenhum. Agora abre o mesmo formulario de
+ * qualificacao dos demais botoes de telefone; com o formulario enviado, segue
+ * para /obrigado-chamada, que e quem disca.
+ *
+ * O salto por /obrigado-chamada foi mantido de proposito: essa URL pode estar
+ * cadastrada como gatilho de conversao no GTM, e tirar o salto apagaria a
+ * conversao sem aviso.
  */
 export default function CallRedirect() {
   const [, setLocation] = useLocation();
+  const abrirTelefone = useTelefoneRedirect();
+  const jaAbriu = useRef(false);
+
+  const seguir = () => {
+    MARCA_LIGACAO_QUALIFICADA.marcar();
+    setLocation("/obrigado-chamada");
+  };
 
   useEffect(() => {
-    // Track o clique em "Ligar"
-    trackPhoneClick("call_redirect_page");
-
-    // Redirecionar para página de agradecimento (que depois redireciona para tel:)
-    setLocation("/obrigado-chamada");
-  }, [setLocation]);
+    // O StrictMode monta duas vezes em desenvolvimento; sem a trava o
+    // phone_click sairia duplicado.
+    if (jaAbriu.current) return;
+    jaAbriu.current = true;
+    abrirTelefone("call_redirect_page", () => {
+      MARCA_LIGACAO_QUALIFICADA.marcar();
+      setLocation("/obrigado-chamada");
+    });
+  }, [abrirTelefone, setLocation]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
-      <div className="text-center">
+      <div className="text-center px-4">
         <p className="text-lg text-gray-600 mb-4">Preparando chamada...</p>
-        <p className="text-sm text-gray-500">Se não funcionar, clique aqui: <a href="tel:+551238873535" onClick={() => trackPhoneClick("ligar_fallback")} className="text-brand underline">+55 (12) 3887-3535</a></p>
+        <p className="text-sm text-gray-500">
+          Se o formulário não abrir,{" "}
+          <button
+            type="button"
+            onClick={() => abrirTelefone("ligar_fallback", seguir)}
+            className="text-brand underline"
+          >
+            clique aqui
+          </button>
+          .
+        </p>
       </div>
     </div>
   );

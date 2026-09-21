@@ -4,8 +4,8 @@
  * Page: Check-Up Preventivo
  */
 import { useEffect, useRef } from "react";
-import { trackScheduleCheckup, trackPhoneClick } from "@/lib/tracking";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { trackScheduleCheckup } from "@/lib/tracking";
+import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 import { ArrowUpRight, Heart, Shield, Activity, Clock, CheckCircle, Stethoscope, FlaskConical, Brain } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -105,6 +105,7 @@ const processSteps = [
 
 export default function CheckUp() {
   const openWhatsApp = useWhatsAppRedirect();
+  const abrirTelefone = useTelefoneRedirect();
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -172,9 +173,9 @@ export default function CheckUp() {
                 Agendar Check-Up
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
-              <a href="tel:+551238873535" onClick={() => trackPhoneClick("checkup_topo")} className="btn-pill bg-transparent !text-text border border-black/20 hover:!bg-black/5">
+              <button type="button" onClick={() => abrirTelefone("checkup_topo")} className="btn-pill bg-transparent !text-text border border-black/20 hover:!bg-black/5">
                 Ligar: (12) 3887-3535
-              </a>
+              </button>
             </div>
           </div>
           <div className="reveal-right">
@@ -324,9 +325,9 @@ export default function CheckUp() {
               Agendar pelo WhatsApp
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
-            <a href="tel:+551238873535" onClick={() => trackPhoneClick("checkup_rodape")} className="btn-pill bg-transparent text-white border border-white/30 hover:bg-white/10">
+            <button type="button" onClick={() => abrirTelefone("checkup_rodape")} className="btn-pill bg-transparent text-white border border-white/30 hover:bg-white/10">
               Ligar: (12) 3887-3535
-            </a>
+            </button>
           </div>
         </div>
       </section>

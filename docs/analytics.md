@@ -39,9 +39,41 @@ alguém reintroduzir `fbq(`, `ttq.` ou `gtag('config'`.
 
 ## Formulário de qualificação de leads (20/09/2026)
 
-Todo clique de WhatsApp do site passa antes por um formulário que pede **nome,
-telefone e e-mail** (`client/src/contexts/WhatsAppLeadContext.tsx`). Até 14/09
-ele pedia só o nome.
+Todo pedido de contato do site — **WhatsApp e ligação telefônica** — passa antes
+por um formulário que pede **nome, telefone e e-mail**
+(`client/src/contexts/ContatoLeadContext.tsx`). Até 14/09 ele pedia só o nome, e
+só no WhatsApp; o telefone entrou em 21/09.
+
+**Por que o telefone entrou.** Um `<a href=tel:…>` entrega o número ao discador
+do sistema operacional e termina ali: a clínica só descobre o lead se a chamada
+completar e alguém anotar. Metade dos pedidos de contato do site saía assim, sem
+registro, sem valor de lead e sem conversão. Agora os dois canais produzem o
+mesmo lead, com o mesmo formulário e os mesmos três caminhos abaixo.
+
+**Um evento, uma dimensão.** O evento de conversão continua sendo um só
+(`whatsapp_click`, briefing de 02/08, com guard-rail). Quem precisa separar
+ligação de conversa usa o parâmetro **`lead_channel`** (`whatsapp` | `telefone`),
+que viaja no dataLayer e no GA4 Measurement Protocol. Criar um evento novo
+obrigaria a refazer as conversões no Ads e no Meta. No banco, o lead de telefone
+chega com `source` prefixado por `telefone_` e `conversionType = phone_call`.
+
+**Duas exceções ao formulário**, e só estas duas:
+
+- `pages/Privacidade.tsx` — canal para exercer os direitos do titular. A LGPD
+  manda facilitar o pedido (art. 18) e não coletar além do necessário
+  (art. 6, III); exigir cadastro de quem liga justamente para pedir a exclusão
+  dos seus dados seria o contrário das duas regras.
+- `pages/ThankYouCall.tsx` (`/obrigado-chamada`) — a página que de fato disca, no
+  fim do fluxo. Quem chega nela **sem** ter passado pelo formulário não disca:
+  recebe o formulário. O salto `/ligar → /obrigado-chamada` foi mantido porque
+  essa URL pode estar cadastrada como gatilho de conversão no GTM.
+
+**As duas válvulas de escape**, no topo do contexto, valem uma linha cada:
+`CAMPOS_OBRIGATORIOS` define o que trava o envio e `CANAIS_QUALIFICADOS` define
+onde o formulário aparece. Tirar `"telefone"` da segunda devolve o discador
+imediato e mantém o WhatsApp qualificado — o atrito antes de uma ligação é maior
+que antes de uma conversa, porque quem toca em "Ligar" no celular espera o
+discador abrir na hora.
 
 Cada envio percorre **três caminhos independentes** — nenhum derruba o seguinte:
 

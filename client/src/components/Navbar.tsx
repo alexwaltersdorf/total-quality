@@ -7,8 +7,8 @@ import { useState, useEffect, useRef } from "react";
 import type { MouseEvent as ReactMouseEvent } from "react";
 import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { trackNavClick, trackScheduleExam, trackResultsClick, trackPhoneClick, trackWhatsAppClick } from "@/lib/tracking";
-import { useWhatsAppRedirect } from "@/contexts/WhatsAppLeadContext";
+import { trackNavClick, trackScheduleExam, trackResultsClick, trackWhatsAppClick } from "@/lib/tracking";
+import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
 const navLinks = [
   { label: "Início", href: "/" },
@@ -41,6 +41,7 @@ const examSitelinks = [
 
 export default function Navbar() {
   const openWhatsApp = useWhatsAppRedirect();
+  const abrirTelefone = useTelefoneRedirect();
   const [location] = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -99,8 +100,7 @@ export default function Navbar() {
 
   const handlePhoneClickNavbar = () => {
     setMobileOpen(false);
-    trackPhoneClick("navbar");
-    window.location.href = 'tel:+551238873535';
+    abrirTelefone("navbar");
   };
 
   const handleScheduleClick = handleScheduleClickNavbar;
@@ -375,13 +375,13 @@ export default function Navbar() {
           <div className="mt-10 text-xs text-text-muted space-y-1">
             <p>R. Padre Anchieta, 1010 - Centro, Caraguatatuba - SP</p>
             <p>Seg-Sex: 07h30 às 18h</p>
-            <a
-              href="tel:+551238873535"
-              className="block hover:text-brand"
-              onClick={() => trackPhoneClick("mobile_menu")}
+            <button
+              type="button"
+              className="block text-left hover:text-brand"
+              onClick={() => { setMobileOpen(false); abrirTelefone("mobile_menu"); }}
             >
               (12) 3887-3535
-            </a>
+            </button>
           </div>
         </div>
       </div>
