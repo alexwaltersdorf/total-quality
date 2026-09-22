@@ -42,6 +42,7 @@ import {
   type ReactNode,
 } from "react";
 import { X } from "lucide-react";
+import { gerarCodigoTQ, registrarCliqueWhatsApp } from "@/lib/adsClickTracker";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 import {
   trackLeadQualificado,
@@ -179,12 +180,28 @@ function buildMessageWithName(name: string, message: string): string {
 }
 
 /**
+ * Acrescenta o codigo TQ-XXXXX que liga esta conversa ao clique no anuncio.
+ *
+ * Só acrescenta se o beacon do ADS-01 tiver mesmo sido enviado — ou seja, se
+ * VITE_ADS_CLICK_WEBHOOK_URL estiver configurada. Sem o webhook no ar o codigo
+ * nao liga coisa nenhuma, e seria apenas uma sigla estranha na frente de quem
+ * quer marcar um exame. Uma variavel de ambiente liga e desliga tudo, e
+ * enquanto ela nao existe a mensagem sai exatamente como sai hoje.
+ *
+ * Ver docs/gclid-e-conversoes-offline.md.
+ */
+function mensagemComCodigo(message: string, source: string): string {
+  const codigo = gerarCodigoTQ();
+  return registrarCliqueWhatsApp(codigo, source) ? `${message}\n\n[${codigo}]` : message;
+}
+
+/**
  * Nova aba, sempre: tirar o paciente do site encerra a sessao e derruba a
  * atribuicao. O trackWhatsAppRedirectRequested de quem chama fica logo acima.
  */
-function abrirConversa(message: string) {
+function abrirConversa(message: string, source: string) {
   window.open(
-    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
+    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemComCodigo(message, source))}`,
     "_blank",
     "noopener,noreferrer"
   );
@@ -260,7 +277,7 @@ export function ContatoLeadProvider({ children }: { children: ReactNode }) {
     (source, message) => {
       if (!canalQualificado("whatsapp")) {
         trackWhatsAppRedirectRequested(source, "sem_qualificacao");
-        abrirConversa(message);
+        abrirConversa(message, source);
         return;
       }
       limpar();
@@ -359,7 +376,7 @@ export function ContatoLeadProvider({ children }: { children: ReactNode }) {
         (pending.aposEnviar ?? abrirDiscador)();
       } else {
         trackWhatsAppRedirectRequested(pending.source, pending.flowId ?? "");
-        abrirConversa(buildMessageWithName(nomeLimpo, pending.message ?? ""));
+        abrirConversa(buildMessageWithName(nomeLimpo, pending.message ?? ""), pending.source);
       }
 
       close();
