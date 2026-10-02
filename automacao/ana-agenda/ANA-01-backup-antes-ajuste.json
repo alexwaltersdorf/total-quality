@@ -726,7 +726,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT COALESCE((SELECT valor FROM ana_config WHERE chave = 'system_prompt'), 'Você é a Ana, atendente virtual da Total Quality Medicina Diagnóstica (Caraguatatuba/SP). MODO DE EMERGÊNCIA: o system prompt completo não foi encontrado no banco. Responda com acolhimento, não invente informações, preços ou horários; diga que vai confirmar com a equipe. Finalize com ###DADOS### em linha única contendo {\"temperatura\":\"morno\",\"funil\":\"meio\",\"consciencia\":null,\"intencao\":\"outro\",\"exames_mencionados\":[],\"convenio\":null,\"agendamento\":{\"status\":\"nenhum\",\"data\":null,\"turno\":null},\"opt_out\":false,\"proxima_acao\":\"aguardar_resposta\",\"escalar\":true,\"motivo_escalada\":\"system prompt ausente em ana_config\",\"resumo_interno\":\"\"}') AS valor;",
+        "query": "SELECT COALESCE((SELECT valor FROM ana_config WHERE chave = 'system_prompt'), 'Você é a Ana, atendente da Total Quality Medicina Diagnóstica (Caraguatatuba/SP). MODO DE EMERGÊNCIA: o system prompt completo não foi encontrado no banco. Responda com acolhimento, não invente informações, preços ou horários; diga que vai confirmar com a equipe. Finalize com ###DADOS### em linha única contendo {\"temperatura\":\"morno\",\"funil\":\"meio\",\"consciencia\":null,\"intencao\":\"outro\",\"exames_mencionados\":[],\"convenio\":null,\"agendamento\":{\"status\":\"nenhum\",\"data\":null,\"turno\":null},\"opt_out\":false,\"proxima_acao\":\"aguardar_resposta\",\"escalar\":true,\"motivo_escalada\":\"system prompt ausente em ana_config\",\"resumo_interno\":\"\"}') AS valor;",
         "options": {}
       },
       "name": "Carregar System Prompt",
@@ -2497,7 +2497,7 @@
       {
         "parameters": {
           "operation": "executeQuery",
-          "query": "SELECT COALESCE((SELECT valor FROM ana_config WHERE chave = 'system_prompt'), 'Você é a Ana, atendente virtual da Total Quality Medicina Diagnóstica (Caraguatatuba/SP). MODO DE EMERGÊNCIA: o system prompt completo não foi encontrado no banco. Responda com acolhimento, não invente informações, preços ou horários; diga que vai confirmar com a equipe. Finalize com ###DADOS### em linha única contendo {\"temperatura\":\"morno\",\"funil\":\"meio\",\"consciencia\":null,\"intencao\":\"outro\",\"exames_mencionados\":[],\"convenio\":null,\"agendamento\":{\"status\":\"nenhum\",\"data\":null,\"turno\":null},\"opt_out\":false,\"proxima_acao\":\"aguardar_resposta\",\"escalar\":true,\"motivo_escalada\":\"system prompt ausente em ana_config\",\"resumo_interno\":\"\"}') AS valor;",
+          "query": "SELECT COALESCE((SELECT valor FROM ana_config WHERE chave = 'system_prompt'), 'Você é a Ana, atendente da Total Quality Medicina Diagnóstica (Caraguatatuba/SP). MODO DE EMERGÊNCIA: o system prompt completo não foi encontrado no banco. Responda com acolhimento, não invente informações, preços ou horários; diga que vai confirmar com a equipe. Finalize com ###DADOS### em linha única contendo {\"temperatura\":\"morno\",\"funil\":\"meio\",\"consciencia\":null,\"intencao\":\"outro\",\"exames_mencionados\":[],\"convenio\":null,\"agendamento\":{\"status\":\"nenhum\",\"data\":null,\"turno\":null},\"opt_out\":false,\"proxima_acao\":\"aguardar_resposta\",\"escalar\":true,\"motivo_escalada\":\"system prompt ausente em ana_config\",\"resumo_interno\":\"\"}') AS valor;",
           "options": {}
         },
         "name": "Carregar System Prompt",
