@@ -1,0 +1,65 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Total Quality Medicina Diagnostica//Modelo Agenda//PT-BR
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Modelo de preenchimento - Total Quality
+BEGIN:VEVENT
+UID:tq-modelo-guia-2026@totalquality.med.br
+DTSTAMP:20260821T120000Z
+DTSTART;VALUE=DATE:20260822
+DTEND;VALUE=DATE:20260823
+SUMMARY:[TESTE] LEIA PRIMEIRO - Como preencher a agenda
+DESCRIPTION:MODELO OFICIAL DE PREENCHIMENTO DA AGENDA — Total Quality\n\n
+ Os dois eventos abaixo (09:00 e 10:30) mostram o CERTO e o ERRADO.\nA auto
+ macao da Ana le esta agenda a cada 15 minutos e so consegue confirmar\no e
+ xame com o paciente quando o evento estiver preenchido do jeito certo.\n\n
+ REGRA 1 — O BLOCO DEVE ESTAR NA HORA REAL DO EXAME.\nA hora escrita no t
+ itulo tem que ser a MESMA hora do bloco no calendario.\nHoje 69% dos event
+ os estao com hora diferente (ja teve 09h00 no titulo com\no bloco marcado 
+ as 21:00).\n\nREGRA 2 — TITULO NO PADRAO: HH:MM - NOME COMPLETO - EXAME\
+ nExemplo: 09:00 - Maria Aparecida da Silva - USG ABDOMEN TOTAL\n\nREGRA 3 
+ — A DESCRICAO PRECISA TER A LINHA DO WHATSAPP.\nEscreva assim\, em uma l
+ inha so\, com DDD:\nWhatsApp: (12) 99123-4567\nSem essa linha a Ana NAO co
+ nsegue avisar o paciente. Hoje faltam 35 de 90.\n\nREGRA 4 — UM DADO POR
+  LINHA\, COM O NOME DO CAMPO NA FRENTE.\nPaciente / WhatsApp / CPF / Nasci
+ mento / CEP / Exame / Pagamento / Obs.\nSem o rotulo\, o sistema ja confun
+ diu CPF com telefone.\n\nREGRA 5 — TELEFONE COMPLETO. Celular tem 11 dig
+ itos com o DDD:\n(12) 9XXXX-XXXX. Faltando um digito\, a Ana descarta por 
+ seguranca.\n\nDEPOIS DE LER\, PODE APAGAR ESTES 3 EVENTOS DE TESTE.
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:tq-modelo-certo-2026@totalquality.med.br
+DTSTAMP:20260821T120000Z
+DTSTART;TZID=America/Sao_Paulo:20260822T090000
+DTEND;TZID=America/Sao_Paulo:20260822T093000
+SUMMARY:09:00 - Maria Aparecida da Silva - USG ABDOMEN TOTAL
+DESCRIPTION:Paciente: Maria Aparecida da Silva\nWhatsApp: (12) 99123-4567\n
+ CPF: 123.456.789-00\nNascimento: 15/03/1985\nCEP: 11660-000\nExame: Ultras
+ sonografia de abdomen total\nPagamento: PIX a vista - R$ 135\,00 (10% desc
+ .)\nObs: trouxe pedido medico\n\n--- POR QUE ESTE ESTA CERTO ---\n- Bloco 
+ marcado as 09:00\, igual a hora do titulo.\n- Titulo no padrao HH:MM - NOM
+ E COMPLETO - EXAME.\n- Linha "WhatsApp:" com DDD e os 9 digitos.\n- Um dad
+ o por linha\, cada um com o nome do campo.\n=> A Ana confirma este exame s
+ ozinha na vespera\, as 09:00.
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:tq-modelo-errado-2026@totalquality.med.br
+DTSTAMP:20260821T120000Z
+DTSTART;TZID=America/Sao_Paulo:20260822T103000
+DTEND;TZID=America/Sao_Paulo:20260822T110000
+SUMMARY:[TESTE - MODELO ERRADO] 9h maria usg
+DESCRIPTION:maria\n987654321\n9h\n\n--- POR QUE ESTE ESTA ERRADO ---\n1. O 
+ titulo diz 09h mas o bloco esta as 10:30 (hora errada na confirmacao).\n2.
+  Nao tem a linha "WhatsApp:" - a Ana nao sabe para quem escrever.\n3. O nu
+ mero 987654321 esta sem DDD e sem rotulo - pode ser CPF\, pode ser\n   tel
+ efone. O sistema descarta.\n4. "maria" nao identifica a paciente.\n=> Este
+  exame NAO entra na confirmacao automatica.
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR
