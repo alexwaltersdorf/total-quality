@@ -386,6 +386,58 @@ const blogMetadata: Record<string, RouteMetadata> = {
     priority: 0.7,
     changefreq: "monthly",
   },
+
+  // SEO local da regiao sul (out/2026). O termo "laboratorio em Caraguatatuba"
+  // pertence a /laboratorio-caraguatatuba; estes artigos atacam a cauda longa
+  // dos bairros do sul (Pereque-Mirim, Travessao, Porto Novo, Morro do
+  // Algodao), que nenhuma pagina do site disputava.
+  "laboratorio-regiao-sul-caraguatatuba": {
+    title: "Laboratório na Região Sul de Caraguatatuba | Total Quality",
+    description: "Perequê-Mirim, Travessão, Porto Novo ou Morro do Algodão: como escolher laboratório na região sul de Caraguatatuba e o que conferir antes.",
+    keywords: "laboratório região sul Caraguatatuba, laboratório Perequê-Mirim, laboratório Travessão, exame de sangue Porto Novo, análises clínicas Morro do Algodão, coleta domiciliar Caraguatatuba",
+    ogTitle: "Laboratório na Região Sul de Caraguatatuba",
+    ogDescription: "Quais bairros formam o sul da cidade, o que a distância muda no preparo do exame e seis pontos para conferir antes de escolher.",
+    ogImage: "https://totalquality.med.br/images/fachada-1024.webp",
+    canonical: "https://totalquality.med.br/blog/laboratorio-regiao-sul-caraguatatuba",
+    priority: 0.8,
+    changefreq: "monthly",
+  },
+
+  "como-escolher-laboratorio-analises-clinicas": {
+    title: "Como Escolher um Laboratório: 8 Critérios Técnicos",
+    description: "Licença sanitária, responsável técnico, controle externo de qualidade e prazo por exame: os 8 critérios que mostram se um laboratório é confiável.",
+    keywords: "como escolher laboratório, laboratório confiável, controle de qualidade análises clínicas, RDC 302 Anvisa, responsável técnico laboratório, PNCQ ControlLab",
+    ogTitle: "Como Escolher um Laboratório de Análises Clínicas",
+    ogDescription: "Oito critérios verificáveis que dizem mais sobre o seu resultado do que marca, fachada ou preço.",
+    ogImage: "https://totalquality.med.br/images/laboratorio-1024.webp",
+    canonical: "https://totalquality.med.br/blog/como-escolher-laboratorio-analises-clinicas",
+    priority: 0.7,
+    changefreq: "monthly",
+  },
+
+  "resultado-de-exames-online-seguranca": {
+    title: "Resultado de Exames Online: Acesso Seguro e LGPD",
+    description: "Como acessar seu resultado de exames online com segurança, quem pode recebê-lo e o que a LGPD garante sobre o seu dado sensível de saúde.",
+    keywords: "resultado de exames online, resultado de exames Caraguatatuba, LGPD saúde, dado sensível de saúde, sigilo de resultado de exame",
+    ogTitle: "Resultado de Exames Online: Como Acessar com Segurança",
+    ogDescription: "Quem pode receber, o que a LGPD garante e por que o laudo nunca vai para um grupo de mensagens.",
+    ogImage: "https://totalquality.med.br/images/recepcao-1024.webp",
+    canonical: "https://totalquality.med.br/blog/resultado-de-exames-online-seguranca",
+    priority: 0.7,
+    changefreq: "monthly",
+  },
+
+  "exame-de-urina-eas-como-coletar": {
+    title: "Exame de Urina (EAS): Como Coletar Corretamente",
+    description: "Para que serve o EAS, como coletar o jato médio da primeira urina da manhã e os cinco erros que fazem repetir o exame. Guia prático de preparo.",
+    keywords: "exame de urina, EAS, urina tipo 1, como coletar urina, jato médio, urocultura, urina de 24 horas, preparo exame de urina",
+    ogTitle: "Exame de Urina (EAS): Para Que Serve e Como Coletar",
+    ogDescription: "O passo a passo correto da coleta e os cinco erros que mais fazem repetir o exame.",
+    ogImage: "https://totalquality.med.br/images/laboratorio-1024.webp",
+    canonical: "https://totalquality.med.br/blog/exame-de-urina-eas-como-coletar",
+    priority: 0.7,
+    changefreq: "monthly",
+  },
 };
 
 // Rotas estáticas principais
