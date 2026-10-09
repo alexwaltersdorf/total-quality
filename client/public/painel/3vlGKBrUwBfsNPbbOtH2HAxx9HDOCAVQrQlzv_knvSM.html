@@ -100,7 +100,9 @@ td.n{font-family:var(--dados);font-variant-numeric:tabular-nums;white-space:nowr
 .atalhos{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
 button{background:var(--fundo);color:var(--tinta-fraca);border:1px solid var(--borda-forte);
        border-radius:999px;padding:6px 13px;font-size:13px;font-family:var(--ui);cursor:pointer;font-weight:600}
-button:hover:not(:disabled){border-color:var(--acento);color:var(--acento)}
+/* o hover nao pode valer no botao ja marcado: tem especificidade maior que
+   button[aria-pressed] e pintava texto do acento sobre fundo do acento */
+button:hover:not(:disabled):not([aria-pressed="true"]){border-color:var(--acento);color:var(--acento)}
 button:disabled{opacity:.55;cursor:default}
 button[aria-pressed="true"]{background:var(--acento);border-color:var(--acento);color:var(--acento-tinta)}
 :where(a,button,input,select):focus-visible{outline:2px solid var(--acento);outline-offset:2px}
@@ -128,6 +130,7 @@ button[aria-pressed="true"]{background:var(--acento);border-color:var(--acento);
   <label for="de">De<input type="date" id="de" disabled></label>
   <label for="ate">Até<input type="date" id="ate" disabled></label>
   <div class="atalhos">
+    <button type="button" data-d="hoje" title="Recalcula e mostra so o dia de hoje" disabled>Hoje</button>
     <button type="button" data-d="7" disabled>7 dias</button>
     <button type="button" data-d="30" disabled>30 dias</button>
     <button type="button" data-d="60" disabled>60 dias</button>
@@ -188,6 +191,11 @@ function somaDias(d) {                      // d = 0 significa tudo
   return [iso(ini) < DMIN ? DMIN : iso(ini), DMAX];
 }
 const dentro = (dia, a, b) => dia >= a && dia <= b;
+// data de hoje no fuso de quem abre a pagina, em YYYY-MM-DD
+const hojeISO = () => {
+  const d = new Date();
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+};
 
 function tempoCurto(s) {
   if (s < 60) return Math.round(s) + 's';
@@ -224,9 +232,16 @@ function pintar() {
                         + ' (' + dias + ' dia' + (dias === 1 ? '' : 's') + ')';
 
   if (!topo) {
-    el('lead').textContent = 'Nenhuma conversa iniciada nesse período.';
-    el('heroi').innerHTML = '<div class="big">—</div><div class="txt">Escolha outro intervalo.</div>';
-    el('cxFunil').innerHTML = '<div class="vazio">Sem conversas no período escolhido.</div>';
+    const ehHoje = a === b && a === hojeISO();
+    el('lead').textContent = ehHoje
+      ? 'Ainda não houve conversa iniciada hoje.'
+      : 'Nenhuma conversa iniciada nesse período.';
+    el('heroi').innerHTML = '<div class="big">—</div><div class="txt">'
+      + (ehHoje ? 'Os números aparecem assim que o primeiro paciente chamar.'
+                : 'Escolha outro intervalo.') + '</div>';
+    el('cxFunil').innerHTML = '<div class="vazio">'
+      + (ehHoje ? 'Nenhuma conversa iniciada hoje até agora.'
+                : 'Sem conversas no período escolhido.') + '</div>';
   } else {
     const porAg = f[4] ? ((topo - f[4]) / f[4]).toFixed(1).replace('.', ',') : '—';
     el('lead').innerHTML = 'De cada 100 pessoas que chamam no WhatsApp, <b>'
@@ -319,7 +334,7 @@ function pintarTravas() {
 
 function marcar(d) {
   document.querySelectorAll('.atalhos button[data-d]').forEach(b =>
-    b.setAttribute('aria-pressed', +b.dataset.d === d ? 'true' : 'false'));
+    b.setAttribute('aria-pressed', b.dataset.d === String(d) ? 'true' : 'false'));
 }
 function habilitar(on) {
   document.querySelectorAll('.filtro button, .filtro input').forEach(c => { c.disabled = !on; });
@@ -343,7 +358,8 @@ async function carregar(recalcular) {
 
     DMIN = D.funil[0][0];
     DMAX = D.funil[D.funil.length - 1][0];
-    ['de', 'ate'].forEach(id => { el(id).min = DMIN; el(id).max = DMAX; });
+    const teto = hojeISO() > DMAX ? hojeISO() : DMAX;
+    ['de', 'ate'].forEach(id => { el(id).min = DMIN; el(id).max = teto; });
 
     const manteve = el('de').value && el('ate').value;
     if (!manteve) {
@@ -364,10 +380,20 @@ async function carregar(recalcular) {
 }
 
 document.querySelectorAll('.atalhos button[data-d]').forEach(b =>
-  b.addEventListener('click', () => {
-    const [i, f] = somaDias(+b.dataset.d);
+  b.addEventListener('click', async () => {
+    const k = b.dataset.d;
+    if (k === 'hoje') {
+      const h = hojeISO();
+      el('de').value = h; el('ate').value = h;
+      marcar('hoje');
+      // o cache e das 00:03, entao o dia corrente so aparece recalculando
+      el('refrescar').textContent = 'Atualizando...';
+      await carregar(true);
+      return;
+    }
+    const [i, f] = somaDias(+k);
     el('de').value = i; el('ate').value = f;
-    marcar(+b.dataset.d); pintar();
+    marcar(k); pintar();
   }));
 ['de', 'ate'].forEach(id => el(id).addEventListener('change', () => { marcar(-1); pintar(); }));
 el('refrescar').addEventListener('click', () => {
