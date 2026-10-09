@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Jornada do Paciente</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: coluna unica de 900px, seções separadas por regra fina e rótulo em caixa alta.
+   Mesma identidade dos outros relatórios da Total Quality: verde-petróleo sobre
+   neutros levemente esverdeados, números em monoespaçada tabular. */
+:root{
+  --fundo:#f5f7f6; --papel:#ffffff; --tinta:#13201d; --tinta-fraca:#5a6d68;
+  --borda:#e0e6e4; --borda-forte:#c8d3d0;
+  --acento:#0d5247; --acento-fundo:#e6f1ee; --acento-tinta:#ffffff; --trilho:#eceeed;
+  --ok:#0a6340; --ok-fundo:#e2f3ea;
+  --alerta:#7d5100; --alerta-fundo:#fcefd9;
+  --grave:#8a2f22; --grave-fundo:#fbe9e5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --dados:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  --fundo:#0f1513; --papel:#19211f; --tinta:#e9efed; --tinta-fraca:#9bafaa;
+  --borda:#26302d; --borda-forte:#36433f;
+  --acento:#73d2bd; --acento-fundo:#15302b; --acento-tinta:#0f1513; --trilho:#232d2a;
+  --ok:#74d3a4; --ok-fundo:#14301f;
+  --alerta:#e4bf79; --alerta-fundo:#2f2715;
+  --grave:#e8a08f; --grave-fundo:#33201c;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --fundo:#0f1513; --papel:#19211f; --tinta:#e9efed; --tinta-fraca:#9bafaa;
+  --borda:#26302d; --borda-forte:#36433f;
+  --acento:#73d2bd; --acento-fundo:#15302b; --acento-tinta:#0f1513; --trilho:#232d2a;
+  --ok:#74d3a4; --ok-fundo:#14301f;
+  --alerta:#e4bf79; --alerta-fundo:#2f2715;
+  --grave:#e8a08f; --grave-fundo:#33201c;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--tinta);font-family:var(--ui);
+     font-size:15px;line-height:1.55;-webkit-text-size-adjust:100%}
+.pag{max-width:900px;margin:0 auto;padding-inline:18px;padding-block:32px 72px}
+h1{font-size:clamp(24px,4.4vw,33px);font-weight:700;letter-spacing:-.023em;margin:0 0 6px;text-wrap:balance}
+.sub{color:var(--tinta-fraca);font-size:13.5px;margin:0 0 26px}
+h2{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--tinta-fraca);
+   font-weight:700;margin:40px 0 14px;padding-bottom:7px;border-bottom:1px solid var(--borda)}
+p{margin:0 0 13px} p:last-child{margin-bottom:0}
+.lead{font-size:17px;line-height:1.6;margin-bottom:26px;text-wrap:pretty}
+.lead b{color:var(--acento)}
+.heroi{background:var(--papel);border:1px solid var(--borda);border-radius:13px;
+       padding:20px 22px;display:flex;gap:26px;align-items:baseline;flex-wrap:wrap}
+.heroi .big{font-family:var(--dados);font-size:46px;font-weight:500;letter-spacing:-.03em;
+            line-height:1;color:var(--acento);font-variant-numeric:tabular-nums}
+.heroi .txt{flex:1 1 240px;min-width:0;color:var(--tinta-fraca);font-size:14px}
+.heroi .txt b{color:var(--tinta)}
+.funil{background:var(--papel);border:1px solid var(--borda);border-radius:13px;padding:20px 22px}
+.etapa{margin-bottom:4px}
+.etapa .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:5px}
+.etapa .rot{font-size:13.5px;font-weight:600}
+.etapa .num{font-family:var(--dados);font-size:14px;font-variant-numeric:tabular-nums;color:var(--tinta-fraca)}
+.etapa .num b{color:var(--tinta);font-weight:500;font-size:16px}
+.barra-tr{height:16px;background:var(--trilho);border-radius:4px;overflow:hidden}
+.barra{height:100%;background:var(--acento);border-radius:4px}
+.queda{font-size:12.5px;color:var(--alerta);margin:7px 0 13px;font-weight:600}
+.queda.leve{color:var(--tinta-fraca);font-weight:500}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px}
+.t{background:var(--papel);border:1px solid var(--borda);border-radius:11px;padding:14px 16px}
+.t .v{font-family:var(--dados);font-size:25px;font-weight:500;letter-spacing:-.02em;
+      font-variant-numeric:tabular-nums;line-height:1.15}
+.t .l{font-size:11px;color:var(--tinta-fraca);text-transform:uppercase;letter-spacing:.07em;
+      margin-top:3px;font-weight:600}
+.t .obs{font-size:12.5px;color:var(--tinta-fraca);margin-top:7px;line-height:1.45}
+.quadro{background:var(--papel);border:1px solid var(--borda);border-radius:11px;overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{text-align:left;padding:11px 15px;border-bottom:1px solid var(--borda);vertical-align:top}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--tinta-fraca);font-weight:700}
+tbody tr:last-child td{border-bottom:none}
+td.n{font-family:var(--dados);font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:500}
+.sel{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.s-ok{background:var(--ok-fundo);color:var(--ok)}
+.s-at{background:var(--alerta-fundo);color:var(--alerta)}
+.s-gr{background:var(--grave-fundo);color:var(--grave)}
+.dem{background:var(--papel);border:1px solid var(--borda);border-radius:13px;padding:20px 22px}
+.dlinha{display:grid;grid-template-columns:minmax(110px,210px) 1fr auto;gap:12px;align-items:center;
+        margin-bottom:9px}
+.dlinha:last-child{margin-bottom:0}
+.dlinha .r{font-size:13.5px;min-width:0}
+.dlinha .tr{display:block;height:13px;background:var(--trilho);border-radius:3px;overflow:hidden;min-width:0}
+.dlinha .b{display:block;height:13px;background:var(--acento);border-radius:3px}
+.dlinha .v{font-family:var(--dados);font-size:13.5px;font-variant-numeric:tabular-nums;min-width:26px;text-align:right}
+.filtro{background:var(--papel);border:1px solid var(--borda);border-radius:13px;
+        padding:14px 16px;margin-bottom:26px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.filtro label{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:700;
+        text-transform:uppercase;letter-spacing:.07em;color:var(--tinta-fraca)}
+.filtro input[type=date]{background:var(--fundo);color:var(--tinta);border:1px solid var(--borda-forte);
+        border-radius:8px;padding:7px 9px;font-size:14px;font-family:var(--ui);min-width:146px}
+.atalhos{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+button{background:var(--fundo);color:var(--tinta-fraca);border:1px solid var(--borda-forte);
+       border-radius:999px;padding:6px 13px;font-size:13px;font-family:var(--ui);cursor:pointer;font-weight:600}
+button:hover:not(:disabled){border-color:var(--acento);color:var(--acento)}
+button:disabled{opacity:.55;cursor:default}
+button[aria-pressed="true"]{background:var(--acento);border-color:var(--acento);color:var(--acento-tinta)}
+:where(a,button,input,select):focus-visible{outline:2px solid var(--acento);outline-offset:2px}
+.vazio{background:var(--papel);border:1px solid var(--borda);border-radius:13px;
+       padding:26px 22px;text-align:center;color:var(--tinta-fraca);font-size:14px}
+.hojetag{display:inline-block;margin-left:8px;padding:2px 9px;border-radius:999px;font-size:10.5px;
+        font-weight:700;letter-spacing:.04em;background:var(--acento-fundo);color:var(--acento);
+        text-transform:none}
+.rodape{margin-top:38px;padding-top:16px;border-top:1px solid var(--borda);
+        font-size:12.5px;color:var(--tinta-fraca);line-height:1.6}
+.rodape code{font-family:var(--dados);font-size:12px}
+.aviso{background:var(--grave-fundo);color:var(--grave);border:1px solid var(--grave);
+       border-radius:13px;padding:18px 20px;font-size:14px}
+.aviso button{margin-top:12px;background:transparent;border-color:var(--grave);color:var(--grave)}
+@media (max-width:560px){.atalhos{margin-left:0;width:100%}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="pag">
+<h1>Jornada do paciente no WhatsApp</h1>
+<p class="sub">Total Quality Medicina Diagnóstica · <span id="sub">carregando os dados da clínica…</span></p>
+
+<div class="filtro">
+  <label for="de">De<input type="date" id="de" disabled></label>
+  <label for="ate">Até<input type="date" id="ate" disabled></label>
+  <div class="atalhos">
+    <button type="button" data-d="7" disabled>7 dias</button>
+    <button type="button" data-d="30" disabled>30 dias</button>
+    <button type="button" data-d="60" disabled>60 dias</button>
+    <button type="button" data-d="0" disabled>Tudo</button>
+    <button type="button" id="refrescar" disabled title="Recalcula agora, sem esperar as 00:00">Atualizar agora</button>
+  </div>
+</div>
+
+<div id="falha" hidden></div>
+
+<p class="lead" id="lead">Quantas pessoas que chamam no WhatsApp saem com exame agendado, e em que ponto da conversa as outras desistem.</p>
+<div class="heroi" id="heroi"><div class="big">—</div><div class="txt">Buscando o fechamento mais recente.</div></div>
+
+<h2>Onde as pessoas somem</h2>
+<div id="cxFunil"><div class="vazio">Carregando o funil…</div></div>
+
+<h2>Quanto a Ana demora para responder</h2>
+<div class="tiles" id="tempos"><div class="vazio" style="grid-column:1/-1">Carregando os tempos…</div></div>
+
+<h2>Demanda por exame que a clínica não faz</h2>
+<p style="font-size:14px;color:var(--tinta-fraca);margin-bottom:16px">
+  Exames registrados nas conversas iniciadas no período. Cada um é uma pessoa que
+  procurou a Total Quality e foi embora porque o exame não existe aqui.</p>
+<div id="cxDemanda"><div class="vazio">Carregando a demanda…</div></div>
+
+<h2>Follow-up disparado no período</h2>
+<div class="tiles" id="fup"><div class="vazio" style="grid-column:1/-1">Carregando o follow-up…</div></div>
+
+<h2>O que está travado <span class="hojetag">situação de hoje — não muda com o filtro</span></h2>
+<div class="quadro">
+  <table>
+    <thead><tr><th>Situação</th><th>Casos</th><th>Pior caso</th><th>Gravidade</th></tr></thead>
+    <tbody id="travas"><tr><td colspan="4" style="color:var(--tinta-fraca)">Carregando…</td></tr></tbody>
+  </table>
+</div>
+
+<p class="rodape" id="rodape">
+  Fontes: <code>ana_leads</code>, <code>ana_mensagens</code> e <code>ana_envios_log</code>, do Supabase da clínica.
+</p>
+</div>
+
+<script>
+const API = 'https://ajwhrmjzvfdjwsqynbzt.supabase.co/functions/v1/jornada';
+const TOKEN = '3vlGKBrUwBfsNPbbOtH2HAxx9HDOCAVQrQlzv_knvSM';
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const el = id => document.getElementById(id);
+const br = n => n.toLocaleString('pt-BR');
+const dt = s => s.split('-').reverse().join('/');
+
+let D = null, DMIN = '', DMAX = '';
+
+function somaDias(d) {                      // d = 0 significa tudo
+  if (!d) return [DMIN, DMAX];
+  const fim = new Date(DMAX + 'T12:00:00');
+  const ini = new Date(fim); ini.setDate(ini.getDate() - (d - 1));
+  const iso = x => x.toISOString().slice(0, 10);
+  return [iso(ini) < DMIN ? DMIN : iso(ini), DMAX];
+}
+const dentro = (dia, a, b) => dia >= a && dia <= b;
+
+function tempoCurto(s) {
+  if (s < 60) return Math.round(s) + 's';
+  if (s < 3600) {
+    const m = s / 60;
+    return (m < 10 ? m.toFixed(1).replace('.', ',') : Math.round(m)) + 'min';
+  }
+  return (s / 3600).toFixed(1).replace('.', ',') + 'h';
+}
+const pct = (x, t) => t ? Math.round(x / t * 100) : 0;
+function quantil(ord, q) {                  // ord ja vem ordenado
+  if (!ord.length) return null;
+  const i = (ord.length - 1) * q, lo = Math.floor(i), hi = Math.ceil(i);
+  return lo === hi ? ord[lo] : ord[lo] + (ord[hi] - ord[lo]) * (i - lo);
+}
+const tile = (v, l, obs) =>
+  '<div class="t"><div class="v">' + esc(v) + '</div><div class="l">' + esc(l) + '</div>'
+  + '<div class="obs">' + esc(obs) + '</div></div>';
+
+const ROTULOS = ['Chamaram no WhatsApp', 'Trocaram mais de uma mensagem',
+                 'Disseram qual exame queriam', 'Chegaram a falar de data', 'Agendaram'];
+
+function pintar() {
+  if (!D) return;
+  const a = el('de').value, b = el('ate').value;
+  if (!a || !b || a > b) return;
+
+  const f = [0, 0, 0, 0, 0];
+  D.funil.forEach(r => { if (dentro(r[0], a, b)) for (let i = 0; i < 5; i++) f[i] += r[i + 1]; });
+  const topo = f[0], conv = topo ? f[4] / topo * 100 : 0;
+  const dias = Math.round((new Date(b) - new Date(a)) / 864e5) + 1;
+
+  el('sub').textContent = br(topo) + ' conversas iniciadas · ' + dt(a) + ' a ' + dt(b)
+                        + ' (' + dias + ' dia' + (dias === 1 ? '' : 's') + ')';
+
+  if (!topo) {
+    el('lead').textContent = 'Nenhuma conversa iniciada nesse período.';
+    el('heroi').innerHTML = '<div class="big">—</div><div class="txt">Escolha outro intervalo.</div>';
+    el('cxFunil').innerHTML = '<div class="vazio">Sem conversas no período escolhido.</div>';
+  } else {
+    const porAg = f[4] ? ((topo - f[4]) / f[4]).toFixed(1).replace('.', ',') : '—';
+    el('lead').innerHTML = 'De cada 100 pessoas que chamam no WhatsApp, <b>'
+      + conv.toFixed(0) + ' saem com exame agendado</b>. '
+      + (f[2] > f[3]
+         ? 'A maior perda está no meio, entre dizer qual exame quer e marcar um horário.'
+         : 'A maior perda está logo no começo da conversa.');
+    el('heroi').innerHTML =
+      '<div class="big">' + conv.toFixed(1).replace('.', ',') + '%</div>'
+      + '<div class="txt"><b>' + br(f[4]) + ' agendamento' + (f[4] === 1 ? '' : 's')
+      + '</b> em ' + br(topo) + ' conversas iniciadas. Para cada agendamento, '
+      + porAg + ' pessoas conversaram e saíram sem marcar.</div>';
+    el('cxFunil').innerHTML = '<div class="funil">' + f.map((n, i) => {
+      const p = pct(n, topo);
+      let s = '<div class="etapa" title="' + esc(ROTULOS[i]) + ': ' + br(n) + ' pessoas, ' + p + '%">'
+        + '<div class="top"><span class="rot">' + esc(ROTULOS[i]) + '</span>'
+        + '<span class="num"><b>' + br(n) + '</b> · ' + p + '%</span></div>'
+        + '<div class="barra-tr"><div class="barra" style="width:' + Math.max(p, 1) + '%"></div></div></div>';
+      if (i < 4) {
+        const perda = n - f[i + 1], pp = n ? Math.round(perda / n * 100) : 0;
+        s += '<p class="queda' + (pp < 15 ? ' leve' : '') + '">↓ saíram ' + br(perda) + ' aqui (' + pp + '%)</p>';
+      }
+      return s;
+    }).join('') + '</div>';
+  }
+
+  let secs = [];
+  for (const dia in D.tempos) if (dentro(dia, a, b)) secs = secs.concat(D.tempos[dia]);
+  secs.sort((x, y) => x - y);
+  if (!secs.length) {
+    el('tempos').innerHTML = '<div class="vazio" style="grid-column:1/-1">Sem respostas medidas no período.</div>';
+  } else {
+    const ate60 = secs.filter(s => s <= 60).length, acima = secs.filter(s => s > 3600).length;
+    el('tempos').innerHTML =
+        tile(tempoCurto(quantil(secs, .5)), 'Resposta típica', 'Mediana de ' + br(secs.length) + ' respostas medidas.')
+      + tile(pct(ate60, secs.length) + '%', 'Em até 1 minuto', br(ate60) + ' das ' + br(secs.length) + ' respostas.')
+      + tile(tempoCurto(quantil(secs, .9)), 'Pior caso típico', '90% das respostas saem abaixo disso.')
+      + tile(br(acima), 'Acima de 1 hora', pct(acima, secs.length) + '% do total. Quase sempre conversa que passou para um humano.');
+  }
+
+  const dem = {};
+  D.demanda.forEach(r => { if (dentro(r[0], a, b)) dem[r[1]] = (dem[r[1]] || 0) + r[2]; });
+  const lista = Object.entries(dem).sort((x, y) => y[1] - x[1]);
+  if (!lista.length) {
+    el('cxDemanda').innerHTML = '<div class="vazio">Nenhum pedido de exame indisponível no período.</div>';
+  } else {
+    const mx = lista[0][1];
+    el('cxDemanda').innerHTML = '<div class="dem">' + lista.map(([rot, n]) =>
+      '<div class="dlinha" title="' + esc(rot) + ': ' + n + ' pedidos no período">'
+      + '<span class="r">' + esc(rot) + '</span>'
+      + '<span class="tr"><span class="b" style="width:' + Math.round(n / mx * 100) + '%"></span></span>'
+      + '<span class="v">' + n + '</span></div>').join('') + '</div>';
+  }
+
+  let env = 0, resp = 0;
+  D.fup.forEach(r => { if (dentro(r[0], a, b)) { env += r[1]; resp += r[2]; } });
+  el('fup').innerHTML =
+      tile(br(env), 'Toques enviados', env ? 'Mensagens da régua que saíram no período.' : 'A régua não disparou nesse período.')
+    + tile(env ? pct(resp, env) + '%' : '—', 'Geraram resposta',
+           env ? br(resp) + ' de ' + br(env) + ' responderam em até 7 dias.' : 'Sem envios para medir.')
+    + tile(br(D.hoje.fila), 'Na fila agora',
+           'Situação de hoje. A 20 por dia útil, ' + Math.ceil(D.hoje.fila / 20) + ' dias para percorrer.');
+
+  el('rodape').innerHTML =
+    'Fontes: <code>ana_leads</code>, <code>ana_mensagens</code> e <code>ana_envios_log</code>, lidos em '
+    + esc(D.gerado_em) + '. Dados disponíveis de ' + dt(DMIN) + ' a ' + dt(DMAX) + '. '
+    + 'O funil conta conversas <b>iniciadas</b> no período e classifica cada uma pelo estágio que alcançou até hoje. '
+    + '"Agendou" é agendamento confirmado na Agenda do Google. '
+    + 'Tempo de resposta mede o intervalo entre a mensagem do paciente e a resposta seguinte da Ana, '
+    + 'limitado a 2h no topo, o que não afeta mediana nem percentil 90. '
+    + 'A demanda por exame indisponível sai dos exames registrados na conversa. '
+    + 'A tabela do que está travado mostra a situação de hoje e não acompanha o filtro.';
+}
+
+function pintarTravas() {
+  el('travas').innerHTML = [
+    ['Escaladas abertas', 'Paciente esperando alguém da equipe', D.hoje.escaladas, D.hoje.esc_dias + ' dias', 'gr'],
+    ['Pergunta sem resposta', 'Paciente perguntou e ninguém respondeu', D.hoje.sem_resposta, D.hoje.sr_dias + ' dias', 'at'],
+    ['Bot pausado agora', 'Recepção assumiu — ' + D.hoje.orfas_vencidas + ' passaram da janela de devolução',
+     D.hoje.orfas, D.hoje.orfas_vencidas ? 'fora da janela' : 'dentro da janela',
+     D.hoje.orfas_vencidas ? 'at' : 'ok'],
+    ['Despedidas sem resposta', '"Ok", "obrigada", emoji — não responder está certo', D.hoje.despedidas, '—', 'ok'],
+    ['Pediram para parar', 'Opt-out respeitado', D.hoje.optout, '—', 'ok'],
+  ].map(([t, s, n, pior, g]) =>
+    '<tr><td><b>' + esc(t) + '</b><br><span style="color:var(--tinta-fraca);font-size:13px">' + esc(s) + '</span></td>'
+    + '<td class="n">' + br(n) + '</td><td class="n">' + esc(pior) + '</td>'
+    + '<td><span class="sel s-' + g + '">' + (g === 'gr' ? 'crítico' : g === 'at' ? 'atenção' : 'normal') + '</span></td></tr>'
+  ).join('');
+}
+
+function marcar(d) {
+  document.querySelectorAll('.atalhos button[data-d]').forEach(b =>
+    b.setAttribute('aria-pressed', +b.dataset.d === d ? 'true' : 'false'));
+}
+function habilitar(on) {
+  document.querySelectorAll('.filtro button, .filtro input').forEach(c => { c.disabled = !on; });
+}
+
+function mostrarFalha(msg) {
+  const cx = el('falha');
+  cx.hidden = false;
+  cx.innerHTML = '<div class="aviso"><b>Não consegui buscar os dados.</b><br>' + esc(msg)
+    + '<br><button type="button" id="tentar">Tentar de novo</button></div>';
+  el('tentar').addEventListener('click', () => { cx.hidden = true; carregar(false); });
+}
+
+async function carregar(recalcular) {
+  habilitar(false);
+  try {
+    const r = await fetch(API + '?k=' + encodeURIComponent(TOKEN) + (recalcular ? '&refresh=1' : ''));
+    if (!r.ok) throw new Error('O servidor respondeu ' + r.status + '.');
+    D = await r.json();
+    if (!D || !D.funil || !D.funil.length) throw new Error('Vieram dados vazios.');
+
+    DMIN = D.funil[0][0];
+    DMAX = D.funil[D.funil.length - 1][0];
+    ['de', 'ate'].forEach(id => { el(id).min = DMIN; el(id).max = DMAX; });
+
+    const manteve = el('de').value && el('ate').value;
+    if (!manteve) {
+      const ini = somaDias(30);
+      el('de').value = ini[0]; el('ate').value = ini[1];
+      marcar(30);
+    }
+    pintarTravas();
+    pintar();
+    el('falha').hidden = true;
+  } catch (e) {
+    mostrarFalha(String(e.message || e));
+  } finally {
+    habilitar(true);
+    const bt = el('refrescar');
+    bt.textContent = 'Atualizar agora';
+  }
+}
+
+document.querySelectorAll('.atalhos button[data-d]').forEach(b =>
+  b.addEventListener('click', () => {
+    const [i, f] = somaDias(+b.dataset.d);
+    el('de').value = i; el('ate').value = f;
+    marcar(+b.dataset.d); pintar();
+  }));
+['de', 'ate'].forEach(id => el(id).addEventListener('change', () => { marcar(-1); pintar(); }));
+el('refrescar').addEventListener('click', () => {
+  el('refrescar').textContent = 'Atualizando…';
+  carregar(true);
+});
+
+carregar(false);
+</script>
+
+</body>
+</html>

@@ -6,6 +6,7 @@ Allow: /
 Disallow: /dashboard
 Disallow: /admin
 Disallow: /api/
+Disallow: /painel/
 
 User-agent: MJ12bot
 Disallow: /
