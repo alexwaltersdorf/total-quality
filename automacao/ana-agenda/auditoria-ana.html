@@ -1,0 +1,460 @@
+<title>Auditoria dos Fluxos da Ana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --paper:     #FBFAF8;
+    --surface:   #FFFFFF;
+    --surface-2: #F1F5F4;
+    --ink:       #101E22;
+    --ink-soft:  #4A5E61;
+    --ink-faint: #7B8D8F;
+    --rule:      #DCE4E3;
+    --rule-soft: #EAEFEE;
+    --accent:    #0E6E67;
+    --accent-bg: #E6F2F0;
+    --crit:      #B4442E;
+    --crit-bg:   #FBEDE9;
+    --warn:      #8C6210;
+    --warn-bg:   #FBF2E0;
+    --ok:        #1B7A4B;
+    --ok-bg:     #E9F5EE;
+    --shadow:    0 1px 2px rgba(16,30,34,.05), 0 10px 28px -16px rgba(16,30,34,.22);
+
+    --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --body:    "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --mono:    "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:     #0D1618;
+      --surface:   #152124;
+      --surface-2: #1C2B2E;
+      --ink:       #E6EEEC;
+      --ink-soft:  #A4B6B7;
+      --ink-faint: #77898B;
+      --rule:      #26353800;
+      --rule:      #263538;
+      --rule-soft: #1E2C2F;
+      --accent:    #58C4B6;
+      --accent-bg: #15302E;
+      --crit:      #E4907A;
+      --crit-bg:   #33201C;
+      --warn:      #D9A441;
+      --warn-bg:   #322916;
+      --ok:        #5FB98A;
+      --ok-bg:     #16302A;
+      --shadow:    0 1px 2px rgba(0,0,0,.4), 0 10px 28px -16px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:     #0D1618;
+    --surface:   #152124;
+    --surface-2: #1C2B2E;
+    --ink:       #E6EEEC;
+    --ink-soft:  #A4B6B7;
+    --ink-faint: #77898B;
+    --rule:      #263538;
+    --rule-soft: #1E2C2F;
+    --accent:    #58C4B6;
+    --accent-bg: #15302E;
+    --crit:      #E4907A;
+    --crit-bg:   #33201C;
+    --warn:      #D9A441;
+    --warn-bg:   #322916;
+    --ok:        #5FB98A;
+    --ok-bg:     #16302A;
+    --shadow:    0 1px 2px rgba(0,0,0,.4), 0 10px 28px -16px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.58;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 60px 28px 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 52px;
+  }
+
+  header { display: flex; flex-direction: column; gap: 14px; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11.5px; font-weight: 500;
+    letter-spacing: .16em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1 {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(2.1rem, 5.4vw, 3.05rem);
+    line-height: 1.03; letter-spacing: -.026em;
+    margin: 0; text-wrap: balance;
+  }
+  .lede { margin: 0; max-width: 66ch; font-size: 1.04rem; color: var(--ink-soft); }
+
+  h2 {
+    font-family: var(--display); font-weight: 600;
+    font-size: 1.3rem; letter-spacing: -.014em;
+    margin: 0 0 18px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+  h3 {
+    font-family: var(--display); font-weight: 600;
+    font-size: 1.02rem; letter-spacing: -.008em;
+    margin: 0 0 6px;
+  }
+  section > p:first-of-type { margin-top: 0; }
+  p { margin: 0 0 14px; max-width: 68ch; }
+
+  /* status dos fluxos */
+  .fluxos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(178px, 1fr));
+    gap: 14px;
+  }
+  .fluxo {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 7px;
+    padding: 15px 16px;
+    display: flex; flex-direction: column; gap: 7px;
+    box-shadow: var(--shadow);
+  }
+  .fluxo b {
+    font-family: var(--mono); font-size: .8rem;
+    font-weight: 600; letter-spacing: .04em;
+    color: var(--ink-faint);
+  }
+  .fluxo .nome { font-family: var(--display); font-weight: 600; font-size: .99rem; line-height: 1.25; }
+  .chip {
+    align-self: flex-start;
+    font-family: var(--mono); font-size: 10.5px; font-weight: 600;
+    letter-spacing: .07em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 3px;
+  }
+  .c-ok   { background: var(--ok-bg);   color: var(--ok); }
+  .c-warn { background: var(--warn-bg); color: var(--warn); }
+  .c-crit { background: var(--crit-bg); color: var(--crit); }
+
+  /* figura */
+  figure { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .fig-box {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 22px 18px;
+    overflow-x: auto;
+    box-shadow: var(--shadow);
+  }
+  figure svg { display: block; max-width: 100%; height: auto; min-width: 680px; margin: 0 auto; }
+  figcaption { font-size: .875rem; color: var(--ink-soft); max-width: 68ch; }
+
+  /* tabelas */
+  .tabela { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: .91rem; }
+  th, td { text-align: left; padding: 11px 13px; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+  th {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 600;
+    letter-spacing: .09em; text-transform: uppercase;
+    color: var(--ink-faint); border-bottom: 1px solid var(--rule);
+  }
+  td.num { font-variant-numeric: tabular-nums; font-family: var(--mono); white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+
+  /* achados */
+  .achado {
+    display: grid;
+    grid-template-columns: 74px 1fr;
+    gap: 18px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .achado:first-of-type { border-top: 1px solid var(--rule-soft); }
+  .sev {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 600;
+    letter-spacing: .07em; text-transform: uppercase;
+    padding: 3px 0; text-align: center; border-radius: 3px; height: fit-content;
+  }
+  .achado p { margin: 0; font-size: .93rem; color: var(--ink-soft); }
+  .achado p + p { margin-top: 8px; }
+  .achado .fix {
+    margin-top: 9px; font-size: .88rem;
+    color: var(--ink); background: var(--accent-bg);
+    border-left: 2px solid var(--accent);
+    padding: 8px 12px; border-radius: 0 4px 4px 0;
+  }
+
+  code {
+    font-family: var(--mono); font-size: .85em;
+    background: var(--surface-2); padding: 1px 5px; border-radius: 3px;
+  }
+
+  .plano { counter-reset: p; margin: 0; padding: 0; list-style: none;
+           display: flex; flex-direction: column; }
+  .plano li {
+    counter-increment: p;
+    display: grid; grid-template-columns: 38px 1fr; gap: 16px;
+    padding: 16px 0; border-bottom: 1px solid var(--rule-soft);
+  }
+  .plano li:first-child { border-top: 1px solid var(--rule-soft); }
+  .plano li::before {
+    content: counter(p);
+    font-family: var(--mono); font-size: 1.1rem; font-weight: 600;
+    color: var(--accent); line-height: 1.4;
+  }
+  .plano .t { font-weight: 600; margin-bottom: 3px; }
+  .plano .d { font-size: .89rem; color: var(--ink-soft); }
+
+  footer {
+    font-size: .82rem; color: var(--ink-faint);
+    border-top: 1px solid var(--rule); padding-top: 16px;
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Total Quality · 2ª auditoria · 1 de setembro de 2026</div>
+    <h1>Auditoria dos Fluxos da Ana</h1>
+    <p class="lede">
+      Segunda passagem, depois das correções implantadas. Três dos quatro achados críticos
+      estão fechados e verificados. O quarto continua aberto — e a causa é uma decisão minha
+      de projeto, não um erro de configuração de vocês.
+    </p>
+  </header>
+
+  <section>
+    <h2>Situação de cada fluxo</h2>
+    <div class="fluxos">
+      <div class="fluxo"><b>ANA-01</b><div class="nome">Atendimento</div><span class="chip c-ok">no ar</span></div>
+      <div class="fluxo"><b>ANA-02</b><div class="nome">Follow-up · v2</div><span class="chip c-warn">parado por ordem</span></div>
+      <div class="fluxo"><b>ANA-03</b><div class="nome">Resumo diário</div><span class="chip c-ok">no ar</span></div>
+      <div class="fluxo"><b>ANA-04</b><div class="nome">Auditoria</div><span class="chip c-ok">corrigido</span></div>
+      <div class="fluxo"><b>ANA-05</b><div class="nome">Agenda</div><span class="chip c-crit">ativo, sem efeito</span></div>
+      <div class="fluxo"><b>ANA-06</b><div class="nome">Confirmação</div><span class="chip c-warn">parado por ordem</span></div>
+      <div class="fluxo"><b>SDR</b><div class="nome">Campanha de check-up</div><span class="chip c-ok">desligado</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>O que ficou pronto e está verificado</h2>
+
+    <div class="achado">
+      <div class="sev c-ok">fechado</div>
+      <div>
+        <h3>A origem dos check-ups foi desligada</h3>
+        <p>
+          Era o fluxo <em>Followup - SDR</em>, invisível para todas as análises anteriores porque
+          usa outro conjunto de tabelas e <strong>outra instância da Evolution</strong>
+          (<code>187.127.13.63</code>, HTTP puro). Disparava <strong>até 50 mensagens em bloco</strong>,
+          todo dia às 09:00, numa cadência própria de 30 dias sobre saúde preventiva.
+        </p>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-ok">fechado</div>
+      <div>
+        <h3>A auditoria voltou a funcionar</h3>
+        <p>
+          O ANA-04 falhava com <code>invalid syntax</code> em <strong>toda</strong> execução desde 27/08.
+          A migração Anthropic → OpenAI ficou pela metade: o cabeçalho tinha
+          <code>ANTHROPIC_API_KEYBearer …</code> e o corpo concatenava dois <code>JSON.stringify</code>.
+          Corrigido; a próxima nota sai amanhã às 07:10.
+        </p>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-ok">fechado</div>
+      <div>
+        <h3>A retomada do atendimento saiu do fluxo de envio</h3>
+        <p>
+          Roda por <code>pg_cron</code> a cada 15 minutos, dentro do banco. O indicador
+          <code>retomada_travada</code> está em <strong>0</strong> — eram 12 quando o painel foi criado,
+          e a correção liberou 13 pacientes travados desde 17/08, entre eles gente que só não
+          conseguia falar com a Ana porque <em>tinha exame confirmado</em>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Consumo de tokens: o quadro real</h2>
+    <p>
+      A primeira auditoria errou aqui, e a correção é grande o suficiente para valer o registro.
+      <strong>ANA-01 e ANA-04 rodam em OpenAI</strong> — só o ANA-02 usa a API da Anthropic. E o
+      ANA-01 <strong>já agrupava</strong> mensagens em rajada; eu disse que não agrupava.
+    </p>
+
+    <div class="tabela">
+      <table>
+        <thead><tr><th>Dia</th><th>Mensagens recebidas</th><th>Chamadas ao modelo</th><th>Agrupadas por chamada</th></tr></thead>
+        <tbody>
+          <tr><td>qua 26/08</td><td class="num">398</td><td class="num">67</td><td class="num">5,94</td></tr>
+          <tr><td>qui 27/08</td><td class="num">357</td><td class="num">80</td><td class="num">4,46</td></tr>
+          <tr><td>sex 28/08</td><td class="num">441</td><td class="num">114</td><td class="num">3,87</td></tr>
+          <tr><td>sáb 29/08</td><td class="num">62</td><td class="num">43</td><td class="num">1,44</td></tr>
+          <tr><td>dom 30/08</td><td class="num">36</td><td class="num">29</td><td class="num">1,24</td></tr>
+          <tr><td>seg 31/08</td><td class="num">740</td><td class="num">158</td><td class="num">4,68</td></tr>
+          <tr><td>ter 01/09</td><td class="num">457</td><td class="num">130</td><td class="num">3,52</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="margin-top:18px">
+      Em dia útil o sistema já junta de <strong>3,5 a 5,9 mensagens do paciente em uma única
+      chamada</strong>. Sem esse agrupamento seriam 400 a 700 chamadas por dia em vez de 130 a 158.
+      Nos fins de semana a taxa cai para 1,2 porque as mensagens chegam espaçadas — não há o que agrupar.
+    </p>
+
+    <div class="achado">
+      <div class="sev c-ok">ok</div>
+      <div>
+        <h3>O cache do prompt já estava certo no ANA-01</h3>
+        <p>
+          Fui verificar como o corpo é montado: o prompt vai em <code>instructions</code> e o
+          carimbo de data/hora vai no <code>input</code>. É exatamente o que o cache automático de
+          prefixo do OpenAI exige — se o horário estivesse dentro das instruções, o cache
+          quebraria a cada minuto. <strong>Não havia o que corrigir aqui.</strong>
+        </p>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-warn">a medir</div>
+      <div>
+        <h3>Os dois ajustes que fiz ainda não têm leitura</h3>
+        <p>
+          Subi a janela de agrupamento de 8s para 15s e reduzi a busca de histórico de 24 para 12
+          mensagens — ele buscava 24 e usava só 12. As mudanças entraram às 20:35 de ontem, com a
+          clínica já fechada: <strong>não há um único dia útil de dados depois delas</strong>.
+          A leitura honesta sai na quarta-feira.
+        </p>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-ok">ok</div>
+      <div>
+        <h3>ANA-02: prompt reduzido pela metade</h3>
+        <p>
+          De 47.715 para 21.620 caracteres, mantendo cadência, compliance e contrato de saída.
+          A redução é feita por SQL sobre o prompt original — não existe um segundo prompt para
+          manter atualizado. Somado ao <code>cache_control</code>, é a maior economia do conjunto,
+          e entra em vigor quando o follow-up for religado.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>O achado desta auditoria: o ANA-05 não escreveu nada</h2>
+
+    <div class="achado">
+      <div class="sev c-crit">crítico</div>
+      <div>
+        <h3>Ele está ativo e correto — e mesmo assim inútil como está</h3>
+        <p>
+          Desde que foi ligado, o ANA-05 gravou <strong>zero</strong> agendamentos. Não é falha de
+          credencial nem de parser: eu configurei o nó com <code>updatedMin</code> de 30 minutos,
+          para não reprocessar 90 eventos a cada 15 minutos. O efeito colateral é que ele só
+          enxerga eventos <em>alterados</em> na última meia hora — e <strong>nunca faz a carga
+          inicial</strong>.
+        </p>
+        <p>
+          Resultado prático: o banco segue com <strong>19 agendamentos</strong>, dos quais 1 é o
+          evento de teste. Na agenda há cerca de 55 exames com paciente identificável. A Ana
+          continua sem saber quem já tem exame marcado — que era exatamente o problema que o
+          ANA-05 existia para resolver.
+        </p>
+        <div class="fix">
+          Correção: um segundo gatilho diário, de madrugada, lendo a janela inteira de 60 dias sem
+          <code>updatedMin</code>. O de 15 minutos continua pegando as mudanças do dia; o diário
+          reconcilia tudo. Precisa de acesso ao n8n para entrar.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Aberto, e nada disso é técnico</h2>
+
+    <div class="achado">
+      <div class="sev c-crit">pessoas</div>
+      <div>
+        <h3>15 escaladas esperando, a mais antiga há 16 dias</h3>
+        <p>
+          Cresceu de 14 para 15 desde a auditoria anterior. São pacientes que a Ana passou para a
+          equipe e que ninguém retomou. Nenhum ajuste de fluxo resolve isso.
+        </p>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-warn">arquitetura</div>
+      <div>
+        <h3>A pilha legada continua de pé</h3>
+        <p>
+          O <em>Relatório Diario - 07:00</em> ainda usa a instância <code>187.127.13.63</code> e as
+          tabelas <code>conversations</code>/<code>messages</code>. Não fala com paciente, então
+          deixei no ar — mas é a mesma infraestrutura de onde saiu a campanha que derrubou o número.
+          Enquanto ela existir, existe um caminho fora de todas as travas.
+        </p>
+      </div>
+    </div>
+
+    <div class="achado">
+      <div class="sev c-ok">por ordem</div>
+      <div>
+        <h3>ANA-02 e ANA-06 parados</h3>
+        <p>
+          Os dois enviam mensagem e seguem desligados até você liberar. A trava de banco
+          (<code>followup_envios_suspensos = true</code>) continua valendo por cima, então nem
+          um religamento acidental dispara algo.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sinais vitais agora</h2>
+    <div class="tabela">
+      <table>
+        <thead><tr><th>Indicador</th><th>Valor</th><th>Leitura</th></tr></thead>
+        <tbody>
+          <tr><td>envios suspensos</td><td class="num">true</td><td>nada proativo sai</td></tr>
+          <tr><td>follow-ups liberados hoje</td><td class="num">0</td><td>a guarda nunca liberou nenhum</td></tr>
+          <tr><td>razão enviadas / recebidas</td><td class="num">1,06</td><td>conversa saudável — no dia do bloqueio foi 58,8</td></tr>
+          <tr><td>retomada travada</td><td class="num">0</td><td>corrigido nesta rodada</td></tr>
+          <tr><td>bot pausado</td><td class="num">76</td><td>atendimento humano em curso</td></tr>
+          <tr><td>agendamentos no banco</td><td class="num">19</td><td>deveria estar subindo — ver ANA-05</td></tr>
+          <tr><td>escaladas abertas</td><td class="num">15</td><td>a mais antiga há 16 dias</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:16px">
+      Consulta única: <code>SELECT * FROM ana_saude;</code>
+    </p>
+  </section>
+
+  <footer>
+    2ª auditoria · 01/09/2026 · fontes: <code>ana_leads</code>, <code>ana_mensagens</code>,
+    <code>ana_saude</code>, <code>ana_auditorias</code> e os JSON dos fluxos publicados no n8n.
+  </footer>
+
+</div>
