@@ -29,6 +29,7 @@ vez, conforme as linhas são abertas. A senha e o PBKDF2 estão descritos em
 | `?modo=lista` | os leads, sem as mensagens (~650 kB) |
 | `?modo=conversa&fone=55...` | o histórico de um contato só |
 | `?modo=tudo` | leads + todas as mensagens (~5,4 MB), para gerar o HTML |
+| `POST ?modo=status` | grava `status_manual` de um contato. Corpo `{fone, status}`, status vazio volta ao automático |
 
 A senha vai sempre no cabeçalho `x-senha`, nunca na URL: query string entra em
 log de servidor, histórico de navegador e cabeçalho `Referer`.
