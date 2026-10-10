@@ -12,7 +12,7 @@ import Navbar from "@/components/Navbar";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription, useFAQSchema, useMedicalTestSchema } from "@/components/SEOHead";
 
-const HERO_IMG = "/images/hero-clinica-1440.webp";
+const HERO_IMG = "/images/recepcao-1024.webp";
 const DETAIL_IMG = "/images/laboratorio-1024.webp";
 
 const metrics = [
