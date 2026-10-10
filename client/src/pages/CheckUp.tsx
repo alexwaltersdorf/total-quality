@@ -13,9 +13,9 @@ import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { useSchemaBreadcrumb } from "@/hooks/useSchemaLocalBusiness";
 
-const HERO_IMG = "/images/hero-clinica-1440.webp";
+const HERO_IMG = "/images/recepcao-1024.webp";
 const PROCESS_IMG = "/images/laboratorio-1024.webp";
-const BENEFITS_IMG = "/images/recepcao-1024.webp";
+const BENEFITS_IMG = "/images/fachada-1024.webp";
 
 const checkupPackages = [
   {

@@ -924,3 +924,258 @@ describe("GUARD-RAIL: soft 404 do catch-all de artigos (Search Console, ago/2026
     }
   });
 });
+
+describe("GUARD-RAIL: blog de SEO local da regiao sul (out/2026)", () => {
+  // O briefing de 09/10/2026 pedia um pilar de artigos comparando a Total
+  // Quality com grandes redes nominalmente. A Resolucao CFM 2.336/2023 veda
+  // publicidade que estabeleca comparacao ou concorrencia entre
+  // estabelecimentos de saude, e o Google trata pagina feita para capturar
+  // marca de terceiro como conteudo de baixa qualidade. O pilar foi mantido,
+  // mas escrito por CRITERIO TECNICO verificavel, sem nomear ninguem.
+  //
+  // "Anchieta" fica fora da lista de proposito: e o nome da rua da clinica
+  // (Rua Padre Anchieta, 1010). "a+" tambem fica fora — casaria com qualquer
+  // texto. Esses dois so sao audiveis por leitura humana.
+  const CONCORRENTES_NOMEADOS = [
+    /oswaldo\s*cruz/i,
+    /\bsabin\b/i,
+    /mastellini/i,
+    /lavoisier/i,
+    /confiance/i,
+  ];
+
+  const ARTIGOS_DO_SUL = [
+    "laboratorio-regiao-sul-caraguatatuba",
+    "como-escolher-laboratorio-analises-clinicas",
+    "resultado-de-exames-online-seguranca",
+    "exame-de-urina-eas-como-coletar",
+  ];
+
+  it.each(getAllRoutes().map((r) => new URL(r.canonical).pathname))(
+    "%s nao nomeia laboratorio concorrente",
+    (pathname) => {
+      const html = getSeoContentForPath(pathname);
+      if (!html) return;
+      for (const marca of CONCORRENTES_NOMEADOS) {
+        expect(html, `${pathname} nomeia concorrente (${marca})`).not.toMatch(marca);
+      }
+    }
+  );
+
+  it("nenhuma peca publica usa o nome de rua errado do NAP", () => {
+    // Os fluxos de WhatsApp (ANA-02, BV-01) dizem "Av. Anchieta, 1010". O
+    // endereco correto, e o que esta no perfil do Google, e "Rua Padre
+    // Anchieta, 1010". NAP divergente derruba ranking local — o site nao pode
+    // herdar a variante errada.
+    for (const route of getAllRoutes()) {
+      const html = getSeoContentForPath(new URL(route.canonical).pathname);
+      if (!html) continue;
+      expect(html, `${route.canonical} usa "Av. Anchieta" em vez de "Rua Padre Anchieta"`).not.toMatch(
+        /Av\.?\s*Anchieta|Avenida\s+Anchieta/i
+      );
+    }
+  });
+
+  it("o artigo da regiao sul nomeia os bairros do sul", () => {
+    // Sem os bairros, o artigo perde a cauda longa que justifica a sua
+    // existencia e passa a competir com a landing de laboratorio.
+    // Os nomes vem da area de referencia do CRAS Sul da Prefeitura.
+    const html = getSeoContentForPath("/blog/laboratorio-regiao-sul-caraguatatuba")!;
+    for (const bairro of ["Perequê-Mirim", "Travessão", "Porto Novo", "Morro do Algodão", "Pegorelli"]) {
+      expect(html, `o artigo da regiao sul perdeu o bairro ${bairro}`).toContain(bairro);
+    }
+  });
+
+  it("o artigo da regiao sul continua dizendo que a clinica fica no Centro", () => {
+    // A clinica NAO tem unidade na regiao sul. Um artigo otimizado para
+    // "laboratorio no Pereque-Mirim" sem essa frase vira promessa falsa de
+    // localidade — o paciente sai de casa e nao encontra nada.
+    const html = getSeoContentForPath("/blog/laboratorio-regiao-sul-caraguatatuba")!;
+    expect(html).toContain("Não temos unidade na região sul");
+    expect(html).toContain("Rua Padre Anchieta, 1010");
+  });
+
+  it.each(ARTIGOS_DO_SUL)("artigo %s avisa que nao substitui consulta medica", (slug) => {
+    // Nicho YMYL: conteudo de saude sem encaminhamento ao medico e risco
+    // clinico antes de ser risco de ranking.
+    const html = getSeoContentForPath(`/blog/${slug}`)!;
+    expect(html).toMatch(/n[ãa]o substitui consulta m[ée]dica/i);
+  });
+
+  it("nenhum artigo do blog volta a disputar o termo da landing", () => {
+    // PR de out/2026 deu a /laboratorio-caraguatatuba a exclusividade de
+    // "laboratorio em Caraguatatuba". Artigo com esse termo no title reabre a
+    // canibalizacao, agora com 23 paginas em vez de duas.
+    for (const route of getAllRoutes()) {
+      const pathname = new URL(route.canonical).pathname;
+      if (!pathname.startsWith("/blog/")) continue;
+      expect(
+        route.title,
+        `${pathname} disputa "laboratorio em Caraguatatuba" com a landing`
+      ).not.toMatch(/laborat[óo]rio em caraguatatuba/i);
+    }
+  });
+});
+
+describe("GUARD-RAIL: identificacao do art. 5o em TODA peca publica (out/2026)", () => {
+  // A auditoria de conformidade de 09/10/2026 reprovou os artigos novos por
+  // ausencia de identificacao obrigatoria — e a varredura mostrou que a falta
+  // era do site inteiro, nao dos artigos: nenhuma das 44 rotas
+  // pre-renderizadas trazia o registro do estabelecimento nem o responsavel
+  // tecnico, e o rodape renderizado tambem nao.
+  //
+  // Art. 5o da Resolucao CFM 2.336/2023: nome do estabelecimento com o numero
+  // de registro E nome do responsavel tecnico com o dele, em local visivel.
+  // Art. 6o: os numeros devem constar na pagina principal do site/perfil.
+  //
+  // Por isso a identificacao mora no bloco de NAP (pre-render) e no rodape
+  // (cliente): sao as duas pecas que acompanham todas as paginas. Pagina nova
+  // nasce conforme sem ninguem lembrar de nada.
+  it.each(getAllRoutes().map((r) => new URL(r.canonical).pathname))(
+    "%s identifica o estabelecimento e o responsavel tecnico",
+    (pathname) => {
+      const html = getSeoContentForPath(pathname);
+      if (!html) return;
+      expect(html, `${pathname} nao traz o registro do estabelecimento`).toMatch(/Registro\s*970616/);
+      expect(html, `${pathname} nao traz o responsavel tecnico`).toMatch(
+        /Respons[áa]vel T[ée]cnico:\s*Alex Waltersdorf - 267\.339/
+      );
+    }
+  );
+
+  it("o rodape renderizado tambem identifica (quem tem JavaScript ve o Footer, nao o prerender)", async () => {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const footer = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "../client/src/components/Footer.tsx"),
+      "utf-8"
+    );
+    expect(footer).toContain("970616");
+    expect(footer).toContain("Alex Waltersdorf - 267.339");
+    expect(footer).toContain("Responsável Técnico:");
+  });
+
+  it("nem o pre-render nem o rodape escrevem a sigla do conselho", () => {
+    // Decisao do Alex: apenas os digitos, sem a sigla. Comentario de codigo
+    // nao conta — o teste olha o texto servido.
+    for (const route of getAllRoutes()) {
+      const html = getSeoContentForPath(new URL(route.canonical).pathname);
+      if (!html) continue;
+      const semComentarios = html.replace(/<!--[\s\S]*?-->/g, "");
+      expect(semComentarios, `${route.canonical} escreve a sigla do conselho`).not.toMatch(
+        /\bCRM\b/
+      );
+    }
+  });
+});
+
+describe("GUARD-RAIL: imagem do artigo bate com o assunto (out/2026)", () => {
+  // O Alex reportou em 10/10/2026 que as fotos do blog nao tinham relacao com
+  // o texto. Ao abrir os arquivos, dois achados:
+  //
+  //   1. "cardiologia-1024.webp" NAO e uma foto de cardiologia: e um ULTRASSOM
+  //      com Doppler colorido. O nome enganou quem escolheu, e a foto foi parar
+  //      em artigos de eletrocardiograma, MAPA e Holter — exames eletricos, que
+  //      nao se parecem nada com aquilo.
+  //   2. "hero-clinica-1440.webp" mostra uma RESSONANCIA MAGNETICA. A decisao
+  //      de nao usar essa foto e de 01/08/2026 e esta registrada em
+  //      HeroSection.tsx, mas so a home foi limpa: a imagem seguia no `image`
+  //      do LocalBusiness (a foto da ENTIDADE que o Google le), na categoria
+  //      neurologia de ExamePage, no hero do check-up, no hero da
+  //      bioimpedancia e em 4 artigos do blog.
+  //
+  // O guard-rail de "servico nao prestado" existe desde ago/2026, mas olha
+  // TEXTO. Imagem passou batido. Estes dois testes fecham essa porta.
+  const O_QUE_CADA_FOTO_MOSTRA = {
+    laboratorio: "bancada, microscopio, tubos de coleta e analisadores",
+    cardiologia: "ultrassom com Doppler colorido (o nome do arquivo engana)",
+    tomografia: "medico lendo cortes de tomografia em dois monitores",
+    recepcao: "recepcao real da Total Quality",
+    fachada: "predio real da clinica",
+  } as const;
+
+  type Foto = keyof typeof O_QUE_CADA_FOTO_MOSTRA;
+
+  // Fotos aceitaveis por assunto. Mais de uma quando o assunto admite.
+  const FOTO_POR_ARTIGO: Record<string, Foto[]> = {
+    "exames-de-sangue-guia-completo": ["laboratorio"],
+    "hemograma-caraguatatuba": ["laboratorio"],
+    "hemograma-completo-o-que-avalia": ["laboratorio"],
+    "alimentacao-e-exames-laboratoriais": ["laboratorio"],
+    "vitamina-d-importancia-saude": ["laboratorio"],
+    "exame-de-urina-eas-como-coletar": ["laboratorio"],
+    "exame-toxicologico-cnh": ["laboratorio"],
+    "como-escolher-laboratorio-analises-clinicas": ["laboratorio"],
+    "saude-do-coracao-prevencao": ["laboratorio"],
+    "ultrassonografia-caraguatatuba": ["cardiologia"],
+    "diferenca-ultrassom-comum-doppler": ["cardiologia"],
+    "mamografia-ultrassom-mamas-diferencas": ["cardiologia"],
+    "tomografia-caraguatatuba": ["tomografia"],
+    "tomografia-computadorizada-como-funciona": ["tomografia"],
+    "diferenca-raio-x-tomografia": ["tomografia"],
+    "convenios-laboratorio-caraguatatuba": ["recepcao", "fachada"],
+    "resultado-de-exames-online-seguranca": ["recepcao", "fachada"],
+    "check-up-preventivo-quando-fazer": ["recepcao", "fachada"],
+    "check-up-medico-quais-exames-fazer": ["recepcao", "fachada"],
+    "eletrocardiograma-o-que-e-como-e-feito": ["recepcao", "fachada"],
+    "mapa-ou-holter-diferenca": ["recepcao", "fachada"],
+    "laboratorio-regiao-sul-caraguatatuba": ["fachada", "recepcao"],
+    "aso-exames-ocupacionais": ["fachada", "recepcao"],
+  };
+
+  it("todo artigo do blog esta na tabela de assunto x foto", () => {
+    // Artigo novo entra aqui junto com o resto. Sem isso o par volta a ser
+    // escolhido no olho, que e exatamente como "ultrassom" foi parar em Holter.
+    const slugs = Array.from(getKnownBlogSlugs()).sort();
+    expect(slugs, "artigo sem entrada em FOTO_POR_ARTIGO").toEqual(
+      Object.keys(FOTO_POR_ARTIGO).sort()
+    );
+  });
+
+  it.each(Object.entries(FOTO_POR_ARTIGO))(
+    "%s usa uma foto compativel com o assunto",
+    async (slug, aceitas) => {
+      const fs = await import("node:fs");
+      const nodePath = await import("node:path");
+      const artigo = JSON.parse(
+        fs.readFileSync(
+          nodePath.resolve(import.meta.dirname, `../client/src/content/blog/${slug}.json`),
+          "utf-8"
+        )
+      ) as { image: string };
+      const foto = artigo.image.replace(/^.*\/images\//, "").replace(/-\d+\.\w+$/, "");
+      expect(
+        aceitas as readonly string[],
+        `${slug} usa "${foto}" (${(O_QUE_CADA_FOTO_MOSTRA as Record<string, string>)[foto] ?? "foto desconhecida"}), que nao combina com o assunto`
+      ).toContain(foto);
+    }
+  );
+
+  it("nenhuma peca servida volta a usar a foto da ressonancia", async () => {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const raiz = nodePath.resolve(import.meta.dirname, "..", "client", "src");
+    const arquivos = fs
+      .readdirSync(raiz, { recursive: true, encoding: "utf-8" })
+      .filter((f) => /\.(tsx?|json)$/.test(f))
+      .map((f) => nodePath.join(raiz, f));
+    arquivos.push(nodePath.resolve(import.meta.dirname, "..", "client", "index.html"));
+    arquivos.push(nodePath.resolve(import.meta.dirname, "_core", "routes-metadata.ts"));
+    arquivos.push(nodePath.resolve(import.meta.dirname, "_core", "seo-content.ts"));
+
+    const ofensores: string[] = [];
+    for (const arquivo of arquivos) {
+      const bruto = fs.readFileSync(arquivo, "utf-8");
+      // comentario que explica POR QUE a foto saiu pode citar o nome
+      const semComentario = bruto
+        .replace(/\/\*[\s\S]*?\*\//g, "")
+        .replace(/\{\s*\/\*[\s\S]*?\*\/\s*\}/g, "")
+        .replace(/^\s*\/\/.*$/gm, "");
+      if (semComentario.includes("hero-clinica")) ofensores.push(arquivo);
+    }
+    expect(
+      ofensores,
+      `hero-clinica-*.webp mostra uma ressonancia magnetica, exame que a clinica nao realiza:\n${ofensores.join("\n")}`
+    ).toEqual([]);
+  });
+});
