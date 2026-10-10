@@ -112,3 +112,13 @@ temp/
 # Manus version file (auto-generated, not part of source)
 client/public/__manus__/version.json
 .project-config.json
+
+# relatorios com dado de paciente nao entram no repositorio
+leads-whatsapp-*.html
+leads-whatsapp-*.csv
+
+# triagem de conversas mortas tambem carrega dado de paciente
+conversas-mortas-*.html
+conversas-mortas-*.csv
+
+jornada-paciente-whatsapp.html
