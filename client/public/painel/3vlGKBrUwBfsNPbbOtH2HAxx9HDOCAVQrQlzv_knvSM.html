@@ -117,7 +117,81 @@ button[aria-pressed="true"]{background:var(--acento);border-color:var(--acento);
 .aviso{background:var(--grave-fundo);color:var(--grave);border:1px solid var(--grave);
        border-radius:13px;padding:18px 20px;font-size:14px}
 .aviso button{margin-top:12px;background:transparent;border-color:var(--grave);color:var(--grave)}
-@media (max-width:560px){.atalhos{margin-left:0;width:100%}}
+/* secao de pacientes e conversas */
+.trava{background:var(--papel);border:1px solid var(--borda);border-radius:13px;padding:20px 22px}
+.trava p{font-size:14px;color:var(--tinta-fraca);max-width:64ch}
+.trava p b{color:var(--tinta)}
+.trava form{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:15px}
+.trava input{background:var(--fundo);color:var(--tinta);border:1px solid var(--borda-forte);
+  border-radius:8px;padding:8px 11px;font-size:14px;font-family:var(--ui);min-width:190px}
+button.principal{background:var(--acento);border-color:var(--acento);color:var(--acento-tinta)}
+.recado{font-size:13px;color:var(--grave);font-weight:600}
+.recado.ok{color:var(--tinta-fraca);font-weight:500}
+.lbarra{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:14px 0 11px}
+.lbarra input[type=search],.lbarra select{background:var(--papel);color:var(--tinta);
+  border:1px solid var(--borda-forte);border-radius:8px;padding:7px 10px;
+  font-size:13.5px;font-family:var(--ui);max-width:100%}
+.lbarra input[type=search]{flex:1 1 200px;min-width:0}
+.lconta{font-size:12.5px;color:var(--tinta-fraca);margin:0 0 10px;
+  font-variant-numeric:tabular-nums}
+#tbLeads{min-width:640px}
+#tbLeads th,#tbLeads td{padding-left:9px;padding-right:9px}
+#tbLeads td{font-size:13.5px}
+#tbLeads td.nome{font-weight:600;max-width:160px}
+#tbLeads td.fone{font-family:var(--dados);font-size:12.5px;white-space:nowrap;
+  color:var(--tinta-fraca)}
+#tbLeads td.ex{max-width:190px}
+#tbLeads td.conv{max-width:175px}
+#tbLeads td.conv .det{display:block;font-size:10.5px;color:var(--tinta-fraca);
+  margin-top:3px;line-height:1.35}
+#tbLeads td.ex .fam{display:block;font-size:10.5px;color:var(--tinta-fraca);margin-top:2px;
+  text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+#tbLeads td.abrir{width:28px;padding-right:0}
+#tbLeads tr.linha{cursor:pointer}
+#tbLeads tr.linha[aria-expanded="true"]{background:var(--acento-fundo)}
+#tbLeads tr.linha:hover:not([aria-expanded="true"]){background:var(--acento-fundo)}
+.caret{background:none;border:none;padding:2px 4px;color:var(--tinta-fraca);font-size:11px;
+  line-height:1;border-radius:5px;display:inline-block;transition:transform .12s ease}
+#tbLeads tr.linha[aria-expanded="true"] .caret{color:var(--acento);transform:rotate(90deg)}
+#tbLeads tr.gaveta>td{background:var(--fundo);padding:0}
+.gav{position:sticky;left:0;width:min(856px,calc(100vw - 38px));padding:2px 15px 18px 40px}
+.gtopo{display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:12px 0 10px;
+  font-size:12px;color:var(--tinta-fraca)}
+.gtopo .marca{padding:2px 9px;border-radius:999px;background:var(--trilho);font-weight:600;
+  font-size:11px}
+.gtopo .espaco{margin-left:auto}
+.gresumo{font-size:12.5px;color:var(--tinta-fraca);border-left:2px solid var(--borda-forte);
+  padding:2px 0 2px 11px;margin:0 0 12px;max-width:68ch}
+.fio{display:flex;flex-direction:column;gap:7px;max-width:700px}
+.dia{align-self:center;font-size:10px;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--tinta-fraca);font-weight:700;margin:8px 0 2px;font-family:var(--dados)}
+.bolha{max-width:80%;padding:8px 12px;border-radius:13px;font-size:13px;line-height:1.5;
+  border:1px solid var(--borda);white-space:pre-wrap;overflow-wrap:anywhere}
+.bolha .cab{display:flex;gap:14px;align-items:baseline;margin-bottom:3px}
+.bolha .q{font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;font-weight:700;
+  opacity:.75;white-space:nowrap}
+.bolha .h{font-family:var(--dados);font-size:10px;color:var(--tinta-fraca);margin-left:auto;
+  white-space:nowrap}
+.b-p{align-self:flex-start;background:var(--papel);border-bottom-left-radius:4px}
+.b-a{align-self:flex-end;background:var(--acento-fundo);border-color:transparent;
+  border-bottom-right-radius:4px}
+.b-a .q{color:var(--acento)}
+.b-h{align-self:flex-end;background:var(--alerta-fundo);border-color:transparent;
+  border-bottom-right-radius:4px}
+.b-h .q{color:var(--alerta)}
+.anexo{display:inline-block;margin-right:6px;font-size:9.5px;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--tinta-fraca)}
+.c-ag{background:var(--ok-fundo);color:var(--ok)}
+.c-esc,.c-bot{background:var(--alerta-fundo);color:var(--alerta)}
+.c-cli{background:var(--acento-fundo);color:var(--acento)}
+.c-pac,.c-par,.c-opt{background:var(--trilho);color:var(--tinta-fraca)}
+.t.clica{cursor:pointer;text-align:left;font-family:inherit;width:100%;border-radius:11px}
+.t.clica[aria-pressed="true"]{border-color:var(--acento);background:var(--acento-fundo)}
+.t.clica[aria-pressed="true"] .l{color:var(--acento)}
+@media (max-width:560px){
+  .atalhos{margin-left:0;width:100%}
+  .gav{padding-left:15px;width:calc(100vw - 38px)} .bolha{max-width:92%}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -146,6 +220,22 @@ button[aria-pressed="true"]{background:var(--acento);border-color:var(--acento);
 
 <h2>Onde as pessoas somem</h2>
 <div id="cxFunil"><div class="vazio">Carregando o funil…</div></div>
+
+<h2>Pacientes e conversas <span class="hojetag">pede senha — dado de paciente</span></h2>
+<div id="cxLeads">
+  <div class="trava" id="trava">
+    <p><b>Nome, telefone, exame procurado e a conversa inteira de cada paciente.</b>
+       É dado sensível de saúde pelo art. 11 da LGPD, então não vem junto com o
+       resto do painel: a senha é conferida no servidor, e quem tem só o link
+       desta página não abre esta seção.</p>
+    <form id="formSenha" autocomplete="off">
+      <input type="password" id="senha" placeholder="Senha" aria-label="Senha"
+             autocomplete="current-password" required>
+      <button type="submit" class="principal">Abrir</button>
+      <span class="recado" id="recadoSenha"></span>
+    </form>
+  </div>
+</div>
 
 <h2>Quanto a Ana demora para responder</h2>
 <div class="tiles" id="tempos"><div class="vazio" style="grid-column:1/-1">Carregando os tempos…</div></div>
@@ -402,6 +492,247 @@ el('refrescar').addEventListener('click', () => {
 });
 
 carregar(false);
+
+// ───────────────── pacientes e conversas, atras de senha ─────────────────
+// A lista vem sem as mensagens (650 kB). O historico de cada um e buscado
+// quando a linha e aberta, e fica guardado na memoria ate recarregar a pagina.
+const API_H = 'https://ajwhrmjzvfdjwsqynbzt.supabase.co/functions/v1/historico';
+const CLSS = {'Agendou':'s-ok','Não Agendou':'s-at','Não Aplica':'s-gr'};
+const CLSC = {'Agendada':'c-ag','Escalada':'c-esc','Bot pausado':'c-bot',
+  'Aguardando a clínica':'c-cli','Aguardando o paciente':'c-pac',
+  'Parada':'c-par','Opt-out':'c-opt'};
+const QUEM = {p:['Paciente','b-p'], a:['Ana','b-a'], h:['Recepção','b-h']};
+const ORDEM_SIT = ['Aguardando a clínica','Escalada','Bot pausado','Agendada',
+  'Aguardando o paciente','Parada','Opt-out'];
+const CORSIT = {'Aguardando a clínica':'var(--acento)','Escalada':'var(--alerta)',
+  'Bot pausado':'var(--alerta)','Agendada':'var(--ok)'};
+const ACENTOS = {'o paciente falou por ultimo':'o paciente falou por último',
+  'a clinica falou por ultimo':'a clínica falou por último',
+  'a recepcao assumiu e nao devolveu':'a recepção assumiu e não devolveu',
+  'pediu para nao receber mais mensagens':'pediu para não receber mais mensagens'};
+const acentos = s => ACENTOS[s] ?? String(s)
+  .replace('a clinica falou por ultimo', 'a clínica falou por último')
+  .replace('o paciente falou por ultimo', 'o paciente falou por último');
+
+let SENHA = '', LEADS = [], CONVERSAS = new Map(), abertas = new Set();
+let lTermo = '', lSit = '', lStatus = '', lFam = '';
+
+const fone = t => {
+  const d = String(t).replace(/\D/g, '');
+  if (d.startsWith('55') && d.length === 13) return `+55 (${d.slice(2,4)}) ${d.slice(4,9)}-${d.slice(9)}`;
+  if (d.startsWith('55') && d.length === 12) return `+55 (${d.slice(2,4)}) ${d.slice(4,8)}-${d.slice(8)}`;
+  return t;
+};
+const pedir = async (qs) => {
+  const r = await fetch(`${API_H}?${qs}`, { headers: { 'x-senha': SENHA } });
+  if (r.status === 401) throw new Error('senha');
+  if (!r.ok) throw new Error('rede');
+  return await r.json();
+};
+
+document.getElementById('formSenha').addEventListener('submit', async e => {
+  e.preventDefault();
+  const campo = el('senha'), recado = el('recadoSenha');
+  SENHA = campo.value;
+  recado.className = 'recado ok'; recado.textContent = 'Conferindo…';
+  try {
+    const d = await pedir('modo=lista');
+    LEADS = d.leads.map(r => ({ ...r, tr: r.t, t: fone(r.t),
+      c: r.c.replace('clinica', 'clínica'), det: acentos(r.det) }));
+    try { sessionStorage.setItem('tq_h', SENHA); } catch {}
+    campo.value = '';
+    montarLeads(d.gerado_em);
+  } catch (err) {
+    SENHA = '';
+    recado.className = 'recado';
+    recado.textContent = err.message === 'senha'
+      ? 'Senha não confere.' : 'Não consegui buscar os dados.';
+  }
+});
+
+function montarLeads(geradoEm) {
+  const porSit = {};
+  LEADS.forEach(r => porSit[r.c] = (porSit[r.c] || 0) + 1);
+  const sits = ORDEM_SIT.filter(s => porSit[s])
+    .concat(Object.keys(porSit).filter(s => !ORDEM_SIT.includes(s)));
+  const fams = [...new Set(LEADS.map(r => r.f))].sort();
+
+  el('cxLeads').innerHTML = `
+    <div class="tiles" id="tilesSit">${sits.map(s => `
+      <button type="button" class="t clica" data-c="${esc(s)}" aria-pressed="false">
+        <div class="v" style="color:${CORSIT[s] || 'var(--tinta-fraca)'}">${br(porSit[s])}</div>
+        <div class="l">${esc(s)}</div></button>`).join('')}</div>
+    <div class="lbarra">
+      <input type="search" id="lbusca" placeholder="Nome, telefone ou exame…" autocomplete="off">
+      <select id="lsit"><option value="">Todas as situações</option>${
+        sits.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('')}</select>
+      <select id="lstatus"><option value="">Todos os status</option>
+        <option>Agendou</option><option>Não Agendou</option><option>Não Aplica</option></select>
+      <select id="lfam"><option value="">Todos os exames</option>${
+        fams.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}</select>
+      <button type="button" id="llimpar">Limpar</button>
+      <button type="button" id="lcsv">Baixar CSV</button>
+      <button type="button" id="lfechar" title="Esquece a senha nesta aba">Fechar</button>
+    </div>
+    <p class="lconta" id="lconta"></p>
+    <div class="quadro"><table id="tbLeads">
+      <thead><tr><th></th><th>Nome</th><th>WhatsApp</th><th>Exame procurado</th>
+        <th>Status</th><th>Conversa</th></tr></thead>
+      <tbody id="lcorpo"></tbody></table>
+      <div class="vazio" id="lvazio" hidden style="border:none">Nenhum paciente com esses filtros.</div>
+    </div>
+    <p class="lconta" style="margin-top:10px">Lista buscada em ${esc(geradoEm)}.
+      Clique numa linha para abrir a conversa inteira.</p>`;
+
+  el('lbusca').addEventListener('input', e => { lTermo = e.target.value.trim().toLowerCase(); pintaLeads(); });
+  el('lsit').addEventListener('change', e => { lSit = e.target.value; sincTiles(); pintaLeads(); });
+  el('lstatus').addEventListener('change', e => { lStatus = e.target.value; pintaLeads(); });
+  el('lfam').addEventListener('change', e => { lFam = e.target.value; pintaLeads(); });
+  el('llimpar').addEventListener('click', () => {
+    lTermo = lSit = lStatus = lFam = '';
+    el('lbusca').value = ''; el('lsit').value = ''; el('lstatus').value = ''; el('lfam').value = '';
+    sincTiles(); pintaLeads();
+  });
+  el('lcsv').addEventListener('click', baixarCsv);
+  el('lfechar').addEventListener('click', () => {
+    SENHA = ''; LEADS = []; CONVERSAS.clear(); abertas.clear();
+    try { sessionStorage.removeItem('tq_h'); } catch {}
+    location.reload();
+  });
+  document.querySelectorAll('#tilesSit .t.clica').forEach(b =>
+    b.addEventListener('click', () => {
+      lSit = b.dataset.c === lSit ? '' : b.dataset.c;
+      el('lsit').value = lSit; sincTiles(); pintaLeads();
+    }));
+  el('lcorpo').addEventListener('click', aoClicarLinha);
+  pintaLeads();
+}
+
+const sincTiles = () => document.querySelectorAll('#tilesSit .t.clica')
+  .forEach(b => b.setAttribute('aria-pressed', b.dataset.c === lSit));
+
+const visiveisL = () => LEADS.filter(r =>
+  (!lSit || r.c === lSit) && (!lStatus || r.s === lStatus) && (!lFam || r.f === lFam) &&
+  (!lTermo || (r.n + ' ' + r.t + ' ' + r.tr + ' ' + r.e + ' ' + r.f + ' ' + r.c)
+    .toLowerCase().includes(lTermo)));
+
+function resumoExame(txt) {
+  const ps = String(txt).split('; ');
+  if (ps.length <= 2) return esc(txt);
+  return esc(ps.slice(0, 2).join('; ')) +
+    ` <span style="color:var(--tinta-fraca)">+${ps.length - 2} exame${ps.length - 2 > 1 ? 's' : ''}</span>`;
+}
+
+function pintaLeads() {
+  const rs = visiveisL();
+  el('lcorpo').innerHTML = rs.map(r => {
+    const ab = abertas.has(r.tr);
+    return `<tr class="linha" data-f="${esc(r.tr)}" aria-expanded="${ab}" tabindex="0">
+      <td class="abrir"><span class="caret" aria-hidden="true">▶</span></td>
+      <td class="nome">${esc(r.n)}</td>
+      <td class="fone">${esc(r.t)}</td>
+      <td class="ex">${resumoExame(r.e)}<span class="fam">${esc(r.f)}</span></td>
+      <td><span class="sel ${CLSS[r.s] || ''}">${esc(r.s)}</span></td>
+      <td class="conv"><span class="sel ${CLSC[r.c] || 'c-par'}">${esc(r.c)}</span>${
+        r.det ? `<span class="det">${esc(r.det)}</span>` : ''}</td></tr>` + (ab ? gaveta(r) : '');
+  }).join('');
+  el('lvazio').hidden = rs.length > 0;
+  el('lconta').textContent = rs.length === LEADS.length
+    ? `${br(rs.length)} pacientes` : `${br(rs.length)} de ${br(LEADS.length)} pacientes`;
+}
+
+function gaveta(r) {
+  const marcas = [
+    r.nm ? `${br(r.nm)} mensagem${r.nm > 1 ? 's' : ''}` : '',
+    r.dias === null ? '' : (r.dias === 0 ? 'hoje' : `${r.dias} dia${r.dias > 1 ? 's' : ''} sem falar`),
+    `última mensagem em ${r.u}`, r.tmp ? `temperatura ${r.tmp}` : '',
+    r.conv && r.conv !== 'particular' ? `convênio ${r.conv}` : '',
+  ].filter(Boolean);
+  const ms = CONVERSAS.get(r.tr);
+  return `<tr class="gaveta"><td colspan="6"><div class="gav">
+    <div class="gtopo">${marcas.map(m => `<span class="marca">${esc(m)}</span>`).join('')}
+      ${ms ? `<button type="button" class="copiar espaco" data-f="${esc(r.tr)}">Copiar conversa</button>` : ''}
+    </div>
+    ${r.res ? `<p class="gresumo">${esc(r.res)}</p>` : ''}
+    ${ms === undefined ? '<p class="gresumo">Buscando a conversa…</p>' : fio(ms)}
+  </div></td></tr>`;
+}
+
+function fio(ms) {
+  if (!ms.length) return '<p class="gresumo">Sem mensagens guardadas para este contato.</p>';
+  let dia = '', html = '<div class="fio">';
+  for (const [ts, quem, tipo, txt] of ms) {
+    const d = ts.slice(0, 10);
+    if (d !== dia) { dia = d; html += `<div class="dia">${esc(d)}</div>`; }
+    const [rotulo, cls] = QUEM[quem] || QUEM.a;
+    html += `<div class="bolha ${cls}"><div class="cab">` +
+      `<span class="q">${rotulo}</span><span class="h">${esc(ts.slice(11))}</span></div>` +
+      (tipo ? `<span class="anexo">[${esc(tipo)}]</span>` : '') + esc(txt) + '</div>';
+  }
+  return html + '</div>';
+}
+
+async function aoClicarLinha(e) {
+  const copiar = e.target.closest('.copiar');
+  if (copiar) {
+    const ms = CONVERSAS.get(copiar.dataset.f) || [];
+    const txt = ms.map(([ts, q, tp, t]) =>
+      `[${ts}] ${(QUEM[q] || QUEM.a)[0]}: ${tp ? '(' + tp + ') ' : ''}${t}`).join('\n');
+    const antes = copiar.textContent;
+    try { await navigator.clipboard.writeText(txt); copiar.textContent = `${ms.length} mensagens copiadas`; }
+    catch { copiar.textContent = 'Não consegui copiar'; }
+    setTimeout(() => copiar.textContent = antes, 1800);
+    return;
+  }
+  const tr = e.target.closest('tr.linha');
+  if (!tr) return;
+  const f = tr.dataset.f;
+  if (abertas.has(f)) { abertas.delete(f); pintaLeads(); return; }
+  abertas.add(f);
+  pintaLeads();
+  if (CONVERSAS.has(f)) return;
+  try {
+    const d = await pedir(`modo=conversa&fone=${encodeURIComponent(f)}`);
+    CONVERSAS.set(f, d.msgs);
+  } catch { CONVERSAS.set(f, []); }
+  if (abertas.has(f)) pintaLeads();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const tr = e.target.closest?.('#tbLeads tr.linha');
+  if (!tr) return;
+  e.preventDefault();
+  aoClicarLinha({ target: tr, preventDefault() {} });
+});
+
+function baixarCsv() {
+  const L = [['Nome','WhatsApp','Exame','Familia','Status','Situacao da conversa',
+              'Detalhe','Mensagens','Dias sem falar','Etapa do follow-up',
+              'Data do contato','Ultima mensagem','Recontato']];
+  visiveisL().forEach(r => L.push([r.n, r.tr, r.e, r.f, r.s, r.c, r.det, r.nm,
+    r.dias === null ? '' : r.dias, r.et, r.d, r.u, r.r ? 'sim' : 'nao']));
+  const asp = s => '"' + String(s).replace(/"/g, '""') + '"';
+  const blob = new Blob(['\ufeff' + L.map(l => l.map(asp).join(';')).join('\r\n')],
+    { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'leads-whatsapp-total-quality.csv';
+  a.click(); URL.revokeObjectURL(a.href);
+}
+
+// senha guardada so nesta aba: sobrevive ao filtro, nao ao fechar o navegador
+try {
+  const guardada = sessionStorage.getItem('tq_h');
+  if (guardada) {
+    SENHA = guardada;
+    pedir('modo=lista').then(d => {
+      LEADS = d.leads.map(r => ({ ...r, tr: r.t, t: fone(r.t),
+        c: r.c.replace('clinica', 'clínica'), det: acentos(r.det) }));
+      montarLeads(d.gerado_em);
+    }).catch(() => { SENHA = ''; sessionStorage.removeItem('tq_h'); });
+  }
+} catch {}
 </script>
 
 </body>
