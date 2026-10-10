@@ -1,0 +1,213 @@
+{
+  "name": "ANA-05 - Sincronizar Agendamentos do Google Agenda (v4.1)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "a05-trigger",
+      "name": "A cada 15 minutos",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -800,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "sac@totalquality.med.br",
+          "mode": "list",
+          "cachedResultName": "sac@totalquality.med.br"
+        },
+        "returnAll": true,
+        "options": {
+          "timeMin": "={{ $now.toISO() }}",
+          "timeMax": "={{ $now.plus({ days: 60 }).toISO() }}",
+          "updatedMin": "={{ $now.minus({ minutes: 30 }).toISO() }}",
+          "singleEvents": true,
+          "showDeleted": true
+        }
+      },
+      "id": "a05-gcal",
+      "name": "Buscar eventos atualizados",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -576,
+        300
+      ],
+      "notes": "Agenda confirmada em 20/08/2026: sac@totalquality.med.br (owner/primary, America/Sao_Paulo). showDeleted=true detecta cancelamentos.",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "O6Uj5bEN2ESNl5Sy",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// ANA-05 v4.1 — extrai WhatsApp, nome e data/hora do evento da agenda.\n// CALIBRADO contra os 90 eventos REAIS de sac@totalquality.med.br\n// (execução n8n 126929 — 20/08/2026).\n//\n//  1. rejeita telefone internacional (+1 ...)\n//  2. rejeita CPF/RG/SSN/CEP mesmo SEM rótulo — o v3 gravava CPF como\n//     telefone em 4 eventos, no cadastro do PACIENTE ERRADO\n//  3. a HORA vem do TÍTULO (o bloco diverge em 69% dos casos)\n//  4. extrai também o NOME do paciente (83 de 90 eventos), para os\n//     agendamentos feitos no balcão, sem cadastro prévio no WhatsApp\n//  5. sem telefone confiável, não escreve — silêncio é seguro\n// ============================================================\nconst DDDS = new Set([11,12,13,14,15,16,17,18,19,21,22,24,27,28,31,32,33,34,35,37,38,41,42,43,44,45,46,47,48,49,51,53,54,55,61,62,63,64,65,66,67,68,69,71,73,74,75,77,79,81,82,83,84,85,86,87,88,89,91,92,93,94,95,96,97,98,99]);\n\nfunction extrairTelefone(ev) {\n  const bruto = `${ev.summary || ''}\\n${ev.description || ''}`;\n  const limpo = bruto\n    .replace(/\\+(?!55)\\d{1,3}[\\s.\\-]?[\\d.\\-\\s]{6,15}/g, ' ')\n    .replace(/\\b(cpf|rg|ssn|nasc\\w*|data de nasc\\w*|carteirinha|matr[ií]cula|conv[êe]nio|cep)\\b\\s*[:\\-]?\\s*[\\d.\\-\\/ ]{6,20}/gi, ' ')\n    .replace(/\\b\\d{3}\\.\\d{3}\\.\\d{3}-?\\d{2}\\b/g, ' ')\n    .replace(/\\b\\d{2}\\.?\\d{3}-\\d{3}\\b/g, ' ')\n    .replace(/\\b\\d{1,2}[\\/.]\\d{1,2}[\\/.]\\d{2,4}\\b/g, ' ');\n\n  const cand = []; let m;\n  const marcado = /(?:tel|fone|celular|cel|whats?app|whats|contato)\\s*[:\\-]?\\s*(?:\\+?55)?\\s*\\(?(\\d{2})\\)?\\s*(\\d{4,5})[\\s.\\-]?(\\d{4})/gi;\n  while ((m = marcado.exec(limpo)) !== null) cand.push({ p: 3, ddd: m[1], num: m[2] + m[3] });\n  const paren = /\\((\\d{2})\\)\\s*(\\d{4,5})[\\s.\\-]?(\\d{4})/g;\n  while ((m = paren.exec(limpo)) !== null) cand.push({ p: 2, ddd: m[1], num: m[2] + m[3] });\n  const solto = /(?:\\+?55)?\\s*(\\d{2})\\s*(9\\d{4}|[2-5]\\d{3})[\\s.\\-]?(\\d{4})\\b/g;\n  const semPont = limpo.replace(/[.\\-]/g, ' ');\n  while ((m = solto.exec(semPont)) !== null) cand.push({ p: 1, ddd: m[1], num: m[2] + m[3] });\n\n  const validos = cand.filter(function (c) {\n    if (!DDDS.has(parseInt(c.ddd, 10))) return false;\n    if (c.num.length === 9) return /^9/.test(c.num);\n    if (c.num.length === 8) return /^[2-5]/.test(c.num);\n    return false;\n  });\n  if (!validos.length) return null;\n  validos.sort(function (a, b) { return b.p - a.p; });\n  return '55' + validos[0].ddd + validos[0].num;\n}\n\nfunction extrairNome(ev) {\n  const m = String(ev.description || '').match(/^\\s*(?:paciente|nome)\\s*[:\\-]\\s*(.+)$/im);\n  if (m) {\n    const n = m[1].trim().replace(/\\s+/g, ' ');\n    if (n.length >= 3 && /^[A-Za-zÀ-ÿ' ]+$/.test(n)) return n;\n  }\n  const partes = String(ev.summary || '').split(/\\s*[-–]\\s*/).map(function (p) { return p.trim(); }).filter(Boolean);\n  for (const parte of partes.slice(0, -1)) {\n    const cand = parte.replace(/^\\d{1,2}\\s*[hH:]\\s*\\d{0,2}\\s*/, '').replace(/\\s+/g, ' ').trim();\n    if (cand.length >= 5 && cand.indexOf(' ') > 0 && /^[A-Za-zÀ-ÿ' ]+$/.test(cand)) return cand;\n  }\n  return null;\n}\n\nfunction extrairHorario(ev) {\n  const inicio = (ev.start && (ev.start.dateTime || ev.start.date)) || null;\n  if (!inicio) return null;\n  const em = inicio.match(/T(\\d{2}):(\\d{2})/);\n  const horaBloco = em ? em[1] + ':' + em[2] : null;\n  const tm = (ev.summary || '').match(/(?:^|[\\s\\-])(\\d{1,2})\\s*[hH:]\\s*(\\d{2})?/);\n  let horaTitulo = null;\n  if (tm) {\n    const h = Number(tm[1]);\n    if (h >= 0 && h <= 23) horaTitulo = String(h).padStart(2, '0') + ':' + (tm[2] || '00');\n  }\n  const hora = horaTitulo || horaBloco || '08:00';\n  const hh = Number(hora.slice(0, 2));\n  return {\n    data: inicio.slice(0, 10),\n    hora: hora,\n    turno: hh < 12 ? 'manhã' : (hh < 18 ? 'tarde' : 'noite'),\n    fonte_hora: horaTitulo ? 'titulo' : (horaBloco ? 'bloco' : 'padrao'),\n    divergencia: !!(horaTitulo && horaBloco && horaTitulo !== horaBloco)\n  };\n}\n\nconst out = [];\nfor (const item of $input.all()) {\n  const ev = item.json;\n  const phone = extrairTelefone(ev);\n  if (!phone) continue;\n  const h = extrairHorario(ev);\n  if (!h) continue;\n  out.push({ json: {\n    phone: phone,\n    nome: extrairNome(ev) || '',\n    data: h.data,\n    hora: h.hora,\n    turno: h.turno,\n    cancelado: ev.status === 'cancelled',\n    evento: (ev.summary || '').slice(0, 120),\n    event_id: ev.id,\n    fonte_hora: h.fonte_hora,\n    divergencia_horario: h.divergencia\n  }});\n}\nreturn out;"
+      },
+      "id": "a05-parse",
+      "name": "Extrair telefone e horario",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -352,
+        300
+      ],
+      "notes": "Parser v4.1 calibrado nos 90 eventos reais: 55/90 (61%) com telefone confiavel, 0 falso positivo, nome do paciente em 83/90."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Um unico parametro JSONB. O n8n resolve o queryReplacement e divide a string\n-- por virgula: com o nome do paciente vazio some um parametro, e um titulo de\n-- evento com virgula deslocaria todos os campos. Este e o padrao do resto do\n-- sistema. (Cuidado: o n8n le placeholders de parametro ate dentro de comentario.)\nINSERT INTO ana_leads AS l (\n  phone, nome, agendamento, proxima_acao, followup_due_at,\n  resumo_interno, bot_ativo, temperatura, funil, intencao, created_at, updated_at)\nSELECT\n  p->>'phone',\n  NULLIF(p->>'nome',''),\n  jsonb_build_object(\n    'status', CASE WHEN (p->>'cancelado')::boolean THEN 'cancelado' ELSE 'confirmado' END,\n    'data', p->>'data', 'turno', p->>'turno', 'hora', p->>'hora',\n    'origem','google_agenda','evento', p->>'evento',\n    'paciente', NULLIF(p->>'nome','')),\n  CASE WHEN (p->>'cancelado')::boolean THEN 'follow_up_d1' ELSE 'agendado' END,\n  CASE WHEN (p->>'cancelado')::boolean THEN now() + interval '2 hours' END,\n  CASE WHEN (p->>'cancelado')::boolean\n    THEN 'Agendamento CANCELADO no Google Agenda - retomar contato para reagendar.'\n    ELSE 'Agendamento CONFIRMADO via Google Agenda para ' || (p->>'data') || ' as ' || (p->>'hora')\n         || ' (' || (p->>'turno') || ') - origem: agenda da clinica.' END,\n  true, 'quente', 'fundo', 'agendar', now(), now()\nFROM (SELECT $1::jsonb AS p) t\nON CONFLICT (phone) DO UPDATE SET\n  nome            = COALESCE(l.nome, EXCLUDED.nome),\n  agendamento     = EXCLUDED.agendamento,\n  proxima_acao    = EXCLUDED.proxima_acao,\n  followup_due_at = CASE WHEN (EXCLUDED.agendamento->>'status') = 'cancelado'\n                          AND NOT COALESCE(l.opt_out,false)\n                         THEN now() + interval '2 hours' END,\n  resumo_interno  = EXCLUDED.resumo_interno,\n  updated_at      = now()",
+        "options": {
+          "queryBatching": "independently",
+          "queryReplacement": "={{ JSON.stringify($json) }}"
+        }
+      },
+      "id": "a05-pg",
+      "name": "Atualizar ana_leads",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -128,
+        300
+      ],
+      "notes": "UPSERT com um unico parametro JSONB. Cria o lead quando o agendamento veio do balcao e nunca sobrescreve nome ja cadastrado.",
+      "credentials": {
+        "postgres": {
+          "id": "yhHF1KyvjtG6Ev9q",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 5 * * *"
+            }
+          ]
+        }
+      },
+      "id": "a05-cron-full",
+      "name": "Reconciliacao diaria 05:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -800,
+        480
+      ],
+      "notes": "Le a janela inteira de 60 dias, sem updatedMin. O gatilho de 15 minutos so enxerga evento alterado na ultima meia hora e nunca faria a carga inicial."
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "sac@totalquality.med.br",
+          "mode": "list",
+          "cachedResultName": "sac@totalquality.med.br"
+        },
+        "returnAll": true,
+        "options": {
+          "timeMin": "={{ $now.minus({ days: 1 }).toISO() }}",
+          "timeMax": "={{ $now.plus({ days: 60 }).toISO() }}",
+          "singleEvents": true,
+          "showDeleted": true
+        }
+      },
+      "id": "a05-gcal-full",
+      "name": "Ler agenda completa (60 dias)",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -576,
+        480
+      ],
+      "notes": "Reconciliacao: le a janela inteira, sem updatedMin. O no de 15 minutos so enxerga evento ALTERADO na ultima meia hora e por isso nunca fazia a carga inicial — o banco ficou com 19 agendamentos enquanto a agenda tinha ~55 identificaveis.",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "O6Uj5bEN2ESNl5Sy",
+          "name": "Google Calendar account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "A cada 15 minutos": {
+      "main": [
+        [
+          {
+            "node": "Buscar eventos atualizados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar eventos atualizados": {
+      "main": [
+        [
+          {
+            "node": "Extrair telefone e horario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair telefone e horario": {
+      "main": [
+        [
+          {
+            "node": "Atualizar ana_leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reconciliacao diaria 05:00": {
+      "main": [
+        [
+          {
+            "node": "Ler agenda completa (60 dias)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler agenda completa (60 dias)": {
+      "main": [
+        [
+          {
+            "node": "Extrair telefone e horario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo"
+  }
+}
