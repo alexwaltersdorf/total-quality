@@ -165,6 +165,24 @@ export default function Footer({ laboratory = false }: { laboratory?: boolean })
         </div>
       </div>
 
+      {/* Identificação obrigatória — art. 5º da Resolução CFM nº 2.336/2023.
+          O número vai sem a sigla do conselho em texto renderizado, apenas os
+          dígitos; há guard-rail que quebra o build se a sigla reaparecer.
+          Fica no rodapé, e não só em /quem-somos, porque a norma pede "local
+          visível" em toda peça do estabelecimento — o rodapé é a única parte
+          que acompanha todas as páginas. O equivalente pré-renderizado está
+          em napHtml(), em server/_core/seo-content.ts. */}
+      <div className="border-t border-black/10">
+        <div className="container py-5 text-center">
+          <p className="text-text-muted text-xs leading-relaxed">
+            <span className="text-text-light">Total Quality Medicina Diagnóstica</span> — Registro 970616
+            <span className="hidden sm:inline"> · </span>
+            <br className="sm:hidden" />
+            Responsável Técnico: Alex Waltersdorf - 267.339
+          </p>
+        </div>
+      </div>
+
       {/* Bottom bar */}
       <div className="border-t border-black/10">
         <div className="container py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
