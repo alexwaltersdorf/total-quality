@@ -19,7 +19,7 @@ const CATEGORY_BACKGROUNDS: Record<ExamData["category"], string> = {
   laboratorio: "/images/laboratorio-1440.webp",
   imagem: "/images/tomografia-1440.webp",
   cardiologia: "/images/cardiologia-1440.webp",
-  neurologia: "/images/hero-clinica-1440.webp",
+  neurologia: "/images/recepcao-1024.webp",
   outros: "/images/recepcao-1024.webp",
 };
 

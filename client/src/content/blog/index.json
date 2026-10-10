@@ -10,7 +10,7 @@
     "authorRole": "Diretor Clínico — Total Quality",
     "date": "10 Abr 2026",
     "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/hero-clinica-1024.webp",
+    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
     "tags": [
       "check-up",
       "medicina preventiva",
@@ -51,7 +51,7 @@
     "authorRole": "Cardiologista — Total Quality",
     "date": "28 Mar 2026",
     "readTime": "7 min",
-    "image": "https://totalquality.med.br/images/cardiologia-1024.webp",
+    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
     "tags": [
       "cardiologia",
       "saúde do coração",
@@ -90,7 +90,7 @@
     "authorRole": "Diretor Clínico — Total Quality",
     "date": "12 Mar 2026",
     "readTime": "7 min",
-    "image": "https://totalquality.med.br/images/hero-clinica-1024.webp",
+    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
     "tags": [
       "vitamina D",
       "bem-estar",
@@ -231,7 +231,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
     "readTime": "9 min",
-    "image": "https://totalquality.med.br/images/cardiologia-1024.webp",
+    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
     "tags": [
       "MAPA",
       "Holter",
@@ -252,7 +252,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
     "readTime": "10 min",
-    "image": "https://totalquality.med.br/images/hero-clinica-1024.webp",
+    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
     "tags": [
       "check-up médico",
       "check-up preventivo",
@@ -292,7 +292,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
     "readTime": "10 min",
-    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
+    "image": "https://totalquality.med.br/images/cardiologia-1024.webp",
     "tags": [
       "mamografia",
       "ultrassom da mama",
@@ -332,7 +332,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
     "readTime": "9 min",
-    "image": "https://totalquality.med.br/images/hero-clinica-1024.webp",
+    "image": "https://totalquality.med.br/images/fachada-1024.webp",
     "tags": [
       "ASO",
       "exame ocupacional",
@@ -353,7 +353,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
     "readTime": "9 min",
-    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
+    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
     "tags": [
       "exame toxicológico",
       "CNH",
@@ -374,13 +374,94 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
     "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/cardiologia-1024.webp",
+    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
     "tags": [
       "eletrocardiograma",
       "ECG",
       "exame cardiológico",
       "saúde do coração",
       "Caraguatatuba"
+    ]
+  },
+  {
+    "id": "21",
+    "slug": "laboratorio-regiao-sul-caraguatatuba",
+    "title": "Laboratório na Região Sul de Caraguatatuba: Como Escolher e o Que Conferir",
+    "subtitle": "Perequê-Mirim, Travessão, Porto Novo, Morro do Algodão e os outros bairros do sul da cidade",
+    "excerpt": "A região sul é a parte de Caraguatatuba que cresce mais rápido, mas a estrutura de diagnóstico continua concentrada no Centro. Veja quais bairros formam o sul, o que a distância muda no preparo do exame e seis pontos para conferir antes de escolher um laboratório.",
+    "category": "Medicina Preventiva",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "09 Out 2026",
+    "readTime": "7 min",
+    "image": "https://totalquality.med.br/images/fachada-1024.webp",
+    "tags": [
+      "região sul",
+      "Perequê-Mirim",
+      "Travessão",
+      "Porto Novo",
+      "Caraguatatuba",
+      "análises clínicas"
+    ]
+  },
+  {
+    "id": "22",
+    "slug": "como-escolher-laboratorio-analises-clinicas",
+    "title": "Como Escolher um Laboratório de Análises Clínicas: 8 Critérios Técnicos",
+    "subtitle": "Os critérios técnicos que o paciente pode conferir antes de decidir onde coletar",
+    "excerpt": "O que mostra se um resultado é confiável não está na fachada nem na tabela de preços: está em critérios técnicos verificáveis. São oito, e o paciente pode conferir todos antes de coletar.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "09 Out 2026",
+    "readTime": "8 min",
+    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
+    "tags": [
+      "análises clínicas",
+      "qualidade",
+      "controle de qualidade",
+      "Anvisa",
+      "escolha de laboratório"
+    ]
+  },
+  {
+    "id": "23",
+    "slug": "resultado-de-exames-online-seguranca",
+    "title": "Resultado de Exames Online: Como Acessar com Segurança",
+    "subtitle": "Quem pode receber, o que a LGPD garante e por que o laudo nunca vai para um grupo de mensagens",
+    "excerpt": "Resultado de exame é dado sensível de saúde. Veja como acessar o seu laudo online, quem tem direito a recebê-lo, o que a LGPD garante na prática e o que fazer quando o acesso falha.",
+    "category": "Bem-Estar",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "09 Out 2026",
+    "readTime": "6 min",
+    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
+    "tags": [
+      "resultado de exames",
+      "LGPD",
+      "dado sensível",
+      "sigilo",
+      "Caraguatatuba"
+    ]
+  },
+  {
+    "id": "24",
+    "slug": "exame-de-urina-eas-como-coletar",
+    "title": "Exame de Urina (EAS): Para Que Serve e Como Coletar Corretamente",
+    "subtitle": "O exame mais simples do pedido médico é também o que mais se perde por erro de coleta",
+    "excerpt": "O EAS — exame de urina de rotina — avalia infecção, função renal, hidratação e sinais de diabetes. É simples, barato e o que mais precisa ser repetido por coleta mal feita. Veja o passo a passo correto.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "09 Out 2026",
+    "readTime": "6 min",
+    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
+    "tags": [
+      "exame de urina",
+      "EAS",
+      "urina tipo 1",
+      "preparo de exame",
+      "urocultura"
     ]
   }
 ]

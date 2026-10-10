@@ -65,6 +65,36 @@ const NAP = {
   hours: "Segunda a sexta, das 7h30 às 18h · Sábado e domingo fechado",
 };
 
+/*
+ * Identificação obrigatória — art. 5º da Resolução CFM nº 2.336/2023.
+ *
+ * A norma pede o nome do estabelecimento com o número de registro E o nome do
+ * responsável técnico com o dele, em local visível, em TODA peça do
+ * estabelecimento. Até out/2026 o site não trazia isso em nenhuma página: nem
+ * no rodapé renderizado, nem no pré-render de nenhuma das rotas.
+ *
+ * Entra aqui, dentro do bloco de NAP, porque esse bloco acompanha todas as
+ * rotas pré-renderizadas — assim a conformidade não depende de alguém lembrar
+ * de repetir o texto a cada página nova. O equivalente que o visitante com
+ * JavaScript vê está em client/src/components/Footer.tsx; os dois precisam
+ * dizer a mesma coisa.
+ *
+ * Sem a sigla do conselho em texto renderizado: apenas os dígitos.
+ */
+const IDENTIFICACAO_CFM = {
+  estabelecimento: "Total Quality Medicina Diagnóstica",
+  registro: "970616",
+  responsavelTecnico: "Alex Waltersdorf - 267.339",
+};
+
+function identificacaoHtml(): string {
+  return `
+    <p>
+      <strong>${escapeHtml(IDENTIFICACAO_CFM.estabelecimento)}</strong> — Registro ${escapeHtml(IDENTIFICACAO_CFM.registro)} ·
+      Responsável Técnico: ${escapeHtml(IDENTIFICACAO_CFM.responsavelTecnico)}
+    </p>`;
+}
+
 function escapeHtml(text: string): string {
   const map: Record<string, string> = {
     "&": "&amp;",
@@ -184,7 +214,8 @@ function napHtml(ctaMessage: string): string {
       <a href="${NAP.whatsappHref}">Agende pelo WhatsApp</a><br />
       Horário de atendimento: ${escapeHtml(NAP.hours)}
     </address>
-    <p>${escapeHtml(ctaMessage)}</p>`;
+    <p>${escapeHtml(ctaMessage)}</p>
+    ${identificacaoHtml()}`;
 }
 
 function internalLinksHtml(currentPath: string): string {
@@ -656,6 +687,7 @@ function blogIndexHtml(): string {
     <h1>Blog Total Quality — Saúde e Diagnóstico</h1>
     <p>Artigos escritos pela equipe da Total Quality Medicina Diagnóstica sobre exames, prevenção e saúde no Litoral Norte.</p>
     <ul>${items}</ul>
+    ${identificacaoHtml()}
     ${internalLinksHtml("/blog")}`;
 }
 
