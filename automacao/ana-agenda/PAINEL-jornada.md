@@ -111,8 +111,29 @@ art. 11 da LGPD, e por isso ela **nao** anda junto com o link da pagina:
 - a senha fica em `sessionStorage`, entao sobrevive a um filtro mas nao a fechar o
   navegador. O botao **Fechar** apaga na hora
 
-A lista chega sem as mensagens (~650 kB para 1.517 pacientes). O historico de cada um
+A lista chega sem as mensagens (~700 kB para 1.517 pacientes). O historico de cada um
 e buscado quando a linha e aberta, e so fica na memoria daquela aba.
+
+A ordem e **da conversa mais recente para a mais antiga**, pela ultima mensagem
+trocada (`ana_msgs_contagem.ultima`, que a funcao devolve como `ut`). Nao pela
+data do contato: ela e o inicio da conversa, nao o fim, e deixava no topo quem
+tinha aberto a conversa ha mais tempo.
+
+### Atualizacao sozinha
+
+A secao rebusca a lista a cada **5 minutos**, e o botao *Atualizar agora* faz na
+hora. O que isso respeita:
+
+- **aba escondida nao busca**: nao adianta gastar consulta para uma tela que
+  ninguem esta vendo. Ao voltar para a aba, busca na hora se ja passou dos 5
+  minutos
+- **nao atropela gravacao**: enquanto um status esta sendo gravado, a volta do
+  relogio e pulada
+- **so repinta se algo mudou**, comparando a resposta com a anterior
+- **a rolagem e as conversas abertas ficam onde estavam**. Conversa aberta que
+  ganhou mensagem (a contagem `nm` mudou) tem o historico rebuscado
+- **senha trocada no banco** para o relogio e avisa na tela, em vez de ficar
+  errando em silencio
 
 ### Status: automatico com a palavra final de quem atende
 

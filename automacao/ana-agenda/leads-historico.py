@@ -35,8 +35,10 @@ for r in d['leads']:
                    'd': r['d'], 'u': r['u'], 'r': bool(r['r']),
                    'c': r['c'].replace('clinica', 'clínica'), 'det': acentos(r['det']),
                    'tmp': r['tmp'], 'fun': r['fun'], 'conv': r['conv'], 'res': r['res'],
-                   'nm': r['nm'], 'dias': r['dias']})
-linhas.sort(key=lambda x: kd(x['d']), reverse=True)
+                   'nm': r['nm'], 'dias': r['dias'], 'ut': r.get('ut', 0)})
+# do mais recente para o mais antigo, pela ultima mensagem trocada. A data do
+# contato nao serve: ela e o inicio da conversa, nao o fim.
+linhas.sort(key=lambda x: (x['ut'], kd(x['d'])), reverse=True)
 
 tot  = len(linhas)
 ag   = sum(1 for r in linhas if r['s'] == 'Agendou')
