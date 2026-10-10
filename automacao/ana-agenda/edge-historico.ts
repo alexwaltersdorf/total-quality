@@ -148,10 +148,12 @@ Deno.serve(async (req) => {
     'resumo_interno,status_manual,status_manual_em', 'phone.asc');
   const porFone = new Map<string, any>(estados.map((e: any) => [e.phone, e]));
 
-  // 3. quantas mensagens cada um trocou (a view agrupa no banco)
-  const contagem = new Map<string, number>(
-    (await todos('ana_msgs_contagem?select=phone,n', 'phone.asc'))
-      .map((c: any) => [c.phone, c.n]));
+  // 3. quantas mensagens cada um trocou e quando foi a ultima (a view agrupa
+  //    no banco). 'ultima' e o que ordena a lista: ate aqui ela vinha por
+  //    ord.desc, que e o inicio da conversa, nao a ultima mensagem.
+  const msgs = new Map<string, { n: number, ut: number }>(
+    (await todos('ana_msgs_contagem?select=phone,n,ultima', 'phone.asc'))
+      .map((c: any) => [c.phone, { n: c.n, ut: Date.parse(c.ultima) || 0 }]));
 
   const agora = Date.now();
   const dias = (iso: string | null) =>
@@ -187,10 +189,14 @@ Deno.serve(async (req) => {
       c, det,
       tmp: e.temperatura ?? '', fun: e.funil ?? '', conv: e.convenio ?? '',
       res: e.resumo_interno ?? '',
-      nm: contagem.get(p.WhatsApp) ?? 0,
+      nm: msgs.get(p.WhatsApp)?.n ?? 0,
+      ut: msgs.get(p.WhatsApp)?.ut ?? 0,
       dias: Number.isFinite(ult) ? Math.floor(ult) : null,
     };
   });
+
+  // do mais recente para o mais antigo, pela ultima mensagem trocada
+  leads.sort((a: any, b: any) => b.ut - a.ut);
 
   const saida: Record<string, unknown> = {
     gerado_em: quando(new Date().toISOString()),

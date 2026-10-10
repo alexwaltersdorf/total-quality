@@ -147,6 +147,11 @@ select.estado.e-at{background:var(--alerta-fundo);color:var(--alerta)}
 select.estado.e-gr{background:var(--grave-fundo);color:var(--grave)}
 select.estado option{background:var(--papel);color:var(--tinta);font-weight:500}
 .mao{display:block;font-size:10px;color:var(--tinta-fraca);margin-top:3px;line-height:1.3}
+.rodalista{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:11px;
+  font-size:12.5px;color:var(--tinta-fraca)}
+.rodalista button{font-size:12.5px;padding:4px 11px}
+.pisca{animation:pisca 1.1s ease-in-out infinite}
+@keyframes pisca{50%{opacity:.45}}
 .gtopo .mao{display:inline;margin:0 0 0 -2px}
 #tbLeads th,#tbLeads td{padding-left:9px;padding-right:9px}
 #tbLeads td{font-size:13.5px}
@@ -603,10 +608,15 @@ function montarLeads(geradoEm) {
       <tbody id="lcorpo"></tbody></table>
       <div class="vazio" id="lvazio" hidden style="border:none">Nenhum paciente com esses filtros.</div>
     </div>
-    <p class="lconta" style="margin-top:10px">Lista buscada em ${esc(geradoEm)}.
-      Clique numa linha para abrir a conversa inteira. O <b>Status</b> sai da
-      análise da conversa e pode ser trocado à mão — a escolha manual passa a
-      valer, e <i>Automático</i> devolve o controle ao sistema.</p>
+    <div class="rodalista">
+      <span id="lrelogio">Lista buscada em ${esc(geradoEm)}.</span>
+      <button type="button" id="lagora">Atualizar agora</button>
+      <span>Atualiza sozinha a cada 5 minutos, da conversa mais recente para a mais antiga.</span>
+    </div>
+    <p class="lconta" style="margin-top:10px">Clique numa linha para abrir a
+      conversa inteira. O <b>Status</b> sai da análise da conversa e pode ser
+      trocado à mão — a escolha manual passa a valer, e <i>Automático</i>
+      devolve o controle ao sistema.</p>
     </div>`;
 
   el('lbusca').addEventListener('input', e => { lTermo = e.target.value.trim().toLowerCase(); pintaLeads(); });
@@ -619,7 +629,9 @@ function montarLeads(geradoEm) {
     sincTiles(); pintaLeads();
   });
   el('lcsv').addEventListener('click', baixarCsv);
+  el('lagora').addEventListener('click', () => recarregar(true));
   el('lfechar').addEventListener('click', () => {
+    clearInterval(RELOGIO);
     SENHA = ''; LEADS = []; CONVERSAS.clear(); abertas.clear();
     try { sessionStorage.removeItem('tq_h'); } catch {}
     location.reload();
@@ -632,6 +644,71 @@ function montarLeads(geradoEm) {
   el('lcorpo').addEventListener('click', aoClicarLinha);
   el('lcorpo').addEventListener('change', aoTrocarStatus);
   pintaLeads();
+  ligaRelogio();
+}
+
+// ───────────── atualizacao sozinha, de 5 em 5 minutos ─────────────
+// A pagina nao busca com a aba escondida: nao adianta gastar consulta para
+// uma tela que ninguem esta vendo. Ao voltar para a aba, busca na hora se ja
+// passou da conta.
+const INTERVALO = 300000;
+let RELOGIO = null, ULTIMA = Date.now(), GRAVANDO = 0;
+
+function ligaRelogio() {
+  clearInterval(RELOGIO);
+  RELOGIO = setInterval(() => { if (!document.hidden) recarregar(false); }, INTERVALO);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && SENHA && Date.now() - ULTIMA > INTERVALO) recarregar(false);
+  });
+}
+
+async function recarregar(porBotao) {
+  if (!SENHA || GRAVANDO) return;           // nao atropela uma gravacao em curso
+  const relogio = el('lrelogio');
+  if (!relogio) return;
+  if (porBotao) { relogio.textContent = 'Buscando…'; relogio.classList.add('pisca'); }
+  let d;
+  try {
+    d = await pedir('modo=lista');
+  } catch (err) {
+    relogio.classList.remove('pisca');
+    if (err.message === 'senha') {          // a senha foi trocada no banco
+      clearInterval(RELOGIO); SENHA = '';
+      try { sessionStorage.removeItem('tq_h'); } catch {}
+      relogio.textContent = 'A senha mudou. Recarregue a página para entrar de novo.';
+      return;
+    }
+    relogio.textContent = 'Não consegui atualizar. Tento de novo em 5 minutos.';
+    return;
+  }
+  ULTIMA = Date.now();
+  relogio.classList.remove('pisca');
+
+  const novos = d.leads.map(r => ({ ...r, tr: r.t, t: fone(r.t),
+    c: r.c.replace('clinica', 'clínica'), det: acentos(r.det) }));
+  const mudou = JSON.stringify(novos) !== JSON.stringify(LEADS);
+  if (mudou) {
+    // conversa aberta que ganhou mensagem precisa ser buscada de novo
+    const antes = new Map(LEADS.map(r => [r.tr, r.nm]));
+    novos.forEach(r => {
+      if (antes.has(r.tr) && antes.get(r.tr) !== r.nm) CONVERSAS.delete(r.tr);
+    });
+    LEADS = novos;
+    atualizaTiles();
+    const y = window.scrollY;
+    pintaLeads();
+    window.scrollTo(0, y);
+    abertas.forEach(f => { if (!CONVERSAS.has(f)) buscarConversa(f); });
+  }
+  relogio.textContent = `Lista buscada em ${d.gerado_em}.` + (mudou ? ' Mudou.' : '');
+}
+
+function atualizaTiles() {
+  const porSit = {};
+  LEADS.forEach(r => porSit[r.c] = (porSit[r.c] || 0) + 1);
+  document.querySelectorAll('#tilesSit .t.clica').forEach(b => {
+    b.querySelector('.v').textContent = br(porSit[b.dataset.c] || 0);
+  });
 }
 
 const sincTiles = () => document.querySelectorAll('#tilesSit .t.clica')
@@ -729,12 +806,20 @@ async function aoClicarLinha(e) {
   if (abertas.has(f)) { abertas.delete(f); pintaLeads(); return; }
   abertas.add(f);
   pintaLeads();
+  await buscarConversa(f);
+}
+
+async function buscarConversa(f) {
   if (CONVERSAS.has(f)) return;
   try {
     const d = await pedir(`modo=conversa&fone=${encodeURIComponent(f)}`);
     CONVERSAS.set(f, d.msgs);
   } catch { CONVERSAS.set(f, []); }
-  if (abertas.has(f)) pintaLeads();
+  if (abertas.has(f)) {
+    const y = window.scrollY;
+    pintaLeads();
+    window.scrollTo(0, y);
+  }
 }
 
 async function aoTrocarStatus(e) {
@@ -743,6 +828,7 @@ async function aoTrocarStatus(e) {
   const f = sel.dataset.f, novo = sel.value;
   const r = LEADS.find(x => x.tr === f);
   const antes = r.sm;
+  GRAVANDO++;
   document.querySelectorAll(`select.estado[data-f="${CSS.escape(f)}"]`)
     .forEach(s => s.disabled = true);
   try {
@@ -750,6 +836,7 @@ async function aoTrocarStatus(e) {
     r.sm = novo || null;
     r.s = r.sm ?? r.sa;
   } catch {
+    GRAVANDO--;
     document.querySelectorAll(`select.estado[data-f="${CSS.escape(f)}"]`).forEach(s => {
       s.value = antes ?? ''; s.disabled = false;
     });
@@ -759,6 +846,7 @@ async function aoTrocarStatus(e) {
     setTimeout(() => aviso.textContent = texto, 2500);
     return;
   }
+  GRAVANDO--;
   // repinta tudo se o filtro de status estiver ligado, porque a linha pode
   // ter deixado de pertencer a lista
   if (lStatus) { pintaLeads(); return; }
