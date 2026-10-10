@@ -114,6 +114,38 @@ art. 11 da LGPD, e por isso ela **nao** anda junto com o link da pagina:
 A lista chega sem as mensagens (~650 kB para 1.517 pacientes). O historico de cada um
 e buscado quando a linha e aberta, e so fica na memoria daquela aba.
 
+### Status: automatico com a palavra final de quem atende
+
+A coluna **Status** sai da analise da conversa, como sempre saiu:
+
+| Valor | Quando o sistema o escolhe |
+|---|---|
+| `Agendou` | `agendamento.status = 'confirmado'` |
+| `Não Aplica` | o exame procurado esta na lista do que a clinica nao faz |
+| `Não Agendou` | o resto |
+| `Encerrado` | **nunca** — so existe como escolha manual |
+
+Quem atende pode sobrepor pelo seletor da propria linha, ou pelo mesmo seletor
+dentro da gaveta da conversa (no celular a tabela rola de lado, a gaveta nao).
+A escolha vai para `ana_leads.status_manual`, com `status_manual_em`, e passa a
+ganhar do calculado. A primeira opcao do seletor e sempre
+**Automatico · \<o que a conversa diz\>**: escolher ela limpa a sobreposicao e
+devolve o controle ao sistema. Linha com escolha manual mostra *definido a mao*.
+
+O calculo nunca para: `sa` (automatico) continua vindo em toda resposta, lado a
+lado com `sm` (manual) e com `s`, que e `sm ?? sa`. Assim da para comparar os
+dois a qualquer momento, e o CSV traz as tres colunas.
+
+`Encerrado` ficou de fora do automatico de proposito: quem fecha o assunto e a
+pessoa que atende, nao a conversa. Se depois aparecer uma regra clara — por
+exemplo, opt-out vira encerrado —, ela entra em `edge-historico.ts`, no mesmo
+bloco que decide os outros tres.
+
+A gravacao passa pela mesma senha e pelo mesmo CORS da leitura, aceita so os
+quatro valores da lista e so telefone que ja existe em `ana_leads` (404 caso
+contrario). Falha de rede nao altera a tela: o seletor volta ao valor anterior
+e a pagina avisa que nada foi gravado.
+
 ### Trocar a senha
 
 Gerar o hash e gravar:

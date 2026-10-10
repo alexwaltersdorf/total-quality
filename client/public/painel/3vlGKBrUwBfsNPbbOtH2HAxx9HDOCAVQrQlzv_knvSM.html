@@ -134,7 +134,20 @@ button.principal{background:var(--acento);border-color:var(--acento);color:var(-
 .lbarra input[type=search]{flex:1 1 200px;min-width:0}
 .lconta{font-size:12.5px;color:var(--tinta-fraca);margin:0 0 10px;
   font-variant-numeric:tabular-nums}
-#tbLeads{min-width:640px}
+/* a tabela nao cabe na coluna de 900px do painel: esta secao sai da coluna */
+.largo{width:min(1160px,calc(100vw - 36px));
+       margin-inline:calc((min(1160px,100vw - 36px) - 100%) / -2)}
+#tbLeads{min-width:860px}
+select.estado{font-family:var(--ui);font-size:12px;font-weight:700;padding:3px 7px;
+  border-radius:999px;border:1px solid transparent;cursor:pointer;max-width:100%;
+  background:var(--trilho);color:var(--tinta-fraca);appearance:none;text-align:center}
+select.estado:disabled{opacity:.5;cursor:wait}
+select.estado.e-ok{background:var(--ok-fundo);color:var(--ok)}
+select.estado.e-at{background:var(--alerta-fundo);color:var(--alerta)}
+select.estado.e-gr{background:var(--grave-fundo);color:var(--grave)}
+select.estado option{background:var(--papel);color:var(--tinta);font-weight:500}
+.mao{display:block;font-size:10px;color:var(--tinta-fraca);margin-top:3px;line-height:1.3}
+.gtopo .mao{display:inline;margin:0 0 0 -2px}
 #tbLeads th,#tbLeads td{padding-left:9px;padding-right:9px}
 #tbLeads td{font-size:13.5px}
 #tbLeads td.nome{font-weight:600;max-width:160px}
@@ -142,6 +155,9 @@ button.principal{background:var(--acento);border-color:var(--acento);color:var(-
   color:var(--tinta-fraca)}
 #tbLeads td.ex{max-width:190px}
 #tbLeads td.conv{max-width:175px}
+#tbLeads td.quando{font-family:var(--dados);font-size:12.5px;white-space:nowrap;
+  color:var(--tinta-fraca)}
+#tbLeads td.est{min-width:140px}
 #tbLeads td.conv .det{display:block;font-size:10.5px;color:var(--tinta-fraca);
   margin-top:3px;line-height:1.35}
 #tbLeads td.ex .fam{display:block;font-size:10.5px;color:var(--tinta-fraca);margin-top:2px;
@@ -154,7 +170,7 @@ button.principal{background:var(--acento);border-color:var(--acento);color:var(-
   line-height:1;border-radius:5px;display:inline-block;transition:transform .12s ease}
 #tbLeads tr.linha[aria-expanded="true"] .caret{color:var(--acento);transform:rotate(90deg)}
 #tbLeads tr.gaveta>td{background:var(--fundo);padding:0}
-.gav{position:sticky;left:0;width:min(856px,calc(100vw - 38px));padding:2px 15px 18px 40px}
+.gav{position:sticky;left:0;width:min(1156px,calc(100vw - 38px));padding:2px 15px 18px 40px}
 .gtopo{display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:12px 0 10px;
   font-size:12px;color:var(--tinta-fraca)}
 .gtopo .marca{padding:2px 9px;border-radius:999px;background:var(--trilho);font-weight:600;
@@ -497,7 +513,8 @@ carregar(false);
 // A lista vem sem as mensagens (650 kB). O historico de cada um e buscado
 // quando a linha e aberta, e fica guardado na memoria ate recarregar a pagina.
 const API_H = 'https://ajwhrmjzvfdjwsqynbzt.supabase.co/functions/v1/historico';
-const CLSS = {'Agendou':'s-ok','Não Agendou':'s-at','Não Aplica':'s-gr'};
+const STATUS = ['Agendou', 'Não Agendou', 'Não Aplica', 'Encerrado'];
+const ESTADO = {'Agendou':'e-ok','Não Agendou':'e-at','Não Aplica':'e-gr','Encerrado':''};
 const CLSC = {'Agendada':'c-ag','Escalada':'c-esc','Bot pausado':'c-bot',
   'Aguardando a clínica':'c-cli','Aguardando o paciente':'c-pac',
   'Parada':'c-par','Opt-out':'c-opt'};
@@ -523,8 +540,11 @@ const fone = t => {
   if (d.startsWith('55') && d.length === 12) return `+55 (${d.slice(2,4)}) ${d.slice(4,8)}-${d.slice(8)}`;
   return t;
 };
-const pedir = async (qs) => {
-  const r = await fetch(`${API_H}?${qs}`, { headers: { 'x-senha': SENHA } });
+const pedir = async (qs, corpo) => {
+  const r = await fetch(`${API_H}?${qs}`, corpo === undefined
+    ? { headers: { 'x-senha': SENHA } }
+    : { method: 'POST', headers: { 'x-senha': SENHA, 'content-type': 'application/json' },
+        body: JSON.stringify(corpo) });
   if (r.status === 401) throw new Error('senha');
   if (!r.ok) throw new Error('rede');
   return await r.json();
@@ -558,6 +578,7 @@ function montarLeads(geradoEm) {
   const fams = [...new Set(LEADS.map(r => r.f))].sort();
 
   el('cxLeads').innerHTML = `
+    <div class="largo">
     <div class="tiles" id="tilesSit">${sits.map(s => `
       <button type="button" class="t clica" data-c="${esc(s)}" aria-pressed="false">
         <div class="v" style="color:${CORSIT[s] || 'var(--tinta-fraca)'}">${br(porSit[s])}</div>
@@ -567,7 +588,8 @@ function montarLeads(geradoEm) {
       <select id="lsit"><option value="">Todas as situações</option>${
         sits.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('')}</select>
       <select id="lstatus"><option value="">Todos os status</option>
-        <option>Agendou</option><option>Não Agendou</option><option>Não Aplica</option></select>
+        <option>Agendou</option><option>Não Agendou</option><option>Não Aplica</option>
+        <option>Encerrado</option></select>
       <select id="lfam"><option value="">Todos os exames</option>${
         fams.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}</select>
       <button type="button" id="llimpar">Limpar</button>
@@ -577,12 +599,15 @@ function montarLeads(geradoEm) {
     <p class="lconta" id="lconta"></p>
     <div class="quadro"><table id="tbLeads">
       <thead><tr><th></th><th>Nome</th><th>WhatsApp</th><th>Exame procurado</th>
-        <th>Status</th><th>Conversa</th></tr></thead>
+        <th>Status</th><th>Conversa</th><th>Data</th></tr></thead>
       <tbody id="lcorpo"></tbody></table>
       <div class="vazio" id="lvazio" hidden style="border:none">Nenhum paciente com esses filtros.</div>
     </div>
     <p class="lconta" style="margin-top:10px">Lista buscada em ${esc(geradoEm)}.
-      Clique numa linha para abrir a conversa inteira.</p>`;
+      Clique numa linha para abrir a conversa inteira. O <b>Status</b> sai da
+      análise da conversa e pode ser trocado à mão — a escolha manual passa a
+      valer, e <i>Automático</i> devolve o controle ao sistema.</p>
+    </div>`;
 
   el('lbusca').addEventListener('input', e => { lTermo = e.target.value.trim().toLowerCase(); pintaLeads(); });
   el('lsit').addEventListener('change', e => { lSit = e.target.value; sincTiles(); pintaLeads(); });
@@ -605,6 +630,7 @@ function montarLeads(geradoEm) {
       el('lsit').value = lSit; sincTiles(); pintaLeads();
     }));
   el('lcorpo').addEventListener('click', aoClicarLinha);
+  el('lcorpo').addEventListener('change', aoTrocarStatus);
   pintaLeads();
 }
 
@@ -615,6 +641,17 @@ const visiveisL = () => LEADS.filter(r =>
   (!lSit || r.c === lSit) && (!lStatus || r.s === lStatus) && (!lFam || r.f === lFam) &&
   (!lTermo || (r.n + ' ' + r.t + ' ' + r.tr + ' ' + r.e + ' ' + r.f + ' ' + r.c)
     .toLowerCase().includes(lTermo)));
+
+// O sistema continua lendo a fase da conversa: o automatico e sempre calculado
+// e fica na primeira opcao. Escolher um valor sobrepoe, 'Automatico' devolve.
+function seletor(r) {
+  const op = s => `<option value="${esc(s)}"${r.sm === s ? ' selected' : ''}>${esc(s)}</option>`;
+  return `<select class="estado ${ESTADO[r.s] || ''}" data-f="${esc(r.tr)}"
+      aria-label="Status de ${esc(r.n)}">
+      <option value=""${r.sm ? '' : ' selected'}>Automático · ${esc(r.sa)}</option>
+      ${STATUS.map(op).join('')}
+    </select>${r.sm ? '<span class="mao">definido à mão</span>' : ''}`;
+}
 
 function resumoExame(txt) {
   const ps = String(txt).split('; ');
@@ -632,9 +669,10 @@ function pintaLeads() {
       <td class="nome">${esc(r.n)}</td>
       <td class="fone">${esc(r.t)}</td>
       <td class="ex">${resumoExame(r.e)}<span class="fam">${esc(r.f)}</span></td>
-      <td><span class="sel ${CLSS[r.s] || ''}">${esc(r.s)}</span></td>
+      <td class="est">${seletor(r)}</td>
       <td class="conv"><span class="sel ${CLSC[r.c] || 'c-par'}">${esc(r.c)}</span>${
-        r.det ? `<span class="det">${esc(r.det)}</span>` : ''}</td></tr>` + (ab ? gaveta(r) : '');
+        r.det ? `<span class="det">${esc(r.det)}</span>` : ''}</td>
+      <td class="quando">${esc(r.u)}</td></tr>` + (ab ? gaveta(r) : '');
   }).join('');
   el('lvazio').hidden = rs.length > 0;
   el('lconta').textContent = rs.length === LEADS.length
@@ -643,14 +681,14 @@ function pintaLeads() {
 
 function gaveta(r) {
   const marcas = [
-    r.nm ? `${br(r.nm)} mensagem${r.nm > 1 ? 's' : ''}` : '',
+    r.nm ? `${br(r.nm)} ${r.nm > 1 ? 'mensagens' : 'mensagem'}` : '',
     r.dias === null ? '' : (r.dias === 0 ? 'hoje' : `${r.dias} dia${r.dias > 1 ? 's' : ''} sem falar`),
     `última mensagem em ${r.u}`, r.tmp ? `temperatura ${r.tmp}` : '',
     r.conv && r.conv !== 'particular' ? `convênio ${r.conv}` : '',
   ].filter(Boolean);
   const ms = CONVERSAS.get(r.tr);
-  return `<tr class="gaveta"><td colspan="6"><div class="gav">
-    <div class="gtopo">${marcas.map(m => `<span class="marca">${esc(m)}</span>`).join('')}
+  return `<tr class="gaveta"><td colspan="7"><div class="gav">
+    <div class="gtopo">${seletor(r)}${marcas.map(m => `<span class="marca">${esc(m)}</span>`).join('')}
       ${ms ? `<button type="button" class="copiar espaco" data-f="${esc(r.tr)}">Copiar conversa</button>` : ''}
     </div>
     ${r.res ? `<p class="gresumo">${esc(r.res)}</p>` : ''}
@@ -684,6 +722,7 @@ async function aoClicarLinha(e) {
     setTimeout(() => copiar.textContent = antes, 1800);
     return;
   }
+  if (e.target.closest('select.estado')) return;
   const tr = e.target.closest('tr.linha');
   if (!tr) return;
   const f = tr.dataset.f;
@@ -698,19 +737,56 @@ async function aoClicarLinha(e) {
   if (abertas.has(f)) pintaLeads();
 }
 
+async function aoTrocarStatus(e) {
+  const sel = e.target.closest('select.estado');
+  if (!sel) return;
+  const f = sel.dataset.f, novo = sel.value;
+  const r = LEADS.find(x => x.tr === f);
+  const antes = r.sm;
+  document.querySelectorAll(`select.estado[data-f="${CSS.escape(f)}"]`)
+    .forEach(s => s.disabled = true);
+  try {
+    await pedir('modo=status', { fone: f, status: novo });
+    r.sm = novo || null;
+    r.s = r.sm ?? r.sa;
+  } catch {
+    document.querySelectorAll(`select.estado[data-f="${CSS.escape(f)}"]`).forEach(s => {
+      s.value = antes ?? ''; s.disabled = false;
+    });
+    const aviso = el('lconta');
+    const texto = aviso.textContent;
+    aviso.textContent = 'Não consegui gravar o status. Nada foi alterado.';
+    setTimeout(() => aviso.textContent = texto, 2500);
+    return;
+  }
+  // repinta tudo se o filtro de status estiver ligado, porque a linha pode
+  // ter deixado de pertencer a lista
+  if (lStatus) { pintaLeads(); return; }
+  document.querySelectorAll(`select.estado[data-f="${CSS.escape(f)}"]`).forEach(s => {
+    s.disabled = false;
+    s.value = r.sm ?? '';
+    s.className = 'estado ' + (ESTADO[r.s] || '');
+    const marca = s.parentElement.querySelector('.mao');
+    if (r.sm && !marca) s.insertAdjacentHTML('afterend', '<span class="mao">definido à mão</span>');
+    if (!r.sm && marca) marca.remove();
+  });
+}
+
 document.addEventListener('keydown', e => {
   if (e.key !== 'Enter' && e.key !== ' ') return;
   const tr = e.target.closest?.('#tbLeads tr.linha');
-  if (!tr) return;
+  if (!tr || e.target.closest('select, button, input')) return;
   e.preventDefault();
   aoClicarLinha({ target: tr, preventDefault() {} });
 });
 
 function baixarCsv() {
-  const L = [['Nome','WhatsApp','Exame','Familia','Status','Situacao da conversa',
-              'Detalhe','Mensagens','Dias sem falar','Etapa do follow-up',
-              'Data do contato','Ultima mensagem','Recontato']];
-  visiveisL().forEach(r => L.push([r.n, r.tr, r.e, r.f, r.s, r.c, r.det, r.nm,
+  const L = [['Nome','WhatsApp','Exame','Familia','Status','Status automatico',
+              'Definido a mao','Situacao da conversa','Detalhe','Mensagens',
+              'Dias sem falar','Etapa do follow-up','Data do contato',
+              'Data da ultima mensagem','Recontato']];
+  visiveisL().forEach(r => L.push([r.n, r.tr, r.e, r.f, r.s, r.sa,
+    r.sm ? 'sim' : 'nao', r.c, r.det, r.nm,
     r.dias === null ? '' : r.dias, r.et, r.d, r.u, r.r ? 'sim' : 'nao']));
   const asp = s => '"' + String(s).replace(/"/g, '""') + '"';
   const blob = new Blob(['\ufeff' + L.map(l => l.map(asp).join(';')).join('\r\n')],
