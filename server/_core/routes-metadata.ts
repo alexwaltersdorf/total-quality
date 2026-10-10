@@ -451,11 +451,16 @@ const blogMetadata: Record<string, RouteMetadata> = {
 
 // Rotas estáticas principais
 const staticRoutes: Record<string, RouteMetadata> = {
+  // A home NAO disputa "laboratorio em caraguatatuba". Esse termo e da
+  // /laboratorio-caraguatatuba, e so dela. A home responde pela MARCA e por
+  // "medicina diagnostica" — o guarda-chuva que cobre imagem, cardiologia e
+  // laboratorio. Separar assim encerra a canibalizacao: antes as duas abriam
+  // com "Laboratorio", e o Google escolhia uma por conta propria a cada busca.
   "/": {
-    title: "Laboratório em Caraguatatuba | Total Quality | Ligue Agora",
-    description: `Laboratório em Caraguatatuba com resultados em até 24h. Há ${anosDeAtuacao()} anos no Litoral Norte: exames de sangue, tomografia, ultrassom e check-up. Nota 4,5 no Google.`,
-    keywords: "laboratório Caraguatatuba, exames de sangue, tomografia, ultrassom, check-up",
-    ogTitle: "Total Quality Medicina Diagnóstica e Laboratorial | Exames de Sangue em Caraguatatuba - SP",
+    title: "Total Quality | Medicina Diagnóstica no Litoral Norte",
+    description: `Medicina diagnóstica em Caraguatatuba há ${anosDeAtuacao()} anos: tomografia, ultrassonografia com Doppler, raio-X, cardiologia e análises clínicas. Resultados em até 24h.`,
+    keywords: "medicina diagnóstica, exames de imagem, tomografia, ultrassonografia, check-up, Litoral Norte",
+    ogTitle: "Total Quality Medicina Diagnóstica | Caraguatatuba - SP",
     ogDescription: "Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba - SP. Exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia e mais de 3.000 tipos de exames. Agende pelo WhatsApp.",
     ogImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png",
     canonical: "https://totalquality.med.br/",
@@ -529,10 +534,27 @@ const staticRoutes: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
 
+  // Pagina de E-E-A-T: ate out/2026 o site nao dizia QUEM responde tecnicamente
+  // pelos laudos. Em saude isso pesa duas vezes — no ranking do Google e no
+  // art. 5o da Resolucao CFM 2.336/2023, que exige o nome do estabelecimento
+  // com o numero de registro e o do responsavel tecnico com o dele.
+  "/quem-somos": {
+    title: "Quem Somos e Responsável Técnico | Total Quality",
+    description: `Conheça a Total Quality: ${anosDeAtuacao()} anos de medicina diagnóstica no Litoral Norte, responsável técnico identificado, estrutura de análises clínicas e imagem no Centro de Caraguatatuba.`,
+    keywords: "Total Quality, quem somos, responsável técnico, clínica de diagnóstico, Litoral Norte",
+    ogTitle: "Quem Somos | Total Quality Medicina Diagnóstica",
+    ogDescription: "Responsável técnico, registro, estrutura e histórico da Total Quality em Caraguatatuba - SP.",
+    canonical: "https://totalquality.med.br/quem-somos",
+    priority: 0.8,
+    changefreq: "monthly",
+  },
+
   "/laboratorio-caraguatatuba": {
-    // Intencao distinta da home para evitar canibalizacao: home = "laboratório em
-    // caraguatatuba" (transacional); esta pagina = "laboratório de análises clínicas".
-    title: "Laboratório de Análises Clínicas | Total Quality",
+    // Esta e a pagina do termo "laboratorio em caraguatatuba". A versao antiga
+    // tentava separar por intencao ("transacional" na home, "analises clinicas"
+    // aqui) e nao funcionou: os dois titulos abriam com "Laboratorio" e
+    // continuavam disputando a mesma busca. Agora a home cedeu o termo.
+    title: "Laboratório em Caraguatatuba | Total Quality",
     description: "Laboratório de análises clínicas em Caraguatatuba: hemograma, exames de sangue, hormônios e mais de 3.000 exames. Resultados em até 24h. Agende.",
     keywords: "laboratório Caraguatatuba, análises clínicas, exames de sangue, diagnóstico",
     ogTitle: "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality",

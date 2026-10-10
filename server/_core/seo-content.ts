@@ -117,6 +117,47 @@ const BUSINESS_ID = `${SITE}/#medicalbusiness`;
  * repetirem o FAQPage genérico da home, como acontecia com o bloco estático do
  * index.html (schema duplicado/conflitante nas páginas de exame).
  */
+/**
+ * Data da ultima atualizacao do conteudo, em ISO (AAAA-MM-DD).
+ *
+ * DERIVADA, nunca cravada. Data fixa no codigo envelhece do mesmo jeito que a
+ * nota autodeclarada que saiu daqui: alguem escreve "2026-10-09", o conteudo
+ * muda tres vezes e o dateModified continua mentindo. O deploy da Hostinger faz
+ * `git reset --hard origin/main`, o que carimba o mtime do arquivo com a hora
+ * do deploy — entao o mtime deste modulo E a data em que este conteudo foi ao
+ * ar pela ultima vez.
+ *
+ * Calculado uma vez no boot. Se a leitura falhar (bundle em memoria, FS
+ * somente leitura), devolve null e o dateModified simplesmente nao e emitido —
+ * melhor ausente do que errado.
+ */
+const CONTEUDO_ATUALIZADO_EM: string | null = (() => {
+  try {
+    const url = new URL(import.meta.url);
+    return fs.statSync(url.pathname).mtime.toISOString().slice(0, 10);
+  } catch {
+    return null;
+  }
+})();
+
+/**
+ * JSON-LD de WebPage com a data de atualizacao do conteudo.
+ *
+ * Entra em toda rota pre-renderizada: sem dateModified, tanto o Google quanto
+ * os robos de IA tratam a pagina como de idade desconhecida e tendem a preferir
+ * uma fonte datada.
+ */
+function webPageLd(): object | null {
+  if (!CONTEUDO_ATUALIZADO_EM) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    dateModified: CONTEUDO_ATUALIZADO_EM,
+    isPartOf: { "@type": "WebSite", "@id": `${SITE}/#website` },
+    publisher: { "@id": BUSINESS_ID },
+  };
+}
+
 function jsonLd(objects: object[]): string {
   return objects
     .map(
@@ -193,6 +234,7 @@ function internalLinksHtml(currentPath: string): string {
     // Console): recebiam pouquissimos links internos.
     ["/exames/eletrocardiograma", "Eletrocardiograma (ECG)"],
     ["/blog", "Blog: saúde e diagnóstico"],
+    ["/quem-somos", "Quem somos e responsável técnico"],
   ];
   const items = links
     .filter(([href]) => href !== currentPath)
@@ -285,7 +327,7 @@ const laboratorioHtml = `
     <h2>Por que escolher a Total Quality</h2>
     <ul>
       <li>Mais de ${anosDeAtuacao()} anos de experiência em Caraguatatuba</li>
-      <li>Mais de 340 avaliações no Google com nota 4,5</li>
+      <li>Mais de 340 avaliações no Google</li>
       <li>Coleta rápida, ambiente confortável e estacionamento no Centro</li>
       <li>Resultados online em até 24 horas para a maioria dos exames</li>
       <li>Atendimento particular, convênios e empresas de Caraguatatuba, Ubatuba, São Sebastião e Ilhabela</li>
@@ -427,35 +469,89 @@ function conveniosHtml(): string {
 }
 
 const homeHtml = `
-    <h1>Laboratório em Caraguatatuba — Total Quality Medicina Diagnóstica</h1>
-    <p>Há mais de ${anosDeAtuacao()} anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">laboratório de análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>.</p>
+    <h1>Total Quality — Medicina Diagnóstica em Caraguatatuba</h1>
+    <p>Há mais de ${anosDeAtuacao()} anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">laboratório de análises clínicas</a> e centro de diagnóstico por imagem: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>.</p>
+    <p>A unidade fica no <strong>Centro</strong>, na Rua Padre Anchieta, com acesso rápido para quem vem do Indaiá, do Porto Novo, do Martim de Sá e das demais cidades do Litoral Norte. <a href="/quem-somos">Conheça a clínica e o responsável técnico</a>.</p>
     <ul>
       <li>Resultados online em até 24 horas para a maioria dos exames</li>
       <li>Coleta laboratorial sem agendamento, por ordem de chegada — e coleta domiciliar mediante agendamento</li>
       <li>Equipamentos modernos e equipe especializada</li>
       <li>Atendimento particular, convênios e empresas</li>
-      <li>Mais de 340 avaliações no Google com nota 4,5</li>
+      <li>Mais de 340 avaliações no Google</li>
     </ul>
     ${faqSectionHtml([
       {
-        q: "Quais exames são realizados no laboratório em Caraguatatuba?",
-        a: "A Total Quality realiza mais de 3.000 tipos de exames em Caraguatatuba - SP, incluindo exames de sangue (hemograma, glicemia, colesterol, hormônios), tomografia computadorizada, ultrassonografia, mamografia digital, raio-X, eletrocardiograma, holter 24h, MAPA, bioimpedância e check-up preventivo.",
+        q: "Quais exames a Total Quality realiza?",
+        a: "Mais de 3.000 tipos de exames, entre análises clínicas (hemograma, glicemia, colesterol, hormônios) e diagnóstico por imagem: tomografia computadorizada, ultrassonografia com Doppler, mamografia digital, raio-X, eletrocardiograma, holter 24h, MAPA, bioimpedância e check-up preventivo.",
       },
       {
-        q: "Qual o endereço do laboratório em Caraguatatuba?",
-        a: "O laboratório Total Quality está localizado na Rua Padre Anchieta, 1010 - Centro, Caraguatatuba - SP. Funcionamento de segunda a sexta, das 07h30 às 18h.",
+        q: "Onde fica a Total Quality?",
+        a: "Na Rua Padre Anchieta, 1010 - Centro, Caraguatatuba - SP, a poucos minutos do Indaiá, do Porto Novo e do Martim de Sá. Funcionamento de segunda a sexta, das 07h30 às 18h.",
       },
       {
-        q: "Como agendar exames no laboratório em Caraguatatuba?",
+        q: "Como agendar um exame?",
         a: "Exames laboratoriais e de sangue não precisam de agendamento: o atendimento é por ordem de chegada, de segunda a sexta, das 07h30 às 18h. Exames de imagem e procedimentos especiais podem ser agendados pelo WhatsApp ou telefone (12) 3887-3535, ou pelo site totalquality.med.br.",
       },
       {
-        q: "O laboratório em Caraguatatuba aceita convênios?",
-        a: "Sim, o laboratório Total Quality em Caraguatatuba aceita diversos convênios de saúde. Entre em contato pelo WhatsApp para verificar se seu plano é aceito.",
+        q: "A Total Quality aceita convênios?",
+        a: "Sim, a clínica aceita diversos convênios de saúde. Entre em contato pelo WhatsApp para verificar se seu plano é aceito.",
       },
     ])}
-    ${napHtml("Agende seus exames pelo WhatsApp (12) 3887-3535 ou visite-nos no Centro de Caraguatatuba.")}
+    ${napHtml("Agende seus exames pelo WhatsApp (12) 3887-3535 ou visite-nos no Centro, na Rua Padre Anchieta, 1010.")}
     ${internalLinksHtml("/")}`;
+
+const quemSomosHtml = `
+    <h1>Quem somos — Total Quality Medicina Diagnóstica</h1>
+    <p>A Total Quality é uma clínica de medicina diagnóstica e laboratório de análises clínicas em Caraguatatuba – SP, em atividade há mais de ${anosDeAtuacao()} anos no Litoral Norte. Reunimos em um único endereço, no Centro da cidade, o <a href="/laboratorio-caraguatatuba">laboratório de análises clínicas</a> e o setor de diagnóstico por imagem e cardiologia.</p>
+
+    <h2>Responsável técnico e registro</h2>
+    <p>A direção técnica responde pelos procedimentos realizados na clínica e pela qualidade dos laudos emitidos, conforme a Resolução CFM nº 2.336/2023.</p>
+    <ul>
+      <li><strong>Total Quality Medicina Diagnóstica</strong> — Registro 970616</li>
+      <li><strong>Responsável Técnico:</strong> Alex Waltersdorf - 267.339</li>
+      <li><strong>Endereço:</strong> Rua Padre Anchieta, 1010 - Centro, Caraguatatuba - SP</li>
+    </ul>
+
+    <h2>O que realizamos</h2>
+    <p>São mais de 3.000 tipos de exames, divididos entre:</p>
+    <ul>
+      <li><strong>Análises clínicas:</strong> <a href="/exames/hemograma">hemograma</a>, <a href="/exames/exames-de-sangue">exames de sangue</a>, hormônios, sorologias, urina e fezes</li>
+      <li><strong>Diagnóstico por imagem:</strong> <a href="/exames/tomografia-computadorizada">tomografia computadorizada multislice</a>, <a href="/exames/ultrassonografia">ultrassonografia geral e com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a> e <a href="/exames/raio-x">raio-X digital</a></li>
+      <li><strong>Cardiologia e pneumologia:</strong> <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/mapa">MAPA 24h</a> e <a href="/exames/espirometria">espirometria</a></li>
+      <li><strong>Medicina ocupacional:</strong> <a href="/exames/exame-admissional">exames admissionais, periódicos e demissionais</a> e <a href="/exames/exame-toxicologico">exame toxicológico</a></li>
+      <li><strong>Prevenção:</strong> <a href="/checkup">check-up preventivo</a> e <a href="/bioimpedancia">bioimpedância</a></li>
+    </ul>
+
+    <h2>Como trabalhamos</h2>
+    <ul>
+      <li>Coleta laboratorial por ordem de chegada, sem agendamento; coleta domiciliar mediante agendamento</li>
+      <li>Resultados disponíveis online em até 24 horas para a maioria dos exames laboratoriais</li>
+      <li>Laudos assinados por profissionais habilitados nas respectivas especialidades</li>
+      <li>Atendimento particular, por <a href="/convenios">convênios</a> e para empresas</li>
+    </ul>
+
+    <p>Atendemos moradores de todo o Litoral Norte — Caraguatatuba, Ubatuba, São Sebastião e Ilhabela — e, dentro da cidade, recebemos com frequência pacientes do Indaiá, do Porto Novo, do Martim de Sá, do Sumaré e do Massaguaçu.</p>
+
+    ${faqSectionHtml([
+      {
+        q: "Quem é o responsável técnico da Total Quality?",
+        a: "O Responsável Técnico é Alex Waltersdorf - 267.339. O estabelecimento está registrado sob o número 970616, conforme exige a Resolução CFM nº 2.336/2023 para peças de identificação de clínicas e laboratórios.",
+      },
+      {
+        q: "Há quanto tempo a clínica funciona?",
+        a: `A Total Quality atua há mais de ${anosDeAtuacao()} anos no Litoral Norte, com unidade própria no Centro de Caraguatatuba.`,
+      },
+      {
+        q: "A clínica atende pacientes de outras cidades?",
+        a: "Sim. Além de Caraguatatuba, recebemos pacientes de Ubatuba, São Sebastião e Ilhabela. Exames laboratoriais são atendidos por ordem de chegada; exames de imagem podem ser agendados pelo WhatsApp ou telefone (12) 3887-3535.",
+      },
+      {
+        q: "Quem assina os laudos dos exames?",
+        a: "Os laudos são assinados por profissionais habilitados na especialidade correspondente a cada exame, sob a direção técnica do responsável técnico da clínica.",
+      },
+    ])}
+    ${napHtml("Fale com a equipe pelo WhatsApp (12) 3887-3535 ou visite-nos no Centro, na Rua Padre Anchieta, 1010.")}
+    ${internalLinksHtml("/quem-somos")}`;
 
 /**
  * Retorna o HTML SEO da rota, ou null para rotas sem pré-renderização.
@@ -465,6 +561,7 @@ export function getSeoContentForPath(pathname: string): string | null {
 
   if (path === "/") return wrap(homeHtml);
   if (path === "/laboratorio-caraguatatuba") return wrap(laboratorioHtml);
+  if (path === "/quem-somos") return wrap(quemSomosHtml);
   if (path === "/bioimpedancia") return wrap(bioimpedanciaHtml);
 
   if (path === "/privacidade") return wrap(privacidadeHtml);
@@ -704,7 +801,9 @@ function renderBlogHtml(post: BlogPost): string {
 
 function wrap(inner: string): string {
   // Markup semântico simples; o React substitui este bloco ao montar.
-  return `<main class="seo-prerender">${inner}</main>`;
+  const pagina = webPageLd();
+  const data = pagina ? jsonLd([pagina]) : "";
+  return `<main class="seo-prerender">${inner}</main>${data}`;
 }
 
 /**
@@ -727,6 +826,7 @@ const CLIENT_ROUTES = new Set([
   "/bioimpedancia",
   "/blog",
   "/laboratorio-caraguatatuba",
+  "/quem-somos",
   "/ligar",
   "/obrigado-chamada",
   "/formulario-sucesso",

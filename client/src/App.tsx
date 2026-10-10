@@ -16,6 +16,7 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const ExamesHub = lazy(() => import("./pages/ExamesHub"));
 const ExamePage = lazy(() => import("./pages/ExamePage"));
 const LaboratorioCaraguatatuba = lazy(() => import("./pages/LaboratorioCaraguatatuba"));
+const QuemSomos = lazy(() => import("./pages/QuemSomos"));
 const CallRedirect = lazy(() => import("./pages/CallRedirect"));
 const ThankYouCall = lazy(() => import("./pages/ThankYouCall"));
 const FormSubmissionSuccess = lazy(() => import("./pages/FormSubmissionSuccess"));
@@ -34,6 +35,7 @@ function Router() {
       <Route path={"/blog"} component={Blog} />
       <Route path={"/blog/:slug"} component={BlogPost} />
       <Route path={"/laboratorio-caraguatatuba"} component={LaboratorioCaraguatatuba} />
+      <Route path={"/quem-somos"} component={QuemSomos} />
       <Route path={"/exames"} component={ExamesHub} />
       <Route path={"/exames/:slug"} component={ExamePage} />
       <Route path={"/ligar"} component={CallRedirect} />

@@ -6,7 +6,7 @@ import {
   resolveHttpStatus,
 } from "./_core/seo-content";
 import { CONVENIOS as CONVENIOS_CLIENT } from "@/lib/conveniosData";
-import { getAllRoutes, getKnownBlogSlugs } from "./_core/routes-metadata";
+import { getAllRoutes, getKnownBlogSlugs, getRouteMetadata } from "./_core/routes-metadata";
 import { getLegacyRedirect, isGone } from "./_core/legacy-redirects";
 import { anosDeAtuacao } from "@shared/const";
 
@@ -1177,5 +1177,138 @@ describe("GUARD-RAIL: imagem do artigo bate com o assunto (out/2026)", () => {
       ofensores,
       `hero-clinica-*.webp mostra uma ressonancia magnetica, exame que a clinica nao realiza:\n${ofensores.join("\n")}`
     ).toEqual([]);
+  });
+});
+describe("GUARD-RAIL: a home nao disputa 'laboratorio' com a landing (out/2026)", () => {
+  /*
+   * Ate out/2026 a home abria com "Laboratório em Caraguatatuba | Total Quality"
+   * e a /laboratorio-caraguatatuba com "Laboratório de Análises Clínicas". As
+   * duas competiam pela mesma busca e o Google escolhia uma por conta propria a
+   * cada consulta — o classico de canibalizacao.
+   *
+   * A divisao agora e por ENTIDADE, nao por nuance de intencao: a home responde
+   * pela MARCA e por "medicina diagnostica"; o termo "laboratorio em
+   * caraguatatuba" e exclusivo da landing. Uma tentativa anterior separou por
+   * "transacional x analises clinicas" e falhou justamente por ser sutil demais.
+   */
+  it("o title e o H1 da home nao comecam por 'Laboratório'", () => {
+    const meta = getRouteMetadata("/");
+    expect(meta, "metadata da home nao encontrada").toBeTruthy();
+    expect(meta!.title).not.toMatch(/^Laborat[óo]rio/i);
+
+    const html = getSeoContentForPath("/")!;
+    const h1 = html.match(/<h1>([\s\S]*?)<\/h1>/)?.[1] ?? "";
+    expect(h1, "H1 da home nao encontrado").not.toBe("");
+    expect(h1.trim()).not.toMatch(/^Laborat[óo]rio/i);
+  });
+
+  it("a landing de laboratorio continua reivindicando o termo", () => {
+    const meta = getRouteMetadata("/laboratorio-caraguatatuba");
+    expect(meta!.title).toMatch(/^Laborat[óo]rio em Caraguatatuba/i);
+  });
+
+  it("a home nao repete 'Caraguatatuba' ao ponto de soar artificial", () => {
+    const texto = getSeoContentForPath("/")!
+      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<[^>]+>/g, " ");
+    const palavras = texto.match(/[\wÀ-ÿ'-]+/g) ?? [];
+    const ocorrencias = palavras.filter((p) => /caragua/i.test(p)).length;
+    const densidade = (100 * ocorrencias) / palavras.length;
+    // Teto generoso: o problema real medido era 3,47%. Abaixo de 2% a repeticao
+    // deixa de ser padrao detectavel e vira prosa normal.
+    expect(densidade, `densidade de "Caraguatatuba" na home: ${densidade.toFixed(2)}%`).toBeLessThan(2);
+  });
+});
+
+describe("GUARD-RAIL: identificacao obrigatoria do art. 5o (CFM 2.336/2023)", () => {
+  /*
+   * Peca de estabelecimento precisa trazer o nome com o numero de registro e o
+   * do responsavel tecnico com o dele. Ate out/2026 o site inteiro nao dizia
+   * isso em lugar nenhum. A /quem-somos e a pagina que carrega essa obrigacao —
+   * se ela perder os numeros, o site volta a ficar irregular.
+   *
+   * A sigla "CRM" nao entra em texto renderizado: apenas os digitos.
+   */
+  it("a /quem-somos traz registro e responsavel tecnico", () => {
+    const html = getSeoContentForPath("/quem-somos");
+    expect(html, "/quem-somos sem conteudo pre-renderizado").toBeTruthy();
+    /*
+     * Exigir so os digitos nao basta: a primeira versao deste teste passou com
+     * o bloco de identificacao apagado, porque o numero sobrevivia solto numa
+     * resposta do FAQ. O que o art. 5o pede e a identificacao DECLARADA —
+     * "Registro <numero>" e "Responsavel Tecnico: <nome> - <numero>" —, entao e
+     * isso que o teste cobra, com rotulo colado no numero.
+     */
+    expect(html, "falta o registro do estabelecimento rotulado").toMatch(/Registro\s*970616/);
+    expect(html, "falta o responsavel tecnico rotulado").toMatch(
+      /Respons[áa]vel T[ée]cnico:<\/strong>\s*Alex Waltersdorf - 267\.339|Respons[áa]vel T[ée]cnico:\s*<\/strong>\s*Alex Waltersdorf - 267\.339|Respons[áa]vel T[ée]cnico:\*?\*?\s*Alex Waltersdorf - 267\.339/
+    );
+  });
+
+  it("nem o pre-render nem a pagina React escrevem a sigla CRM", async () => {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const html = getSeoContentForPath("/quem-somos")!;
+    const pagina = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "../client/src/pages/QuemSomos.tsx"),
+      "utf-8"
+    );
+    // \bCRM\b pegaria "CFM" nao; o risco real e alguem escrever "CRM 970616".
+    expect(html).not.toMatch(/\bCRMs?\b/);
+    expect(pagina).not.toMatch(/\bCRMs?\b/);
+  });
+});
+
+describe("GUARD-RAIL: data de atualizacao do conteudo (out/2026)", () => {
+  /*
+   * Sem dateModified o Google e os robos de IA tratam a pagina como de idade
+   * desconhecida. A data e DERIVADA do mtime do modulo, nunca cravada: data
+   * fixa no codigo envelhece do mesmo jeito que a nota autodeclarada que ja
+   * saiu daqui.
+   */
+  it.each(["/", "/laboratorio-caraguatatuba", "/quem-somos", "/checkup"])(
+    "%s emite dateModified em JSON-LD",
+    (rota) => {
+      const html = getSeoContentForPath(rota)!;
+      const m = html.match(/"dateModified":"(\d{4}-\d{2}-\d{2})"/);
+      expect(m, `${rota} nao emite dateModified`).toBeTruthy();
+    }
+  );
+
+  it("a data nao esta cravada no codigo", async () => {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const fonte = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "_core/seo-content.ts"),
+      "utf-8"
+    );
+    const atribuicao = fonte.match(/CONTEUDO_ATUALIZADO_EM[^=]*=\s*([\s\S]{0,80})/)?.[1] ?? "";
+    expect(atribuicao, "CONTEUDO_ATUALIZADO_EM nao encontrada").not.toBe("");
+    expect(atribuicao, "a data foi cravada como literal").not.toMatch(/["'`]\d{4}-\d{2}-\d{2}["'`]/);
+  });
+});
+
+describe("GUARD-RAIL: sem nota autodeclarada tambem no texto servido (out/2026)", () => {
+  /*
+   * O schema ja estava protegido. Faltava a copy: a home anunciava "Nota 4,5 no
+   * Google" na meta description e na lista de diferenciais. O numero envelhece a
+   * cada avaliacao nova (a base cresce ~26/mes) e virou inconsistencia assim que
+   * o perfil subiu para 4,6. Contagem de avaliacoes arredondada pode ficar;
+   * nota, nao.
+   */
+  it.each(["/", "/laboratorio-caraguatatuba", "/quem-somos"])(
+    "%s nao anuncia nota propria",
+    (rota) => {
+      const html = getSeoContentForPath(rota)!;
+      expect(html).not.toMatch(/nota\s*[45][,.]\d/i);
+    }
+  );
+
+  it("nenhuma meta description anuncia nota propria", () => {
+    for (const rota of getAllRoutes()) {
+      expect(rota.description, `${rota.canonical} anuncia nota na description`).not.toMatch(
+        /nota\s*[45][,.]\d/i
+      );
+    }
   });
 });
