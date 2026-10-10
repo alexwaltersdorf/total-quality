@@ -10,10 +10,34 @@ export interface UTMParams {
   utmCampaign: string | null;
   utmTerm: string | null;
   utmContent: string | null;
+  /** Identificadores de clique do Google Ads. Ver getAdClickIds(). */
+  gclid: string | null;
+  gbraid: string | null;
+  wbraid: string | null;
+  /** ValueTrack, quando o modelo de acompanhamento da conta os envia. */
+  keyword: string | null;
+  campaignId: string | null;
+  adGroupId: string | null;
+  matchType: string | null;
+  device: string | null;
+  network: string | null;
+  creative: string | null;
   channel: string;
   referrer: string;
   landingPage: string;
 }
+
+/**
+ * Parametros cuja presenca na URL significa "isto e uma chegada nova".
+ *
+ * A lista inclui os identificadores de clique pago porque um anuncio pode
+ * mandar gclid sem mandar UTM nenhum — e essa chegada precisa sobrescrever a
+ * anterior do mesmo jeito.
+ */
+const PARAMS_DE_CHEGADA = [
+  "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
+  "gclid", "gbraid", "wbraid",
+] as const;
 
 const UTM_STORAGE_KEY = "tq_utm_params";
 
@@ -130,15 +154,23 @@ export function captureUTMParams(): UTMParams {
   const referrer = document.referrer || "";
   const landingPage = window.location.pathname;
 
-  // Verificar se já temos UTMs salvos na sessão
-  const stored = sessionStorage.getItem(UTM_STORAGE_KEY);
-  if (stored) {
-    try {
-      return JSON.parse(stored) as UTMParams;
-    } catch {
-      // Se falhar, recaptura
-    }
-  }
+  const guardado = getStoredUTMParams();
+  const chegadaNova = PARAMS_DE_CHEGADA.some((p) => (params.get(p) || "") !== "");
+
+  /*
+   * Ate 22/09/2026 esta funcao devolvia o que estava guardado ANTES de olhar a
+   * URL. Efeito: o utm_term da primeira pagina da sessao grudava em tudo o que
+   * viesse depois — por isso `pesquisa-pediatra-cardiologista` aparecia em lead
+   * de ultrassom, mamografia, raio-x e toxicologico na planilha. Pior: quem
+   * chegava organico e depois clicava num anuncio tinha o clique pago
+   * atribuido ao organico.
+   *
+   * Agora vale a ultima chegada com parametro de campanha, que e como o Google
+   * Ads e o GA4 atribuem. Navegacao dentro do site nao traz esses parametros e
+   * portanto nao sobrescreve nada — o dado da campanha sobrevive ate o fim da
+   * sessao, que era a unica coisa que o comportamento antigo acertava.
+   */
+  if (guardado && !chegadaNova) return guardado;
 
   const utmSource = params.get("utm_source");
   const utmMedium = params.get("utm_medium");
@@ -155,15 +187,60 @@ export function captureUTMParams(): UTMParams {
     utmCampaign,
     utmTerm,
     utmContent,
+    gclid: params.get("gclid"),
+    gbraid: params.get("gbraid"),
+    wbraid: params.get("wbraid"),
+    keyword: params.get("keyword"),
+    campaignId: params.get("campaignid"),
+    adGroupId: params.get("adgroupid"),
+    matchType: params.get("matchtype"),
+    device: params.get("device"),
+    network: params.get("network"),
+    creative: params.get("creative"),
     channel,
     referrer,
     landingPage,
   };
 
   // Persistir na sessão
-  sessionStorage.setItem(UTM_STORAGE_KEY, JSON.stringify(utmData));
+  try {
+    sessionStorage.setItem(UTM_STORAGE_KEY, JSON.stringify(utmData));
+  } catch {
+    // Aba anonima ou storage bloqueado: seguir sem persistir.
+  }
 
   return utmData;
+}
+
+/**
+ * Identificadores do clique pago, para o beacon do ADS-01.
+ *
+ * Fica separado de getUTMForAPI de proposito: aquele alimenta o formulario de
+ * lead, cujo schema no servidor nao aceita estes campos. Misturar os dois faria
+ * o lead ser rejeitado com HTTP 400 — ou seja, medicao quebrada derrubando
+ * atendimento, que e exatamente o que nao pode acontecer.
+ */
+export function getAdClickIds(): Record<string, string | null> {
+  const utm = getStoredUTMParams();
+  if (!utm) return {};
+  return {
+    gclid: utm.gclid ?? null,
+    gbraid: utm.gbraid ?? null,
+    wbraid: utm.wbraid ?? null,
+    keyword: utm.keyword ?? null,
+    campaignid: utm.campaignId ?? null,
+    adgroupid: utm.adGroupId ?? null,
+    matchtype: utm.matchType ?? null,
+    device: utm.device ?? null,
+    network: utm.network ?? null,
+    creative: utm.creative ?? null,
+    utm_source: utm.utmSource ?? null,
+    utm_medium: utm.utmMedium ?? null,
+    utm_campaign: utm.utmCampaign ?? null,
+    utm_term: utm.utmTerm ?? null,
+    utm_content: utm.utmContent ?? null,
+    landing_url: utm.landingPage ?? null,
+  };
 }
 
 /**
