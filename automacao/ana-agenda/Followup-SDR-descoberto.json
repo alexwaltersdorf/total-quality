@@ -1,0 +1,409 @@
+{
+  "updatedAt": "2026-04-10T01:39:23.471Z",
+  "createdAt": "2026-04-08T02:28:48.823Z",
+  "id": "fQmbc2WOhnKo2uf2",
+  "name": "Followup - SDR",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 12 * * *"
+            }
+          ]
+        }
+      },
+      "id": "6a8759ac-9b84-44b1-84a4-e372e1a85147",
+      "name": "⏰ Follow-up 09h00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        2768,
+        608
+      ],
+      "notes": "09:00 BRT = 12:00 UTC. Se GENERIC_TIMEZONE=America/Sao_Paulo, use: 0 9 * * *"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  c.phone,\n  COALESCE(c.patient_name, 'Prezado(a)') AS patient_name,\n  c.stage,\n  c.updated_at,\n  ROUND(EXTRACT(EPOCH FROM (NOW() - c.updated_at)) / 86400) AS dias_desde_contato,\n  COALESCE(fp.followup_count, 0)                            AS followup_count,\n  fp.last_followup_at\nFROM conversations c\nLEFT JOIN (\n  SELECT\n    phone,\n    COUNT(*)     AS followup_count,\n    MAX(created_at) AS last_followup_at\n  FROM messages\n  WHERE direction = 'out'\n    AND message LIKE '%[FOLLOWUP-%'\n  GROUP BY phone\n) fp ON fp.phone = c.phone\nWHERE\n  -- Estágios pendentes (não confirmaram agendamento)\n  c.stage IN (\n    'AGUARDANDO_CONFIRMACAO',\n    'VALOR',\n    'TRIAGEM',\n    'COLETA'\n  )\n  AND c.is_escalated = false\n  -- Janela de 30 dias\n  AND c.updated_at > NOW() - INTERVAL '30 days'\n  AND c.updated_at < NOW() - INTERVAL '20 hours'\n  -- Máximo 6 follow-ups por paciente\n  AND (fp.followup_count IS NULL OR fp.followup_count < 6)\n  -- Intervalo mínimo por etapa (cadência escalonada)\n  AND (\n    (COALESCE(fp.followup_count,0) = 0\n      AND c.updated_at       < NOW() - INTERVAL '1 day')\n    OR\n    (fp.followup_count = 1\n      AND fp.last_followup_at < NOW() - INTERVAL '2 days')\n    OR\n    (fp.followup_count = 2\n      AND fp.last_followup_at < NOW() - INTERVAL '4 days')\n    OR\n    (fp.followup_count = 3\n      AND fp.last_followup_at < NOW() - INTERVAL '7 days')\n    OR\n    (fp.followup_count = 4\n      AND fp.last_followup_at < NOW() - INTERVAL '7 days')\n    OR\n    (fp.followup_count = 5\n      AND fp.last_followup_at < NOW() - INTERVAL '10 days')\n  )\nORDER BY c.updated_at ASC\nLIMIT 50",
+        "options": {}
+      },
+      "id": "316dfd31-438e-44f6-b3fd-32c4e5a791a4",
+      "name": "🔍 Buscar Leads Follow-up",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        2992,
+        608
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "HGtvKYtSRcHhLPzQ",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ── Mensagens da cadência de follow-up (30 dias) ─────────────────\n//\n//  Cada mensagem é personalizada por etapa e orientada à saúde preventiva.\n//  O marcador [FOLLOWUP-N] é salvo no banco para rastrear a cadência.\n//\nconst CADENCIA = [\n\n  // ── FU-1: Lembrete acolhedor (dia 1) ─────────────────────────────\n  {\n    tag: '[FOLLOWUP-1]',\n    texto: (nome) =>\n      `Olá, ${nome}! 😊\\n\\n` +\n      `Passamos para lembrar do orçamento que preparamos para você aqui na *Total Quality*.\\n\\n` +\n      `Cuidar da saúde com exames preventivos é um dos maiores presentes que você pode dar a si mesmo(a) — e nós estamos prontos para facilitar isso! ❤️\\n\\n` +\n      `Posso reservar um horário especial para você esta semana?\\n\\n` +\n      `_Total Quality — (12) 3887-3535_`\n  },\n\n  // ── FU-2: Importância da saúde preventiva (dia 3) ─────────────────\n  {\n    tag: '[FOLLOWUP-2]',\n    texto: (nome) =>\n      `${nome}, você sabia que *mais de 80% das doenças crônicas* são detectáveis precocemente com exames de rotina? 🩺\\n\\n` +\n      `Hemograma, glicemia, colesterol, hormônios, ultrassom — esses exames são aliados poderosos da sua saúde preventiva.\\n\\n` +\n      `Na *Total Quality* você tem:\\n` +\n      `✅ Laudos rápidos e assinados por especialistas\\n` +\n      `✅ Mais de 23 anos cuidando da saúde do Litoral Norte\\n` +\n      `✅ Atendimento humanizado do início ao fim\\n\\n` +\n      `Que tal dar esse passo hoje? Posso verificar os melhores horários para você! 😊\\n\\n` +\n      `_Total Quality — (12) 3887-3535_`\n  },\n\n  // ── FU-3: Urgência leve — agenda (dia 7) ─────────────────────────\n  {\n    tag: '[FOLLOWUP-3]',\n    texto: (nome) =>\n      `Olá, ${nome}! 👋\\n\\n` +\n      `Nossa agenda está *bem disputada* nessa época do ano — especialmente para ultrassons, tomografias e exames de coluna.\\n\\n` +\n      `Temos *alguns horários disponíveis* ainda esta semana. Seria uma pena você esperar mais do que o necessário para cuidar da sua saúde. 💛\\n\\n` +\n      `Posso garantir sua vaga agora? É rápido — preciso apenas do seu nome e data preferida! 📅\\n\\n` +\n      `_Total Quality — (12) 3887-3535_`\n  },\n\n  // ── FU-4: Check-in e ajuda personalizada (dia 14) ─────────────────\n  {\n    tag: '[FOLLOWUP-4]',\n    texto: (nome) =>\n      `${nome}, tudo bem? 😊\\n\\n` +\n      `Estamos passando para saber se ficou alguma dúvida sobre os exames do seu pedido — preparo, convênio, forma de pagamento ou qualquer outra coisa.\\n\\n` +\n      `Às vezes uma pergunta não respondida é o que impede a gente de dar o próximo passo. Pode me perguntar à vontade!\\n\\n` +\n      `Também posso verificar se seu convênio cobre algum exame ou ajudar a organizar tudo no mesmo dia. 🗓️\\n\\n` +\n      `O que posso fazer por você?\\n\\n` +\n      `_Total Quality — (12) 3887-3535_`\n  },\n\n  // ── FU-5: Diferencial + facilidade de pagamento (dia 21) ──────────\n  {\n    tag: '[FOLLOWUP-5]',\n    texto: (nome) =>\n      `${nome}, que tal cuidar da sua saúde ainda esse mês? 🌟\\n\\n` +\n      `Na *Total Quality* você tem condições especiais de pagamento:\\n\\n` +\n      `💚 *PIX* — sem taxa adicional (o mais econômico!)\\n` +\n      `💳 *Cartão crédito* — até 3x sem juros\\n` +\n      `🏦 *Débito* — todas as bandeiras\\n\\n` +\n      `Seja qual for o exame — laboratorial, ultrassom, tomografia, cardiologia — você recebe resultado rápido e laudo especializado. 🏆\\n\\n` +\n      `Ainda consigo reservar seu horário esta semana. É só me dizer! 😊\\n\\n` +\n      `_Total Quality — (12) 3887-3535_`\n  },\n\n  // ── FU-6: Mensagem final — porta aberta (dia 30) ─────────────────\n  {\n    tag: '[FOLLOWUP-6]',\n    texto: (nome) =>\n      `${nome}, esse é nosso último contato automático — e queremos que saiba que as portas da *Total Quality* estão sempre abertas para você! ❤️\\n\\n` +\n      `Quando estiver pronto(a) para cuidar da sua saúde, é só nos chamar aqui no WhatsApp ou ligar:\\n\\n` +\n      `📞 *(12) 3887-3535*\\n` +\n      `🕗 Segunda a Sexta, 8h às 18h\\n` +\n      `📍 Caraguatatuba, SP — Litoral Norte\\n\\n` +\n      `Cuide-se muito! 💛\\n\\n` +\n      `_Total Quality Medicina Diagnóstica — 23 anos cuidando de você_`\n  }\n];\n\n// ── Processar cada paciente ───────────────────────────────────────\nconst itens = $input.all();\n\nconst resultado = itens.map(item => {\n  const {\n    phone,\n    patient_name,\n    followup_count,\n    stage,\n    dias_desde_contato\n  } = item.json;\n\n  const idx    = Math.min(parseInt(followup_count) || 0, CADENCIA.length - 1);\n  const etapa  = CADENCIA[idx];\n  const nome   = (patient_name || 'Prezado(a)').split(' ')[0]; // apenas primeiro nome\n  const texto  = etapa.texto(nome);\n  const tag    = etapa.tag;\n  const numero = idx + 1;\n\n  return {\n    json: {\n      phone,\n      patient_name,\n      remoteJid:        `${phone}@s.whatsapp.net`,\n      followup_count:   parseInt(followup_count) || 0,\n      followup_numero:  numero,\n      followup_tag:     tag,\n      stage,\n      dias_desde_contato,\n      mensagem_completa: `${tag}\\n${texto}`,\n      mensagem_paciente:  texto   // texto limpo para o paciente (sem tag)\n    }\n  };\n});\n\nreturn resultado;"
+      },
+      "id": "e835490f-cdde-43f7-9702-cb84c191f987",
+      "name": "💬 Compor Mensagem Follow-up",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3440,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://187.127.13.63:48240/message/sendText/totalquality",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "D706845DE309-44FB-9AFE-7B43A596B52E"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  number: $json.remoteJid,\n  text:   $json.mensagem_paciente,\n  delay:  3000\n}) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 3000
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "1b042c98-30e4-4d8c-9792-84cec36d5d8e",
+      "name": "📤 Enviar Follow-up WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3664,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO messages (conversation_id, phone, direction, message, aida_stage, created_at)\nSELECT\n  c.id,\n  $1,\n  'out',\n  $2,\n  c.stage,\n  NOW()\nFROM conversations c\nWHERE c.phone = $1\nORDER BY c.updated_at DESC\nLIMIT 1",
+        "options": {
+          "queryBatching": "independently",
+          "queryReplacement": "={{ $('💬 Compor Mensagem Follow-up').item.json.phone }},={{ $('💬 Compor Mensagem Follow-up').item.json.mensagem_completa }}"
+        }
+      },
+      "id": "d41ae3f1-2378-46f6-bbb4-0f6214e8edf2",
+      "name": "💾 Registrar Follow-up Enviado",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        3888,
+        608
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "HGtvKYtSRcHhLPzQ",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "⏰ Follow-up 09h00": {
+      "main": [
+        [
+          {
+            "node": "🔍 Buscar Leads Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 Buscar Leads Follow-up": {
+      "main": [
+        [
+          {
+            "node": "💬 Compor Mensagem Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "💬 Compor Mensagem Follow-up": {
+      "main": [
+        [
+          {
+            "node": "📤 Enviar Follow-up WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📤 Enviar Follow-up WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "💾 Registrar Follow-up Enviado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": {
+    "node:⏰ Follow-up 09h00": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "7ff3a20a-df4d-4d4b-bff6-b52adeacb857",
+  "activeVersionId": "0029a24c-03cb-425c-b4f8-c0eca5c463b8",
+  "versionCounter": 23,
+  "triggerCount": 1,
+  "sourceWorkflowId": null,
+  "shared": [
+    {
+      "updatedAt": "2026-04-08T02:28:48.825Z",
+      "createdAt": "2026-04-08T02:28:48.825Z",
+      "role": "workflow:owner",
+      "workflowId": "fQmbc2WOhnKo2uf2",
+      "projectId": "49FUN0KCAllHc2lW",
+      "project": {
+        "updatedAt": "2026-04-05T02:07:21.513Z",
+        "createdAt": "2026-04-05T02:05:00.881Z",
+        "id": "49FUN0KCAllHc2lW",
+        "name": "Alex Waltersdorf <alex@totalquality.med.br>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "f3c9783b-9bb8-48b3-9c8c-e51c5a23af23"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-04-08T02:40:10.000Z",
+    "createdAt": "2026-04-08T02:39:51.873Z",
+    "versionId": "0029a24c-03cb-425c-b4f8-c0eca5c463b8",
+    "workflowId": "fQmbc2WOhnKo2uf2",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "0 12 * * *"
+              }
+            ]
+          }
+        },
+        "id": "5bd9da36-9389-4c1f-82d9-6904ffff4622",
+        "name": "⏰ Follow-up 09h00",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          1408,
+          384
+        ],
+        "notes": "09:00 BRT = 12:00 UTC. Se GENERIC_TIMEZONE=America/Sao_Paulo, use: 0 9 * * *"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT\n  c.phone,\n  COALESCE(c.patient_name, 'Prezado(a)') AS patient_name,\n  c.stage,\n  c.updated_at,\n  ROUND(EXTRACT(EPOCH FROM (NOW() - c.updated_at)) / 86400) AS dias_desde_contato,\n  COALESCE(fp.followup_count, 0)                            AS followup_count,\n  fp.last_followup_at\nFROM conversations c\nLEFT JOIN (\n  SELECT\n    phone,\n    COUNT(*)     AS followup_count,\n    MAX(created_at) AS last_followup_at\n  FROM messages\n  WHERE direction = 'out'\n    AND message LIKE '%[FOLLOWUP-%'\n  GROUP BY phone\n) fp ON fp.phone = c.phone\nWHERE\n  -- Estágios pendentes (não confirmaram agendamento)\n  c.stage IN (\n    'AGUARDANDO_CONFIRMACAO',\n    'VALOR',\n    'TRIAGEM',\n    'COLETA'\n  )\n  AND c.is_escalated = false\n  -- Janela de 30 dias\n  AND c.updated_at > NOW() - INTERVAL '30 days'\n  AND c.updated_at < NOW() - INTERVAL '20 hours'\n  -- Máximo 6 follow-ups por paciente\n  AND (fp.followup_count IS NULL OR fp.followup_count < 6)\n  -- Intervalo mínimo por etapa (cadência escalonada)\n  AND (\n    (COALESCE(fp.followup_count,0) = 0\n      AND c.updated_at       < NOW() - INTERVAL '1 day')\n    OR\n    (fp.followup_count = 1\n      AND fp.last_followup_at < NOW() - INTERVAL '2 days')\n    OR\n    (fp.followup_count = 2\n      AND fp.last_followup_at < NOW() - INTERVAL '4 days')\n    OR\n    (fp.followup_count = 3\n      AND fp.last_followup_at < NOW() - INTERVAL '7 days')\n    OR\n    (fp.followup_count = 4\n      AND fp.last_followup_at < NOW() - INTERVAL '7 days')\n    OR\n    (fp.followup_count = 5\n      AND fp.last_followup_at < NOW() - INTERVAL '10 days')\n  )\nORDER BY c.updated_at ASC\nLIMIT 50",
+          "options": {}
+        },
+        "id": "168d6321-5818-41fb-8887-e2f88378450f",
+        "name": "🔍 Buscar Leads Follow-up",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1632,
+          384
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "HGtvKYtSRcHhLPzQ",
+            "name": "Postgres account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// ── Mensagens da cadência de follow-up (30 dias) ─────────────────\n//\n//  Cada mensagem é personalizada por etapa e orientada à saúde preventiva.\n//  O marcador [FOLLOWUP-N] é salvo no banco para rastrear a cadência.\n//\nconst CADENCIA = [\n\n  // ── FU-1: Lembrete acolhedor (dia 1) ─────────────────────────────\n  {\n    tag: '[FOLLOWUP-1]',\n    texto: (nome) =>\n      `Olá, ${nome}! 😊\\n\\n` +\n      `Passamos para lembrar do orçamento que preparamos para você aqui na *Clínica Total Quality*.\\n\\n` +\n      `Cuidar da saúde com exames preventivos é um dos maiores presentes que você pode dar a si mesmo(a) — e nós estamos prontos para facilitar isso! ❤️\\n\\n` +\n      `Posso reservar um horário especial para você esta semana?\\n\\n` +\n      `_Total Quality — (12) 3887-3535_`\n\\n\\n` +\n  },\n\n  // ── FU-2: Importância da saúde preventiva (dia 3) ─────────────────\n  {\n    tag: '[FOLLOWUP-2]',\n    texto: (nome) =>\n      `${nome}, você sabia que *mais de 80% das doenças crônicas* são detectáveis precocemente com exames de rotina? 🩺\\n\\n` +\n      `Hemograma, glicemia, colesterol, hormônios, ultrassom — esses exames são aliados poderosos da sua saúde preventiva.\\n\\n` +\n      `Na *Total Quality* você tem:\\n` +\n      `✅ Laudos rápidos e assinados por especialistas\\n` +\n      `✅ Mais de 23 anos cuidando da saúde do Litoral Norte\\n` +\n      `✅ Atendimento humanizado do início ao fim\\n\\n` +\n      `Que tal dar esse passo hoje? Posso verificar os melhores horários para você! 😊\\n\\n` +\n      `_Total Quality — (12) 3887-3535_`\n  },\n\n  // ── FU-3: Urgência leve — agenda (dia 7) ─────────────────────────\n  {\n    tag: '[FOLLOWUP-3]',\n    texto: (nome) =>\n      `Olá, ${nome}! 👋\\n\\n` +\n      `Nossa agenda está *bem disputada* nessa época do ano — especialmente para ultrassons, tomografias e exames de coluna.\\n\\n` +\n      `Temos *alguns horários disponíveis* ainda esta semana. Seria uma pena você esperar mais do que o necessário para cuidar da sua saúde. 💛\\n\\n` +\n      `Posso garantir sua vaga agora? É rápido — preciso apenas do seu nome e data preferida! 📅\\n\\n` +\n      `_Total Quality — (12) 3887-3535_`\n  },\n\n  // ── FU-4: Check-in e ajuda personalizada (dia 14) ─────────────────\n  {\n    tag: '[FOLLOWUP-4]',\n    texto: (nome) =>\n      `${nome}, tudo bem? 😊\\n\\n` +\n      `Estamos passando para saber se ficou alguma dúvida sobre os exames do seu pedido — preparo, convênio, forma de pagamento ou qualquer outra coisa.\\n\\n` +\n      `Às vezes uma pergunta não respondida é o que impede a gente de dar o próximo passo. Pode me perguntar à vontade!\\n\\n` +\n      `Também posso verificar se seu convênio cobre algum exame ou ajudar a organizar tudo no mesmo dia. 🗓️\\n\\n` +\n      `O que posso fazer por você?\\n\\n` +\n      `_Total Quality — (12) 3887-3535_`\n  },\n\n  // ── FU-5: Diferencial + facilidade de pagamento (dia 21) ──────────\n  {\n    tag: '[FOLLOWUP-5]',\n    texto: (nome) =>\n      `${nome}, que tal cuidar da sua saúde ainda esse mês? 🌟\\n\\n` +\n      `Na *Total Quality* você tem condições especiais de pagamento:\\n\\n` +\n      `💚 *PIX* — sem taxa adicional (o mais econômico!)\\n` +\n      `💳 *Cartão crédito* — até 3x sem juros\\n` +\n      `🏦 *Débito* — todas as bandeiras\\n\\n` +\n      `Seja qual for o exame — laboratorial, ultrassom, tomografia, cardiologia — você recebe resultado rápido e laudo especializado. 🏆\\n\\n` +\n      `Ainda consigo reservar seu horário esta semana. É só me dizer! 😊\\n\\n` +\n      `_Total Quality — (12) 3887-3535_`\n  },\n\n  // ── FU-6: Mensagem final — porta aberta (dia 30) ─────────────────\n  {\n    tag: '[FOLLOWUP-6]',\n    texto: (nome) =>\n      `${nome}, esse é nosso último contato automático — e queremos que saiba que as portas da *Total Quality* estão sempre abertas para você! ❤️\\n\\n` +\n      `Quando estiver pronto(a) para cuidar da sua saúde, é só nos chamar aqui no WhatsApp ou ligar:\\n\\n` +\n      `📞 *(12) 3887-3535*\\n` +\n      `🕗 Segunda a Sexta, 8h às 18h\\n` +\n      `📍 Caraguatatuba, SP — Litoral Norte\\n\\n` +\n      `Cuide-se muito! 💛\\n\\n` +\n      `_Total Quality Medicina Diagnóstica — 23 anos cuidando de você_`\n  }\n];\n\n// ── Processar cada paciente ───────────────────────────────────────\nconst itens = $input.all();\n\nconst resultado = itens.map(item => {\n  const {\n    phone,\n    patient_name,\n    followup_count,\n    stage,\n    dias_desde_contato\n  } = item.json;\n\n  const idx    = Math.min(parseInt(followup_count) || 0, CADENCIA.length - 1);\n  const etapa  = CADENCIA[idx];\n  const nome   = (patient_name || 'Prezado(a)').split(' ')[0]; // apenas primeiro nome\n  const texto  = etapa.texto(nome);\n  const tag    = etapa.tag;\n  const numero = idx + 1;\n\n  return {\n    json: {\n      phone,\n      patient_name,\n      remoteJid:        `${phone}@s.whatsapp.net`,\n      followup_count:   parseInt(followup_count) || 0,\n      followup_numero:  numero,\n      followup_tag:     tag,\n      stage,\n      dias_desde_contato,\n      mensagem_completa: `${tag}\\n${texto}`,\n      mensagem_paciente:  texto   // texto limpo para o paciente (sem tag)\n    }\n  };\n});\n\nreturn resultado;"
+        },
+        "id": "280ed02c-fcbf-44b4-8651-332c4dd52a0b",
+        "name": "💬 Compor Mensagem Follow-up",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2080,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://187.127.13.63:48240/message/sendText/totalquality",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "apikey",
+                "value": "D706845DE309-44FB-9AFE-7B43A596B52E"
+              }
+            ]
+          },
+          "sendBody": true,
+          "contentType": "raw",
+          "rawContentType": "application/json",
+          "body": "={{ JSON.stringify({\n  number: $json.remoteJid,\n  text:   $json.mensagem_paciente,\n  delay:  3000\n}) }}",
+          "options": {
+            "batching": {
+              "batch": {
+                "batchSize": 1,
+                "batchInterval": 3000
+              }
+            },
+            "timeout": 15000
+          }
+        },
+        "id": "c1ac5d46-cca2-427d-88bb-6013a5a0650f",
+        "name": "📤 Enviar Follow-up WhatsApp",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2304,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO messages (conversation_id, phone, direction, message, aida_stage, created_at)\nSELECT\n  c.id,\n  $1,\n  'out',\n  $2,\n  c.stage,\n  NOW()\nFROM conversations c\nWHERE c.phone = $1\nORDER BY c.updated_at DESC\nLIMIT 1",
+          "options": {
+            "queryBatching": "independently",
+            "queryReplacement": "={{ $('💬 Compor Mensagem Follow-up').item.json.phone }},={{ $('💬 Compor Mensagem Follow-up').item.json.mensagem_completa }}"
+          }
+        },
+        "id": "6535227a-b155-4c4d-931a-248e4337ff09",
+        "name": "💾 Registrar Follow-up Enviado",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          2528,
+          384
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "HGtvKYtSRcHhLPzQ",
+            "name": "Postgres account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "⏰ Follow-up 09h00": {
+        "main": [
+          [
+            {
+              "node": "🔍 Buscar Leads Follow-up",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🔍 Buscar Leads Follow-up": {
+        "main": [
+          [
+            {
+              "node": "💬 Compor Mensagem Follow-up",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "💬 Compor Mensagem Follow-up": {
+        "main": [
+          [
+            {
+              "node": "📤 Enviar Follow-up WhatsApp",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "📤 Enviar Follow-up WhatsApp": {
+        "main": [
+          [
+            {
+              "node": "💾 Registrar Follow-up Enviado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Alex Waltersdorf",
+    "name": "Version 0029a24c",
+    "description": "",
+    "autosaved": true,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-04-08T02:40:10.453Z",
+        "id": 27,
+        "workflowId": "fQmbc2WOhnKo2uf2",
+        "versionId": "0029a24c-03cb-425c-b4f8-c0eca5c463b8",
+        "event": "activated",
+        "userId": "f3c9783b-9bb8-48b3-9c8c-e51c5a23af23"
+      }
+    ]
+  }
+}
