@@ -1,9 +1,31 @@
-// Extracao pontual: leads + status da conversa + historico de mensagens.
-// Protegida por token guardado em ana_config.chave = 'historico_token'.
-// Apagar a linha do token desativa a funcao (passa a devolver 404).
+// API de pacientes e conversas, atras de senha.
+//
+// A senha e conferida aqui, contra o hash PBKDF2 guardado em
+// ana_config.chave = 'historico_senha'. Sem senha certa nada sai: o link do
+// painel sozinho nao da acesso a nome, telefone nem conversa de paciente.
+//
+//   GET ?modo=lista                 -> os leads, sem as mensagens
+//   GET ?modo=conversa&fone=55...   -> o historico de um contato so
+//   GET ?modo=tudo                  -> leads + todas as mensagens (gera o HTML)
+//
+// A senha vai no cabecalho x-senha, nunca na URL: query string entra em log de
+// servidor, historico de navegador e cabecalho Referer.
 const URL_SB = Deno.env.get('SUPABASE_URL')!;
 const CHAVE  = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const H = { apikey: CHAVE, Authorization: `Bearer ${CHAVE}` };
+const PAGINA = 1000;   // teto do PostgREST, independente do limit pedido
+
+const ORIGEM_OK = new Set([
+  'https://totalquality.med.br',
+  'https://www.totalquality.med.br',
+]);
+const cors = (origem: string | null) => ({
+  'access-control-allow-origin': origem && ORIGEM_OK.has(origem) ? origem : 'null',
+  'access-control-allow-headers': 'x-senha, content-type',
+  'access-control-allow-methods': 'GET, OPTIONS',
+  'access-control-max-age': '86400',
+  'vary': 'origin',
+});
 
 const rest = async (caminho: string) => {
   const r = await fetch(`${URL_SB}/rest/v1/${caminho}`, { headers: H });
@@ -11,11 +33,35 @@ const rest = async (caminho: string) => {
   return await r.json();
 };
 
-// comparacao de tempo constante, para o token nao vazar por timing
-const igual = (a: string, b: string) => {
-  if (a.length !== b.length) return false;
+// pagina ate o fim: avanca pelo que veio, nunca pelo que foi pedido
+const todos = async (caminho: string, ordem: string, teto = 200000) => {
+  const fora: any[] = [];
+  for (;;) {
+    const lote = await rest(
+      `${caminho}&order=${ordem}&limit=${PAGINA}&offset=${fora.length}`);
+    for (const x of lote) fora.push(x);
+    if (lote.length < PAGINA || fora.length >= teto) break;
+  }
+  return fora;
+};
+
+const b64 = (b: Uint8Array) => btoa(String.fromCharCode(...b));
+const deB64 = (s: string) => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+
+// PBKDF2 custa ~100ms por tentativa: forca bruta em senha de 20 caracteres
+// aleatorios deixa de ser viavel mesmo sem contador de tentativas.
+const confere = async (senha: string, registro: string) => {
+  const [algo, it, sal, esperado] = registro.split('$');
+  if (algo !== 'pbkdf2') return false;
+  const material = await crypto.subtle.importKey(
+    'raw', new TextEncoder().encode(senha), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', hash: 'SHA-256', salt: deB64(sal), iterations: Number(it) },
+    material, 256);
+  const obtido = new Uint8Array(bits), alvo = deB64(esperado);
+  if (obtido.length !== alvo.length) return false;
   let d = 0;
-  for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  for (let i = 0; i < obtido.length; i++) d |= obtido[i] ^ alvo[i];
   return d === 0;
 };
 
@@ -25,51 +71,60 @@ const fmt = new Intl.DateTimeFormat('pt-BR', {
   hour: '2-digit', minute: '2-digit', hour12: false,
 });
 const quando = (iso: string) => fmt.format(new Date(iso)).replace(',', '');
-const dia = (iso: string) => quando(iso).slice(0, 10);
+
+// p = paciente, a = Ana (bot), h = recepcao (humano pelo WhatsApp)
+const linhaMsg = (m: any) => [
+  quando(m.created_at),
+  m.role === 'user' ? 'p' : (m.tipo === 'humano' ? 'h' : 'a'),
+  m.tipo === 'texto' || m.tipo === 'humano' ? '' : (m.tipo ?? ''),
+  String(m.conteudo ?? '').slice(0, 1800),
+];
 
 Deno.serve(async (req) => {
   const u = new URL(req.url);
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204 });
+  const origem = req.headers.get('origin');
+  const cab = cors(origem);
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cab });
 
-  let token = '';
+  const json = (corpo: unknown, status = 200) => new Response(JSON.stringify(corpo),
+    { status, headers: { ...cab, 'content-type': 'application/json', 'cache-control': 'no-store' } });
+
+  let registro = '';
   try {
-    const cfg = await rest(`ana_config?chave=eq.historico_token&select=valor`);
-    token = cfg?.[0]?.valor ?? '';
-  } catch { /* sem token configurado */ }
-  if (!token || !igual(u.searchParams.get('k') ?? '', token)) {
-    return new Response('Not Found', { status: 404 });
+    const cfg = await rest('ana_config?chave=eq.historico_senha&select=valor');
+    registro = cfg?.[0]?.valor ?? '';
+  } catch { /* sem senha configurada */ }
+  const senha = req.headers.get('x-senha') ?? '';
+  if (!registro || !senha || !(await confere(senha, registro))) {
+    return json({ erro: 'senha' }, 401);
+  }
+
+  const modo = u.searchParams.get('modo') ?? 'lista';
+
+  // uma conversa so, buscada quando a linha e aberta
+  if (modo === 'conversa') {
+    const fone = (u.searchParams.get('fone') ?? '').replace(/\D/g, '');
+    if (!fone) return json({ erro: 'fone' }, 400);
+    const ms = await todos(
+      `ana_mensagens?select=role,tipo,conteudo,created_at&phone=eq.${fone}`,
+      'created_at.asc,id.asc');
+    return json({ fone, msgs: ms.map(linhaMsg) });
   }
 
   // 1. planilha de leads (nome, exame, status comercial, etapa, datas)
-  const planilha = await rest(
-    'ana_leads_planilha?select=*&order=ord.desc&limit=5000');
+  const planilha = await todos('ana_leads_planilha?select=*', 'ord.desc');
 
   // 2. estado atual da conversa, direto de ana_leads
-  const estados = await rest('ana_leads?select=phone,escalado,bot_ativo,opt_out,' +
-    'motivo_escalada,proxima_acao,agendamento,temperatura,funil,convenio,' +
-    'last_patient_msg_at,last_bot_msg_at,human_msg_at,followup_step,' +
-    'followup_due_at,agendado_em,resumo_interno&limit=5000');
+  const estados = await todos('ana_leads?select=phone,escalado,bot_ativo,opt_out,' +
+    'motivo_escalada,agendamento,temperatura,funil,convenio,' +
+    'last_patient_msg_at,last_bot_msg_at,human_msg_at,followup_due_at,' +
+    'resumo_interno', 'phone.asc');
   const porFone = new Map<string, any>(estados.map((e: any) => [e.phone, e]));
 
-  // 3. historico completo, paginado
-  const hist: Record<string, any[]> = {};
-  const contagem: Record<string, number> = {};
-  let off = 0;
-  for (;;) {
-    const lote = await rest('ana_mensagens?select=phone,role,tipo,conteudo,created_at' +
-      `&order=created_at.asc,id.asc&limit=2000&offset=${off}`);
-    if (!lote.length) break;
-    for (const m of lote) {
-      // p = paciente, a = Ana (bot), h = recepcao (humano pelo WhatsApp)
-      const quem = m.role === 'user' ? 'p' : (m.tipo === 'humano' ? 'h' : 'a');
-      const txt = String(m.conteudo ?? '').slice(0, 1800);
-      (hist[m.phone] ??= []).push([quando(m.created_at), quem,
-        m.tipo === 'texto' || m.tipo === 'humano' ? '' : (m.tipo ?? ''), txt]);
-      contagem[m.phone] = (contagem[m.phone] ?? 0) + 1;
-    }
-    off += 2000;
-    if (off > 120000) break;
-  }
+  // 3. quantas mensagens cada um trocou (a view agrupa no banco)
+  const contagem = new Map<string, number>(
+    (await todos('ana_msgs_contagem?select=phone,n', 'phone.asc'))
+      .map((c: any) => [c.phone, c.n]));
 
   const agora = Date.now();
   const dias = (iso: string | null) =>
@@ -93,7 +148,6 @@ Deno.serve(async (req) => {
       else if (doPaciente) { c = 'Aguardando a clinica'; det = 'o paciente falou por ultimo'; }
       else { c = 'Aguardando o paciente'; det = 'a clinica falou por ultimo'; }
     }
-
     return {
       n: p.Nome, t: p.WhatsApp, e: p['Exame procurado'], f: p.Familia,
       s: p.Status, et: p['Etapa do follow-up'],
@@ -103,18 +157,27 @@ Deno.serve(async (req) => {
       c, det,
       tmp: e.temperatura ?? '', fun: e.funil ?? '', conv: e.convenio ?? '',
       res: e.resumo_interno ?? '',
-      nm: contagem[p.WhatsApp] ?? 0,
+      nm: contagem.get(p.WhatsApp) ?? 0,
       dias: Number.isFinite(ult) ? Math.floor(ult) : null,
     };
   });
 
-  const corpo = JSON.stringify({
+  const saida: Record<string, unknown> = {
     gerado_em: quando(new Date().toISOString()),
+    conferencia: { leads: leads.length, estados: estados.length },
     leads,
-    hist: Object.fromEntries(
-      Object.entries(hist).filter(([f]) => porFone.has(f))),
-  });
-  return new Response(corpo, {
-    headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
-  });
+  };
+
+  // modo tudo: carrega o historico inteiro, para gerar o documento offline
+  if (modo === 'tudo') {
+    const mensagens = await todos(
+      'ana_mensagens?select=phone,role,tipo,conteudo,created_at', 'created_at.asc,id.asc');
+    const hist: Record<string, any[]> = {};
+    for (const m of mensagens) (hist[m.phone] ??= []).push(linhaMsg(m));
+    (saida.conferencia as any).mensagens = mensagens.length;
+    saida.hist = Object.fromEntries(
+      Object.entries(hist).filter(([f]) => porFone.has(f)));
+  }
+
+  return json(saida);
 });

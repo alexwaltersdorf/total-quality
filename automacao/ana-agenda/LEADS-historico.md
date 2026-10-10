@@ -12,35 +12,40 @@ teor das conversas de pacientes identificáveis. O `.gitignore` já cobre
 
 | Arquivo | Papel |
 |---|---|
-| `edge-historico.ts` | Edge Function `historico`: lê o banco com a service role e devolve um JSON com leads, situação e mensagens |
+| `edge-historico.ts` | Edge Function `historico`: lê o banco com a service role e devolve JSON com leads, situação e mensagens, atrás de senha |
 | `leads-historico.py` | Gerador: pega o JSON e escreve o HTML |
 | `leads-historico.tpl` | O documento em si — CSS, marcação e JavaScript |
 
-## Como gerar de novo
+## A mesma função serve o painel
 
-A função só responde enquanto existir um token em `ana_config`. Fora da geração
-ela fica desligada, devolvendo 404 — é um endereço público que lê conversa de
-paciente, então não fica de pé à toa.
+A seção **Pacientes e conversas** do painel da jornada
+(`https://totalquality.med.br/painel/<token>.html`) consome esta mesma função.
+Lá ela entrega a lista sem as mensagens, e o histórico de um paciente de cada
+vez, conforme as linhas são abertas. A senha e o PBKDF2 estão descritos em
+`PAINEL-jornada.md`.
 
-1. Ligar, com um segredo novo a cada vez:
+| Modo | O que devolve |
+|---|---|
+| `?modo=lista` | os leads, sem as mensagens (~650 kB) |
+| `?modo=conversa&fone=55...` | o histórico de um contato só |
+| `?modo=tudo` | leads + todas as mensagens (~5,4 MB), para gerar o HTML |
 
-   ```sql
-   update ana_config set valor = '<token aleatorio>', updated_at = now()
-    where chave = 'historico_token';
-   ```
+A senha vai sempre no cabeçalho `x-senha`, nunca na URL: query string entra em
+log de servidor, histórico de navegador e cabeçalho `Referer`.
 
-2. Baixar e montar:
+## Como gerar o documento offline
 
-   ```sh
-   curl -s "https://ajwhrmjzvfdjwsqynbzt.supabase.co/functions/v1/historico?k=<token>" -o dados.json
-   python3 leads-historico.py dados.json
-   ```
+```sh
+curl -s -H "x-senha: <a senha>" \
+     "https://ajwhrmjzvfdjwsqynbzt.supabase.co/functions/v1/historico?modo=tudo" \
+     -o dados.json
+python3 leads-historico.py dados.json
+```
 
-3. Desligar:
-
-   ```sql
-   update ana_config set valor = '' where chave = 'historico_token';
-   ```
+O HTML sai em `leads-whatsapp-total-quality.html`, na pasta de onde o comando
+rodou. Ele é autossuficiente — abre sem rede — e por isso traz as conversas
+todas embutidas. Guarde-o como guardaria um prontuário, e não o coloque no
+repositório: o `.gitignore` já barra.
 
 ## Situação da conversa
 
@@ -71,3 +76,6 @@ O corte de 7 dias importa: sem ele, qualquer conversa em que o paciente deu a
   isso a função devolve JSON e o HTML é montado aqui.
 - **O cliente SQL do MCP quebra o comando no `;`**, mesmo dentro de string. Por
   isso a Edge Function escreve os detalhes sem acento e o gerador os reacentua.
+- **A contagem de mensagens por telefone vem da view `ana_msgs_contagem`**, não
+  de somar as 38 mil linhas no cliente: o PostgREST não faz `group by`, e sem a
+  view o modo `lista` teria de baixar o histórico inteiro só para contar.
