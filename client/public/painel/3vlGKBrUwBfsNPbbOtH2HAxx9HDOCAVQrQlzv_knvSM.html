@@ -145,6 +145,7 @@ select.estado:disabled{opacity:.5;cursor:wait}
 select.estado.e-ok{background:var(--ok-fundo);color:var(--ok)}
 select.estado.e-at{background:var(--alerta-fundo);color:var(--alerta)}
 select.estado.e-gr{background:var(--grave-fundo);color:var(--grave)}
+select.estado.e-fu{background:var(--acento-fundo);color:var(--acento)}
 select.estado option{background:var(--papel);color:var(--tinta);font-weight:500}
 .mao{display:block;font-size:10px;color:var(--tinta-fraca);margin-top:3px;line-height:1.3}
 .rodalista{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:11px;
@@ -518,8 +519,9 @@ carregar(false);
 // A lista vem sem as mensagens (650 kB). O historico de cada um e buscado
 // quando a linha e aberta, e fica guardado na memoria ate recarregar a pagina.
 const API_H = 'https://ajwhrmjzvfdjwsqynbzt.supabase.co/functions/v1/historico';
-const STATUS = ['Agendou', 'Não Agendou', 'Não Aplica', 'Encerrado'];
-const ESTADO = {'Agendou':'e-ok','Não Agendou':'e-at','Não Aplica':'e-gr','Encerrado':''};
+const STATUS = ['Agendou', 'Não Agendou', 'Não Aplica', 'Encerrado', 'Follow-Up'];
+const ESTADO = {'Agendou':'e-ok','Não Agendou':'e-at','Não Aplica':'e-gr',
+                'Encerrado':'', 'Follow-Up':'e-fu'};
 const CLSC = {'Agendada':'c-ag','Escalada':'c-esc','Bot pausado':'c-bot',
   'Aguardando a clínica':'c-cli','Aguardando o paciente':'c-pac',
   'Parada':'c-par','Opt-out':'c-opt'};
@@ -551,8 +553,9 @@ const pedir = async (qs, corpo) => {
     : { method: 'POST', headers: { 'x-senha': SENHA, 'content-type': 'application/json' },
         body: JSON.stringify(corpo) });
   if (r.status === 401) throw new Error('senha');
-  if (!r.ok) throw new Error('rede');
-  return await r.json();
+  const resp = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error('rede'); e.corpo = resp; throw e; }
+  return resp;
 };
 
 document.getElementById('formSenha').addEventListener('submit', async e => {
@@ -594,7 +597,7 @@ function montarLeads(geradoEm) {
         sits.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('')}</select>
       <select id="lstatus"><option value="">Todos os status</option>
         <option>Agendou</option><option>Não Agendou</option><option>Não Aplica</option>
-        <option>Encerrado</option></select>
+        <option>Encerrado</option><option>Follow-Up</option></select>
       <select id="lfam"><option value="">Todos os exames</option>${
         fams.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}</select>
       <button type="button" id="llimpar">Limpar</button>
@@ -612,6 +615,7 @@ function montarLeads(geradoEm) {
       <span id="lrelogio">Lista buscada em ${esc(geradoEm)}.</span>
       <button type="button" id="lagora">Atualizar agora</button>
       <span>Atualiza sozinha a cada 5 minutos, da conversa mais recente para a mais antiga.</span>
+      <span><b>Follow-Up</b> no Status recoloca o paciente na régua automática da Ana.</span>
     </div>
     <p class="lconta" style="margin-top:10px">Clique numa linha para abrir a
       conversa inteira. O <b>Status</b> sai da análise da conversa e pode ser
@@ -701,6 +705,16 @@ async function recarregar(porBotao) {
     abertas.forEach(f => { if (!CONVERSAS.has(f)) buscarConversa(f); });
   }
   relogio.textContent = `Lista buscada em ${d.gerado_em}.` + (mudou ? ' Mudou.' : '');
+}
+
+// recado curto na linha da contagem, que volta ao normal sozinho
+function aviso(texto) {
+  const alvo = el('lconta');
+  if (!alvo) return;
+  clearTimeout(aviso.t);
+  if (!aviso.antes) aviso.antes = alvo.textContent;
+  alvo.textContent = texto;
+  aviso.t = setTimeout(() => { alvo.textContent = aviso.antes; aviso.antes = ''; }, 3500);
 }
 
 function atualizaTiles() {
@@ -832,18 +846,23 @@ async function aoTrocarStatus(e) {
   document.querySelectorAll(`select.estado[data-f="${CSS.escape(f)}"]`)
     .forEach(s => s.disabled = true);
   try {
-    await pedir('modo=status', { fone: f, status: novo });
+    const resposta = await pedir('modo=status', { fone: f, status: novo });
     r.sm = novo || null;
     r.s = r.sm ?? r.sa;
-  } catch {
+    if (resposta.recado) aviso(resposta.recado);
+  } catch (err) {
     GRAVANDO--;
+    if (err.corpo?.recado) {
+      document.querySelectorAll(`select.estado[data-f="${CSS.escape(f)}"]`).forEach(s => {
+        s.value = antes ?? ''; s.disabled = false;
+      });
+      aviso(err.corpo.recado);
+      return;
+    }
     document.querySelectorAll(`select.estado[data-f="${CSS.escape(f)}"]`).forEach(s => {
       s.value = antes ?? ''; s.disabled = false;
     });
-    const aviso = el('lconta');
-    const texto = aviso.textContent;
-    aviso.textContent = 'Não consegui gravar o status. Nada foi alterado.';
-    setTimeout(() => aviso.textContent = texto, 2500);
+    aviso('Não consegui gravar o status. Nada foi alterado.');
     return;
   }
   GRAVANDO--;

@@ -36,9 +36,12 @@ const rest = async (caminho: string, init: RequestInit = {}) => {
   return await r.json();
 };
 
-// o unico status que a conversa nao produz sozinha: quem fecha o assunto e a
-// pessoa que atende, entao 'Encerrado' so existe como escolha manual
-const STATUS_OK = ['Agendou', 'Não Agendou', 'Não Aplica', 'Encerrado'];
+// Dois valores que a conversa nao produz sozinha. 'Encerrado' porque quem
+// fecha o assunto e a pessoa que atende. 'Follow-Up' porque e uma ordem, nao
+// uma leitura: escolher esse valor recoloca o lead na regua da Ana.
+const STATUS_OK = ['Agendou', 'Não Agendou', 'Não Aplica', 'Encerrado', 'Follow-Up'];
+// status que tiram o lead da regua: nao se persegue quem ja veio ou ja foi fechado
+const FORA_DA_REGUA = ['Agendou', 'Encerrado', 'Não Aplica'];
 
 // pagina ate o fim: avanca pelo que veio, nunca pelo que foi pedido
 const todos = async (caminho: string, ordem: string, teto = 200000) => {
@@ -116,16 +119,45 @@ Deno.serve(async (req) => {
     const novo = String(corpo?.status ?? '').trim();
     if (!fone) return json({ erro: 'fone' }, 400);
     if (novo && !STATUS_OK.includes(novo)) return json({ erro: 'status' }, 400);
+    const atual = await rest(`ana_leads?phone=eq.${fone}` +
+      '&select=phone,opt_out,escalado,followup_step,proxima_acao,followup_due_at');
+    if (!atual.length) return json({ erro: 'nao encontrado' }, 404);
+    const l = atual[0];
+
+    const patch: Record<string, unknown> = {
+      status_manual: novo || null,
+      status_manual_em: novo ? new Date().toISOString() : null,
+    };
+    let recado = '';
+
+    if (novo === 'Follow-Up') {
+      // opt-out e vontade do paciente: nenhuma marcacao no painel reabre isso
+      if (l.opt_out) {
+        return json({ erro: 'opt_out',
+          recado: 'Este paciente pediu para não receber mais mensagens. A régua não volta.' }, 409);
+      }
+      if ((l.followup_step ?? 0) >= 5) {
+        recado = 'A cadência deste lead já chegou ao fim (5 toques). O status foi gravado, mas nenhuma mensagem nova sai.';
+      } else {
+        // a regua so pega quem tem data marcada, nao esta escalado e tem
+        // proxima_acao de follow-up. Sem os tres, marcar nao faria nada.
+        patch.followup_due_at = new Date().toISOString();
+        patch.escalado = false;
+        if (!/^follow_up/.test(l.proxima_acao ?? '')) patch.proxima_acao = 'follow_up_d1';
+        recado = 'Lead recolocado na régua da Ana.';
+      }
+    } else if (novo && FORA_DA_REGUA.includes(novo)) {
+      patch.followup_due_at = null;
+      if (l.followup_due_at) recado = 'Lead retirado da régua da Ana.';
+    }
+
     const gravado = await rest(`ana_leads?phone=eq.${fone}&select=phone,status_manual`, {
       method: 'PATCH',
       headers: { 'content-type': 'application/json', Prefer: 'return=representation' },
-      body: JSON.stringify({
-        status_manual: novo || null,
-        status_manual_em: novo ? new Date().toISOString() : null,
-      }),
+      body: JSON.stringify(patch),
     });
     if (!gravado.length) return json({ erro: 'nao encontrado' }, 404);
-    return json({ fone, status_manual: gravado[0].status_manual });
+    return json({ fone, status_manual: gravado[0].status_manual, recado });
   }
 
   // uma conversa so, buscada quando a linha e aberta
@@ -165,7 +197,8 @@ Deno.serve(async (req) => {
     const ult = Math.min(dias(e.last_patient_msg_at), dias(e.last_bot_msg_at),
                          dias(e.human_msg_at));
     let c: string, det = '';
-    if (ag === 'confirmado')       { c = 'Agendada'; det = e.agendamento?.quando ?? ''; }
+    if (e.agendamento?.realizado === true) { c = 'Agendada'; det = 'exame ja realizado'; }
+    else if (ag === 'confirmado')  { c = 'Agendada'; det = e.agendamento?.quando ?? ''; }
     else if (e.opt_out)            { c = 'Opt-out'; det = 'pediu para nao receber mais mensagens'; }
     else if (e.escalado)           { c = 'Escalada'; det = e.motivo_escalada ?? ''; }
     else if (e.bot_ativo === false){ c = 'Bot pausado'; det = 'a recepcao assumiu e nao devolveu'; }

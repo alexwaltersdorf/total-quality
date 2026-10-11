@@ -111,29 +111,8 @@ art. 11 da LGPD, e por isso ela **nao** anda junto com o link da pagina:
 - a senha fica em `sessionStorage`, entao sobrevive a um filtro mas nao a fechar o
   navegador. O botao **Fechar** apaga na hora
 
-A lista chega sem as mensagens (~700 kB para 1.517 pacientes). O historico de cada um
+A lista chega sem as mensagens (~650 kB para 1.517 pacientes). O historico de cada um
 e buscado quando a linha e aberta, e so fica na memoria daquela aba.
-
-A ordem e **da conversa mais recente para a mais antiga**, pela ultima mensagem
-trocada (`ana_msgs_contagem.ultima`, que a funcao devolve como `ut`). Nao pela
-data do contato: ela e o inicio da conversa, nao o fim, e deixava no topo quem
-tinha aberto a conversa ha mais tempo.
-
-### Atualizacao sozinha
-
-A secao rebusca a lista a cada **5 minutos**, e o botao *Atualizar agora* faz na
-hora. O que isso respeita:
-
-- **aba escondida nao busca**: nao adianta gastar consulta para uma tela que
-  ninguem esta vendo. Ao voltar para a aba, busca na hora se ja passou dos 5
-  minutos
-- **nao atropela gravacao**: enquanto um status esta sendo gravado, a volta do
-  relogio e pulada
-- **so repinta se algo mudou**, comparando a resposta com a anterior
-- **a rolagem e as conversas abertas ficam onde estavam**. Conversa aberta que
-  ganhou mensagem (a contagem `nm` mudou) tem o historico rebuscado
-- **senha trocada no banco** para o relogio e avisa na tela, em vez de ficar
-  errando em silencio
 
 ### Status: automatico com a palavra final de quem atende
 
@@ -145,6 +124,7 @@ A coluna **Status** sai da analise da conversa, como sempre saiu:
 | `Não Aplica` | o exame procurado esta na lista do que a clinica nao faz |
 | `Não Agendou` | o resto |
 | `Encerrado` | **nunca** — so existe como escolha manual |
+| `Follow-Up` | **nunca** — e uma ordem, nao uma leitura (ver abaixo) |
 
 Quem atende pode sobrepor pelo seletor da propria linha, ou pelo mesmo seletor
 dentro da gaveta da conversa (no celular a tabela rola de lado, a gaveta nao).
@@ -158,9 +138,25 @@ lado com `sm` (manual) e com `s`, que e `sm ?? sa`. Assim da para comparar os
 dois a qualquer momento, e o CSV traz as tres colunas.
 
 `Encerrado` ficou de fora do automatico de proposito: quem fecha o assunto e a
-pessoa que atende, nao a conversa. Se depois aparecer uma regra clara — por
-exemplo, opt-out vira encerrado —, ela entra em `edge-historico.ts`, no mesmo
-bloco que decide os outros tres.
+pessoa que atende, nao a conversa.
+
+**`Follow-Up` faz coisa, nao so rotula.** A regua da Ana so pega um lead que
+tenha `followup_due_at` marcado, `escalado = false` e `proxima_acao` de
+follow-up — marcar so o status nao faria nada. Entao a Edge Function arruma os
+tres de uma vez e responde *"Lead recolocado na régua da Ana"*. Dois casos em
+que ela nao obedece: **opt-out** (vontade do paciente, nenhuma marcacao no
+painel reabre, devolve 409) e **cadencia esgotada** nos 5 toques (grava o
+status e avisa que nenhuma mensagem nova sai). No caminho inverso, marcar
+`Agendou`, `Encerrado` ou `Não Aplica` **tira** o lead da regua.
+
+**O exame ja feito passa a ser detectado sozinho.** O Status so virava
+"Agendou" com `agendamento.status = 'confirmado'`, que depende da sincronizacao
+com o Google Agenda casar o evento com o lead pelo telefone — e ela alcanca 61%
+dos eventos. Quem agendou pela recepcao ficava como "Não Agendou" para sempre.
+Agora a Ana marca `agendamento.realizado = true` quando o paciente da sinal de
+que o exame ja aconteceu (pede resultado, laudo, nota fiscal, retirada), e o
+Status acompanha. A chave entra dentro do jsonb que ja existia: doze objetos do
+banco testam `agendamento.status` e nenhum precisou mudar.
 
 A gravacao passa pela mesma senha e pelo mesmo CORS da leitura, aceita so os
 quatro valores da lista e so telefone que ja existe em `ana_leads` (404 caso
