@@ -47,11 +47,21 @@ select phone, count(*)::int as n, max(created_at) as ultima
 -- cliente SQL do MCP quebra o comando nesse caractere, mesmo dentro de string.
 -- ---------------------------------------------------------------------------
 
--- em ana_relatorio_conversas, no CASE que decide o status:
+-- ana_relatorio_conversas passou a calcular o automatico num CTE 'auto':
 --   WHEN (l.agendamento ->> 'status') = 'confirmado' THEN 'Agendou'
 --   WHEN (l.agendamento ->> 'realizado')::boolean IS TRUE THEN 'Agendou'   <= novo
 --   WHEN <regex de exame que a clinica nao faz> THEN 'Não Aplica'
 --   ELSE 'Não Agendou'
+--
+-- e a coluna status virou COALESCE(l.status_manual, a.st), com duas colunas
+-- novas no fim: status_automatico e status_manual. Sem isso a escolha feita no
+-- painel nao chegava na planilha do Google, que a recepcao usa (ANA-07 reescreve
+-- ana_leads_planilha a cada 30 min). A planilha ganhou as colunas
+-- "Status automatico" e "Definido a mao".
+--
+-- edge-historico.ts le os dois: s = Status (efetivo), sa = Status automatico.
+-- Se lesse so Status, a primeira opcao do seletor diria "Automático · Agendou"
+-- justamente nos leads em que alguem discordou do automatico.
 
 -- ---------------------------------------------------------------------------
 -- Quem sai da regua

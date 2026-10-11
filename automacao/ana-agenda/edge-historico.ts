@@ -211,11 +211,13 @@ Deno.serve(async (req) => {
       else { c = 'Aguardando o paciente'; det = 'a clinica falou por ultimo'; }
     }
     // sa = o que a conversa diz, sm = o que a pessoa que atende decidiu.
-    // O manual ganha, mas o automatico continua visivel para dar o contraste.
-    const sa = p.Status, sm = e.status_manual ?? null;
+    // A view ja devolve o efetivo em Status e o calculado em Status automatico,
+    // para a planilha do Google tambem respeitar a escolha manual.
+    const sm = e.status_manual ?? null;
+    const sa = p['Status automatico'] ?? p.Status;
     return {
       n: p.Nome, t: p.WhatsApp, e: p['Exame procurado'], f: p.Familia,
-      s: sm ?? sa, sa, sm, et: p['Etapa do follow-up'],
+      s: p.Status, sa, sm, et: p['Etapa do follow-up'],
       d: p['Data do contato'], u: p['Ultima mensagem'],
       r: p.Recontato === 'sim',
       fila: !!e.followup_due_at,
