@@ -108,8 +108,13 @@ art. 11 da LGPD, e por isso ela **nao** anda junto com o link da pagina:
   contra uma senha aleatoria de 20 caracteres mesmo sem contador de tentativas
 - o CORS so aceita `https://totalquality.med.br`: outra origem recebe
   `access-control-allow-origin: null` e o navegador barra a leitura
-- a senha fica em `sessionStorage`, entao sobrevive a um filtro mas nao a fechar o
-  navegador. O botao **Fechar** apaga na hora
+- a senha fica em `localStorage`, por aparelho: cada pessoa da gestao digita uma
+  vez no celular e uma no computador e nao digita mais. O botao **Fechar** apaga
+  na hora, para quando a tela for compartilhada. Era `sessionStorage` e pedia a
+  senha a cada aba — a fricção estava levando ao pedido de tirar a protecao, que
+  e o contrario do que se quer: o link nao distingue gestao de ninguem, e sem
+  senha qualquer encaminhamento entrega nome, telefone, exame e a conversa
+  inteira de 1.517 pacientes
 
 A lista chega sem as mensagens (~650 kB para 1.517 pacientes). O historico de cada um
 e buscado quando a linha e aberta, e so fica na memoria daquela aba.

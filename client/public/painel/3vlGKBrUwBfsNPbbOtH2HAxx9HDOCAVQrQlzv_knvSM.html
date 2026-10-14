@@ -249,7 +249,8 @@ select.estado option{background:var(--papel);color:var(--tinta);font-weight:500}
     <p><b>Nome, telefone, exame procurado e a conversa inteira de cada paciente.</b>
        É dado sensível de saúde pelo art. 11 da LGPD, então não vem junto com o
        resto do painel: a senha é conferida no servidor, e quem tem só o link
-       desta página não abre esta seção.</p>
+       desta página não abre esta seção. Este aparelho vai lembrar da senha —
+       use <b>Fechar</b> para esquecê-la, se a tela for compartilhada.</p>
     <form id="formSenha" autocomplete="off">
       <input type="password" id="senha" placeholder="Senha" aria-label="Senha"
              autocomplete="current-password" required>
@@ -567,7 +568,7 @@ document.getElementById('formSenha').addEventListener('submit', async e => {
     const d = await pedir('modo=lista');
     LEADS = d.leads.map(r => ({ ...r, tr: r.t, t: fone(r.t),
       c: r.c.replace('clinica', 'clínica'), det: acentos(r.det) }));
-    try { sessionStorage.setItem('tq_h', SENHA); } catch {}
+    try { localStorage.setItem('tq_h', SENHA); } catch {}
     campo.value = '';
     montarLeads(d.gerado_em);
   } catch (err) {
@@ -602,7 +603,7 @@ function montarLeads(geradoEm) {
         fams.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}</select>
       <button type="button" id="llimpar">Limpar</button>
       <button type="button" id="lcsv">Baixar CSV</button>
-      <button type="button" id="lfechar" title="Esquece a senha nesta aba">Fechar</button>
+      <button type="button" id="lfechar" title="Esquece a senha neste aparelho">Fechar</button>
     </div>
     <p class="lconta" id="lconta"></p>
     <div class="quadro"><table id="tbLeads">
@@ -637,7 +638,7 @@ function montarLeads(geradoEm) {
   el('lfechar').addEventListener('click', () => {
     clearInterval(RELOGIO);
     SENHA = ''; LEADS = []; CONVERSAS.clear(); abertas.clear();
-    try { sessionStorage.removeItem('tq_h'); } catch {}
+    try { localStorage.removeItem('tq_h'); } catch {}
     location.reload();
   });
   document.querySelectorAll('#tilesSit .t.clica').forEach(b =>
@@ -678,7 +679,7 @@ async function recarregar(porBotao) {
     relogio.classList.remove('pisca');
     if (err.message === 'senha') {          // a senha foi trocada no banco
       clearInterval(RELOGIO); SENHA = '';
-      try { sessionStorage.removeItem('tq_h'); } catch {}
+      try { localStorage.removeItem('tq_h'); } catch {}
       relogio.textContent = 'A senha mudou. Recarregue a página para entrar de novo.';
       return;
     }
@@ -904,16 +905,17 @@ function baixarCsv() {
   a.click(); URL.revokeObjectURL(a.href);
 }
 
-// senha guardada so nesta aba: sobrevive ao filtro, nao ao fechar o navegador
+// senha guardada neste aparelho: a gestao digita uma vez no celular e uma no
+// computador. O botao Fechar apaga, para quando a tela for compartilhada.
 try {
-  const guardada = sessionStorage.getItem('tq_h');
+  const guardada = localStorage.getItem('tq_h');
   if (guardada) {
     SENHA = guardada;
     pedir('modo=lista').then(d => {
       LEADS = d.leads.map(r => ({ ...r, tr: r.t, t: fone(r.t),
         c: r.c.replace('clinica', 'clínica'), det: acentos(r.det) }));
       montarLeads(d.gerado_em);
-    }).catch(() => { SENHA = ''; sessionStorage.removeItem('tq_h'); });
+    }).catch(() => { SENHA = ''; localStorage.removeItem('tq_h'); });
   }
 } catch {}
 </script>
