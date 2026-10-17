@@ -12,6 +12,7 @@ import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
+import { ANALISES_TITLE, ANALISES_H1, ANALISES_DESCRIPTION } from "@shared/const";
 import { trackScheduleExam } from "@/lib/tracking";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
@@ -76,11 +77,12 @@ export default function LaboratorioCaraguatatuba() {
   const scrollRef = useScrollReveal();
 
   useEffect(() => {
-    document.title = "Laboratório em Caraguatatuba | Total Quality";
+    // Esta pagina e de "analises clinicas"; "laboratorio" e da home (shared/const.ts).
+    document.title = ANALISES_TITLE;
   }, []);
 
   useCanonical("https://totalquality.med.br/laboratorio-caraguatatuba");
-  useMetaDescription("Conheça o Total Quality, laboratório em Caraguatatuba com exames de Hemograma, tomografia, ultrassom, mamografia e mais serviços para cuidar da sua saúde. Agende agora!");
+  useMetaDescription(ANALISES_DESCRIPTION);
 
   // Inject BreadcrumbList schema
   useEffect(() => {
@@ -91,7 +93,7 @@ export default function LaboratorioCaraguatatuba() {
       "@type": "BreadcrumbList",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://totalquality.med.br/" },
-        { "@type": "ListItem", "position": 2, "name": "Laboratório em Caraguatatuba", "item": "https://totalquality.med.br/laboratorio-caraguatatuba" },
+        { "@type": "ListItem", "position": 2, "name": "Análises clínicas", "item": "https://totalquality.med.br/laboratorio-caraguatatuba" },
       ],
     });
     document.head.appendChild(script);
@@ -116,24 +118,23 @@ export default function LaboratorioCaraguatatuba() {
                 <nav className="reveal text-sm text-text-light mb-6" aria-label="Breadcrumb">
                   <a href="/" className="hover:text-brand transition-colors">Início</a>
                   <span className="mx-2">›</span>
-                  <span className="text-text">Laboratório em Caraguatatuba</span>
+                  <span className="text-text">Análises clínicas</span>
                 </nav>
 
                 <span className="section-label mb-4 block">Laboratório de Análises Clínicas</span>
 
                 <h1 className="reveal heading-display text-4xl lg:text-5xl xl:text-6xl text-text mb-6">
-                  LABORATÓRIO EM{" "}
-                  <span className="text-brand">CARAGUATATUBA</span>{" "}
-                  <span className="block text-2xl lg:text-3xl text-text-light font-light mt-2">
-                    Total Quality Medicina Diagnóstica
-                  </span>
+                  {ANALISES_H1}
                 </h1>
 
                 <p className="reveal text-lg text-text-light leading-relaxed max-w-2xl mb-8">
-                  A Total Quality é o laboratório de análises clínicas e medicina diagnóstica mais completo de
-                  Caraguatatuba - SP. Desde 2003, realizamos mais de 3.000 tipos de exames com tecnologia de
-                  última geração, equipe médica especializada e resultados disponíveis online. Localizado no
-                  centro de Caraguatatuba, com fácil acesso e atendimento humanizado.
+                  A Total Quality é um{" "}
+                  <a href="/" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                    laboratório em Caraguatatuba
+                  </a>{" "}
+                  que reúne análises clínicas e medicina diagnóstica no Centro da cidade. Desde 2003, realizamos
+                  mais de 3.000 tipos de exames, com equipamentos automatizados, equipe especializada e resultados
+                  disponíveis online. A coleta laboratorial é por ordem de chegada, sem agendamento.
                 </p>
 
                 <div className="reveal flex flex-wrap gap-4">
@@ -235,9 +236,9 @@ export default function LaboratorioCaraguatatuba() {
               DIAGNÓSTICO POR IMAGEM EM <span className="text-brand">CARAGUATATUBA</span>
             </h2>
             <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
-              A Total Quality é a clínica de diagnóstico por imagem mais completa de Caraguatatuba - SP.
-              Contamos com equipamentos de última geração e equipe médica especializada em radiologia,
-              cardiologia e neurologia para laudos detalhados e confiáveis.
+              Além das análises clínicas, a Total Quality realiza exames de imagem e cardiológicos no mesmo
+              endereço, com equipe médica especializada em radiologia, cardiologia e neurologia, que assina os
+              laudos.
             </p>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -275,7 +276,7 @@ export default function LaboratorioCaraguatatuba() {
         <section className="py-16 lg:py-24 bg-neutral-50">
           <div className="container">
             <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-8">
-              COMO CHEGAR AO LABORATÓRIO EM <span className="text-brand">CARAGUATATUBA</span>
+              COMO CHEGAR À <span className="text-brand">TOTAL QUALITY</span>
             </h2>
 
             <div className="grid lg:grid-cols-12 gap-8">
@@ -341,7 +342,7 @@ export default function LaboratorioCaraguatatuba() {
         <section className="py-16 lg:py-24">
           <div className="container">
             <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-4">
-              CONVÊNIOS ACEITOS NO LABORATÓRIO EM <span className="text-brand">CARAGUATATUBA</span>
+              CONVÊNIOS <span className="text-brand">ACEITOS</span>
             </h2>
             <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
               O laboratório Total Quality em Caraguatatuba atende Cartão de Todos, Solumedi e Leader. Veja a{" "}
@@ -405,7 +406,7 @@ export default function LaboratorioCaraguatatuba() {
         <section className="py-16 lg:py-24 bg-brand text-white">
           <div className="container text-center">
             <h2 className="reveal heading-display text-3xl lg:text-4xl mb-6">
-              FAÇA SEUS EXAMES SEM AGENDAMENTO NO LABORATÓRIO EM CARAGUATATUBA
+              FAÇA SEUS EXAMES LABORATORIAIS SEM AGENDAMENTO
             </h2>
             <p className="reveal text-white/80 text-lg max-w-2xl mx-auto mb-10">
               A coleta é por ordem de chegada, de segunda a sexta, das 07h30 às 18h — basta trazer

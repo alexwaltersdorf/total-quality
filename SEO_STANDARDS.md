@@ -371,9 +371,15 @@ por testes em `server/seo-content.test.ts`:
    metadata em `routes-metadata.ts` + conteúdo em `seo-content.ts` (o teste
    guard-rail falha se esquecer).
 2. **Uma intenção de busca por página (sem canibalização).** Home = "laboratório
-   em caraguatatuba"; `/laboratorio-caraguatatuba` = "laboratório de análises
+   em caraguatatuba" (e "laboratório"); `/laboratorio-caraguatatuba` = "análises
    clínicas"; cada `/exames/:slug` = o nome do exame. Não repetir o mesmo
-   título-alvo em duas páginas.
+   título-alvo em duas páginas — **nem no servidor, nem no React**: título,
+   description e H1 da home e da landing vêm de `shared/const.ts`
+   (`HOME_TITLE`, `HOME_H1`, `ANALISES_TITLE`…). Até out/2026 a landing dizia
+   "Análises Clínicas" ao robô e "Laboratório em Caraguatatuba" depois do JS.
+   Quem é dona de um termo se decide por Search Console (90 dias, por página),
+   nunca por opinião: em 16/10/2026 a home era a URL escolhida pelo Google
+   para "laboratório caraguatatuba" (posição ~3–4) e a URL do perfil do Google.
 3. **H1 limpo, sem marca empilhada.** A marca vai no `<title>` (após o pipe),
    nunca dentro do `<h1>`.
 4. **robots.txt não bloqueia crawlers de IA** (GPTBot/CCBot liberados — o site já
@@ -463,3 +469,18 @@ por testes em `server/seo-content.test.ts`:
     curl na home; o teste unitário não pegava porque exercitava
     `getSeoContentForPath("/")` isolado, sem passar pelo servidor. **Ao mexer no
     `serveStatic`, conferir a home por curl, não só por teste.**
+22. **Regra de ouro — os cinco indicadores do Google** ("Como a Pesquisa Google
+    determina a classificação de resultados"): **significado** (a intenção, que
+    para "laboratório" é local e transacional), **relevância** (o termo no título
+    e no corpo, com conteúdo útil ao redor — não repetição), **qualidade**
+    (conhecimento, legitimidade e confiabilidade: responsável técnico
+    identificado, só fatos verificáveis, links de sites legítimos), **usabilidade**
+    (celular e velocidade desempatam) e **contexto** (local e personalização —
+    não existe "1º lugar" único; medir por Search Console e grade). Toda
+    mudança precisa melhorar um indicador sem piorar outro, e nunca às custas da
+    verdade: nada de "última geração", "mais completo", nota declarada pelo site
+    ou "diversos convênios" (são três, `CONVENIOS_TEXTO`). Um único nó de
+    negócio no JSON-LD (`#medicalbusiness`, com `DiagnosticLab` e `hasMap`).
+    Travas em `server/regra-ouro-ranking.test.ts`. Documento completo, com os
+    dados de out/2026: `REGRA-OURO-RANKING-GOOGLE.md` no repositório
+    `SEO---Total-Quality`.

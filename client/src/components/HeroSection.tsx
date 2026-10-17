@@ -9,6 +9,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
 import { trackScheduleExam } from "@/lib/tracking";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import { HOME_H1 } from "@shared/const";
 
 
 const marqueeItems = [
@@ -45,7 +46,7 @@ export default function HeroSection() {
                 <span className="text-brand">QUALITY</span>
               </span>
               <h1 className="block text-lg lg:text-xl text-text-light font-light tracking-wide mt-4">
-                Laboratório de Análises Clínicas e Medicina Diagnóstica em Caraguatatuba
+                {HOME_H1}
               </h1>
             </div>
 
@@ -79,8 +80,8 @@ export default function HeroSection() {
               e{" "}
               <Link href="/checkup" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
                 check-up preventivo
-              </Link>{" "}
-              com tecnologia de última geração.
+              </Link>
+              .
             </p>
 
             <div className="reveal flex flex-wrap gap-4 mb-16" style={{ transitionDelay: "300ms" }}>

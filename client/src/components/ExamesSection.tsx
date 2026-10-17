@@ -43,7 +43,7 @@ const examData: Record<
 > = {
   imagem: {
     image: DIAGNOSTIC_IMG,
-    tag: "Tecnologia de Última Geração",
+    tag: "Equipamentos Digitais",
     description: (
       <>
         Equipamentos de ponta para diagnósticos por imagem em Caraguatatuba.{" "}

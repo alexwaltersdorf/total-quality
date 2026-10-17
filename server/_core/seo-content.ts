@@ -18,7 +18,14 @@ import nodePath from "node:path";
 import { examesData, type ExamData } from "../../client/src/lib/examesData";
 import { linkifyText } from "../../client/src/lib/internalLinkTargets";
 import blogIndex from "../../client/src/content/blog/index.json";
-import { anosDeAtuacao } from "@shared/const";
+import {
+  anosDeAtuacao,
+  HOME_H1,
+  ANALISES_H1,
+  ANALISES_TITLE,
+  ANALISES_DESCRIPTION,
+  CONVENIOS_TEXTO,
+} from "@shared/const";
 
 type BlogPost = (typeof blogIndex)[number] & { content: string[] };
 
@@ -179,7 +186,7 @@ function napHtml(ctaMessage: string): string {
 
 function internalLinksHtml(currentPath: string): string {
   const links: Array<[string, string]> = [
-    ["/laboratorio-caraguatatuba", "Laboratório de análises clínicas"],
+    ["/laboratorio-caraguatatuba", "Análises clínicas"],
     ["/exames/exames-de-sangue", "Exames de sangue"],
     ["/exames/tomografia-computadorizada", "Tomografia computadorizada"],
     ["/exames/ultrassonografia", "Ultrassonografia"],
@@ -258,8 +265,8 @@ function renderExamHtml(exam: ExamData): string {
 }
 
 const laboratorioHtml = `
-    <h1>Laboratório de Análises Clínicas em Caraguatatuba</h1>
-    <p>A Total Quality é um laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba – SP, com mais de ${anosDeAtuacao()} anos de atuação no Litoral Norte. Realizamos mais de 3.000 tipos de exames laboratoriais e de imagem em um só lugar, com equipamentos automatizados de alta precisão, equipe especializada e resultados disponíveis online.</p>
+    <h1>${ANALISES_H1}</h1>
+    <p>A Total Quality é um <a href="/">laboratório em Caraguatatuba</a> que reúne análises clínicas e medicina diagnóstica no Centro da cidade, com mais de ${anosDeAtuacao()} anos de atuação no Litoral Norte. Realizamos mais de 3.000 tipos de exames laboratoriais e de imagem em um só lugar, com equipamentos automatizados de alta precisão, equipe especializada e resultados disponíveis online.</p>
     <h2>Exames laboratoriais realizados</h2>
     <ul>
       <li><a href="/exames/hemograma">Hemograma completo</a> e <a href="/exames/exames-de-sangue">exames de sangue</a> em geral</li>
@@ -285,7 +292,7 @@ const laboratorioHtml = `
     <h2>Por que escolher a Total Quality</h2>
     <ul>
       <li>Mais de ${anosDeAtuacao()} anos de experiência em Caraguatatuba</li>
-      <li>Mais de 340 avaliações no Google com nota 4,5</li>
+      <li>Mais de 400 avaliações no Google</li>
       <li>Coleta rápida, ambiente confortável e estacionamento no Centro</li>
       <li>Resultados online em até 24 horas para a maioria dos exames</li>
       <li>Atendimento particular, convênios e empresas de Caraguatatuba, Ubatuba, São Sebastião e Ilhabela</li>
@@ -294,7 +301,7 @@ const laboratorioHtml = `
     <h3>Preciso agendar para fazer exames de sangue?</h3>
     <p>Para a maioria dos exames laboratoriais não é necessário agendamento: basta comparecer com o pedido médico e documento com foto. Veja as <a href="/blog/alimentacao-e-exames-laboratoriais">orientações de preparo e jejum</a> antes de vir. Exames de imagem e procedimentos especiais podem ser agendados pelo WhatsApp.</p>
     <h3>Quais convênios são aceitos?</h3>
-    <p>Atendemos os principais convênios e planos de saúde da região, além de atendimento particular. Veja a <a href="/convenios">lista completa de convênios aceitos</a> ou consulte seu plano pelo WhatsApp (12) 3887-3535.</p>
+    <p>Atendemos ${CONVENIOS_TEXTO}. Fora deles, o atendimento é particular, com tabela própria. Veja os <a href="/convenios">convênios aceitos</a> ou tire dúvidas pelo WhatsApp (12) 3887-3535.</p>
     <h3>Em quanto tempo sai o resultado?</h3>
     <p>A maioria dos exames de sangue fica pronta em até 24 horas, com resultados disponíveis online. Exames específicos podem levar até 7 dias úteis.</p>
     <h3>Vocês fazem coleta domiciliar?</h3>
@@ -307,9 +314,8 @@ const laboratorioHtml = `
         "@type": "MedicalWebPage",
         "@id": `${SITE}/laboratorio-caraguatatuba#webpage`,
         url: `${SITE}/laboratorio-caraguatatuba`,
-        name: "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality",
-        description:
-          "Laboratório de análises clínicas em Caraguatatuba: hemograma, exames de sangue, hormônios e mais de 3.000 exames. Resultados em até 24h.",
+        name: ANALISES_TITLE,
+        description: ANALISES_DESCRIPTION,
         about: { "@id": BUSINESS_ID },
         provider: { "@id": BUSINESS_ID },
       },
@@ -320,7 +326,7 @@ const laboratorioHtml = `
         },
         {
           q: "Quais convênios são aceitos?",
-          a: "Atendemos os principais convênios e planos de saúde da região, além de atendimento particular. Consulte seu plano pelo WhatsApp (12) 3887-3535.",
+          a: `Atendemos ${CONVENIOS_TEXTO}. Fora deles, o atendimento é particular, com tabela própria. Tire dúvidas pelo WhatsApp (12) 3887-3535.`,
         },
         {
           q: "Em quanto tempo sai o resultado?",
@@ -333,7 +339,7 @@ const laboratorioHtml = `
       ]),
       breadcrumbLd([
         ["Início", "/"],
-        ["Laboratório em Caraguatatuba", "/laboratorio-caraguatatuba"],
+        ["Análises clínicas", "/laboratorio-caraguatatuba"],
       ]),
     ])}`;
 
@@ -427,15 +433,17 @@ function conveniosHtml(): string {
 }
 
 const homeHtml = `
-    <h1>Laboratório em Caraguatatuba — Total Quality Medicina Diagnóstica</h1>
-    <p>Há mais de ${anosDeAtuacao()} anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">laboratório de análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>.</p>
+    <h1>${HOME_H1}</h1>
+    <p>Há mais de ${anosDeAtuacao()} anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>.</p>
     <ul>
       <li>Resultados online em até 24 horas para a maioria dos exames</li>
       <li>Coleta laboratorial sem agendamento, por ordem de chegada — e coleta domiciliar mediante agendamento</li>
-      <li>Equipamentos modernos e equipe especializada</li>
-      <li>Atendimento particular, convênios e empresas</li>
-      <li>Mais de 340 avaliações no Google com nota 4,5</li>
+      <li>Atendimento particular, empresas e os convênios ${CONVENIOS_TEXTO}</li>
+      <li>Mais de 400 avaliações no Google</li>
     </ul>
+    <h2>Como funciona o laboratório</h2>
+    <p>Para <a href="/exames/exames-de-sangue">exames de sangue</a> e demais exames laboratoriais, basta vir com o pedido médico e um documento com foto, de segunda a sexta, das 7h30 às 18h — o atendimento é por ordem de chegada. Antes, confira as <a href="/blog/alimentacao-e-exames-laboratoriais">orientações de preparo e jejum</a>. Quem não pode se deslocar pode pedir a coleta domiciliar pelo WhatsApp (12) 3887-3535, que confirma área atendida, horário e valor. Os resultados ficam disponíveis online.</p>
+    <p>Exames de imagem e cardiológicos, como tomografia, ultrassonografia, MAPA e Holter, são agendados pelo WhatsApp ou telefone, porque dependem de horário com o médico e de preparo específico.</p>
     ${faqSectionHtml([
       {
         q: "Quais exames são realizados no laboratório em Caraguatatuba?",
@@ -451,7 +459,7 @@ const homeHtml = `
       },
       {
         q: "O laboratório em Caraguatatuba aceita convênios?",
-        a: "Sim, o laboratório Total Quality em Caraguatatuba aceita diversos convênios de saúde. Entre em contato pelo WhatsApp para verificar se seu plano é aceito.",
+        a: `Atendemos ${CONVENIOS_TEXTO}. Fora desses três, o atendimento é particular, com tabela própria. Tire dúvidas pelo WhatsApp (12) 3887-3535.`,
       },
     ])}
     ${napHtml("Agende seus exames pelo WhatsApp (12) 3887-3535 ou visite-nos no Centro de Caraguatatuba.")}
