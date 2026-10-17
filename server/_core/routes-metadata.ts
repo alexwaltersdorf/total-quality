@@ -11,6 +11,8 @@ import {
   ANALISES_TITLE,
   ANALISES_DESCRIPTION,
 } from "@shared/const";
+import blogIndex from "../../client/src/content/blog/index.json";
+import { blogModifiedIso, isPublished, type BlogPostMeta } from "../../client/src/lib/blogMeta";
 
 export interface RouteMetadata {
   title: string;
@@ -22,6 +24,12 @@ export interface RouteMetadata {
   canonical: string;
   priority?: number; // Para sitemap.xml (0.0 a 1.0)
   changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
+  /** AAAA-MM-DD da ultima alteracao real. Sem ele, o sitemap omite o lastmod. */
+  lastmod?: string;
+  /** og:type da pagina (padrao do index.html: "website"). */
+  ogType?: "website" | "article";
+  /** true = <meta name="robots" content="noindex, nofollow"> e fora do sitemap. */
+  noindex?: boolean;
 }
 
 // Dados dos exames para reutilização
@@ -129,10 +137,10 @@ const examesMetadata: Record<string, RouteMetadata> = {
 
   "exame-toxicologico": {
     title: "Exame Toxicológico em Caraguatatuba | Total Quality",
-    description: "Exame toxicológico em Caraguatatuba - SP. Teste de drogas. Resultado rápido e confiável. Agende seu exame.",
-    keywords: "exame toxicológico, teste de drogas, toxicologia, Caraguatatuba",
-    ogTitle: "Exame Toxicológico | Total Quality",
-    ogDescription: "Teste toxicológico com resultado rápido e confiável.",
+    description: "Exame toxicológico em Caraguatatuba para CNH C, D e E e motorista profissional: coleta de cabelo ou pelo, laboratório credenciado. Dúvidas no WhatsApp.",
+    keywords: "exame toxicológico, exames toxicológicos, toxicológico CNH, toxicológico motorista profissional, teste de drogas, Caraguatatuba",
+    ogTitle: "Exame Toxicológico para CNH | Total Quality",
+    ogDescription: "Toxicológico para CNH C, D e E e motorista profissional, com coleta na unidade e laboratório credenciado.",
     canonical: "https://totalquality.med.br/exames/exame-toxicologico",
     priority: 0.8,
     changefreq: "monthly",
@@ -173,6 +181,12 @@ const examesMetadata: Record<string, RouteMetadata> = {
 };
 
 // Dados dos artigos de blog
+/*
+ * Metadados escritos a mao dos artigos antigos. Artigo novo NAO precisa entrar
+ * aqui: blogRoute() deriva title (metaTitle), description (excerpt), og e
+ * lastmod do client/src/content/blog/index.json. Uma entrada daqui so
+ * sobrescreve os textos — lastmod, og:type e noindex vem sempre do indice.
+ */
 const blogMetadata: Record<string, RouteMetadata> = {
   "check-up-preventivo-quando-fazer": {
     title: "Check-up Preventivo: Quando Fazer | Total Quality",
@@ -182,18 +196,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
     ogDescription: "Saiba quando fazer seu check-up preventivo e quais exames são essenciais para manter a saúde.",
     ogImage: "https://totalquality.med.br/images/recepcao-1024.webp",
     canonical: "https://totalquality.med.br/blog/check-up-preventivo-quando-fazer",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
-
-  "hemograma-caraguatatuba": {
-    title: "Hemograma em Caraguatatuba | Total Quality",
-    description: "Hemograma em Caraguatatuba: entenda o que é, para que serve e como é realizado. Resultados rápidos na Total Quality.",
-    keywords: "hemograma, hemograma completo, análise de sangue, laboratório, Caraguatatuba",
-    ogTitle: "Hemograma em Caraguatatuba",
-    ogDescription: "Tudo sobre hemograma: o que é, para que serve e como é realizado.",
-    ogImage: "https://totalquality.med.br/images/laboratorio-1024.webp",
-    canonical: "https://totalquality.med.br/blog/hemograma-caraguatatuba",
     priority: 0.7,
     changefreq: "monthly",
   },
@@ -587,10 +589,8 @@ export function getRouteMetadata(pathname: string): RouteMetadata | null {
   // Verificar rotas de blog (/blog/:slug)
   const blogMatch = path.match(/^\/blog\/([a-z0-9\-]+)$/);
   if (blogMatch) {
-    const slug = blogMatch[1];
-    if (blogMetadata[slug]) {
-      return blogMetadata[slug];
-    }
+    const route = blogRoute(blogMatch[1]);
+    if (route) return route;
   }
 
   // Rota não encontrada
@@ -601,7 +601,34 @@ export function getRouteMetadata(pathname: string): RouteMetadata | null {
  * Slugs de blog com metadata conhecida (usado na resolução de 404)
  */
 export function getKnownBlogSlugs(): Set<string> {
-  return new Set(Object.keys(blogMetadata));
+  // Rascunho incluso: a URL responde 200 (com noindex) para revisao.
+  return new Set(blogPostsMeta.map((p) => p.slug));
+}
+
+const blogPostsMeta = blogIndex as BlogPostMeta[];
+
+/** Metadados da rota de um artigo, a partir do indice do blog. */
+function blogRoute(slug: string): RouteMetadata | null {
+  const post = blogPostsMeta.find((p) => p.slug === slug);
+  if (!post) return null;
+  const canonical = `https://totalquality.med.br/blog/${slug}`;
+  const base: RouteMetadata = blogMetadata[slug] ?? {
+    title: post.metaTitle ?? post.title,
+    description: post.excerpt,
+    keywords: post.tags.join(", "),
+    ogTitle: post.title,
+    ogDescription: post.excerpt,
+    ogImage: post.image,
+    canonical,
+    priority: 0.7,
+    changefreq: "monthly",
+  };
+  return {
+    ...base,
+    ogType: "article",
+    lastmod: blogModifiedIso(post),
+    ...(isPublished(post) ? {} : { noindex: true }),
+  };
 }
 
 /**
@@ -616,8 +643,11 @@ export function getAllRoutes(): RouteMetadata[] {
   // Adicionar rotas de exames
   routes.push(...Object.values(examesMetadata));
 
-  // Adicionar rotas de blog
-  routes.push(...Object.values(blogMetadata));
+  // Adicionar rotas de blog — so as publicadas; rascunho nunca entra no sitemap
+  for (const post of blogPostsMeta) {
+    const route = blogRoute(post.slug);
+    if (route && !route.noindex) routes.push(route);
+  }
 
   return routes;
 }
@@ -663,6 +693,21 @@ export function injectMetaTags(html: string, metadata: RouteMetadata): string {
     /<meta property="og:url" content="[^"]*"/,
     `<meta property="og:url" content="${escapeHtml(metadata.canonical)}"`
   );
+
+  if (metadata.ogType) {
+    result = result.replace(
+      /<meta property="og:type" content="[^"]*"/,
+      `<meta property="og:type" content="${metadata.ogType}"`
+    );
+  }
+
+  // Rascunho do blog: acessivel para revisao, mas fora do indice do Google
+  if (metadata.noindex) {
+    result = result.replace(
+      /<meta name="robots" content="[^"]*"/,
+      `<meta name="robots" content="noindex, nofollow"`
+    );
+  }
 
   // Injetar og:image se fornecido
   if (metadata.ogImage) {

@@ -8,22 +8,27 @@ import { trackWhatsAppConversion } from "@/lib/tracking";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, ArrowUpRight, Clock, Calendar, Tag, Share2 } from "lucide-react";
-import { blogPosts, loadBlogPost, extractFaqs } from "@/lib/blogData";
+import { allBlogPosts, blogPosts, loadBlogPost, extractFaqs } from "@/lib/blogData";
+import { blogModifiedIso, relatedPosts as pickRelated, tableOfContents, isPublished } from "@/lib/blogMeta";
 import { renderBlogContent } from "@/lib/renderBlogContent";
 import { trpc } from "@/lib/trpc";
 import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
-import { useBreadcrumbSchema, useBlogPostingSchema, useFAQSchema, useCanonical, useMetaDescription } from "@/components/SEOHead";
+import { useBreadcrumbSchema, useBlogArticleSchema, useFAQSchema, useCanonical, useMetaDescription } from "@/components/SEOHead";
 import GiscusComments from "@/components/GiscusComments";
+import ExamCTA from "@/components/ExamCTA";
+import MedicalFooter from "@/components/MedicalFooter";
 
 export default function BlogPost() {
   const openWhatsApp = useWhatsAppRedirect();
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
 
-  const meta = useMemo(() => blogPosts.find((p) => p.slug === slug), [slug]);
+  // Rascunho tambem abre pela URL (para o Alex revisar no ar), mas com noindex
+  // e fora de listagem, sitemap e relacionados — ver lib/blogMeta.ts.
+  const meta = useMemo(() => allBlogPosts.find((p) => p.slug === slug), [slug]);
   const [content, setContent] = useState<string[] | null>(null);
 
   // O corpo do artigo vive em client/src/content/blog/<slug>.json e vira um
@@ -44,13 +49,19 @@ export default function BlogPost() {
     [meta, content]
   );
 
-  const relatedPosts = useMemo(() => {
-    if (!post) return [];
-    return blogPosts
-      .filter((p) => p.id !== post.id)
-      .filter((p) => p.category === post.category || p.tags.some((t) => post.tags.includes(t)))
-      .slice(0, 3);
-  }, [post]);
+  // Os tres escolhidos a mao no campo related; sem eles, mesma categoria/tag.
+  const relatedPosts = useMemo(() => (post ? pickRelated(post, blogPosts) : []), [post]);
+  const toc = useMemo(() => tableOfContents(post?.content ?? []), [post?.content]);
+
+  useEffect(() => {
+    if (!meta || isPublished(meta)) return;
+    const robots = document.querySelector('meta[name="robots"]');
+    const anterior = robots?.getAttribute("content") ?? null;
+    robots?.setAttribute("content", "noindex, nofollow");
+    return () => {
+      if (robots && anterior !== null) robots.setAttribute("content", anterior);
+    };
+  }, [meta]);
 
   const blogViewMutation = trpc.blog.trackView.useMutation();
   const { data: viewData } = trpc.blog.viewCount.useQuery(
@@ -61,7 +72,8 @@ export default function BlogPost() {
   useEffect(() => {
     window.scrollTo(0, 0);
     if (post) {
-      document.title = `${post.title} | Blog Total Quality Medicina Diagnóstica`;
+      // Mesmo <title> do prerender (routes-metadata.ts le metaTitle do index.json).
+      document.title = post.metaTitle ?? `${post.title} | Blog Total Quality Medicina Diagnóstica`;
 
       // Registrar visualização no banco de dados
       blogViewMutation.mutate({ slug: post.slug });
@@ -85,15 +97,8 @@ export default function BlogPost() {
   ] : [], [post]);
   useBreadcrumbSchema(breadcrumbs);
 
-  // SEO: BlogPosting schema
-  useBlogPostingSchema({
-    title: post?.title || "",
-    description: post?.excerpt || "",
-    url: `/blog/${post?.slug || ""}`,
-    datePublished: post?.date || "",
-    authorName: post?.author || "",
-    imageUrl: post?.image,
-  });
+  // SEO: BlogPosting schema — o mesmo objeto do prerender (blogPostingLd).
+  useBlogArticleSchema(meta);
 
   // SEO: FAQPage schema — extraido da secao "## Perguntas frequentes" do
   // corpo, quando o artigo tiver uma (mesmo padrao de ExamePage.tsx).
@@ -195,7 +200,11 @@ export default function BlogPost() {
       <div className="container max-w-5xl mx-auto mb-12">
         <img
           src={post.image}
-          alt={post.title}
+          alt={post.imageAlt ?? post.title}
+          width={1024}
+          height={576}
+          fetchPriority="high"
+          decoding="async"
           className="w-full aspect-[16/9] object-cover"
         />
       </div>
@@ -203,13 +212,40 @@ export default function BlogPost() {
       {/* Article Content */}
       <article className="pb-16">
         <div className="container max-w-3xl mx-auto">
+          {toc.length > 0 && (
+            <nav aria-label="Sumário" className="mb-10 p-6 border border-black/10 bg-surface-light/50">
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-text-muted mb-3">Neste artigo</p>
+              <ol className="list-decimal pl-5 space-y-1.5 text-sm">
+                {toc.map((item) => (
+                  <li key={item.id}>
+                    <a href={`#${item.id}`} className="text-text hover:text-brand underline-offset-2 hover:underline">
+                      {item.text}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )}
+
           <div className="space-y-6">
             {/* Interpreta a formatacao markdown leve do corpo (##/###, **negrito**,
                 listas, tabelas) e aplica a linkagem interna automática (mesmo
                 mapa do prerender — internalLinkTargets.ts): informacional →
                 página estratégica. */}
-            {renderBlogContent(post.content, `/blog/${post.slug}`)}
+            {renderBlogContent(post.content, `/blog/${post.slug}`, (key) =>
+              post.examName ? (
+                <ExamCTA key={key} examName={post.examName} examType={post.examType} posicao="meio" />
+              ) : null
+            )}
           </div>
+
+          {post.examName && <ExamCTA examName={post.examName} examType={post.examType} posicao="fim" />}
+
+          <MedicalFooter
+            dateModified={blogModifiedIso(post)}
+            lastReviewed={post.lastReviewed}
+            draft={!isPublished(post)}
+          />
 
           {/* Tags */}
           <div className="mt-12 pt-8 border-t border-black/10">
@@ -226,23 +262,27 @@ export default function BlogPost() {
             </div>
           </div>
 
-          {/* CTA */}
+          {/* CTA dos artigos que nao tratam de um exame de laboratorio (os que
+              tratam usam o ExamCTA acima). Sem "Agende seus exames": a coleta
+              laboratorial e sem agendamento, por ordem de chegada. */}
+          {!post.examName && (
           <div className="mt-12 p-8 bg-surface-light border border-black/5 text-center">
-            <h2 className="heading-display text-3xl text-text mb-3">AGENDE SEUS EXAMES</h2>
+            <h2 className="heading-display text-3xl text-text mb-3">FALE COM A TOTAL QUALITY</h2>
             <p className="text-text-light text-sm mb-6 max-w-md mx-auto">
-              Na Total Quality em Caraguatatuba, cuidamos da sua saúde com tecnologia de ponta e atendimento humanizado.
+              Coleta laboratorial sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Exames de imagem com hora marcada pelo WhatsApp (12) 3887-3535.
             </p>
             <button
               type="button"
               onClick={() => {
                 trackWhatsAppConversion("artigo_cta", "blog");
-                openWhatsApp("artigo_cta", `Olá! Li o artigo sobre ${post.title} e gostaria de agendar um exame.`);
+                openWhatsApp("artigo_cta", `Olá! Li o artigo sobre ${post.title} e tenho uma dúvida.`);
               }}
               className="btn-pill-brand inline-flex items-center gap-2"
             >
-              Agendar pelo WhatsApp <ArrowUpRight className="w-4 h-4" />
+              Falar pelo WhatsApp <ArrowUpRight className="w-4 h-4" />
             </button>
           </div>
+          )}
         </div>
       </article>
 

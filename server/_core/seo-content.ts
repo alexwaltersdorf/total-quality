@@ -17,7 +17,23 @@ import nodePath from "node:path";
 
 import { examesData, type ExamData } from "../../client/src/lib/examesData";
 import { linkifyText } from "../../client/src/lib/internalLinkTargets";
+import { blogLinksFor, examesDeSangueLista } from "../../client/src/lib/examBlogLinks";
 import blogIndex from "../../client/src/content/blog/index.json";
+import {
+  AVISO_INFORMATIVO,
+  blogModifiedIso,
+  blogPostingLd,
+  CTA_MARKER,
+  extractFaqs,
+  headingId,
+  isoToBr,
+  isPublished,
+  parseBlogDate,
+  relatedPosts,
+  tableOfContents,
+  type BlogPost as BlogPostFull,
+  type BlogPostMeta,
+} from "../../client/src/lib/blogMeta";
 import {
   anosDeAtuacao,
   HOME_H1,
@@ -27,7 +43,7 @@ import {
   CONVENIOS_TEXTO,
 } from "@shared/const";
 
-type BlogPost = (typeof blogIndex)[number] & { content: string[] };
+type BlogPost = BlogPostFull;
 
 /**
  * Corpo dos artigos lido do disco: os JSONs em client/src/content/blog sao a
@@ -45,7 +61,7 @@ const BLOG_CONTENT_DIR = [
 ].find((dir) => fs.existsSync(dir));
 
 function loadBlogPostFromDisk(slug: string): BlogPost | null {
-  const meta = blogIndex.find((b) => b.slug === slug);
+  const meta = blogPosts.find((b) => b.slug === slug);
   if (!meta) return null;
   if (!BLOG_CONTENT_DIR) {
     console.error("[seo-content] diretorio de artigos do blog nao encontrado — prerender sem corpo");
@@ -60,7 +76,8 @@ function loadBlogPostFromDisk(slug: string): BlogPost | null {
   }
 }
 
-const blogPosts = blogIndex;
+/** Todos os artigos, rascunhos inclusive (a URL do rascunho prerenderiza, com noindex). */
+const blogPosts = blogIndex as BlogPostMeta[];
 
 const NAP = {
   name: "Total Quality Laboratório e Medicina Diagnóstica",
@@ -208,6 +225,24 @@ function internalLinksHtml(currentPath: string): string {
   return `<h2>Outros exames na Total Quality</h2><ul>${items}</ul>`;
 }
 
+/** Mesmo bloco do ExamePage.tsx: lista de exames de sangue e artigos do blog. */
+function examBlogSectionHtml(examSlug: string): string {
+  const publicados = blogPosts.filter(isPublished);
+  const lista =
+    examSlug === "exames-de-sangue"
+      ? `<h2>Exames de sangue que realizamos</h2><ul>${examesDeSangueLista(publicados)
+          .map((i) => `<li>${i.href ? `<a href="${i.href}">${escapeHtml(i.nome)}</a>` : escapeHtml(i.nome)}</li>`)
+          .join("")}</ul>`
+      : "";
+  const artigos = blogLinksFor(examSlug, publicados);
+  const blog = artigos.length
+    ? `<h2>Saiba mais no nosso blog</h2><ul>${artigos
+        .map((p) => `<li><a href="/blog/${p.slug}">${escapeHtml(p.title)}</a></li>`)
+        .join("")}</ul>`
+    : "";
+  return lista + blog;
+}
+
 function renderExamHtml(exam: ExamData): string {
   const h1 = exam.metaTitle.split("|")[0].trim();
   const canonical = `${SITE}/exames/${exam.slug}`;
@@ -247,6 +282,7 @@ function renderExamHtml(exam: ExamData): string {
     <ul>${indications}</ul>
     <h2>Preparo para o exame</h2>
     <ul>${preparations}</ul>
+    ${examBlogSectionHtml(exam.slug)}
     ${faqSectionHtml(exam.faqs)}
     ${napHtml(
       exam.category === "laboratorio"
@@ -413,6 +449,13 @@ const CONVENIOS_FAQS: Faq[] = [
   },
 ];
 
+/** Link para o artigo de coleta domiciliar — so depois de publicado. */
+function coletaDomiciliarLinkHtml(): string {
+  const post = blogPosts.find((p) => p.slug === "coleta-domiciliar-exames-caraguatatuba");
+  if (!post || !isPublished(post)) return "";
+  return `<p>Não pode vir até a unidade? Veja como funciona a <a href="/blog/${post.slug}">coleta domiciliar de exames</a>.</p>`;
+}
+
 function conveniosHtml(): string {
   const lista = CONVENIOS.map((c) => `<li>${escapeHtml(c)}</li>`).join("");
   return `
@@ -421,6 +464,7 @@ function conveniosHtml(): string {
     <h2>Convênios e cartões atendidos</h2>
     <ul>${lista}</ul>
     <p>Não trabalhamos com outros convênios ou planos de saúde: fora dessa lista, o atendimento é particular. Confirme condições e valores pelo WhatsApp <a href="${NAP.whatsappHref}">(12) 3887-3535</a> antes de vir.</p>
+    ${coletaDomiciliarLinkHtml()}
     ${faqSectionHtml(CONVENIOS_FAQS)}
     ${napHtml("Confirme seu convênio pelo WhatsApp — a coleta laboratorial é sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h; exames de imagem com hora marcada.")}
     ${internalLinksHtml("/convenios")}
@@ -564,33 +608,9 @@ function examesHubHtml(): string {
     ${napHtml("Não encontrou o exame que procura? Fale com a gente pelo WhatsApp — realizamos mais de 3.000 tipos de exames.")}`;
 }
 
-const PT_MONTHS: Record<string, number> = {
-  jan: 0, fev: 1, mar: 2, abr: 3, mai: 4, jun: 5,
-  jul: 6, ago: 7, set: 8, out: 9, nov: 10, dez: 11,
-};
-
-/**
- * Mesma logica de client/src/lib/blogData.ts (duplicada, nao importada: este
- * arquivo roda fora do Vite e blogData.ts usa import.meta.glob). O construtor
- * nativo Date() nao reconhece meses abreviados em portugues ("12 Set 2026"),
- * entao sem isso o /blog prerenderizado listava os artigos por ordem de
- * insercao no index.json, nao por data.
- */
-function parseBlogDate(date: string): number {
-  const match = date.match(/^(\d{1,2})\s+([A-Za-zçÇ]+)\s+(\d{4})$/);
-  if (match) {
-    const [, day, monthStr, year] = match;
-    const month = PT_MONTHS[monthStr.toLowerCase()];
-    if (month !== undefined) {
-      return new Date(Number(year), month, Number(day)).getTime();
-    }
-  }
-  const fallback = new Date(date).getTime();
-  return Number.isNaN(fallback) ? 0 : fallback;
-}
-
 function blogIndexHtml(): string {
-  const items = [...blogPosts]
+  const items = blogPosts
+    .filter(isPublished)
     .sort((a, b) => parseBlogDate(b.date) - parseBlogDate(a.date))
     .map((b) => `<li><a href="/blog/${b.slug}">${escapeHtml(b.title)}</a> — ${escapeHtml(b.excerpt)}</li>`)
     .join("");
@@ -657,7 +677,7 @@ function renderInlineHtml(text: string, currentPath: string, usedHrefs: Set<stri
  * renderBlogContent.tsx no cliente). Antes disso cada item do array virava
  * um <p> literal, entao o crawler via os caracteres ##, ** e | crus no HTML.
  */
-function renderBlogBodyHtml(content: string[], currentPath: string): string {
+function renderBlogBodyHtml(content: string[], currentPath: string, ctaHtml = ""): string {
   const usedHrefs = new Set<string>();
 
   return content
@@ -667,8 +687,9 @@ function renderBlogBodyHtml(content: string[], currentPath: string): string {
       if (trimmed.startsWith("### ")) {
         return `<h3>${renderInlineHtml(trimmed.slice(4), currentPath, usedHrefs)}</h3>`;
       }
+      if (trimmed.trim() === CTA_MARKER) return ctaHtml;
       if (trimmed.startsWith("## ")) {
-        return `<h2>${renderInlineHtml(trimmed.slice(3), currentPath, usedHrefs)}</h2>`;
+        return `<h2 id="${headingId(trimmed.slice(3))}">${renderInlineHtml(trimmed.slice(3), currentPath, usedHrefs)}</h2>`;
       }
       if (trimmed.startsWith("|")) {
         const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
@@ -696,18 +717,78 @@ function renderBlogBodyHtml(content: string[], currentPath: string): string {
     .join("");
 }
 
+/**
+ * Quadro de contato do artigo de exame — mesmo texto do ExamCTA.tsx. A coleta
+ * laboratorial e sem agendamento (decisao de 01/08/2026); o WhatsApp tira
+ * duvidas e combina a coleta domiciliar.
+ */
+function examCtaHtml(examName: string): string {
+  const titulo =
+    examName === "coleta domiciliar"
+      ? "Coleta domiciliar em Caraguatatuba"
+      : `${examName[0].toUpperCase()}${examName.slice(1)} na Total Quality`;
+  return `
+    <aside>
+      <p><strong>${escapeHtml(titulo)}</strong></p>
+      <p>Na unidade da Rua Padre Anchieta, 1010 – Centro, a coleta de exames laboratoriais é sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Traga o pedido médico e um documento com foto.</p>
+      <p>Também fazemos coleta domiciliar: área atendida, horário e valor são confirmados pelo <a href="${NAP.whatsappHref}" target="_blank" rel="noopener noreferrer">WhatsApp (12) 3887-3535</a>, que também tira dúvidas de preparo e convênio.</p>
+    </aside>`;
+}
+
+/** Rodape do artigo — mesmo texto do MedicalFooter.tsx. */
+function blogFooterHtml(post: BlogPost): string {
+  const revisao = post.lastReviewed
+    ? `<p>Última revisão médica: ${isoToBr(post.lastReviewed)}</p>`
+    : isPublished(post)
+      ? ""
+      : "<p>Rascunho — revisão médica pendente.</p>";
+  return `
+    <footer>
+      <p><strong>${AVISO_INFORMATIVO}</strong></p>
+      <p>Última atualização: ${isoToBr(blogModifiedIso(post))}</p>
+      ${revisao}
+    </footer>`;
+}
+
 function renderBlogHtml(post: BlogPost): string {
   const currentPath = `/blog/${post.slug}`;
-  const bodyHtml = renderBlogBodyHtml(post.content, currentPath);
+  const cta = post.examName ? examCtaHtml(post.examName) : "";
+  const bodyHtml = renderBlogBodyHtml(post.content, currentPath, cta);
+  const toc = tableOfContents(post.content);
+  const tocHtml = toc.length
+    ? `<nav aria-label="Sumário"><p>Neste artigo</p><ol>${toc
+        .map((t) => `<li><a href="#${t.id}">${escapeHtml(t.text)}</a></li>`)
+        .join("")}</ol></nav>`
+    : "";
+  const related = relatedPosts(post, blogPosts);
+  const relatedHtml = related.length
+    ? `<h2>Artigos relacionados</h2><ul>${related
+        .map((r) => `<li><a href="/blog/${r.slug}">${escapeHtml(r.title)}</a></li>`)
+        .join("")}</ul>`
+    : "";
+  const faqs = extractFaqs(post.content);
   return `
     <article>
       <h1>${escapeHtml(post.title)}</h1>
       <p><em>${escapeHtml(post.subtitle)}</em></p>
       <p>${escapeHtml(post.author)} · ${escapeHtml(post.authorRole)} · ${escapeHtml(post.date)} · ${escapeHtml(post.readTime)} de leitura</p>
+      ${tocHtml}
       ${bodyHtml}
+      ${cta}
+      ${blogFooterHtml(post)}
     </article>
-    ${napHtml("Precisa fazer seus exames? Agende pelo WhatsApp e tenha resultados online em até 24 horas.")}
-    ${internalLinksHtml("/blog/" + post.slug)}`;
+    ${relatedHtml}
+    ${napHtml("Coleta laboratorial sem agendamento, por ordem de chegada, e resultados online. Dúvidas de preparo e convênio pelo WhatsApp.")}
+    ${internalLinksHtml("/blog/" + post.slug)}
+    ${jsonLd([
+      blogPostingLd(post),
+      breadcrumbLd([
+        ["Início", "/"],
+        ["Blog", "/blog"],
+        [post.title, currentPath],
+      ]),
+      ...(faqs.length ? [faqPageLd(faqs)] : []),
+    ])}`;
 }
 
 function wrap(inner: string): string {

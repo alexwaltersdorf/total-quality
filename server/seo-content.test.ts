@@ -77,7 +77,7 @@ describe("resolveHttpStatus", () => {
     expect(resolveHttpStatus("/checkup", blogSlugs)).toBe(200);
     expect(resolveHttpStatus("/exames/holter", blogSlugs)).toBe(200);
     expect(
-      resolveHttpStatus("/blog/hemograma-caraguatatuba", blogSlugs)
+      resolveHttpStatus("/blog/hemograma-completo-o-que-avalia", blogSlugs)
     ).toBe(200);
   });
 
@@ -124,7 +124,7 @@ describe("GUARD-RAIL: cobertura do sitemap (nao remover)", () => {
     expect(getSeoContentForPath("/exames")).toContain("Exames Laboratoriais");
     expect(getSeoContentForPath("/exames/hemograma")).toContain("jejum");
     expect(getSeoContentForPath("/exames/exame-admissional")).toContain("ASO");
-    expect(getSeoContentForPath("/blog/hemograma-caraguatatuba")).toContain("<article>");
+    expect(getSeoContentForPath("/blog/hemograma-completo-o-que-avalia")).toContain("<article>");
     expect(getSeoContentForPath("/blog")).toContain("<h1>");
   });
 });
@@ -1101,7 +1101,14 @@ describe("GUARD-RAIL: imagem do artigo bate com o assunto (out/2026)", () => {
   // Fotos aceitaveis por assunto. Mais de uma quando o assunto admite.
   const FOTO_POR_ARTIGO: Record<string, Foto[]> = {
     "exames-de-sangue-guia-completo": ["laboratorio"],
-    "hemograma-caraguatatuba": ["laboratorio"],
+    "hemoglobina-glicada-exame": ["laboratorio"],
+    "glicemia-de-jejum-exame": ["laboratorio"],
+    "curva-glicemica-teste-tolerancia-glicose": ["laboratorio"],
+    "exame-tsh-t4-livre-tireoide": ["laboratorio"],
+    "beta-hcg-exame-de-gravidez": ["laboratorio"],
+    "urocultura-exame-de-urina": ["laboratorio"],
+    "coleta-domiciliar-exames-caraguatatuba": ["laboratorio"],
+    "exames-laboratoriais-tipos-e-preparo": ["laboratorio"],
     "hemograma-completo-o-que-avalia": ["laboratorio"],
     "alimentacao-e-exames-laboratoriais": ["laboratorio"],
     "vitamina-d-importancia-saude": ["laboratorio"],

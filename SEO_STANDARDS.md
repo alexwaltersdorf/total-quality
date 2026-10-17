@@ -268,7 +268,6 @@ Padrão: `/blog/{slug}`
 | Vitamina D | `vitamina-d-importancia-saude` | 0.7 |
 | Exame de Sangue Caraguatatuba | `exame-de-sangue-caraguatatuba` | 0.8 |
 | Convênios | `convenios-laboratorio-caraguatatuba` | 0.7 |
-| Hemograma | `hemograma-caraguatatuba` | 0.8 |
 | Ultrassonografia | `ultrassonografia-caraguatatuba` | 0.7 |
 | Tomografia | `tomografia-caraguatatuba` | 0.7 |
 | Convênios (alt) | `convênios-laboratório-caraguatatuba` | 0.6 |
@@ -484,3 +483,16 @@ por testes em `server/seo-content.test.ts`:
     Travas em `server/regra-ouro-ranking.test.ts`. Documento completo, com os
     dados de out/2026: `REGRA-OURO-RANKING-GOOGLE.md` no repositório
     `SEO---Total-Quality`.
+
+23. **Artigo de saúde nasce rascunho** (out/2026): todo artigo novo entra em
+    `client/src/content/blog/` com `"draft": true` e `"reviewStatus":
+    "revisao_medica_pendente"`. Rascunho abre pela URL com `noindex, nofollow`
+    (para revisão), mas fica fora do sitemap, da listagem, da home, dos
+    relacionados e de qualquer link de página publicada. Publicar = `draft:
+    false`, `reviewStatus: "aprovado"` e `lastReviewed` preenchido, sem
+    marcador `{{PRAZO}}` pendente. Metadados da rota vêm do `index.json`
+    (`metaTitle` = `<title>` no prerender e no React); `lastmod` do sitemap só
+    com data real (`dateModified`). Schema do artigo: `BlogPosting` com
+    `publisher` → `#medicalbusiness` e `MedicalWebPage` sobre `MedicalTest`.
+    O quadro de contato (`ExamCTA`) nunca diz "agende" para coleta
+    laboratorial. Travas em `server/blog-exames.test.ts`.

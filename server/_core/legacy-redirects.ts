@@ -52,6 +52,13 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   // Slug antigo do artigo de hemograma, de antes de uma renomeacao — ainda
   // aparecia no relatorio do GSC com 1 impressao residual e respondia 404.
   "/blog/hemograma-completo-como-avalia": "/blog/hemograma-completo-o-que-avalia",
+
+  // Canibalizacao do hemograma (diagnostico de SEO de 17/10/2026): o artigo
+  // repetia a intencao local da pagina de servico. Search Console, 90 dias ate
+  // 17/10: ZERO impressoes para a URL do artigo, contra 5.187 de
+  // /exames/hemograma e 7.626 do artigo informativo. O que ele tinha de util
+  // (preparo, indicacoes, sem agendamento) ja estava na pagina de servico.
+  "/blog/hemograma-caraguatatuba": "/exames/hemograma",
 };
 
 /**
