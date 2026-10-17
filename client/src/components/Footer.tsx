@@ -66,7 +66,7 @@ export default function Footer({ laboratory = false }: { laboratory?: boolean })
           <div className="lg:col-span-1">
             <span className="heading-display text-3xl text-text block mb-4">TOTAL QUALITY</span>
             <p className="text-text-muted text-sm leading-relaxed">
-              Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba - SP. Desde 2003, tecnologia de última geração para cuidar da sua saúde.
+              Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba - SP. Desde 2003 no Centro de Caraguatatuba.
             </p>
           </div>
 

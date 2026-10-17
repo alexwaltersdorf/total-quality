@@ -77,7 +77,7 @@ describe("resolveHttpStatus", () => {
     expect(resolveHttpStatus("/checkup", blogSlugs)).toBe(200);
     expect(resolveHttpStatus("/exames/holter", blogSlugs)).toBe(200);
     expect(
-      resolveHttpStatus("/blog/hemograma-caraguatatuba", blogSlugs)
+      resolveHttpStatus("/blog/hemograma-completo-o-que-avalia", blogSlugs)
     ).toBe(200);
   });
 
@@ -124,7 +124,7 @@ describe("GUARD-RAIL: cobertura do sitemap (nao remover)", () => {
     expect(getSeoContentForPath("/exames")).toContain("Exames Laboratoriais");
     expect(getSeoContentForPath("/exames/hemograma")).toContain("jejum");
     expect(getSeoContentForPath("/exames/exame-admissional")).toContain("ASO");
-    expect(getSeoContentForPath("/blog/hemograma-caraguatatuba")).toContain("<article>");
+    expect(getSeoContentForPath("/blog/hemograma-completo-o-que-avalia")).toContain("<article>");
     expect(getSeoContentForPath("/blog")).toContain("<h1>");
   });
 });
@@ -208,7 +208,8 @@ describe("GUARD-RAIL: horario oficial unico (nao remover)", () => {
       "utf-8"
     );
     expect(indexHtml).not.toContain('"opens": "08:00"');
-    expect((indexHtml.match(/"opens": "07:30"/g) || []).length).toBe(2);
+    // Um unico no de negocio desde out/2026 (eram dois, com @id diferentes).
+    expect((indexHtml.match(/"opens": "07:30"/g) || []).length).toBe(1);
     expect(indexHtml).not.toMatch(/Saturday|Sunday/);
   });
 
@@ -290,7 +291,8 @@ describe("GUARD-RAIL: tempo de atuacao sempre calculado (nao remover)", () => {
       nodePath.resolve(import.meta.dirname, "../client/index.html"),
       "utf-8"
     );
-    expect((indexHtml.match(/"foundingDate": "2003-07-08"/g) || []).length).toBe(2);
+    // Um unico no de negocio desde out/2026 (eram dois, com @id diferentes).
+    expect((indexHtml.match(/"foundingDate": "2003-07-08"/g) || []).length).toBe(1);
     expect(indexHtml).not.toContain('"foundingDate": "2003"');
   });
 });
@@ -1003,15 +1005,15 @@ describe("GUARD-RAIL: blog de SEO local da regiao sul (out/2026)", () => {
   });
 
   it("nenhum artigo do blog volta a disputar o termo da landing", () => {
-    // PR de out/2026 deu a /laboratorio-caraguatatuba a exclusividade de
-    // "laboratorio em Caraguatatuba". Artigo com esse termo no title reabre a
-    // canibalizacao, agora com 23 paginas em vez de duas.
+    // "laboratorio em Caraguatatuba" e da HOME (decisao por Search Console,
+    // out/2026 — ver HOME_TITLE em shared/const.ts). Artigo com esse termo no
+    // title reabre a canibalizacao, agora com 23 paginas em vez de duas.
     for (const route of getAllRoutes()) {
       const pathname = new URL(route.canonical).pathname;
       if (!pathname.startsWith("/blog/")) continue;
       expect(
         route.title,
-        `${pathname} disputa "laboratorio em Caraguatatuba" com a landing`
+        `${pathname} disputa "laboratorio em Caraguatatuba" com a home`
       ).not.toMatch(/laborat[óo]rio em caraguatatuba/i);
     }
   });
@@ -1099,7 +1101,14 @@ describe("GUARD-RAIL: imagem do artigo bate com o assunto (out/2026)", () => {
   // Fotos aceitaveis por assunto. Mais de uma quando o assunto admite.
   const FOTO_POR_ARTIGO: Record<string, Foto[]> = {
     "exames-de-sangue-guia-completo": ["laboratorio"],
-    "hemograma-caraguatatuba": ["laboratorio"],
+    "hemoglobina-glicada-exame": ["laboratorio"],
+    "glicemia-de-jejum-exame": ["laboratorio"],
+    "curva-glicemica-teste-tolerancia-glicose": ["laboratorio"],
+    "exame-tsh-t4-livre-tireoide": ["laboratorio"],
+    "beta-hcg-exame-de-gravidez": ["laboratorio"],
+    "urocultura-exame-de-urina": ["laboratorio"],
+    "coleta-domiciliar-exames-caraguatatuba": ["laboratorio"],
+    "exames-laboratoriais-tipos-e-preparo": ["laboratorio"],
     "hemograma-completo-o-que-avalia": ["laboratorio"],
     "alimentacao-e-exames-laboratoriais": ["laboratorio"],
     "vitamina-d-importancia-saude": ["laboratorio"],

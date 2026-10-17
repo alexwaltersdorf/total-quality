@@ -17,10 +17,33 @@ import nodePath from "node:path";
 
 import { examesData, type ExamData } from "../../client/src/lib/examesData";
 import { linkifyText } from "../../client/src/lib/internalLinkTargets";
+import { blogLinksFor, examesDeSangueLista } from "../../client/src/lib/examBlogLinks";
 import blogIndex from "../../client/src/content/blog/index.json";
-import { anosDeAtuacao } from "@shared/const";
+import {
+  AVISO_INFORMATIVO,
+  blogModifiedIso,
+  blogPostingLd,
+  CTA_MARKER,
+  extractFaqs,
+  headingId,
+  isoToBr,
+  isPublished,
+  parseBlogDate,
+  relatedPosts,
+  tableOfContents,
+  type BlogPost as BlogPostFull,
+  type BlogPostMeta,
+} from "../../client/src/lib/blogMeta";
+import {
+  anosDeAtuacao,
+  HOME_H1,
+  ANALISES_H1,
+  ANALISES_TITLE,
+  ANALISES_DESCRIPTION,
+  CONVENIOS_TEXTO,
+} from "@shared/const";
 
-type BlogPost = (typeof blogIndex)[number] & { content: string[] };
+type BlogPost = BlogPostFull;
 
 /**
  * Corpo dos artigos lido do disco: os JSONs em client/src/content/blog sao a
@@ -38,7 +61,7 @@ const BLOG_CONTENT_DIR = [
 ].find((dir) => fs.existsSync(dir));
 
 function loadBlogPostFromDisk(slug: string): BlogPost | null {
-  const meta = blogIndex.find((b) => b.slug === slug);
+  const meta = blogPosts.find((b) => b.slug === slug);
   if (!meta) return null;
   if (!BLOG_CONTENT_DIR) {
     console.error("[seo-content] diretorio de artigos do blog nao encontrado — prerender sem corpo");
@@ -53,7 +76,8 @@ function loadBlogPostFromDisk(slug: string): BlogPost | null {
   }
 }
 
-const blogPosts = blogIndex;
+/** Todos os artigos, rascunhos inclusive (a URL do rascunho prerenderiza, com noindex). */
+const blogPosts = blogIndex as BlogPostMeta[];
 
 const NAP = {
   name: "Total Quality Laboratório e Medicina Diagnóstica",
@@ -179,7 +203,7 @@ function napHtml(ctaMessage: string): string {
 
 function internalLinksHtml(currentPath: string): string {
   const links: Array<[string, string]> = [
-    ["/laboratorio-caraguatatuba", "Laboratório de análises clínicas"],
+    ["/laboratorio-caraguatatuba", "Análises clínicas"],
     ["/exames/exames-de-sangue", "Exames de sangue"],
     ["/exames/tomografia-computadorizada", "Tomografia computadorizada"],
     ["/exames/ultrassonografia", "Ultrassonografia"],
@@ -199,6 +223,24 @@ function internalLinksHtml(currentPath: string): string {
     .map(([href, label]) => `<li><a href="${href}">${escapeHtml(label)}</a></li>`)
     .join("");
   return `<h2>Outros exames na Total Quality</h2><ul>${items}</ul>`;
+}
+
+/** Mesmo bloco do ExamePage.tsx: lista de exames de sangue e artigos do blog. */
+function examBlogSectionHtml(examSlug: string): string {
+  const publicados = blogPosts.filter(isPublished);
+  const lista =
+    examSlug === "exames-de-sangue"
+      ? `<h2>Exames de sangue que realizamos</h2><ul>${examesDeSangueLista(publicados)
+          .map((i) => `<li>${i.href ? `<a href="${i.href}">${escapeHtml(i.nome)}</a>` : escapeHtml(i.nome)}</li>`)
+          .join("")}</ul>`
+      : "";
+  const artigos = blogLinksFor(examSlug, publicados);
+  const blog = artigos.length
+    ? `<h2>Saiba mais no nosso blog</h2><ul>${artigos
+        .map((p) => `<li><a href="/blog/${p.slug}">${escapeHtml(p.title)}</a></li>`)
+        .join("")}</ul>`
+    : "";
+  return lista + blog;
 }
 
 function renderExamHtml(exam: ExamData): string {
@@ -240,6 +282,7 @@ function renderExamHtml(exam: ExamData): string {
     <ul>${indications}</ul>
     <h2>Preparo para o exame</h2>
     <ul>${preparations}</ul>
+    ${examBlogSectionHtml(exam.slug)}
     ${faqSectionHtml(exam.faqs)}
     ${napHtml(
       exam.category === "laboratorio"
@@ -258,8 +301,8 @@ function renderExamHtml(exam: ExamData): string {
 }
 
 const laboratorioHtml = `
-    <h1>Laboratório de Análises Clínicas em Caraguatatuba</h1>
-    <p>A Total Quality é um laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba – SP, com mais de ${anosDeAtuacao()} anos de atuação no Litoral Norte. Realizamos mais de 3.000 tipos de exames laboratoriais e de imagem em um só lugar, com equipamentos automatizados de alta precisão, equipe especializada e resultados disponíveis online.</p>
+    <h1>${ANALISES_H1}</h1>
+    <p>A Total Quality é um <a href="/">laboratório em Caraguatatuba</a> que reúne análises clínicas e medicina diagnóstica no Centro da cidade, com mais de ${anosDeAtuacao()} anos de atuação no Litoral Norte. Realizamos mais de 3.000 tipos de exames laboratoriais e de imagem em um só lugar, com equipamentos automatizados de alta precisão, equipe especializada e resultados disponíveis online.</p>
     <h2>Exames laboratoriais realizados</h2>
     <ul>
       <li><a href="/exames/hemograma">Hemograma completo</a> e <a href="/exames/exames-de-sangue">exames de sangue</a> em geral</li>
@@ -285,7 +328,7 @@ const laboratorioHtml = `
     <h2>Por que escolher a Total Quality</h2>
     <ul>
       <li>Mais de ${anosDeAtuacao()} anos de experiência em Caraguatatuba</li>
-      <li>Mais de 340 avaliações no Google com nota 4,5</li>
+      <li>Mais de 400 avaliações no Google</li>
       <li>Coleta rápida, ambiente confortável e estacionamento no Centro</li>
       <li>Resultados online em até 24 horas para a maioria dos exames</li>
       <li>Atendimento particular, convênios e empresas de Caraguatatuba, Ubatuba, São Sebastião e Ilhabela</li>
@@ -294,7 +337,7 @@ const laboratorioHtml = `
     <h3>Preciso agendar para fazer exames de sangue?</h3>
     <p>Para a maioria dos exames laboratoriais não é necessário agendamento: basta comparecer com o pedido médico e documento com foto. Veja as <a href="/blog/alimentacao-e-exames-laboratoriais">orientações de preparo e jejum</a> antes de vir. Exames de imagem e procedimentos especiais podem ser agendados pelo WhatsApp.</p>
     <h3>Quais convênios são aceitos?</h3>
-    <p>Atendemos os principais convênios e planos de saúde da região, além de atendimento particular. Veja a <a href="/convenios">lista completa de convênios aceitos</a> ou consulte seu plano pelo WhatsApp (12) 3887-3535.</p>
+    <p>Atendemos ${CONVENIOS_TEXTO}. Fora deles, o atendimento é particular, com tabela própria. Veja os <a href="/convenios">convênios aceitos</a> ou tire dúvidas pelo WhatsApp (12) 3887-3535.</p>
     <h3>Em quanto tempo sai o resultado?</h3>
     <p>A maioria dos exames de sangue fica pronta em até 24 horas, com resultados disponíveis online. Exames específicos podem levar até 7 dias úteis.</p>
     <h3>Vocês fazem coleta domiciliar?</h3>
@@ -307,9 +350,8 @@ const laboratorioHtml = `
         "@type": "MedicalWebPage",
         "@id": `${SITE}/laboratorio-caraguatatuba#webpage`,
         url: `${SITE}/laboratorio-caraguatatuba`,
-        name: "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality",
-        description:
-          "Laboratório de análises clínicas em Caraguatatuba: hemograma, exames de sangue, hormônios e mais de 3.000 exames. Resultados em até 24h.",
+        name: ANALISES_TITLE,
+        description: ANALISES_DESCRIPTION,
         about: { "@id": BUSINESS_ID },
         provider: { "@id": BUSINESS_ID },
       },
@@ -320,7 +362,7 @@ const laboratorioHtml = `
         },
         {
           q: "Quais convênios são aceitos?",
-          a: "Atendemos os principais convênios e planos de saúde da região, além de atendimento particular. Consulte seu plano pelo WhatsApp (12) 3887-3535.",
+          a: `Atendemos ${CONVENIOS_TEXTO}. Fora deles, o atendimento é particular, com tabela própria. Tire dúvidas pelo WhatsApp (12) 3887-3535.`,
         },
         {
           q: "Em quanto tempo sai o resultado?",
@@ -333,7 +375,7 @@ const laboratorioHtml = `
       ]),
       breadcrumbLd([
         ["Início", "/"],
-        ["Laboratório em Caraguatatuba", "/laboratorio-caraguatatuba"],
+        ["Análises clínicas", "/laboratorio-caraguatatuba"],
       ]),
     ])}`;
 
@@ -407,6 +449,13 @@ const CONVENIOS_FAQS: Faq[] = [
   },
 ];
 
+/** Link para o artigo de coleta domiciliar — so depois de publicado. */
+function coletaDomiciliarLinkHtml(): string {
+  const post = blogPosts.find((p) => p.slug === "coleta-domiciliar-exames-caraguatatuba");
+  if (!post || !isPublished(post)) return "";
+  return `<p>Não pode vir até a unidade? Veja como funciona a <a href="/blog/${post.slug}">coleta domiciliar de exames</a>.</p>`;
+}
+
 function conveniosHtml(): string {
   const lista = CONVENIOS.map((c) => `<li>${escapeHtml(c)}</li>`).join("");
   return `
@@ -415,6 +464,7 @@ function conveniosHtml(): string {
     <h2>Convênios e cartões atendidos</h2>
     <ul>${lista}</ul>
     <p>Não trabalhamos com outros convênios ou planos de saúde: fora dessa lista, o atendimento é particular. Confirme condições e valores pelo WhatsApp <a href="${NAP.whatsappHref}">(12) 3887-3535</a> antes de vir.</p>
+    ${coletaDomiciliarLinkHtml()}
     ${faqSectionHtml(CONVENIOS_FAQS)}
     ${napHtml("Confirme seu convênio pelo WhatsApp — a coleta laboratorial é sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h; exames de imagem com hora marcada.")}
     ${internalLinksHtml("/convenios")}
@@ -427,15 +477,17 @@ function conveniosHtml(): string {
 }
 
 const homeHtml = `
-    <h1>Laboratório em Caraguatatuba — Total Quality Medicina Diagnóstica</h1>
-    <p>Há mais de ${anosDeAtuacao()} anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">laboratório de análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>.</p>
+    <h1>${HOME_H1}</h1>
+    <p>Há mais de ${anosDeAtuacao()} anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>.</p>
     <ul>
       <li>Resultados online em até 24 horas para a maioria dos exames</li>
       <li>Coleta laboratorial sem agendamento, por ordem de chegada — e coleta domiciliar mediante agendamento</li>
-      <li>Equipamentos modernos e equipe especializada</li>
-      <li>Atendimento particular, convênios e empresas</li>
-      <li>Mais de 340 avaliações no Google com nota 4,5</li>
+      <li>Atendimento particular, empresas e os convênios ${CONVENIOS_TEXTO}</li>
+      <li>Mais de 400 avaliações no Google</li>
     </ul>
+    <h2>Como funciona o laboratório</h2>
+    <p>Para <a href="/exames/exames-de-sangue">exames de sangue</a> e demais exames laboratoriais, basta vir com o pedido médico e um documento com foto, de segunda a sexta, das 7h30 às 18h — o atendimento é por ordem de chegada. Antes, confira as <a href="/blog/alimentacao-e-exames-laboratoriais">orientações de preparo e jejum</a>. Quem não pode se deslocar pode pedir a coleta domiciliar pelo WhatsApp (12) 3887-3535, que confirma área atendida, horário e valor. Os resultados ficam disponíveis online.</p>
+    <p>Exames de imagem e cardiológicos, como tomografia, ultrassonografia, MAPA e Holter, são agendados pelo WhatsApp ou telefone, porque dependem de horário com o médico e de preparo específico.</p>
     ${faqSectionHtml([
       {
         q: "Quais exames são realizados no laboratório em Caraguatatuba?",
@@ -451,7 +503,7 @@ const homeHtml = `
       },
       {
         q: "O laboratório em Caraguatatuba aceita convênios?",
-        a: "Sim, o laboratório Total Quality em Caraguatatuba aceita diversos convênios de saúde. Entre em contato pelo WhatsApp para verificar se seu plano é aceito.",
+        a: `Atendemos ${CONVENIOS_TEXTO}. Fora desses três, o atendimento é particular, com tabela própria. Tire dúvidas pelo WhatsApp (12) 3887-3535.`,
       },
     ])}
     ${napHtml("Agende seus exames pelo WhatsApp (12) 3887-3535 ou visite-nos no Centro de Caraguatatuba.")}
@@ -556,33 +608,9 @@ function examesHubHtml(): string {
     ${napHtml("Não encontrou o exame que procura? Fale com a gente pelo WhatsApp — realizamos mais de 3.000 tipos de exames.")}`;
 }
 
-const PT_MONTHS: Record<string, number> = {
-  jan: 0, fev: 1, mar: 2, abr: 3, mai: 4, jun: 5,
-  jul: 6, ago: 7, set: 8, out: 9, nov: 10, dez: 11,
-};
-
-/**
- * Mesma logica de client/src/lib/blogData.ts (duplicada, nao importada: este
- * arquivo roda fora do Vite e blogData.ts usa import.meta.glob). O construtor
- * nativo Date() nao reconhece meses abreviados em portugues ("12 Set 2026"),
- * entao sem isso o /blog prerenderizado listava os artigos por ordem de
- * insercao no index.json, nao por data.
- */
-function parseBlogDate(date: string): number {
-  const match = date.match(/^(\d{1,2})\s+([A-Za-zçÇ]+)\s+(\d{4})$/);
-  if (match) {
-    const [, day, monthStr, year] = match;
-    const month = PT_MONTHS[monthStr.toLowerCase()];
-    if (month !== undefined) {
-      return new Date(Number(year), month, Number(day)).getTime();
-    }
-  }
-  const fallback = new Date(date).getTime();
-  return Number.isNaN(fallback) ? 0 : fallback;
-}
-
 function blogIndexHtml(): string {
-  const items = [...blogPosts]
+  const items = blogPosts
+    .filter(isPublished)
     .sort((a, b) => parseBlogDate(b.date) - parseBlogDate(a.date))
     .map((b) => `<li><a href="/blog/${b.slug}">${escapeHtml(b.title)}</a> — ${escapeHtml(b.excerpt)}</li>`)
     .join("");
@@ -649,7 +677,7 @@ function renderInlineHtml(text: string, currentPath: string, usedHrefs: Set<stri
  * renderBlogContent.tsx no cliente). Antes disso cada item do array virava
  * um <p> literal, entao o crawler via os caracteres ##, ** e | crus no HTML.
  */
-function renderBlogBodyHtml(content: string[], currentPath: string): string {
+function renderBlogBodyHtml(content: string[], currentPath: string, ctaHtml = ""): string {
   const usedHrefs = new Set<string>();
 
   return content
@@ -659,8 +687,9 @@ function renderBlogBodyHtml(content: string[], currentPath: string): string {
       if (trimmed.startsWith("### ")) {
         return `<h3>${renderInlineHtml(trimmed.slice(4), currentPath, usedHrefs)}</h3>`;
       }
+      if (trimmed.trim() === CTA_MARKER) return ctaHtml;
       if (trimmed.startsWith("## ")) {
-        return `<h2>${renderInlineHtml(trimmed.slice(3), currentPath, usedHrefs)}</h2>`;
+        return `<h2 id="${headingId(trimmed.slice(3))}">${renderInlineHtml(trimmed.slice(3), currentPath, usedHrefs)}</h2>`;
       }
       if (trimmed.startsWith("|")) {
         const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
@@ -688,18 +717,78 @@ function renderBlogBodyHtml(content: string[], currentPath: string): string {
     .join("");
 }
 
+/**
+ * Quadro de contato do artigo de exame — mesmo texto do ExamCTA.tsx. A coleta
+ * laboratorial e sem agendamento (decisao de 01/08/2026); o WhatsApp tira
+ * duvidas e combina a coleta domiciliar.
+ */
+function examCtaHtml(examName: string): string {
+  const titulo =
+    examName === "coleta domiciliar"
+      ? "Coleta domiciliar em Caraguatatuba"
+      : `${examName[0].toUpperCase()}${examName.slice(1)} na Total Quality`;
+  return `
+    <aside>
+      <p><strong>${escapeHtml(titulo)}</strong></p>
+      <p>Na unidade da Rua Padre Anchieta, 1010 – Centro, a coleta de exames laboratoriais é sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Traga o pedido médico e um documento com foto.</p>
+      <p>Também fazemos coleta domiciliar: área atendida, horário e valor são confirmados pelo <a href="${NAP.whatsappHref}" target="_blank" rel="noopener noreferrer">WhatsApp (12) 3887-3535</a>, que também tira dúvidas de preparo e convênio.</p>
+    </aside>`;
+}
+
+/** Rodape do artigo — mesmo texto do MedicalFooter.tsx. */
+function blogFooterHtml(post: BlogPost): string {
+  const revisao = post.lastReviewed
+    ? `<p>Última revisão médica: ${isoToBr(post.lastReviewed)}</p>`
+    : isPublished(post)
+      ? ""
+      : "<p>Rascunho — revisão médica pendente.</p>";
+  return `
+    <footer>
+      <p><strong>${AVISO_INFORMATIVO}</strong></p>
+      <p>Última atualização: ${isoToBr(blogModifiedIso(post))}</p>
+      ${revisao}
+    </footer>`;
+}
+
 function renderBlogHtml(post: BlogPost): string {
   const currentPath = `/blog/${post.slug}`;
-  const bodyHtml = renderBlogBodyHtml(post.content, currentPath);
+  const cta = post.examName ? examCtaHtml(post.examName) : "";
+  const bodyHtml = renderBlogBodyHtml(post.content, currentPath, cta);
+  const toc = tableOfContents(post.content);
+  const tocHtml = toc.length
+    ? `<nav aria-label="Sumário"><p>Neste artigo</p><ol>${toc
+        .map((t) => `<li><a href="#${t.id}">${escapeHtml(t.text)}</a></li>`)
+        .join("")}</ol></nav>`
+    : "";
+  const related = relatedPosts(post, blogPosts);
+  const relatedHtml = related.length
+    ? `<h2>Artigos relacionados</h2><ul>${related
+        .map((r) => `<li><a href="/blog/${r.slug}">${escapeHtml(r.title)}</a></li>`)
+        .join("")}</ul>`
+    : "";
+  const faqs = extractFaqs(post.content);
   return `
     <article>
       <h1>${escapeHtml(post.title)}</h1>
       <p><em>${escapeHtml(post.subtitle)}</em></p>
       <p>${escapeHtml(post.author)} · ${escapeHtml(post.authorRole)} · ${escapeHtml(post.date)} · ${escapeHtml(post.readTime)} de leitura</p>
+      ${tocHtml}
       ${bodyHtml}
+      ${cta}
+      ${blogFooterHtml(post)}
     </article>
-    ${napHtml("Precisa fazer seus exames? Agende pelo WhatsApp e tenha resultados online em até 24 horas.")}
-    ${internalLinksHtml("/blog/" + post.slug)}`;
+    ${relatedHtml}
+    ${napHtml("Coleta laboratorial sem agendamento, por ordem de chegada, e resultados online. Dúvidas de preparo e convênio pelo WhatsApp.")}
+    ${internalLinksHtml("/blog/" + post.slug)}
+    ${jsonLd([
+      blogPostingLd(post),
+      breadcrumbLd([
+        ["Início", "/"],
+        ["Blog", "/blog"],
+        [post.title, currentPath],
+      ]),
+      ...(faqs.length ? [faqPageLd(faqs)] : []),
+    ])}`;
 }
 
 function wrap(inner: string): string {

@@ -6,14 +6,14 @@
 import { ArrowUpRight, CheckCircle, Award, Users, Microscope, MapPin, Clock } from "lucide-react";
 import { Link } from "wouter";
 import { trackScheduleExam } from "@/lib/tracking";
-import { anosDeAtuacao } from "@shared/const";
+import { anosDeAtuacao, CONVENIOS_TEXTO } from "@shared/const";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
 const diferenciais = [
   {
     icon: Microscope,
-    title: "Tecnologia de Última Geração",
-    text: "Nosso laboratório em Caraguatatuba conta com equipamentos automatizados de alta precisão para análises clínicas e diagnósticos por imagem, garantindo resultados confiáveis e rápidos.",
+    title: "Laboratório Automatizado",
+    text: "Nosso laboratório em Caraguatatuba conta com equipamentos automatizados para análises clínicas e equipamentos digitais para diagnóstico por imagem.",
   },
   {
     icon: Award,
@@ -23,7 +23,7 @@ const diferenciais = [
   {
     icon: Users,
     title: "Mais de 30.000 Famílias Atendidas",
-    text: "Somos o laboratório de análises clínicas mais completo de Caraguatatuba - SP, com mais de 3.000 tipos de exames laboratoriais e diagnósticos por imagem disponíveis.",
+    text: "No Centro de Caraguatatuba - SP, reunimos em um só endereço mais de 3.000 tipos de exames laboratoriais e diagnósticos por imagem.",
   },
   {
     icon: Clock,
@@ -102,7 +102,7 @@ export default function PorQueEscolherSection() {
               DIAGNÓSTICO POR IMAGEM EM <span className="text-brand">CARAGUATATUBA</span>
             </h3>
             <p className="reveal text-text-light leading-relaxed mb-4">
-              A Total Quality é a clínica de medicina diagnóstica mais completa de Caraguatatuba, oferecendo{" "}
+              A Total Quality reúne em Caraguatatuba{" "}
               <Link href="/exames/tomografia-computadorizada" className="text-brand hover:underline">
                 tomografia computadorizada multislice
               </Link>
@@ -142,12 +142,12 @@ export default function PorQueEscolherSection() {
               <Link href="/bioimpedancia" className="text-brand hover:underline">
                 bioimpedância
               </Link>
-              . Nossos equipamentos de diagnóstico por imagem em Caraguatatuba são de última geração,
-              proporcionando imagens de alta resolução para diagnósticos mais precisos.
+              . Os equipamentos de diagnóstico por imagem são digitais e produzem imagens de alta resolução
+              para o laudo médico.
             </p>
             <p className="reveal text-text-light leading-relaxed">
-              Contamos com equipe médica especializada em radiologia, cardiologia e neurologia, garantindo
-              laudos detalhados e confiáveis. O check-up preventivo em Caraguatatuba inclui uma combinação
+              Contamos com equipe médica especializada em radiologia, cardiologia e neurologia, que assina
+              laudos detalhados. O check-up preventivo em Caraguatatuba inclui uma combinação
               personalizada de exames laboratoriais e de imagem, adaptada às necessidades de cada paciente.
             </p>
           </div>
@@ -164,7 +164,7 @@ export default function PorQueEscolherSection() {
               <p className="text-text-light leading-relaxed mb-4">
                 O laboratório Total Quality está localizado no centro de Caraguatatuba, na R. Padre Anchieta, 1010,
                 com fácil acesso de carro, ônibus ou a pé. Funcionamos de segunda a sexta-feira, das 07h30 às 18h.
-                Aceitamos diversos convênios de saúde e oferecemos atendimento particular com preços acessíveis.
+                Atendemos {CONVENIOS_TEXTO}; fora deles, o atendimento é particular, com tabela própria.
               </p>
               <div className="flex flex-wrap gap-3">
                 {["Estacionamento próximo", "Acessibilidade", "Aceita cartão e PIX", "Convênios aceitos"].map((item) => (

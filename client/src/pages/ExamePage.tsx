@@ -12,6 +12,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { getExamBySlug, examesData, type ExamData } from "@/lib/examesData";
+import { blogPosts } from "@/lib/blogData";
+import { blogLinksFor, examesDeSangueLista } from "@/lib/examBlogLinks";
 import { useBreadcrumbSchema, useFAQSchema, useMedicalTestSchema, useCanonical } from "@/components/SEOHead";
 const ScrollVideo = lazy(() => import("@/components/ScrollVideo"));
 
@@ -267,6 +269,52 @@ export default function ExamePage() {
 
       {/* Divider */}
       <div className="container"><div className="border-t border-black/10" /></div>
+
+      {/* Exames de sangue que realizamos + Saiba mais no nosso blog: o caminho
+          da pagina transacional para os artigos (lib/examBlogLinks.ts). So
+          artigos publicados — rascunho nunca recebe link. */}
+      {(exam.slug === "exames-de-sangue" || blogLinksFor(exam.slug, blogPosts).length > 0) && (
+        <section className="py-16 lg:py-24">
+          <div className="container max-w-4xl">
+            {exam.slug === "exames-de-sangue" && (
+              <div className="mb-12">
+                <h2 className="heading-display text-3xl lg:text-4xl text-text mb-6">
+                  EXAMES DE SANGUE QUE <span className="text-brand">REALIZAMOS</span>
+                </h2>
+                <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-2 list-disc pl-5 text-text-light">
+                  {examesDeSangueLista(blogPosts).map((item) => (
+                    <li key={item.nome}>
+                      {item.href ? (
+                        <Link href={item.href} className="text-brand underline underline-offset-2 hover:opacity-80">
+                          {item.nome}
+                        </Link>
+                      ) : (
+                        item.nome
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {blogLinksFor(exam.slug, blogPosts).length > 0 && (
+              <>
+                <h2 className="heading-display text-3xl lg:text-4xl text-text mb-6">
+                  SAIBA MAIS NO <span className="text-brand">NOSSO BLOG</span>
+                </h2>
+                <ul className="space-y-3">
+                  {blogLinksFor(exam.slug, blogPosts).map((post) => (
+                    <li key={post.slug}>
+                      <Link href={`/blog/${post.slug}`} className="text-brand underline underline-offset-2 hover:opacity-80">
+                        {post.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* FAQ */}
       <section className="py-16 lg:py-24 bg-surface">

@@ -4,6 +4,7 @@ import {
   FileText, AlertTriangle, Thermometer, Eye, Bone, Scale
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { CONVENIOS_TEXTO } from "@shared/const";
 
 export interface ExamFAQ {
   q: string;
@@ -43,10 +44,10 @@ export const examesData: ExamData[] = [
     title: "EXAMES DE SANGUE",
     shortTitle: "Exames de Sangue",
     subtitle: "Laboratório de Análises Clínicas",
-    description: "Mais de 3.000 tipos de exames laboratoriais com tecnologia de última geração.",
+    description: "Mais de 3.000 tipos de exames laboratoriais.",
     metaTitle: "Exames de Sangue em Caraguatatuba | Total Quality",
     metaDescription: "Exames de sangue em Caraguatatuba na Total Quality. Coleta por ordem de chegada, sem agendamento. Consulte preparo, prazos, convênios e orçamento pelo WhatsApp.",
-    heroDescription: "Realizamos mais de 3.000 tipos de exames de sangue e análises clínicas com equipamentos de última geração e equipe especializada. Hemograma, glicemia, colesterol, hormônios, marcadores tumorais, sorologias e muito mais.",
+    heroDescription: "Realizamos mais de 3.000 tipos de exames de sangue e análises clínicas com equipamentos automatizados e equipe especializada. Hemograma, glicemia, colesterol, hormônios, marcadores tumorais, sorologias e muito mais.",
     whatIs: "Os exames de sangue são análises laboratoriais realizadas a partir de uma amostra de sangue coletada por punção venosa. São fundamentais para avaliar o funcionamento dos órgãos, detectar doenças, monitorar tratamentos e realizar check-ups preventivos. Na Total Quality, utilizamos equipamentos automatizados de alta precisão para garantir resultados confiáveis.",
     howItWorks: "A coleta é realizada por profissionais treinados em ambiente confortável e seguro. O sangue é processado em nosso laboratório com equipamentos automatizados que garantem precisão e rapidez. Os resultados ficam disponíveis online em até 24 horas para a maioria dos exames.",
     indications: [
@@ -71,7 +72,7 @@ export const examesData: ExamData[] = [
       { q: "Quais exames de sangue vocês realizam?", a: "Realizamos mais de 3.000 tipos, incluindo hemograma, glicemia, colesterol, triglicerídeos, TSH, T4 livre, PSA, vitamina D, ácido úrico, ureia, creatinina, TGO, TGP, hormônios, marcadores tumorais e muito mais." },
       { q: "Preciso agendar horário para fazer exame de sangue?", a: "Não. A coleta é feita sem agendamento, por ordem de chegada: basta comparecer com o pedido médico e documento com foto, de segunda a sexta, das 7h30 às 18h. Se preferir, chame no WhatsApp (12) 3887-3535 para tirar dúvidas e já receber as orientações de preparo." },
       { q: "Quanto custa um exame de sangue?", a: "O valor varia conforme o exame solicitado. Envie o seu pedido médico pelo WhatsApp (12) 3887-3535 e retornamos com o orçamento. Atendemos particular com pagamento em dinheiro, cartão, débito ou PIX, e o Cartão Total Quality oferece até 70% de desconto em exames laboratoriais." },
-      { q: "Meu convênio cobre exames de sangue?", a: "Aceitamos os principais convênios e planos de saúde da região, e os exames laboratoriais de rotina fazem parte do Rol de Procedimentos da ANS. Confirme a aceitação do seu plano pelo WhatsApp (12) 3887-3535." },
+      { q: "Meu convênio cobre exames de sangue?", a: `Atendemos ${CONVENIOS_TEXTO}. Fora desses três, o atendimento é particular, com tabela própria. Tire dúvidas pelo WhatsApp (12) 3887-3535.` },
       { q: "Vocês fazem coleta domiciliar?", a: "Sim. Realizamos coleta domiciliar de exames laboratoriais em Caraguatatuba. Agende pelo WhatsApp (12) 3887-3535 para confirmar disponibilidade, horários e valores." },
     ],
     whatsappMessage: "Olá! Gostaria de consultar preparo e orçamento de exames de sangue.",
@@ -123,7 +124,7 @@ export const examesData: ExamData[] = [
     description: "Radiografia digital com alta resolução para diagnóstico rápido e preciso.",
     metaTitle: "Raio-X em Caraguatatuba | Total Quality",
     metaDescription: "Raio-X digital em Caraguatatuba na Total Quality. Faça exame de tórax, coluna, membros e seios da face com alta resolução. Agende o seu atendimento online.",
-    heroDescription: "O Raio-X é um dos exames de imagem mais utilizados na medicina, essencial para diagnóstico de fraturas, doenças pulmonares e diversas condições. Na Total Quality, utilizamos equipamento digital de última geração para imagens de alta resolução.",
+    heroDescription: "O Raio-X é um dos exames de imagem mais utilizados na medicina, essencial para diagnóstico de fraturas, doenças pulmonares e diversas condições. Na Total Quality, utilizamos equipamento digital para imagens de alta resolução.",
     whatIs: "O Raio-X (radiografia) é um exame de diagnóstico por imagem que utiliza radiação ionizante em doses baixas para produzir imagens do interior do corpo. É especialmente eficaz para visualizar ossos, pulmões e certas condições dos tecidos moles. A tecnologia digital permite imagens de alta qualidade com menor exposição à radiação.",
     howItWorks: "O paciente é posicionado entre o emissor de raios-X e o detector digital. A radiação atravessa o corpo e é captada pelo detector, gerando uma imagem digital instantânea. O exame é rápido, durando apenas alguns segundos por incidência.",
     indications: [
@@ -159,7 +160,7 @@ export const examesData: ExamData[] = [
     description: "Exame de imagem por ultrassom para avaliação de órgãos e tecidos.",
     metaTitle: "Ultrassonografia em Caraguatatuba | Total Quality",
     metaDescription: "Ultrassonografia em Caraguatatuba - SP na Total Quality: abdominal, pélvica, obstétrica, tireoide, mama e Doppler. Radiologistas experientes. Agende.",
-    heroDescription: "A ultrassonografia é um exame seguro e indolor que utiliza ondas sonoras para produzir imagens em tempo real dos órgãos internos. Na Total Quality, contamos com equipamentos de última geração para diagnósticos precisos.",
+    heroDescription: "A ultrassonografia é um exame seguro e indolor que utiliza ondas sonoras para produzir imagens em tempo real dos órgãos internos. Na Total Quality, contamos com equipamentos digitais e médicos especialistas que assinam os laudos.",
     whatIs: "A Ultrassonografia (ecografia) é um exame de diagnóstico por imagem que utiliza ondas sonoras de alta frequência para criar imagens dos órgãos e estruturas internas do corpo. É um método seguro, indolor, não invasivo e que não utiliza radiação ionizante, sendo seguro inclusive para gestantes.",
     howItWorks: "Um transdutor (sonda) é colocado sobre a pele com gel condutor. O transdutor emite ondas sonoras que penetram no corpo e retornam ao encontrar diferentes tecidos, criando imagens em tempo real no monitor. O médico analisa as imagens durante o exame.",
     indications: [
@@ -195,7 +196,7 @@ export const examesData: ExamData[] = [
     description: "Mamografia digital de alta resolução para detecção precoce do câncer de mama.",
     metaTitle: "Mamografia Digital em Caraguatatuba | Total Quality",
     metaDescription: "Mamografia digital em Caraguatatuba - SP na Total Quality. Detecção precoce do câncer de mama com alta resolução e conforto. Laudo rápido. Agende.",
-    heroDescription: "A mamografia digital é o principal exame para o rastreamento e a detecção precoce do câncer de mama. Na Total Quality, contamos com mamógrafo digital de última geração, que oferece imagens nítidas com menor dose de radiação e mais conforto durante o exame.",
+    heroDescription: "A mamografia digital é o principal exame para o rastreamento e a detecção precoce do câncer de mama. Na Total Quality, contamos com mamógrafo digital, que oferece imagens nítidas com menor dose de radiação e mais conforto durante o exame.",
     whatIs: "A Mamografia é um exame de diagnóstico por imagem que utiliza raios-X em baixa dose para avaliar o tecido mamário. É a ferramenta mais eficaz para identificar nódulos, microcalcificações e outras alterações ainda não palpáveis, permitindo o diagnóstico precoce do câncer de mama, quando as chances de cura são maiores. A versão digital gera imagens de alta resolução com mais conforto e menor exposição à radiação.",
     howItWorks: "A mama é posicionada e levemente comprimida entre duas placas do mamógrafo por alguns segundos, o tempo necessário para capturar as imagens. A compressão é fundamental para obter imagens nítidas e reduzir a dose de radiação. São feitas, em geral, duas incidências de cada mama. O exame é rápido, durando cerca de 10 a 15 minutos.",
     indications: [
@@ -409,9 +410,9 @@ export const examesData: ExamData[] = [
     subtitle: "Análise Toxicológica",
     description: "Exame toxicológico para detecção de substâncias com janela de até 180 dias.",
     metaTitle: "Exame Toxicológico em Caraguatatuba | Total Quality",
-    metaDescription: "Realize seu exame toxicológico em Caraguatatuba com praticidade e segurança no Total Quality. Consulte informações para CNH categorias C, D e E e agende atendimento! ",
-    heroDescription: "O exame toxicológico é obrigatório para motoristas profissionais (categorias C, D e E) e pode ser solicitado em processos admissionais e demissionais. Na Total Quality, realizamos o exame com laboratório credenciado e resultados rápidos.",
-    whatIs: "O Exame Toxicológico é uma análise laboratorial que detecta o uso de substâncias psicoativas (drogas) através de amostras de cabelo, pelo ou unha. Possui janela de detecção de até 90 a 180 dias, sendo muito mais abrangente que o exame de urina. É obrigatório por lei para motoristas profissionais das categorias C, D e E.",
+    metaDescription: "Exame toxicológico em Caraguatatuba para CNH C, D e E e motorista profissional: coleta de cabelo ou pelo, laboratório credenciado. Dúvidas no WhatsApp.",
+    heroDescription: "O exame toxicológico para CNH é obrigatório para o motorista profissional das categorias C, D e E, na obtenção e na renovação da habilitação, e pode ser pedido em processos admissionais e demissionais. Na Total Quality, a coleta é feita na unidade e a amostra segue para laboratório credenciado.",
+    whatIs: "O Exame Toxicológico é uma análise laboratorial que detecta o uso de substâncias psicoativas (drogas) através de amostras de cabelo, pelo ou unha. Possui janela de detecção de 90 a 180 dias, maior que a do exame de urina. É obrigatório por lei para motoristas profissionais das categorias C, D e E.",
     howItWorks: "Uma pequena amostra de cabelo (ou pelo corporal) é coletada e enviada ao laboratório credenciado. A análise identifica metabólitos de substâncias como maconha, cocaína, anfetaminas, metanfetaminas, opiáceos e outras drogas. O resultado é emitido em formato padronizado e aceito pelo DETRAN.",
     indications: [
       "Renovação ou obtenção de CNH categorias C, D e E",
@@ -432,11 +433,12 @@ export const examesData: ExamData[] = [
       { q: "Qual a janela de detecção do exame?", a: "O exame toxicológico de cabelo detecta o uso de substâncias nos últimos 90 a 180 dias, dependendo do comprimento do cabelo ou pelo coletado." },
       { q: "É obrigatório para qual categoria de CNH?", a: "É obrigatório para motoristas das categorias C, D e E, tanto para obtenção quanto para renovação da CNH, conforme Lei 13.103/2015." },
       { q: "E se eu tiver cabelo muito curto?", a: "Se o cabelo da cabeça for muito curto, pode ser coletado pelo de outras regiões do corpo (braço, perna, tórax). O importante é ter no mínimo 3cm." },
+      { q: "Exames toxicológicos para CNH e para empresa são iguais?", a: "A coleta é a mesma: amostra de cabelo ou pelo. O que muda é a finalidade. O toxicológico da CNH segue o padrão exigido pelo DETRAN para o motorista profissional das categorias C, D e E; o admissional, demissional ou periódico segue o pedido da empresa. Informe a finalidade na coleta." },
       { q: "Quanto tempo demora o resultado?", a: "O resultado fica pronto em média 5 a 10 dias úteis. É emitido em formato padronizado aceito pelo DETRAN." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar um exame toxicológico.",
     category: "outros",
-    keywords: ["exame toxicológico", "toxicológico CNH", "exame de drogas", "toxicológico admissional", "DETRAN", "Caraguatatuba"],
+    keywords: ["exame toxicológico", "exames toxicológicos", "toxicológico CNH", "toxicológico motorista profissional", "exame de drogas", "toxicológico admissional", "DETRAN", "Caraguatatuba"],
   },
 {
     slug: "hemograma",
@@ -468,7 +470,7 @@ export const examesData: ExamData[] = [
       { q: "Hemograma precisa de jejum?", a: "Não. O hemograma isolado não exige jejum. Se o seu pedido incluir também glicemia de jejum ou perfil lipídico, siga a orientação de jejum desses exames (8 a 12 horas) e faça tudo na mesma coleta." },
       { q: "O que o hemograma completo detecta?", a: "Ele avalia glóbulos vermelhos (anemias), glóbulos brancos (infecções, inflamações e alterações da imunidade) e plaquetas (coagulação). É um exame de triagem: alterações devem sempre ser interpretadas pelo médico junto ao quadro clínico." },
       { q: "Em quanto tempo sai o resultado do hemograma?", a: "Na Total Quality, o resultado do hemograma fica pronto em até 24 horas e pode ser acessado online, sem precisar voltar ao laboratório." },
-      { q: "Quanto custa um hemograma completo?", a: "O valor particular é acessível e o exame é coberto pelos principais convênios que atendemos. Consulte o valor atualizado e a cobertura do seu plano pelo WhatsApp (12) 3887-3535." },
+      { q: "Quanto custa um hemograma completo?", a: `Consulte o valor particular atualizado pelo WhatsApp (12) 3887-3535. Nos convênios atendidos (${CONVENIOS_TEXTO}), a equipe confirma a cobertura antes do exame.` },
       { q: "Preciso agendar para fazer o hemograma?", a: "Não é necessário agendamento: basta comparecer com o pedido médico e um documento com foto. A coleta funciona de segunda a sexta a partir das 7h30." },
     ],
     whatsappMessage: "Olá! Gostaria de fazer um hemograma completo.",

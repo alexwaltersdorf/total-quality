@@ -21,7 +21,7 @@ const diferenciais = [
   },
   {
     icon: Cpu,
-    title: "Tecnologia de última geração em exames diagnósticos",
+    title: "Equipamentos digitais e laboratório automatizado",
     description: "Equipamentos modernos de tomografia, ultrassonografia, mamografia digital e laboratório automatizado para exames de sangue e análises clínicas com diagnósticos precisos e confiáveis.",
   },
   {

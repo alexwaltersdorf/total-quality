@@ -5,10 +5,18 @@
  */
 import { Link } from "wouter";
 import { ArrowUpRight, Clock } from "lucide-react";
-import { blogPosts } from "@/lib/blogData";
+import { blogPosts, parseBlogDate } from "@/lib/blogData";
+
+/** Guia que linka todos os artigos de exame. So aparece depois de publicado. */
+const HUB_SLUG = "exames-laboratoriais-tipos-e-preparo";
 
 export default function BlogPreviewSection() {
-  const latestPosts = blogPosts.slice(0, 3);
+  // Os 3 mais RECENTES (antes eram os 3 primeiros do index.json, por ordem de
+  // insercao). blogPosts ja exclui rascunhos.
+  const latestPosts = [...blogPosts]
+    .sort((a, b) => parseBlogDate(b.date) - parseBlogDate(a.date))
+    .slice(0, 3);
+  const hub = blogPosts.find((p) => p.slug === HUB_SLUG);
 
   return (
     <section className="py-20 md:py-28 border-t border-black/10" id="blog">
@@ -28,6 +36,16 @@ export default function BlogPreviewSection() {
             Ver Todos os Artigos <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
         </div>
+
+        {hub && (
+          <p className="text-sm text-text-light mb-10 -mt-6">
+            Procurando o preparo de um exame? Veja o{" "}
+            <Link href={`/blog/${hub.slug}`} className="text-brand underline underline-offset-2 hover:opacity-80">
+              guia de exames laboratoriais: tipos, jejum e preparo
+            </Link>
+            .
+          </p>
+        )}
 
         {/* Posts Grid */}
         <div className="grid md:grid-cols-3 gap-8">

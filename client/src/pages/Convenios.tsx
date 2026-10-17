@@ -17,6 +17,10 @@ import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { CONVENIOS } from "@/lib/conveniosData";
+import { blogPosts } from "@/lib/blogData";
+
+// Artigo de coleta domiciliar: o link so aparece depois que ele for publicado.
+const COLETA_DOMICILIAR = blogPosts.find((p) => p.slug === "coleta-domiciliar-exames-caraguatatuba");
 import { trackWhatsAppConversion } from "@/lib/tracking";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
@@ -109,6 +113,15 @@ export default function Convenios() {
                 </button>{" "}
                 antes de agendar.
               </p>
+              {COLETA_DOMICILIAR && (
+                <p className="mt-4">
+                  Não pode vir até a unidade? Veja como funciona a{" "}
+                  <Link href={`/blog/${COLETA_DOMICILIAR.slug}`} className="text-primary underline">
+                    coleta domiciliar de exames
+                  </Link>
+                  .
+                </p>
+              )}
             </section>
 
             <section>
