@@ -4,7 +4,13 @@
  * Evita duplicação de conteúdo e garante indexação correta pelo Google
  */
 
-import { anosDeAtuacao } from "@shared/const";
+import {
+  anosDeAtuacao,
+  HOME_TITLE,
+  homeDescription,
+  ANALISES_TITLE,
+  ANALISES_DESCRIPTION,
+} from "@shared/const";
 
 export interface RouteMetadata {
   title: string;
@@ -25,7 +31,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     description: "Exames de sangue em Caraguatatuba na Total Quality. Coleta por ordem de chegada, sem agendamento. Consulte preparo, prazos, convênios e orçamento pelo WhatsApp.",
     keywords: "exames de sangue, hemograma, glicemia, colesterol, hormônios, vitamina D, PSA, laboratório, análises clínicas, Caraguatatuba",
     ogTitle: "Exames de Sangue | Total Quality Medicina Diagnóstica",
-    ogDescription: "Mais de 3.000 tipos de exames de sangue com tecnologia de última geração. Hemograma, glicemia, colesterol, hormônios e muito mais.",
+    ogDescription: "Mais de 3.000 tipos de exames de sangue. Hemograma, glicemia, colesterol, hormônios e muito mais.",
     ogImage: "https://totalquality.med.br/images/laboratorio-1440.webp",
     canonical: "https://totalquality.med.br/exames/exames-de-sangue",
     priority: 0.9,
@@ -57,7 +63,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
 
   "ultrassonografia": {
     title: "Ultrassonografia em Caraguatatuba | Total Quality",
-    description: "Ultrassonografia em Caraguatatuba - SP. Exame de imagem com equipamento de última geração. Ultrassom geral, doppler e especializado.",
+    description: "Ultrassonografia em Caraguatatuba - SP. Exame de imagem sem radiação. Ultrassom geral, doppler e especializado.",
     keywords: "ultrassonografia, ultrassom, doppler, diagnóstico por imagem, Caraguatatuba",
     ogTitle: "Ultrassonografia | Total Quality",
     ogDescription: "Exame de ultrassom com equipamento de alta resolução.",
@@ -93,7 +99,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     description: "Espirometria em Caraguatatuba - SP. Teste de função pulmonar para diagnóstico de doenças respiratórias. Agende seu exame.",
     keywords: "espirometria, função pulmonar, teste respiratório, DPOC, asma, Caraguatatuba",
     ogTitle: "Espirometria | Total Quality",
-    ogDescription: "Teste de função pulmonar com equipamento de última geração.",
+    ogDescription: "Teste de função pulmonar com laudo médico.",
     canonical: "https://totalquality.med.br/exames/espirometria",
     priority: 0.8,
     changefreq: "monthly",
@@ -156,7 +162,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
 
   "mamografia": {
     title: "Mamografia Digital em Caraguatatuba | Total Quality",
-    description: "Mamografia digital em Caraguatatuba - SP. Diagnóstico de câncer de mama. Tecnologia de última geração. Agende seu exame.",
+    description: "Mamografia digital em Caraguatatuba - SP. Rastreamento do câncer de mama com mamógrafo digital. Agende seu exame.",
     keywords: "mamografia, mamografia digital, câncer de mama, diagnóstico, Caraguatatuba",
     ogTitle: "Mamografia Digital | Total Quality",
     ogDescription: "Exame de mamografia com tecnologia digital de alta resolução.",
@@ -451,9 +457,11 @@ const blogMetadata: Record<string, RouteMetadata> = {
 
 // Rotas estáticas principais
 const staticRoutes: Record<string, RouteMetadata> = {
+  // A home e a DONA de "laboratorio" (ver HOME_TITLE em shared/const.ts):
+  // decisao por Search Console, nao por opiniao. Nao entregar o termo a outra pagina.
   "/": {
-    title: "Laboratório em Caraguatatuba | Total Quality | Ligue Agora",
-    description: `Laboratório em Caraguatatuba com resultados em até 24h. Há ${anosDeAtuacao()} anos no Litoral Norte: exames de sangue, tomografia, ultrassom e check-up. Nota 4,5 no Google.`,
+    title: HOME_TITLE,
+    description: homeDescription(),
     keywords: "laboratório Caraguatatuba, exames de sangue, tomografia, ultrassom, check-up",
     ogTitle: "Total Quality Medicina Diagnóstica e Laboratorial | Exames de Sangue em Caraguatatuba - SP",
     ogDescription: "Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba - SP. Exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia e mais de 3.000 tipos de exames. Agende pelo WhatsApp.",
@@ -530,13 +538,14 @@ const staticRoutes: Record<string, RouteMetadata> = {
   },
 
   "/laboratorio-caraguatatuba": {
-    // Intencao distinta da home para evitar canibalizacao: home = "laboratório em
-    // caraguatatuba" (transacional); esta pagina = "laboratório de análises clínicas".
-    title: "Laboratório de Análises Clínicas | Total Quality",
-    description: "Laboratório de análises clínicas em Caraguatatuba: hemograma, exames de sangue, hormônios e mais de 3.000 exames. Resultados em até 24h. Agende.",
-    keywords: "laboratório Caraguatatuba, análises clínicas, exames de sangue, diagnóstico",
-    ogTitle: "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality",
-    ogDescription: "Laboratório de análises clínicas com mais de 3.000 tipos de exames e resultados em até 24h.",
+    // Esta pagina e de "analises clinicas"; "laboratorio" e da home. A versao
+    // anterior separava so no title do servidor e o React reescrevia o titulo
+    // para "Laboratorio em Caraguatatuba" — o mesmo termo da home.
+    title: ANALISES_TITLE,
+    description: ANALISES_DESCRIPTION,
+    keywords: "análises clínicas Caraguatatuba, exames laboratoriais, hemograma, exames de sangue",
+    ogTitle: ANALISES_TITLE,
+    ogDescription: ANALISES_DESCRIPTION,
     canonical: "https://totalquality.med.br/laboratorio-caraguatatuba",
     priority: 0.8,
     changefreq: "monthly",

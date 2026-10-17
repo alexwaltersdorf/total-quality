@@ -84,14 +84,17 @@ describe("GUARD-RAIL: nome canonico do Perfil da Empresa (nao remover)", () => {
     const blocos = [...html.matchAll(
       /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g,
     )].map((m) => JSON.parse(m[1]));
-    expect(blocos.length, "blocos JSON-LD parseados").toBeGreaterThanOrEqual(3);
+    expect(blocos.length, "blocos JSON-LD parseados").toBeGreaterThanOrEqual(2);
 
     const TIPOS_DE_NEGOCIO = ["LocalBusiness", "MedicalBusiness", "MedicalClinic"];
     const negocios = blocos.filter((b) => {
       const tipos = Array.isArray(b["@type"]) ? b["@type"] : [b["@type"]];
       return tipos.some((t: string) => TIPOS_DE_NEGOCIO.includes(t));
     });
-    expect(negocios.length, "blocos de negócio encontrados").toBeGreaterThanOrEqual(2);
+    // Out/2026: a clinica era declarada DUAS vezes, com @id diferentes
+    // (#localbusiness e #medicalbusiness) — duas entidades para o mesmo
+    // endereco. Agora e um no so; um segundo bloco de negocio quebra aqui.
+    expect(negocios.length, "blocos de negócio encontrados").toBe(1);
 
     for (const bloco of negocios) {
       expect(bloco.name, `campo name de ${JSON.stringify(bloco["@type"])}`).toBe(
