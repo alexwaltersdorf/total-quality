@@ -529,6 +529,26 @@ const staticRoutes: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
 
+  /*
+   * Campanha Check-up Outubro Rosa. Rota sazonal: quando a campanha encerrar,
+   * tirar esta entrada (sai do sitemap), tirar a rota do App.tsx e o bloco do
+   * seo-content.ts. O passo a passo esta em docs/campanha-outubro-rosa.md.
+   *
+   * priority abaixo da landing de laboratorio de proposito: campanha nao
+   * disputa a pagina permanente que sustenta o termo o ano inteiro.
+   */
+  "/outubro-rosa": {
+    title: "Check-up Outubro Rosa em Caraguatatuba | Total Quality",
+    description: "Check-up Outubro Rosa na Total Quality: ultrassonografia das mamas, transvaginal e Papanicolau por R$ 399,90. Agende em Caraguatatuba.",
+    keywords: "check-up outubro rosa Caraguatatuba, ultrassonografia das mamas, ultrassonografia transvaginal, papanicolau Caraguatatuba, preventivo",
+    ogTitle: "Check-up Outubro Rosa | Total Quality",
+    ogDescription: "Ultrassonografia das mamas, transvaginal e Papanicolau por R$ 399,90, em Caraguatatuba. Fale com a equipe pelo WhatsApp.",
+    ogImage: "https://totalquality.med.br/images/outubro-rosa-og.webp",
+    canonical: "https://totalquality.med.br/outubro-rosa",
+    priority: 0.7,
+    changefreq: "weekly",
+  },
+
   "/laboratorio-caraguatatuba": {
     // Intencao distinta da home para evitar canibalizacao: home = "laboratório em
     // caraguatatuba" (transacional); esta pagina = "laboratório de análises clínicas".
