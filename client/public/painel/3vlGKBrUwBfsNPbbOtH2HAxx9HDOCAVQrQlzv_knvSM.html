@@ -56,6 +56,8 @@ p{margin:0 0 13px} p:last-child{margin-bottom:0}
             line-height:1;color:var(--acento);font-variant-numeric:tabular-nums}
 .heroi .txt{flex:1 1 240px;min-width:0;color:var(--tinta-fraca);font-size:14px}
 .heroi .txt b{color:var(--tinta)}
+.heroi .base{display:block;margin-top:7px;padding-top:7px;border-top:1px solid var(--borda);
+  font-size:12.5px;line-height:1.45}
 .funil{background:var(--papel);border:1px solid var(--borda);border-radius:13px;padding:20px 22px}
 .etapa{margin-bottom:4px}
 .etapa .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:5px}
@@ -335,9 +337,19 @@ function pintar() {
   const a = el('de').value, b = el('ate').value;
   if (!a || !b || a > b) return;
 
-  const f = [0, 0, 0, 0, 0];
-  D.funil.forEach(r => { if (dentro(r[0], a, b)) for (let i = 0; i < 5; i++) f[i] += r[i + 1]; });
-  const topo = f[0], conv = topo ? f[4] / topo * 100 : 0;
+  // 0..4 sao as etapas do funil; 5 = demanda qualificada, 6 = pediu so exame que
+  // a clinica nao faz. Arrays antigos, sem as duas ultimas, viram 0 e a taxa cai
+  // de volta para o denominador bruto.
+  const f = [0, 0, 0, 0, 0, 0, 0];
+  D.funil.forEach(r => { if (dentro(r[0], a, b)) for (let i = 0; i < 7; i++) f[i] += (r[i + 1] || 0); });
+  const topo = f[0];
+  // Denominador: quem pediu algo que a clinica atende, mais quem agendou sem ter
+  // nomeado o exame na conversa (marcou por telefone ou no balcao, e a Agenda do
+  // Google casou depois). Sem esse segundo grupo o numerador teria gente fora do
+  // denominador, e a taxa sairia inflada.
+  const temQual = f[5] > 0;                 // payload novo, com a coluna de qualificados
+  const qual = temQual ? f[5] : topo, conv = qual ? f[4] / qual * 100 : 0;
+  const bruta = topo ? f[4] / topo * 100 : 0;
   const dias = Math.round((new Date(b) - new Date(a)) / 864e5) + 1;
 
   el('sub').textContent = br(topo) + ' conversas iniciadas · ' + dt(a) + ' a ' + dt(b)
@@ -355,18 +367,29 @@ function pintar() {
       + (ehHoje ? 'Nenhuma conversa iniciada hoje até agora.'
                 : 'Sem conversas no período escolhido.') + '</div>';
   } else {
-    const porAg = f[4] ? ((topo - f[4]) / f[4]).toFixed(1).replace('.', ',') : '—';
-    el('lead').innerHTML = 'De cada 100 pessoas que chamam no WhatsApp, <b>'
-      + conv.toFixed(0) + ' saem com exame agendado</b>. '
+    const porAg = f[4] ? ((qual - f[4]) / f[4]).toFixed(1).replace('.', ',') : '—';
+    el('lead').innerHTML = (temQual
+        ? 'De cada 100 pessoas que pedem um exame que a clínica faz, <b>'
+        : 'De cada 100 pessoas que chamam no WhatsApp, <b>')
+      + conv.toFixed(0) + ' saem com horário marcado</b>. '
       + (f[2] > f[3]
          ? 'A maior perda está no meio, entre dizer qual exame quer e marcar um horário.'
          : 'A maior perda está logo no começo da conversa.');
     el('heroi').innerHTML =
       '<div class="big">' + conv.toFixed(1).replace('.', ',') + '%</div>'
       + '<div class="txt"><b>' + br(f[4]) + ' agendamento' + (f[4] === 1 ? '' : 's')
-      + '</b> em ' + br(topo) + ' conversas iniciadas. Para cada agendamento, '
-      + porAg + ' pessoas conversaram e saíram sem marcar.</div>';
-    el('cxFunil').innerHTML = '<div class="funil">' + f.map((n, i) => {
+      + '</b> em ' + br(qual)
+      + (temQual ? ' pessoas com pedido que a clínica atende. ' : ' conversas iniciadas. ')
+      + 'Para cada agendamento, ' + porAg + ' saíram sem marcar.'
+      + (temQual
+         ? '<span class="base">Fora da conta: ' + br(topo - qual) + ' de ' + br(topo)
+           + ' conversas — ' + br(f[6]) + ' pediram só exame que não fazemos e '
+           + br(Math.max(topo - qual - f[6], 0)) + ' nunca disseram o que queriam. '
+           + 'Sobre todas as ' + br(topo) + ', a taxa seria '
+           + bruta.toFixed(1).replace('.', ',') + '%.</span>'
+         : '')
+      + '</div>';
+    el('cxFunil').innerHTML = '<div class="funil">' + f.slice(0, 5).map((n, i) => {
       const p = pct(n, topo);
       let s = '<div class="etapa" title="' + esc(ROTULOS[i]) + ': ' + br(n) + ' pessoas, ' + p + '%">'
         + '<div class="top"><span class="rot">' + esc(ROTULOS[i]) + '</span>'
@@ -422,6 +445,9 @@ function pintar() {
     + esc(D.gerado_em) + '. Dados disponíveis de ' + dt(DMIN) + ' a ' + dt(DMAX) + '. '
     + 'O funil conta conversas <b>iniciadas</b> no período e classifica cada uma pelo estágio que alcançou até hoje. '
     + '"Agendou" é agendamento confirmado na Agenda do Google. '
+    + 'A <b>taxa de conversão</b> não usa todas as conversas como base: usa quem pediu um exame '
+    + 'que a clínica realiza, mais quem agendou sem ter nomeado o exame na conversa — '
+    + 'quem só perguntou outra coisa, ou pediu exame que não fazemos, não é venda perdida. '
     + 'Tempo de resposta mede o intervalo entre a mensagem do paciente e a resposta seguinte da Ana, '
     + 'limitado a 2h no topo, o que não afeta mediana nem percentil 90. '
     + 'A demanda por exame indisponível sai dos exames registrados na conversa. '
