@@ -1069,90 +1069,92 @@ describe("GUARD-RAIL: identificacao do art. 5o em TODA peca publica (out/2026)",
   });
 });
 
-describe("GUARD-RAIL: imagem do artigo bate com o assunto (out/2026)", () => {
-  // O Alex reportou em 10/10/2026 que as fotos do blog nao tinham relacao com
-  // o texto. Ao abrir os arquivos, dois achados:
+describe("GUARD-RAIL: cada artigo tem a sua propria imagem (out/2026)", () => {
+  // Duas correcoes empilhadas, nesta ordem:
   //
-  //   1. "cardiologia-1024.webp" NAO e uma foto de cardiologia: e um ULTRASSOM
-  //      com Doppler colorido. O nome enganou quem escolheu, e a foto foi parar
-  //      em artigos de eletrocardiograma, MAPA e Holter — exames eletricos, que
-  //      nao se parecem nada com aquilo.
-  //   2. "hero-clinica-1440.webp" mostra uma RESSONANCIA MAGNETICA. A decisao
-  //      de nao usar essa foto e de 01/08/2026 e esta registrada em
-  //      HeroSection.tsx, mas so a home foi limpa: a imagem seguia no `image`
-  //      do LocalBusiness (a foto da ENTIDADE que o Google le), na categoria
-  //      neurologia de ExamePage, no hero do check-up, no hero da
-  //      bioimpedancia e em 4 artigos do blog.
+  //   1. As fotos nao batiam com o texto. O nome do arquivo enganava:
+  //      "cardiologia-*.webp" e um ULTRASSOM com Doppler, e por isso foi parar
+  //      nos artigos de eletrocardiograma, MAPA e Holter. E "hero-clinica" era
+  //      uma RESSONANCIA, exame que a clinica nao realiza.
+  //   2. Corrigido o assunto, sobrou a repeticao: 23 artigos dividiam 5 fotos,
+  //      e a listagem do blog mostrava a mesma imagem seis vezes.
   //
-  // O guard-rail de "servico nao prestado" existe desde ago/2026, mas olha
-  // TEXTO. Imagem passou batido. Estes dois testes fecham essa porta.
-  const O_QUE_CADA_FOTO_MOSTRA = {
-    laboratorio: "bancada, microscopio, tubos de coleta e analisadores",
-    cardiologia: "ultrassom com Doppler colorido (o nome do arquivo engana)",
-    tomografia: "medico lendo cortes de tomografia em dois monitores",
-    recepcao: "recepcao real da Total Quality",
-    fachada: "predio real da clinica",
-  } as const;
-
-  type Foto = keyof typeof O_QUE_CADA_FOTO_MOSTRA;
-
-  // Fotos aceitaveis por assunto. Mais de uma quando o assunto admite.
-  const FOTO_POR_ARTIGO: Record<string, Foto[]> = {
-    "exames-de-sangue-guia-completo": ["laboratorio"],
-    "hemograma-caraguatatuba": ["laboratorio"],
-    "hemograma-completo-o-que-avalia": ["laboratorio"],
-    "alimentacao-e-exames-laboratoriais": ["laboratorio"],
-    "vitamina-d-importancia-saude": ["laboratorio"],
-    "exame-de-urina-eas-como-coletar": ["laboratorio"],
-    "exame-toxicologico-cnh": ["laboratorio"],
-    "como-escolher-laboratorio-analises-clinicas": ["laboratorio"],
-    "saude-do-coracao-prevencao": ["laboratorio"],
-    "ultrassonografia-caraguatatuba": ["cardiologia"],
-    "diferenca-ultrassom-comum-doppler": ["cardiologia"],
-    "mamografia-ultrassom-mamas-diferencas": ["cardiologia"],
-    "tomografia-caraguatatuba": ["tomografia"],
-    "tomografia-computadorizada-como-funciona": ["tomografia"],
-    "diferenca-raio-x-tomografia": ["tomografia"],
-    "convenios-laboratorio-caraguatatuba": ["recepcao", "fachada"],
-    "resultado-de-exames-online-seguranca": ["recepcao", "fachada"],
-    "check-up-preventivo-quando-fazer": ["recepcao", "fachada"],
-    "check-up-medico-quais-exames-fazer": ["recepcao", "fachada"],
-    "eletrocardiograma-o-que-e-como-e-feito": ["recepcao", "fachada"],
-    "mapa-ou-holter-diferenca": ["recepcao", "fachada"],
-    "laboratorio-regiao-sul-caraguatatuba": ["fachada", "recepcao"],
-    "aso-exames-ocupacionais": ["fachada", "recepcao"],
-    "hipoglicemia-sintomas-e-exames": ["laboratorio"],
+  // Agora cada artigo tem imagem propria. As da clinica vem primeiro, porque
+  // foto real vale mais para SEO local do que banco de imagens; o resto esta
+  // em /images/blog/<slug>.webp, com a origem registrada em
+  // docs/creditos-imagens-blog.md.
+  const FOTO_DA_CLINICA: Record<string, string> = {
+    "convenios-laboratorio-caraguatatuba": "recepcao-1024.webp",
+    "laboratorio-regiao-sul-caraguatatuba": "fachada-1024.webp",
+    "como-escolher-laboratorio-analises-clinicas": "laboratorio-1024.webp",
+    "tomografia-caraguatatuba": "tomografia-1024.webp",
+    "diferenca-ultrassom-comum-doppler": "cardiologia-1024.webp",
   };
 
-  it("todo artigo do blog esta na tabela de assunto x foto", () => {
-    // Artigo novo entra aqui junto com o resto. Sem isso o par volta a ser
-    // escolhido no olho, que e exatamente como "ultrassom" foi parar em Holter.
-    const slugs = Array.from(getKnownBlogSlugs()).sort();
-    expect(slugs, "artigo sem entrada em FOTO_POR_ARTIGO").toEqual(
-      Object.keys(FOTO_POR_ARTIGO).sort()
-    );
+  async function imagemDoArtigo(slug: string): Promise<string> {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const artigo = JSON.parse(
+      fs.readFileSync(
+        nodePath.resolve(import.meta.dirname, `../client/src/content/blog/${slug}.json`),
+        "utf-8"
+      )
+    ) as { image: string };
+    return artigo.image;
+  }
+
+  it("nenhuma imagem se repete entre os artigos", async () => {
+    // Era o pedido do Alex em 10/10/2026: "as imagens do blog devem ser
+    // diferentes umas das outras".
+    const slugs = Array.from(getKnownBlogSlugs());
+    const porImagem = new Map<string, string[]>();
+    for (const slug of slugs) {
+      const img = await imagemDoArtigo(slug);
+      porImagem.set(img, [...(porImagem.get(img) ?? []), slug]);
+    }
+    const repetidas = Array.from(porImagem.entries()).filter(([, s]) => s.length > 1);
+    expect(
+      repetidas.map(([img, s]) => `${img.split("/").pop()} em ${s.join(", ")}`),
+      "imagem usada por mais de um artigo"
+    ).toEqual([]);
+    expect(porImagem.size).toBe(slugs.length);
   });
 
-  it.each(Object.entries(FOTO_POR_ARTIGO))(
-    "%s usa uma foto compativel com o assunto",
-    async (slug, aceitas) => {
+  it.each(Array.from(getKnownBlogSlugs()))(
+    "artigo %s aponta para uma imagem que existe no disco",
+    async (slug) => {
       const fs = await import("node:fs");
       const nodePath = await import("node:path");
-      const artigo = JSON.parse(
-        fs.readFileSync(
-          nodePath.resolve(import.meta.dirname, `../client/src/content/blog/${slug}.json`),
-          "utf-8"
-        )
-      ) as { image: string };
-      const foto = artigo.image.replace(/^.*\/images\//, "").replace(/-\d+\.\w+$/, "");
-      expect(
-        aceitas as readonly string[],
-        `${slug} usa "${foto}" (${(O_QUE_CADA_FOTO_MOSTRA as Record<string, string>)[foto] ?? "foto desconhecida"}), que nao combina com o assunto`
-      ).toContain(foto);
+      const img = await imagemDoArtigo(slug);
+      const esperado = FOTO_DA_CLINICA[slug]
+        ? `https://totalquality.med.br/images/${FOTO_DA_CLINICA[slug]}`
+        : `https://totalquality.med.br/images/blog/${slug}.webp`;
+      expect(img, `${slug} nao usa a imagem definida para ele`).toBe(esperado);
+      const caminho = nodePath.resolve(
+        import.meta.dirname,
+        "../client/public",
+        img.replace("https://totalquality.med.br/", "")
+      );
+      expect(fs.existsSync(caminho), `${img} nao existe em client/public`).toBe(true);
     }
   );
 
+  it("o card e o og:image do artigo mostram a mesma coisa", async () => {
+    // Antes do #60 so 7 dos 23 tinham ogImage, e nem todos batiam com o card.
+    for (const route of getAllRoutes()) {
+      const pathname = new URL(route.canonical).pathname;
+      const slug = pathname.startsWith("/blog/") ? pathname.slice("/blog/".length) : null;
+      if (!slug || !getKnownBlogSlugs().has(slug)) continue;
+      expect(route.ogImage, `${slug} tem og:image diferente da imagem do card`).toBe(
+        await imagemDoArtigo(slug)
+      );
+    }
+  });
+
   it("nenhuma peca servida volta a usar a foto da ressonancia", async () => {
+    // hero-clinica-*.webp mostra uma ressonancia magnetica, exame que a clinica
+    // nao realiza. O guard-rail de servico nao prestado le TEXTO; imagem
+    // passava batido.
     const fs = await import("node:fs");
     const nodePath = await import("node:path");
     const raiz = nodePath.resolve(import.meta.dirname, "..", "client", "src");
@@ -1166,21 +1168,142 @@ describe("GUARD-RAIL: imagem do artigo bate com o assunto (out/2026)", () => {
 
     const ofensores: string[] = [];
     for (const arquivo of arquivos) {
-      const bruto = fs.readFileSync(arquivo, "utf-8");
-      // comentario que explica POR QUE a foto saiu pode citar o nome
-      const semComentario = bruto
+      const semComentario = fs
+        .readFileSync(arquivo, "utf-8")
         .replace(/\/\*[\s\S]*?\*\//g, "")
         .replace(/\{\s*\/\*[\s\S]*?\*\/\s*\}/g, "")
         .replace(/^\s*\/\/.*$/gm, "");
       if (semComentario.includes("hero-clinica")) ofensores.push(arquivo);
     }
-    expect(
-      ofensores,
-      `hero-clinica-*.webp mostra uma ressonancia magnetica, exame que a clinica nao realiza:\n${ofensores.join("\n")}`
-    ).toEqual([]);
+    expect(ofensores, ofensores.join("\n")).toEqual([]);
+  });
+
+  it("toda imagem de banco esta creditada em docs/creditos-imagens-blog.md", async () => {
+    // Exigencia da Resolucao CFM 2.336/2023: banco de imagens cita a origem.
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const creditos = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "..", "docs", "creditos-imagens-blog.md"),
+      "utf-8"
+    );
+    for (const slug of getKnownBlogSlugs()) {
+      if (FOTO_DA_CLINICA[slug]) continue;
+      expect(creditos, `${slug} usa banco de imagens e nao esta creditado`).toContain(slug);
+    }
   });
 });
 
+describe("GUARD-RAIL: campanha Outubro Rosa (out/2026)", () => {
+  // Pagina de campanha com preco anunciado: o que esta escrito vincula a
+  // clinica (CDC art. 30) e passa pelas vedacoes da Resolucao CFM 2.336/2023.
+  // Tres riscos concretos, e um teste para cada:
+  //
+  //   1. O pre-render e a pagina React sao DOIS textos. Se alguem corrigir o
+  //      preco em um e esquecer o outro, o robo e o paciente passam a ler
+  //      ofertas diferentes — e a que vincula e a que o paciente viu.
+  //   2. A ressalva da mamografia e o que impede o pacote de ser lido como
+  //      rastreamento completo de cancer de mama. Ela nao e enfeite.
+  //   3. Promessa de resultado, urgencia fabricada e brinde sao exatamente o
+  //      que o art. 11 veda, e sao o que primeiro aparece quando alguem
+  //      "melhora a conversao" da pagina.
+  const ROTA = "/outubro-rosa";
+
+  async function fontePagina(): Promise<string> {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    return fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "../client/src/pages/OutubroRosa.tsx"),
+      "utf-8"
+    );
+  }
+
+  /*
+   * Precos CITADOS, nao precos PRESENTES. A primeira versao deste teste so
+   * exigia que "R$ 399,90" aparecesse em algum lugar — e passou com o preco
+   * trocado numa frase, porque a string sobrevivia na resposta do FAQ. Agora
+   * o teste coleta todo preco do texto e exige que o conjunto seja exatamente
+   * os dois: um terceiro valor significa oferta se contradizendo.
+   */
+  const PRECOS_AUTORIZADOS = ["R$ 500,00", "R$ 399,90"];
+  const precosCitados = (texto: string) =>
+    Array.from(
+      new Set(Array.from(texto.matchAll(/R\$\s?\d{1,3}(?:\.\d{3})*,\d{2}/g)).map((m) => m[0]))
+    ).sort();
+
+  it("o pre-render anuncia os tres exames e nenhum preco alem dos dois", () => {
+    const html = getSeoContentForPath(ROTA)!;
+    for (const exame of [
+      "Ultrassonografia das mamas",
+      "Ultrassonografia transvaginal",
+      "Papanicolau",
+    ]) {
+      expect(html, `o pre-render perdeu "${exame}"`).toContain(exame);
+    }
+    expect(precosCitados(html), "preco fora da oferta no pre-render").toEqual(
+      [...PRECOS_AUTORIZADOS].sort()
+    );
+  });
+
+  it("a pagina React anuncia exatamente a mesma oferta do pre-render", async () => {
+    const src = await fontePagina();
+    for (const exame of [
+      "Ultrassonografia das mamas",
+      "Ultrassonografia transvaginal",
+      "Papanicolau",
+    ]) {
+      expect(src, `a pagina perdeu "${exame}"`).toContain(exame);
+    }
+    // O preco promocional aparece quebrado no bloco grande (399 + ,90), entao
+    // o teste cobra as duas partes alem do texto corrido.
+    expect(src).toContain('PRECO_POR_INTEIRO = "399"');
+    expect(src).toContain('PRECO_POR_CENTAVOS = ",90"');
+    expect(precosCitados(src), "preco fora da oferta na pagina").toEqual(
+      [...PRECOS_AUTORIZADOS].sort()
+    );
+  });
+
+  it("a ressalva da mamografia aparece nos dois pontos de cada versao", async () => {
+    /*
+     * Duas vezes em cada versao, e o teste cobra as duas: a nota abaixo dos
+     * cartoes e a resposta do FAQ. Exigir uma so deixava apagar a nota — a
+     * que o paciente le junto da oferta — sem o teste perceber, porque a
+     * frase sobrevivia no FAQ.
+     */
+    const ressalva = /n[ãa]o substitui a/gi;
+    const html = getSeoContentForPath(ROTA)!;
+    const src = await fontePagina();
+    expect((html.match(ressalva) || []).length, "pre-render perdeu uma ressalva").toBe(2);
+    expect((src.match(ressalva) || []).length, "pagina React perdeu uma ressalva").toBe(2);
+    expect(html).toContain("conforme indica");
+  });
+
+  it("nem o pre-render nem a pagina usam promessa, urgencia ou brinde", async () => {
+    const VEDADO = [
+      /prote[çc][ãa]o completa/i,
+      /100\s*%\s*de\s*preven/i,
+      /diagn[óo]stico garantido/i,
+      /livre do c[âa]ncer/i,
+      /vagas limitadas/i,
+      /[úu]ltima chance/i,
+      /contagem regressiva/i,
+      /resultado em 24\s*horas/i,
+      /brinde/i,
+      /sorteio/i,
+      /parcelamos|parcelamento em/i,
+      /desconto no pix/i,
+      /no mesmo dia garantido/i,
+    ];
+    const alvos: Array<[string, string]> = [
+      ["pre-render", getSeoContentForPath(ROTA)!],
+      ["pagina React", await fontePagina()],
+    ];
+    for (const [onde, texto] of alvos) {
+      for (const proibido of VEDADO) {
+        expect(texto, `${onde} usa ${proibido}`).not.toMatch(proibido);
+      }
+    }
+  });
+});
 describe("GUARD-RAIL: artigo de hipoglicemia, conteudo de terceiro (out/2026)", () => {
   // O artigo de hipoglicemia chegou em 18/10/2026 como HTML gerado por um
   // servico externo (airticles.ai). O texto original trazia tres problemas que
