@@ -4,9 +4,11 @@
 // ana_config.chave = 'historico_senha'. Sem senha certa nada sai: o link do
 // painel sozinho nao da acesso a nome, telefone nem conversa de paciente.
 //
-//   GET ?modo=lista                 -> os leads, sem as mensagens
-//   GET ?modo=conversa&fone=55...   -> o historico de um contato so
-//   GET ?modo=tudo                  -> leads + todas as mensagens (gera o HTML)
+//   GET  ?modo=lista                 -> os leads, sem as mensagens
+//   GET  ?modo=conversa&fone=55...   -> o historico de um contato so
+//   GET  ?modo=tudo                  -> leads + todas as mensagens (gera o HTML)
+//   POST ?modo=status                -> grava o status manual de um contato
+//        corpo {fone, status}, status vazio volta para o automatico
 //
 // A senha vai no cabecalho x-senha, nunca na URL: query string entra em log de
 // servidor, historico de navegador e cabecalho Referer.
@@ -22,16 +24,21 @@ const ORIGEM_OK = new Set([
 const cors = (origem: string | null) => ({
   'access-control-allow-origin': origem && ORIGEM_OK.has(origem) ? origem : 'null',
   'access-control-allow-headers': 'x-senha, content-type',
-  'access-control-allow-methods': 'GET, OPTIONS',
+  'access-control-allow-methods': 'GET, POST, OPTIONS',
   'access-control-max-age': '86400',
   'vary': 'origin',
 });
 
-const rest = async (caminho: string) => {
-  const r = await fetch(`${URL_SB}/rest/v1/${caminho}`, { headers: H });
+const rest = async (caminho: string, init: RequestInit = {}) => {
+  const r = await fetch(`${URL_SB}/rest/v1/${caminho}`,
+    { ...init, headers: { ...H, ...(init.headers ?? {}) } });
   if (!r.ok) throw new Error(`${caminho} -> ${r.status} ${await r.text()}`);
   return await r.json();
 };
+
+// o unico status que a conversa nao produz sozinha: quem fecha o assunto e a
+// pessoa que atende, entao 'Encerrado' so existe como escolha manual
+const STATUS_OK = ['Agendou', 'Não Agendou', 'Não Aplica', 'Encerrado'];
 
 // pagina ate o fim: avanca pelo que veio, nunca pelo que foi pedido
 const todos = async (caminho: string, ordem: string, teto = 200000) => {
@@ -45,7 +52,6 @@ const todos = async (caminho: string, ordem: string, teto = 200000) => {
   return fora;
 };
 
-const b64 = (b: Uint8Array) => btoa(String.fromCharCode(...b));
 const deB64 = (s: string) => Uint8Array.from(atob(s), c => c.charCodeAt(0));
 
 // PBKDF2 custa ~100ms por tentativa: forca bruta em senha de 20 caracteres
@@ -101,6 +107,27 @@ Deno.serve(async (req) => {
 
   const modo = u.searchParams.get('modo') ?? 'lista';
 
+  // gravar o status escolhido a mao, ou limpar para voltar ao automatico
+  if (modo === 'status') {
+    if (req.method !== 'POST') return json({ erro: 'metodo' }, 405);
+    let corpo: any;
+    try { corpo = await req.json(); } catch { return json({ erro: 'corpo' }, 400); }
+    const fone = String(corpo?.fone ?? '').replace(/\D/g, '');
+    const novo = String(corpo?.status ?? '').trim();
+    if (!fone) return json({ erro: 'fone' }, 400);
+    if (novo && !STATUS_OK.includes(novo)) return json({ erro: 'status' }, 400);
+    const gravado = await rest(`ana_leads?phone=eq.${fone}&select=phone,status_manual`, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json', Prefer: 'return=representation' },
+      body: JSON.stringify({
+        status_manual: novo || null,
+        status_manual_em: novo ? new Date().toISOString() : null,
+      }),
+    });
+    if (!gravado.length) return json({ erro: 'nao encontrado' }, 404);
+    return json({ fone, status_manual: gravado[0].status_manual });
+  }
+
   // uma conversa so, buscada quando a linha e aberta
   if (modo === 'conversa') {
     const fone = (u.searchParams.get('fone') ?? '').replace(/\D/g, '');
@@ -118,7 +145,7 @@ Deno.serve(async (req) => {
   const estados = await todos('ana_leads?select=phone,escalado,bot_ativo,opt_out,' +
     'motivo_escalada,agendamento,temperatura,funil,convenio,' +
     'last_patient_msg_at,last_bot_msg_at,human_msg_at,followup_due_at,' +
-    'resumo_interno', 'phone.asc');
+    'resumo_interno,status_manual,status_manual_em', 'phone.asc');
   const porFone = new Map<string, any>(estados.map((e: any) => [e.phone, e]));
 
   // 3. quantas mensagens cada um trocou (a view agrupa no banco)
@@ -148,9 +175,12 @@ Deno.serve(async (req) => {
       else if (doPaciente) { c = 'Aguardando a clinica'; det = 'o paciente falou por ultimo'; }
       else { c = 'Aguardando o paciente'; det = 'a clinica falou por ultimo'; }
     }
+    // sa = o que a conversa diz, sm = o que a pessoa que atende decidiu.
+    // O manual ganha, mas o automatico continua visivel para dar o contraste.
+    const sa = p.Status, sm = e.status_manual ?? null;
     return {
       n: p.Nome, t: p.WhatsApp, e: p['Exame procurado'], f: p.Familia,
-      s: p.Status, et: p['Etapa do follow-up'],
+      s: sm ?? sa, sa, sm, et: p['Etapa do follow-up'],
       d: p['Data do contato'], u: p['Ultima mensagem'],
       r: p.Recontato === 'sim',
       fila: !!e.followup_due_at,

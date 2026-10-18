@@ -78,12 +78,11 @@ comparacao e de tempo constante.
 
 ## Acesso
 
-O painel e um artefato **privado** da conta do Alex. Ninguem mais abre, nem com o link.
-Para a equipe ver, compartilhar pelo menu Share do artefato.
+O painel mora no site da clinica, num caminho com token no nome, sem login. Quem tem o
+link abre. Vale para os **numeros agregados** — nenhuma secao dessas identifica paciente.
 
-O token da API esta embutido no fonte do artefato. Como o artefato e privado, o token
-nao vaza — mas **se o artefato for compartilhado, o token vai junto**. Ele so da acesso
-a estes numeros agregados, nunca a dado de paciente.
+O token da API esta embutido no fonte da pagina, entao quem tem o link tem o token.
+Ele so da acesso aos numeros agregados.
 
 ### Trocar o token
 
@@ -91,7 +90,82 @@ a estes numeros agregados, nunca a dado de paciente.
 UPDATE ana_config SET valor = '<novo token>' WHERE chave = 'jornada_token';
 ```
 
-Depois e preciso republicar o artefato com o token novo, porque ele esta no fonte.
+Depois trocar o token no fonte da pagina e renomear o arquivo, porque o nome do
+arquivo e o mesmo token.
+
+## Pacientes e conversas: a secao com senha
+
+A secao **Pacientes e conversas**, logo abaixo do funil, e a unica que mostra nome,
+telefone, exame procurado e o teor das conversas. Isso e dado sensivel de saude pelo
+art. 11 da LGPD, e por isso ela **nao** anda junto com o link da pagina:
+
+- a senha vai no cabecalho `x-senha`, nunca na query string (que entra em log de
+  servidor, historico de navegador e cabecalho `Referer`)
+- quem confere e a Edge Function `historico`, contra um hash **PBKDF2-SHA256 de
+  200.000 iteracoes** guardado em `ana_config.historico_senha`. Sem senha certa o
+  servidor devolve 401 e nenhum dado sai
+- as 200.000 iteracoes custam ~100ms por tentativa, o que inviabiliza forca bruta
+  contra uma senha aleatoria de 20 caracteres mesmo sem contador de tentativas
+- o CORS so aceita `https://totalquality.med.br`: outra origem recebe
+  `access-control-allow-origin: null` e o navegador barra a leitura
+- a senha fica em `sessionStorage`, entao sobrevive a um filtro mas nao a fechar o
+  navegador. O botao **Fechar** apaga na hora
+
+A lista chega sem as mensagens (~650 kB para 1.517 pacientes). O historico de cada um
+e buscado quando a linha e aberta, e so fica na memoria daquela aba.
+
+### Status: automatico com a palavra final de quem atende
+
+A coluna **Status** sai da analise da conversa, como sempre saiu:
+
+| Valor | Quando o sistema o escolhe |
+|---|---|
+| `Agendou` | `agendamento.status = 'confirmado'` |
+| `Não Aplica` | o exame procurado esta na lista do que a clinica nao faz |
+| `Não Agendou` | o resto |
+| `Encerrado` | **nunca** — so existe como escolha manual |
+
+Quem atende pode sobrepor pelo seletor da propria linha, ou pelo mesmo seletor
+dentro da gaveta da conversa (no celular a tabela rola de lado, a gaveta nao).
+A escolha vai para `ana_leads.status_manual`, com `status_manual_em`, e passa a
+ganhar do calculado. A primeira opcao do seletor e sempre
+**Automatico · \<o que a conversa diz\>**: escolher ela limpa a sobreposicao e
+devolve o controle ao sistema. Linha com escolha manual mostra *definido a mao*.
+
+O calculo nunca para: `sa` (automatico) continua vindo em toda resposta, lado a
+lado com `sm` (manual) e com `s`, que e `sm ?? sa`. Assim da para comparar os
+dois a qualquer momento, e o CSV traz as tres colunas.
+
+`Encerrado` ficou de fora do automatico de proposito: quem fecha o assunto e a
+pessoa que atende, nao a conversa. Se depois aparecer uma regra clara — por
+exemplo, opt-out vira encerrado —, ela entra em `edge-historico.ts`, no mesmo
+bloco que decide os outros tres.
+
+A gravacao passa pela mesma senha e pelo mesmo CORS da leitura, aceita so os
+quatro valores da lista e so telefone que ja existe em `ana_leads` (404 caso
+contrario). Falha de rede nao altera a tela: o seletor volta ao valor anterior
+e a pagina avisa que nada foi gravado.
+
+### Trocar a senha
+
+Gerar o hash e gravar:
+
+```python
+import secrets, hashlib, base64
+senha = '-'.join(''.join(secrets.choice('abcdefghijkmnopqrstuvwxyz23456789')
+                         for _ in range(5)) for _ in range(4))
+sal, it = secrets.token_bytes(16), 200_000
+h = hashlib.pbkdf2_hmac('sha256', senha.encode(), sal, it, dklen=32)
+b64 = lambda b: base64.b64encode(b).decode()
+print(senha, f'pbkdf2${it}${b64(sal)}${b64(h)}', sep='\n')
+```
+
+```sql
+UPDATE ana_config SET valor = '<o hash>' WHERE chave = 'historico_senha';
+```
+
+Apagar a linha, ou deixa-la vazia, desliga a secao: a funcao passa a devolver 401
+para qualquer senha.
 
 ## Por que cache e nao consulta ao vivo
 

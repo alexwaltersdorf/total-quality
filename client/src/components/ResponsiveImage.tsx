@@ -13,7 +13,7 @@
  */
 
 export interface ResponsiveImageProps {
-  /** Slug do arquivo em /public/images, sem largura nem extensao (ex.: "hero-clinica") */
+  /** Slug do arquivo em /public/images, sem largura nem extensao (ex.: "recepcao") */
   slug: string;
   alt: string;
   /** Larguras geradas para este slug, em ordem crescente */

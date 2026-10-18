@@ -43,7 +43,7 @@ export function useSchemaLocalBusiness(options?: {
         postalCode: "11660-010",
         addressCountry: "BR",
       },
-      image: "https://totalquality.med.br/images/hero-clinica-1440.webp",
+      image: "https://totalquality.med.br/images/fachada-1024.webp",
       priceRange: "$$",
     };
 

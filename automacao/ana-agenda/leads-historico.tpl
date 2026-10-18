@@ -228,6 +228,7 @@ tr.gaveta>td{background:var(--fundo);padding:0}
         <option value="Agendou">Agendou</option>
         <option value="Não Agendou">Não agendou</option>
         <option value="Não Aplica">Não aplica</option>
+        <option value="Encerrado">Encerrado</option>
       </select>
     </label>
     <label class="cx">
@@ -349,7 +350,8 @@ const corpo = document.getElementById('corpo'), nada = document.getElementById('
       conta = document.getElementById('conta');
 let termo = '', fStatus = '', fExame = '', fEtapa = '', fConversa = '',
     ordem = {c:'d', asc:false};
-const CLS = {'Agendou':'t-ok','Não Agendou':'t-nao','Não Aplica':'t-nap'};
+const CLS = {'Agendou':'t-ok','Não Agendou':'t-nao','Não Aplica':'t-nap',
+             'Encerrado':'t-nap'};
 // situacao da conversa -> classe da etiqueta
 const CLSC = {'Agendada':'c-ag','Escalada':'c-esc','Bot pausado':'c-bot',
   'Aguardando a clínica':'c-cli','Aguardando o paciente':'c-pac',
@@ -401,7 +403,7 @@ function fio(fone){
 }
 function gaveta(r){
   const marcas = [
-    r.nm ? `${r.nm} mensagem${r.nm > 1 ? 's' : ''}` : '',
+    r.nm ? `${r.nm} ${r.nm > 1 ? 'mensagens' : 'mensagem'}` : '',
     r.dias === null ? '' : (r.dias === 0 ? 'hoje' : `${r.dias} dia${r.dias > 1 ? 's' : ''} sem falar`),
     r.tmp ? `temperatura ${r.tmp}` : '',
     r.fun ? `funil ${r.fun}` : '',
