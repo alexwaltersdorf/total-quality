@@ -424,6 +424,18 @@ const blogMetadata: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
 
+  "hipoglicemia-sintomas-e-exames": {
+    title: "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer",
+    description: "Hipoglicemia é a glicose abaixo de 70 mg/dL. Sinais de alerta, quando procurar emergência e quais exames investigam a causa.",
+    keywords: "hipoglicemia, glicose baixa, glicemia de jejum, curva glicêmica, hemoglobina glicada, insulina e peptídeo C, Caraguatatuba",
+    ogTitle: "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer",
+    ogDescription: "Quando a glicose cai abaixo de 70 mg/dL, o que fazer na hora e quais exames investigam a causa.",
+    ogImage: "https://totalquality.med.br/images/blog/hipoglicemia-sintomas-e-exames.webp",
+    canonical: "https://totalquality.med.br/blog/hipoglicemia-sintomas-e-exames",
+    priority: 0.7,
+    changefreq: "monthly",
+  },
+
   "resultado-de-exames-online-seguranca": {
     title: "Resultado de Exames Online: Acesso Seguro e LGPD",
     description: "Como acessar seu resultado de exames online com segurança, quem pode recebê-lo e o que a LGPD garante sobre o seu dado sensível de saúde.",

@@ -51,6 +51,7 @@ original.
 | `eletrocardiograma-o-que-e-como-e-feito` | `photo-1724395261682-c8b152dc5b9b` | traçado de eletrocardiograma em papel |
 | `mapa-ou-holter-diferenca` | `photo-1631815584191-0ed1723f0ead` | aferição de pressão arterial no braço |
 | `aso-exames-ocupacionais` | `photo-1700727448686-b314cb5f9948` | linha de produção com trabalhadores |
+| `hipoglicemia-sintomas-e-exames` | `photo-1683727186226-910f31a9da45` | glicosímetro, tira e gota de sangue na ponta do dedo |
 
 ## O que foi descartado, e por quê
 
@@ -67,6 +68,9 @@ concreto. Fica registrado para ninguém repetir a escolha.
 | Técnico em uniforme camuflado na tomografia | uniforme militar destoa de clínica privada |
 | Celular com app de mensagem e planilha | marca de produto visível e nada a ver com resultado de exame |
 | Cartela Pantone sobre provas de impressão | assunto completamente alheio |
+| Kit de glicosímetro sobre fundo branco | o visor marca `5.6 mmol/L`; o Brasil usa **mg/dL**, e num artigo que fixa o limite em 70 mg/dL o número vira contradição aparente |
+| Mãos idosas medindo glicemia à mesa | boa, mas estreita o público do artigo para a terceira idade sem necessidade |
+| Prato de comida ao lado de glicosímetro | o prato repete o enquadramento já usado em `alimentacao-e-exames-laboratoriais` |
 
 ## Limite conhecido
 

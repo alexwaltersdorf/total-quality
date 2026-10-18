@@ -1304,3 +1304,141 @@ describe("GUARD-RAIL: campanha Outubro Rosa (out/2026)", () => {
     }
   });
 });
+describe("GUARD-RAIL: artigo de hipoglicemia, conteudo de terceiro (out/2026)", () => {
+  // O artigo de hipoglicemia chegou em 18/10/2026 como HTML gerado por um
+  // servico externo (airticles.ai). O texto original trazia tres problemas que
+  // NAO podem voltar, e e para isso que estas travas existem:
+  //
+  //   1. Uma TABELA COMPARATIVA posicionando a Total Quality acima de
+  //      "monitoramento domiciliar" e "metodo ambulatorial tradicional" em
+  //      precisao, agilidade e conforto. A Resolucao CFM 2.336/2023 veda
+  //      publicidade que estabeleca comparacao ou sugira superioridade. E o
+  //      mesmo motivo que derrubou o pilar de benchmark do briefing de 09/10.
+  //   2. DESQUALIFICACAO DO GLICOSIMETRO ("sujeitos a interferencias e margem
+  //      de erro tecnica maior"). Aparelho de ponta de dedo e prescrito e e a
+  //      ferramenta certa para o monitoramento diario de quem tem diabetes.
+  //      Desencorajar o autocontrole para vender exame laboratorial e risco
+  //      clinico, nao so problema de etica publicitaria.
+  //   3. A conclusao mandava AGENDAR EXAME. O proprio texto lista convulsao,
+  //      desmaio e coma entre as manifestacoes — que sao emergencia. Artigo de
+  //      saude que descreve quadro agudo e termina em call-to-action comercial,
+  //      sem dizer para procurar urgencia, e falha de seguranca.
+  const SLUG = "hipoglicemia-sintomas-e-exames";
+
+  const artigo = () => {
+    const fs = require("node:fs") as typeof import("node:fs");
+    const nodePath = require("node:path") as typeof import("node:path");
+    return JSON.parse(
+      fs.readFileSync(
+        nodePath.join(process.cwd(), "client/src/content/blog", `${SLUG}.json`),
+        "utf-8"
+      )
+    ) as { title: string; content: string[] };
+  };
+
+  const corpo = () => artigo().content.join("\n");
+
+  it("a rota existe e o pre-render responde", () => {
+    const slugs = getKnownBlogSlugs();
+    expect(
+      Array.from(slugs),
+      "rota do artigo nao registrada em routes-metadata"
+    ).toContain(SLUG);
+    expect(resolveHttpStatus(`/blog/${SLUG}`, slugs)).toBe(200);
+  });
+
+  it("nenhuma comparacao com outro meio de diagnostico ou de atendimento", () => {
+    // Cobra o PADRAO da peca reprovada: coluna/linha de tabela que confronta a
+    // clinica com uma alternativa. Nao basta proibir as palavras soltas.
+    const vedado = [
+      /monitoramento\s+domiciliar/i,
+      /m[eé]todo\s+ambulatorial/i,
+      /ambulatorial\s+tradicional/i,
+      /margem\s+de\s+erro\s+(t[eé]cnica\s+)?maior/i,
+      /sujeit[oa]s?\s+a\s+interfer[eê]ncias/i,
+      /processamento\s+manual/i,
+      /prazos\s+estendidos/i,
+    ];
+    const texto = corpo();
+    const achados = vedado.filter((r) => r.test(texto)).map(String);
+    expect(
+      achados,
+      "voltou a comparar a clinica com outro meio de diagnostico (CFM 2.336/2023)"
+    ).toEqual([]);
+  });
+
+  it("nenhum superlativo de superioridade", () => {
+    const vedado = [
+      /excel[eê]ncia/i,
+      /exemplar/i,
+      /\bo\s+melhor\b/i,
+      // "de ponta" precisa do substantivo E da ressalva: "aparelho de ponta de
+      // dedo" (glicosimetro) e termo clinico legitimo e aparece na pergunta
+      // frequente que impede a versao que desqualificava o aparelho.
+      /(tecnologia|equipamento|aparelh\w+|estrutura|infraestrutura)\s+de\s+ponta(?!\s+de\s+dedo)/i,
+      /[uú]ltima\s+gera[çc][aã]o/i,
+      /alta\s+sensibilidade/i,
+      /m[aá]xima\s+confiabilidade/i,
+      /infraestrutura\s+(t[eé]cnica\s+)?avan[çc]ada/i,
+      /destaca-se/i,
+    ];
+    const texto = corpo();
+    const achados = vedado.filter((r) => r.test(texto)).map(String);
+    expect(achados, "superlativo de superioridade no artigo (CFM 2.336/2023)").toEqual([]);
+  });
+
+  it("o glicosimetro e tratado como ferramenta legitima, nao como concorrente", () => {
+    const texto = corpo();
+    expect(
+      /glicos[ií]metro|ponta\s+de\s+dedo/i.test(texto),
+      "o artigo deixou de falar do glicosimetro — a pergunta frequente sobre ele e o que impede a versao que o desqualificava"
+    ).toBe(true);
+    expect(texto).toMatch(/ferramenta\s+certa/i);
+  });
+
+  it("a orientacao de emergencia esta no artigo, com o numero do servico", () => {
+    const texto = corpo();
+    expect(texto, "sem secao de emergencia").toMatch(/##\s*Quando\s+é\s+emerg[eê]ncia/i);
+    expect(texto, "sem o telefone do servico de emergencia").toMatch(/\bSAMU\b[^\n]*192|\b192\b/);
+    for (const sinal of [/convuls/i, /desmaio|inconsciente/i]) {
+      expect(texto, `sinal de emergencia ausente: ${sinal}`).toMatch(sinal);
+    }
+  });
+
+  it("avisa para nao dar nada pela boca a quem esta inconsciente", () => {
+    // Era a omissao mais perigosa do texto original: ele listava coma e
+    // convulsao, e nao dizia o que NAO fazer.
+    expect(corpo()).toMatch(/n[aã]o\s+ofere[çc]a[^.]*pela\s+boca|nada\s+pela\s+boca/i);
+  });
+
+  it("o fechamento manda ao medico e a urgencia, nao a um agendamento", () => {
+    const blocos = artigo().content;
+    const ultimo = blocos[blocos.length - 1];
+    expect(ultimo, "ultimo bloco nao e a ressalva medica").toMatch(
+      /n[aã]o\s+substitui\s+consulta\s+m[eé]dica/i
+    );
+    expect(ultimo, "a ressalva final nao remete a urgencia").toMatch(/urg[eê]ncia/i);
+  });
+
+  it("nenhuma imagem de dominio de terceiro", () => {
+    // O HTML de origem servia as fotos de api.airticles.ai. Imagem de CDN
+    // alheio quebra sozinha e ja foi corrigida antes no og:image (#25).
+    const bruto = JSON.stringify(artigo());
+    expect(bruto, "imagem hospedada fora do dominio proprio").not.toMatch(
+      /airticles\.ai|cloudfront\.net/i
+    );
+  });
+
+  it("nao promete resultado nem diagnostico pelo artigo", () => {
+    // "\bcura\b" e nao "cura\b": sem a fronteira da esquerda, casa com
+    // "proCURA" em "o medico procura tres coisas juntas".
+    const vedado = [
+      /garantimos/i,
+      /diagn[oó]stico\s+(garantido|imediato)/i,
+      /\bcura\b/i,
+      /sem\s+risco/i,
+    ];
+    const texto = corpo();
+    expect(vedado.filter((r) => r.test(texto)).map(String)).toEqual([]);
+  });
+});
