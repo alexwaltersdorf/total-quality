@@ -10,6 +10,8 @@ import {
   homeDescription,
   ANALISES_TITLE,
   ANALISES_DESCRIPTION,
+  CHECKUP_TITLE,
+  CHECKUP_DESCRIPTION,
 } from "@shared/const";
 import blogIndex from "../../client/src/content/blog/index.json";
 import { blogModifiedIso, isPublished, type BlogPostMeta } from "../../client/src/lib/blogMeta";
@@ -474,9 +476,9 @@ const staticRoutes: Record<string, RouteMetadata> = {
   },
 
   "/checkup": {
-    title: "Check-up Preventivo: Planos e Preços | Total Quality",
-    description: "Check-up preventivo em Caraguatatuba: planos básico, select e premium. Exames completos com resultados rápidos. Agende agora.",
-    keywords: "check-up, check-up preventivo, exames preventivos, Caraguatatuba",
+    title: CHECKUP_TITLE,
+    description: CHECKUP_DESCRIPTION,
+    keywords: "check-up completo Caraguatatuba, check-up, check-up preventivo, exames preventivos, Caraguatatuba",
     ogTitle: "Check-up Preventivo | Total Quality",
     ogDescription: "Planos de check-up preventivo com exames completos para sua saúde.",
     canonical: "https://totalquality.med.br/checkup",

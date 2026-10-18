@@ -18,6 +18,8 @@ export const EXAM_BLOG_LINKS: Record<string, string[]> = {
     "hemoglobina-glicada-exame",
     "glicemia-de-jejum-exame",
     "exame-tsh-t4-livre-tireoide",
+    "exame-de-colesterol-lipidograma",
+    "exames-diagnostico-diabetes",
     "alimentacao-e-exames-laboratoriais",
     "coleta-domiciliar-exames-caraguatatuba",
   ],
@@ -26,11 +28,11 @@ export const EXAM_BLOG_LINKS: Record<string, string[]> = {
   "exame-admissional": ["aso-exames-ocupacionais", "exame-toxicologico-cnh"],
   "tomografia-computadorizada": ["tomografia-computadorizada-como-funciona", "diferenca-raio-x-tomografia"],
   "raio-x": ["diferenca-raio-x-tomografia"],
-  ultrassonografia: ["diferenca-ultrassom-comum-doppler", "mamografia-ultrassom-mamas-diferencas"],
+  ultrassonografia: ["ultrassom-transvaginal-preparo", "diferenca-ultrassom-comum-doppler", "mamografia-ultrassom-mamas-diferencas"],
   mamografia: ["mamografia-ultrassom-mamas-diferencas"],
-  mapa: ["mapa-ou-holter-diferenca"],
-  holter: ["mapa-ou-holter-diferenca"],
-  eletrocardiograma: ["eletrocardiograma-o-que-e-como-e-feito"],
+  mapa: ["exames-diagnostico-hipertensao", "mapa-ou-holter-diferenca"],
+  holter: ["mapa-ou-holter-diferenca", "exames-diagnostico-infarto"],
+  eletrocardiograma: ["eletrocardiograma-o-que-e-como-e-feito", "exames-diagnostico-infarto"],
 };
 
 /**
@@ -45,6 +47,8 @@ export const EXAMES_DE_SANGUE_LISTA: { nome: string; href?: string; blog?: strin
   { nome: "Curva glicêmica (TOTG)", blog: "curva-glicemica-teste-tolerancia-glicose" },
   { nome: "TSH e T4 livre (tireoide)", blog: "exame-tsh-t4-livre-tireoide" },
   { nome: "Beta HCG", blog: "beta-hcg-exame-de-gravidez" },
+  { nome: "Colesterol e triglicerídeos (lipidograma)", blog: "exame-de-colesterol-lipidograma" },
+  { nome: "Lipoproteína(a) e apolipoproteína B", blog: "lipoproteina-a-apolipoproteina-b" },
   { nome: "Vitamina D", blog: "vitamina-d-importancia-saude" },
 ];
 

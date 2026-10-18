@@ -63,3 +63,12 @@ export const ANALISES_DESCRIPTION =
 
 /** Os únicos convênios atendidos (decisão de 05/09/2026). Fora deles, particular. */
 export const CONVENIOS_TEXTO = "Cartão de Todos, Solumedi e Leader";
+
+/*
+ * /checkup — fonte unica do <title> e da description (prerender e React).
+ * Antes o servidor dizia "Planos e Preços" e o React "Check-Up Preventivo",
+ * e os dois prometiam "resultados rápidos" e "Agende agora!". Palavra-chave
+ * "check-up completo Caraguatatuba" (pedido do Alex, 18/10/2026).
+ */
+export const CHECKUP_TITLE = "Check-up Completo em Caraguatatuba | Total Quality";
+export const CHECKUP_DESCRIPTION = "Check-up em Caraguatatuba com planos Básico, Select e Premium: exames de sangue, cardiológicos e de imagem por faixa etária. Dúvidas pelo WhatsApp.";

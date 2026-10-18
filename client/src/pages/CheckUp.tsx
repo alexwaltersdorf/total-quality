@@ -11,6 +11,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
+import { CHECKUP_TITLE, CHECKUP_DESCRIPTION } from "@shared/const";
 import { useSchemaBreadcrumb } from "@/hooks/useSchemaLocalBusiness";
 
 const HERO_IMG = "/images/recepcao-1024.webp";
@@ -111,11 +112,11 @@ export default function CheckUp() {
   useEffect(() => {
     window.scrollTo(0, 0);
     // SEO: Título otimizado 30-60 caracteres (46 chars)
-    document.title = "Check-Up Preventivo em Caraguatatuba";
+    document.title = CHECKUP_TITLE;
   }, []);
 
   // SEO: Meta description e canonical (155 caracteres - ideal: 150-160)
-  useMetaDescription("Check-up preventivo em Caraguatatuba com hemograma, colesterol, tomografia e eletrocardiograma. Pacotes Básico, Select e Premium. Agende agora!");
+  useMetaDescription(CHECKUP_DESCRIPTION);
   useCanonical("/checkup");
 
   // SEO: Schema.org LocalBusiness para melhorar visibilidade local
@@ -133,9 +134,12 @@ export default function CheckUp() {
    */
 
   // SEO: Breadcrumb para navegação estruturada
+  // O breadcrumb apontava para o dominio de rascunho do Manus
+  // (subdominio .manus): o Google lia o check-up como pagina
+  // de outro site. Agora, o dominio canonico.
   useSchemaBreadcrumb([
-    { name: "Home", url: "https://totalqualmed-jl54vver.manus.space" },
-    { name: "Check-Up Preventivo", url: "https://totalqualmed-jl54vver.manus.space/checkup" },
+    { name: "Início", url: "https://totalquality.med.br/" },
+    { name: "Check-up", url: "https://totalquality.med.br/checkup" },
   ]);
 
   useEffect(() => {

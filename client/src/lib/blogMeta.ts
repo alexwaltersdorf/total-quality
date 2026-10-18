@@ -41,6 +41,12 @@ export interface BlogPostMeta {
   examName?: string;
   /** exam_type do evento whatsapp_click (chave de LEAD_VALUES). */
   examType?: string;
+  /**
+   * true quando o exame do artigo e feito com hora marcada (imagem, MAPA,
+   * coleta ginecologica). Muda o texto do quadro de contato: a coleta
+   * laboratorial e sem agendamento; esses exames, nao.
+   */
+  horaMarcada?: boolean;
   /** Tres slugs escolhidos a mao para "Artigos relacionados". */
   related?: string[];
   /** <title> da pagina, quando diferente do H1. Fonte: routes-metadata.ts. */
@@ -56,6 +62,19 @@ export const CTA_MARKER = "[[cta]]";
 
 /** Artigos com mais palavras que isto ganham sumario com ancoras dos H2. */
 export const TOC_MIN_WORDS = 1000;
+
+/** Texto do quadro de contato — o mesmo no ExamCTA.tsx e no prerender. */
+export function textoContato(horaMarcada?: boolean): string[] {
+  return horaMarcada
+    ? [
+        "Na unidade da Rua Padre Anchieta, 1010 – Centro, este exame é feito com hora marcada pelo WhatsApp (12) 3887-3535, de segunda a sexta, das 7h30 às 18h. Traga o pedido médico e um documento com foto.",
+        "A coleta de exames laboratoriais do mesmo pedido é sem agendamento, por ordem de chegada. Dúvidas de preparo e convênio também pelo WhatsApp.",
+      ]
+    : [
+        "Na unidade da Rua Padre Anchieta, 1010 – Centro, a coleta de exames laboratoriais é sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Traga o pedido médico e um documento com foto.",
+        "Também fazemos coleta domiciliar: área atendida, horário e valor são confirmados pelo WhatsApp (12) 3887-3535, que também tira dúvidas de preparo e convênio.",
+      ];
+}
 
 /** Aviso padrao do fim de todo artigo. */
 export const AVISO_INFORMATIVO = "Conteúdo informativo. Não substitui consulta médica.";

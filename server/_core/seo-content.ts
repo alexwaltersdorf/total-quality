@@ -31,6 +31,7 @@ import {
   parseBlogDate,
   relatedPosts,
   tableOfContents,
+  textoContato,
   type BlogPost as BlogPostFull,
   type BlogPostMeta,
 } from "../../client/src/lib/blogMeta";
@@ -558,7 +559,7 @@ const privacidadeHtml = `
 
 const checkupHtml = `
     <h1>Check-up Preventivo em Caraguatatuba</h1>
-    <p>O check-up preventivo da Total Quality reúne exames laboratoriais, cardiológicos e de imagem em pacotes por faixa etária — Básico, Select e Premium — realizados em um só lugar, no Centro de Caraguatatuba, com resultados rápidos e orientação da nossa equipe.</p>
+    <p>O check-up preventivo da Total Quality reúne exames laboratoriais, cardiológicos e de imagem em pacotes por faixa etária — Básico, Select e Premium — realizados em um só lugar, no Centro de Caraguatatuba, com resultados online e orientação da nossa equipe. É o check-up completo para cada fase da vida, montado a partir do pedido do seu médico.</p>
     <h2>O que os pacotes incluem</h2>
     <ul>
       <li>Exames de sangue: hemograma completo, glicemia, perfil lipídico (colesterol e triglicerídeos), função renal e hepática</li>
@@ -722,16 +723,17 @@ function renderBlogBodyHtml(content: string[], currentPath: string, ctaHtml = ""
  * laboratorial e sem agendamento (decisao de 01/08/2026); o WhatsApp tira
  * duvidas e combina a coleta domiciliar.
  */
-function examCtaHtml(examName: string): string {
+function examCtaHtml(examName: string, horaMarcada?: boolean): string {
   const titulo =
     examName === "coleta domiciliar"
       ? "Coleta domiciliar em Caraguatatuba"
       : `${examName[0].toUpperCase()}${examName.slice(1)} na Total Quality`;
+  const [p1, p2] = textoContato(horaMarcada);
   return `
     <aside>
       <p><strong>${escapeHtml(titulo)}</strong></p>
-      <p>Na unidade da Rua Padre Anchieta, 1010 – Centro, a coleta de exames laboratoriais é sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Traga o pedido médico e um documento com foto.</p>
-      <p>Também fazemos coleta domiciliar: área atendida, horário e valor são confirmados pelo <a href="${NAP.whatsappHref}" target="_blank" rel="noopener noreferrer">WhatsApp (12) 3887-3535</a>, que também tira dúvidas de preparo e convênio.</p>
+      <p>${escapeHtml(p1)}</p>
+      <p>${escapeHtml(p2)} <a href="${NAP.whatsappHref}" target="_blank" rel="noopener noreferrer">Falar pelo WhatsApp</a></p>
     </aside>`;
 }
 
@@ -752,7 +754,7 @@ function blogFooterHtml(post: BlogPost): string {
 
 function renderBlogHtml(post: BlogPost): string {
   const currentPath = `/blog/${post.slug}`;
-  const cta = post.examName ? examCtaHtml(post.examName) : "";
+  const cta = post.examName ? examCtaHtml(post.examName, post.horaMarcada) : "";
   const bodyHtml = renderBlogBodyHtml(post.content, currentPath, cta);
   const toc = tableOfContents(post.content);
   const tocHtml = toc.length

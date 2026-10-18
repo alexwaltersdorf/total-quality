@@ -15,15 +15,18 @@
 import { ArrowUpRight } from "lucide-react";
 import { trackWhatsAppConversion } from "@/lib/tracking";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import { textoContato } from "@/lib/blogMeta";
 
 type Props = {
   examName: string;
   examType?: string;
   /** "meio" ou "fim": vira o event_label, para comparar as duas posicoes. */
   posicao: "meio" | "fim";
+  /** Exame com hora marcada (imagem, MAPA, coleta ginecologica). */
+  horaMarcada?: boolean;
 };
 
-export default function ExamCTA({ examName, examType, posicao }: Props) {
+export default function ExamCTA({ examName, examType, posicao, horaMarcada }: Props) {
   const openWhatsApp = useWhatsAppRedirect();
   const domiciliar = examName === "coleta domiciliar";
   const label = `artigo_cta_${posicao}`;
@@ -35,15 +38,11 @@ export default function ExamCTA({ examName, examType, posicao }: Props) {
       <p className="heading-display text-2xl md:text-3xl text-text mb-3">
         {domiciliar ? "Coleta domiciliar em Caraguatatuba" : `${examName[0].toUpperCase()}${examName.slice(1)} na Total Quality`}
       </p>
-      <p className="text-text-light text-sm leading-relaxed mb-2">
-        Na unidade da Rua Padre Anchieta, 1010 – Centro, a coleta de exames laboratoriais é sem
-        agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Traga o pedido
-        médico e um documento com foto.
-      </p>
-      <p className="text-text-light text-sm leading-relaxed mb-6">
-        Também fazemos coleta domiciliar: área atendida, horário e valor são confirmados pelo
-        WhatsApp (12) 3887-3535, que também tira dúvidas de preparo e convênio.
-      </p>
+      {textoContato(horaMarcada).map((t, i) => (
+        <p key={i} className={`text-text-light text-sm leading-relaxed ${i === 0 ? "mb-2" : "mb-6"}`}>
+          {t}
+        </p>
+      ))}
       <button
         type="button"
         onClick={() => {

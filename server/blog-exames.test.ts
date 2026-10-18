@@ -48,6 +48,16 @@ const ARTIGOS_DE_EXAME = [
   "glicemia-de-jejum-exame",
   "coleta-domiciliar-exames-caraguatatuba",
   "exames-laboratoriais-tipos-e-preparo",
+  // Segunda rodada (18/10/2026): palavras-chave pedidas pelo Alex.
+  "laboratorio-jardim-primavera-caraguatatuba",
+  "papanicolau-exame-preventivo",
+  "ultrassom-transvaginal-preparo",
+  "exame-de-colesterol-lipidograma",
+  "lipoproteina-a-apolipoproteina-b",
+  "exames-diagnostico-infarto",
+  "exames-diagnostico-avc",
+  "exames-diagnostico-hipertensao",
+  "exames-diagnostico-diabetes",
 ];
 
 const rascunhos = index.filter((p) => !isPublished(p));
@@ -210,7 +220,7 @@ describe("GUARD-RAIL: artigos de exame laboratorial (out/2026)", () => {
     expect(html.match(/<h1>/g)).toHaveLength(1);
     expect(html).not.toContain(CTA_MARKER);
     // Os dois quadros de contato: no meio (marcador) e no fim.
-    expect(html.match(/Na unidade da Rua Padre Anchieta, 1010 – Centro, a coleta/g)!.length).toBe(2);
+    expect(html.match(/Na unidade da Rua Padre Anchieta, 1010 – Centro,/g)!.length).toBe(2);
     expect(html).toContain("Conteúdo informativo. Não substitui consulta médica.");
     expect(html).toMatch(/Registro\s*970616/);
     expect(html).toContain("Alex Waltersdorf - 267.339");
@@ -232,10 +242,29 @@ describe("GUARD-RAIL: artigos de exame laboratorial (out/2026)", () => {
     for (const a of ancoras) expect(html).toContain(`<h2 id="${a}">`);
   });
 
-  it("o guia linka todos os artigos de exame", () => {
+  it("o guia linka todos os artigos de exame da primeira rodada", () => {
     const corpo = load("exames-laboratoriais-tipos-e-preparo").content.join("\n");
-    for (const slug of ARTIGOS_DE_EXAME.filter((s) => s !== "exames-laboratoriais-tipos-e-preparo")) {
+    for (const slug of ARTIGOS_DE_EXAME.slice(0, 7)) {
       expect(corpo, slug).toContain(`/blog/${slug})`);
+    }
+  });
+
+  it("infarto e AVC abrem pela emergência: SAMU 192, e laboratório não é o lugar", () => {
+    // Teste dos dois leitores (skill de compliance): quem tem sintoma agora
+    // precisa ler isto antes de qualquer exame.
+    for (const slug of ["exames-diagnostico-infarto", "exames-diagnostico-avc"]) {
+      const abertura = load(slug).content[0];
+      expect(abertura, slug).toMatch(/SAMU 192/);
+      expect(abertura, slug).toMatch(/pronto-socorro/);
+    }
+  });
+
+  it("exame com hora marcada nunca diz que é sem agendamento", () => {
+    for (const slug of ARTIGOS_DE_EXAME) {
+      const p = load(slug);
+      if (!p.horaMarcada) continue;
+      const local = p.content.join("\n");
+      expect(local, slug).toMatch(/hora marcada|horário (marcado|combinado)|marque/i);
     }
   });
 
@@ -273,5 +302,27 @@ describe("GUARD-RAIL: sitemap e meta tags dos artigos (out/2026)", () => {
     const meta = getRouteMetadata("/blog/hemograma-completo-o-que-avalia")!;
     expect(injectMetaTags(HTML_BASE, meta)).toContain('<meta property="og:type" content="article"');
     expect(injectMetaTags(HTML_BASE, meta)).toContain('<meta name="robots" content="index, follow"');
+  });
+});
+
+describe("GUARD-RAIL: check-up completo em Caraguatatuba (out/2026)", () => {
+  it("title e description do /checkup vêm da fonte única, sem promessa", async () => {
+    const { CHECKUP_TITLE, CHECKUP_DESCRIPTION } = await import("@shared/const");
+    const meta = getRouteMetadata("/checkup")!;
+    expect(meta.title).toBe(CHECKUP_TITLE);
+    expect(meta.title).toMatch(/Check-up Completo em Caraguatatuba/);
+    expect(meta.description).toBe(CHECKUP_DESCRIPTION);
+    expect(`${meta.title} ${meta.description} ${getSeoContentForPath("/checkup")}`).not.toMatch(
+      /resultados? r[áa]pidos?|agende agora/i
+    );
+  });
+
+  it("nenhum schema do cliente aponta para domínio de rascunho", () => {
+    const base = nodePath.resolve(import.meta.dirname, "../client/src");
+    const achados = fs
+      .readdirSync(base, { recursive: true, encoding: "utf-8" })
+      .filter((f) => /\.tsx?$/.test(f))
+      .filter((f) => fs.readFileSync(nodePath.join(base, f), "utf-8").includes("manus.space"));
+    expect(achados).toEqual([]);
   });
 });
