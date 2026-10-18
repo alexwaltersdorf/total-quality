@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
+  ARTIGO_PARA_EXAME,
   CONVENIOS,
   getSeoContentForPath,
   injectSeoContent,
   resolveHttpStatus,
 } from "./_core/seo-content";
 import { CONVENIOS as CONVENIOS_CLIENT } from "@/lib/conveniosData";
-import { getAllRoutes, getKnownBlogSlugs } from "./_core/routes-metadata";
+import { getAllRoutes, getKnownBlogSlugs, injectMetaTags } from "./_core/routes-metadata";
 import { getLegacyRedirect, isGone } from "./_core/legacy-redirects";
 import { anosDeAtuacao } from "@shared/const";
 
@@ -232,6 +233,48 @@ describe("GUARD-RAIL: horario oficial unico (nao remover)", () => {
     expect(indexHtml).not.toContain("trysoro");
     expect(indexHtml).toContain('og:image" content="https://totalquality.med.br/images/');
     expect(indexHtml).toContain('"image": ["https://totalquality.med.br/images/');
+  });
+
+  it("todo artigo mapeado leva a pagina comercial do exame", async () => {
+    // Auditoria out/2026: /blog/eletrocardiograma-o-que-e-como-e-feito fez
+    // 25.880 impressoes e 15 cliques em 28 dias, e /blog/hemograma-completo-o-
+    // que-avalia 13.189 e 16 — posicao ~8,9 em consultas informacionais de
+    // alcance nacional. O CTA do artigo era generico e nao levava a pagina do
+    // exame, entao a demanda que chegava nao tinha destino comercial.
+    const examesData = (await import("@/lib/examesData")).examesData;
+    const slugsDeExame = new Set(examesData.map((e) => e.slug));
+    const blogIndex = (await import("../client/src/content/blog/index.json")).default;
+    const slugsDeBlog = new Set(blogIndex.map((b) => b.slug));
+
+    for (const [slugArtigo, destino] of Object.entries(ARTIGO_PARA_EXAME)) {
+      expect(slugsDeBlog.has(slugArtigo), `artigo ${slugArtigo} nao existe`).toBe(true);
+      expect(slugsDeExame.has(destino.slug), `exame ${destino.slug} nao existe`).toBe(true);
+
+      const html = getSeoContentForPath(`/blog/${slugArtigo}`);
+      expect(html, slugArtigo).toBeTruthy();
+      expect(html, slugArtigo).toContain(`href="/exames/${destino.slug}"`);
+      expect(html, slugArtigo).toContain("em Caraguatatuba");
+    }
+  });
+
+  it("nenhuma rota injeta og:image de CDN de terceiro", () => {
+    // Auditoria out/2026: o teste acima lia so o client/index.html, que estava
+    // correto desde agosto. O PNG do CloudFront sobrevivia em routes-metadata,
+    // no ogImage da home, e injectMetaTags sobrescrevia a tag certa em tempo de
+    // requisicao — por isso a producao servia o PNG de 5,7 MB enquanto o HTML
+    // de origem declarava o WebP. Verificar o HTML INJETADO, nao o de origem.
+    for (const metadata of getAllRoutes()) {
+      if (!metadata.ogImage) continue;
+      expect(metadata.ogImage, metadata.canonical).not.toContain("cloudfront.net");
+      expect(metadata.ogImage, metadata.canonical).toMatch(
+        /^https:\/\/totalquality\.med\.br\/images\//
+      );
+      const injected = injectMetaTags(
+        '<meta property="og:image" content="PLACEHOLDER" />',
+        metadata
+      );
+      expect(injected, metadata.canonical).not.toContain("cloudfront.net");
+    }
   });
 });
 
