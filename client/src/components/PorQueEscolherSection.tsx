@@ -18,7 +18,7 @@ const diferenciais = [
   {
     icon: Award,
     title: `Mais de ${anosDeAtuacao()} Anos de Experiência`,
-    text: "Desde 2003, a Total Quality é referência em medicina diagnóstica no litoral norte paulista, com parceria acadêmica com a UNITAU e equipe médica altamente qualificada.",
+    text: "Desde 2003 no Litoral Norte paulista, com parceria acadêmica com a UNITAU e laudos assinados por médicos.",
   },
   {
     icon: Users,
@@ -27,8 +27,8 @@ const diferenciais = [
   },
   {
     icon: Clock,
-    title: "Resultados Rápidos e Online",
-    text: "Os resultados dos exames laboratoriais ficam disponíveis online em até 24 horas para a maioria dos exames de sangue. Acesse de qualquer lugar, a qualquer hora.",
+    title: "Resultados Online",
+    text: "Os resultados ficam disponíveis online, com acesso seguro, de qualquer lugar. O prazo de cada exame é informado no momento da coleta.",
   },
 ];
 
@@ -45,19 +45,19 @@ export default function PorQueEscolherSection() {
         {/* Header */}
         <div className="grid lg:grid-cols-12 gap-12 mb-16">
           <div className="lg:col-span-5">
-            <span className="section-label mb-4 block">Laboratório Caraguatatuba</span>
-            <h2 className="reveal heading-display text-3xl lg:text-4xl xl:text-5xl text-text">
-              POR QUE ESCOLHER A TOTAL QUALITY COMO SEU{" "}
-              <span className="text-brand">LABORATÓRIO EM CARAGUATATUBA?</span>
+            <span className="section-label mb-4 block">Laboratório em Caraguatatuba</span>
+            {/* Titulo curto: a Bebas so funciona em poucas palavras; o termo
+                "laboratorio em Caraguatatuba" foi para a chamada acima. */}
+            <h2 className="reveal heading-display text-4xl lg:text-5xl xl:text-6xl text-text">
+              Por que a <span className="text-brand">Total Quality</span>
             </h2>
           </div>
           <div className="lg:col-span-7 flex items-end">
             <p className="reveal text-text-light text-lg leading-relaxed">
-              A Total Quality é referência em laboratório de análises clínicas em Caraguatatuba - SP desde 2003.
-              Com mais de {anosDeAtuacao()} anos de experiência e mais de 30.000 famílias atendidas, oferecemos a maior
-              estrutura de medicina diagnóstica do litoral norte paulista. Nosso laboratório em Caraguatatuba
-              realiza mais de 3.000 tipos de exames laboratoriais e diagnósticos por imagem, com resultados
-              precisos, rápidos e disponíveis online.
+              A Total Quality é laboratório de análises clínicas e clínica de diagnóstico em Caraguatatuba - SP
+              desde 2003. São mais de {anosDeAtuacao()} anos e mais de 30.000 famílias atendidas. No mesmo endereço,
+              no Centro, o nosso laboratório em Caraguatatuba realiza mais de 3.000 tipos de exames laboratoriais
+              e de imagem, com coleta sem agendamento e resultados disponíveis online.
             </p>
           </div>
         </div>
@@ -88,7 +88,7 @@ export default function PorQueEscolherSection() {
               hemograma completo, glicemia em jejum, colesterol total e frações, triglicerídeos, TSH, T4 livre,
               PSA total e livre, vitamina D, hemoglobina glicada, ureia, creatinina, TGO, TGP, ácido úrico,
               hormônios e marcadores tumorais. Todos os exames laboratoriais em Caraguatatuba - SP são realizados
-              com equipamentos automatizados que garantem precisão e confiabilidade nos resultados.
+              com equipamentos automatizados.
             </p>
             <p className="reveal text-text-light leading-relaxed">
               Além dos exames de sangue, realizamos exames de urina, exames de fezes (parasitológico),

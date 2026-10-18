@@ -247,34 +247,57 @@
     background-color: oklch(0.42 0.14 18);
   }
 
-  /* Optik-style pill button — dark text on light bg */
-  .btn-pill {
+  /* Botoes (auditoria de design, 18/10/2026): UM principal, sempre vinho, em
+     todo o site — antes o principal era grafite numas paginas e vinho noutras,
+     e o visitante tinha de reaprender onde clicar. O secundario e sempre o
+     contorno. .btn-pill-brand fica como sinonimo, para nao quebrar quem ja usa. */
+  .btn-pill,
+  .btn-pill-brand,
+  .btn-pill-outline {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
+    min-height: 44px;
     padding: 0.75rem 1.75rem;
-    background-color: oklch(0.42 0 0);
-    color: oklch(0.99 0 0);
     font-size: 0.8rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     border-radius: 9999px;
-    transition: all 0.3s ease;
-    border: none;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
     cursor: pointer;
   }
-  .btn-pill:hover {
-    background-color: oklch(0.42 0.14 18);
-    color: white;
-  }
+  .btn-pill,
   .btn-pill-brand {
     background-color: oklch(0.42 0.14 18);
     color: white;
+    border: 1px solid transparent;
   }
+  .btn-pill:hover,
   .btn-pill-brand:hover {
-    background-color: oklch(0.35 0.12 18);
+    background-color: oklch(0.37 0.13 18);
     color: white;
+  }
+  .btn-pill:active,
+  .btn-pill-brand:active {
+    background-color: oklch(0.33 0.12 18);
+    transform: translateY(1px);
+  }
+  .btn-pill-outline {
+    background-color: transparent;
+    color: oklch(0.32 0 0);
+    border: 1px solid oklch(0.32 0 0 / 0.2);
+  }
+  .btn-pill-outline:hover {
+    border-color: oklch(0.32 0 0 / 0.45);
+    background-color: oklch(0.32 0 0 / 0.04);
+  }
+  .btn-pill:focus-visible,
+  .btn-pill-brand:focus-visible,
+  .btn-pill-outline:focus-visible {
+    outline: 2px solid oklch(0.42 0.14 18 / 0.45);
+    outline-offset: 3px;
   }
 
   /* Optik-style outline number */
@@ -292,10 +315,12 @@
   }
 
   /* Animate on scroll */
+  /* Entrada curta (0,35 s, 8 px): com 0,8 s e 30 px o conteudo ainda estava
+     a meio caminho 700 ms depois da rolagem e parecia "carregando". */
   .reveal {
     opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(8px);
+    transition: opacity 0.35s ease-out, transform 0.35s ease-out;
   }
   .reveal.visible {
     opacity: 1;
@@ -303,8 +328,8 @@
   }
   .reveal-left {
     opacity: 0;
-    transform: translateX(-40px);
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateX(-8px);
+    transition: opacity 0.35s ease-out, transform 0.35s ease-out;
   }
   .reveal-left.visible {
     opacity: 1;
@@ -312,8 +337,8 @@
   }
   .reveal-right {
     opacity: 0;
-    transform: translateX(40px);
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateX(8px);
+    transition: opacity 0.35s ease-out, transform 0.35s ease-out;
   }
   .reveal-right.visible {
     opacity: 1;

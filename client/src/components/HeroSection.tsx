@@ -9,17 +9,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
 import { trackScheduleExam } from "@/lib/tracking";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
-import { HOME_H1 } from "@shared/const";
-
-
-const marqueeItems = [
-  "TOMOGRAFIA", "EXAMES DE SANGUE", "HEMOGRAMA",
-  "ULTRASSONOGRAFIA", "GLICEMIA", "RAIO-X", "COLESTEROL",
-  "ELETROCARDIOGRAMA", "BIOIMPEDÂNCIA", "CHECK-UP",
-  "DIAGNÓSTICO POR IMAGEM", "LABORATÓRIO", "HORMÔNIOS",
-  "ESPIROMETRIA", "HOLTER", "MAPA", "VITAMINA D", "PSA",
-  "ANÁLISES CLÍNICAS", "ELETROENCEFALOGRAMA", "CREATININA",
-];
+import { HOME_H1, anosDeAtuacao } from "@shared/const";
 
 export default function HeroSection() {
   const openWhatsApp = useWhatsAppRedirect();
@@ -53,41 +43,24 @@ export default function HeroSection() {
             <p className="reveal text-lg text-text-light leading-relaxed max-w-md mb-10" style={{ transitionDelay: "200ms" }}>
               {/* Links discretos: sublinhado suave em vez da cor da marca, para nao
                   poluir o hero. Continuam sendo <a href> rastreaveis. */}
-              Desde 2003, mais de 30.000 famílias confiam no nosso{" "}
-              <Link href="/laboratorio-caraguatatuba" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
-                laboratório de análises clínicas
+              {/* Auditoria de design (18/10/2026): eram 7 links sublinhados num
+                  paragrafo so, competindo com o botao. Ficam dois; a lista de
+                  exames vive na secao de exames, logo abaixo. */}
+              Desde 2003 em Caraguatatuba, com mais de 30.000 famílias atendidas.{" "}
+              <Link href="/exames/exames-de-sangue" className="underline decoration-brand/40 underline-offset-4 hover:text-brand transition-colors">
+                Exames de sangue
               </Link>{" "}
-              e clínica de medicina diagnóstica em Caraguatatuba. Realizamos{" "}
-              <Link href="/exames/exames-de-sangue" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
-                exames de sangue
-              </Link>
-              ,{" "}
-              <Link href="/exames/hemograma" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
-                hemograma
-              </Link>
-              , glicemia, colesterol, hormônios,{" "}
-              <Link href="/exames/tomografia-computadorizada" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
-                tomografia
-              </Link>
-              ,{" "}
-              <Link href="/exames/ultrassonografia" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
-                ultrassonografia
-              </Link>
-              ,{" "}
-              <Link href="/exames/mamografia" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
-                mamografia
+              sem agendamento, por ordem de chegada, e{" "}
+              <Link href="/exames" className="underline decoration-brand/40 underline-offset-4 hover:text-brand transition-colors">
+                exames de imagem
               </Link>{" "}
-              e{" "}
-              <Link href="/checkup" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
-                check-up preventivo
-              </Link>
-              .
+              com hora marcada, no mesmo endereço.
             </p>
 
             <div className="reveal flex flex-wrap gap-4 mb-16" style={{ transitionDelay: "300ms" }}>
               <button
                 onClick={handleScheduleClick}
-                className="btn-pill-brand btn-pill"
+                className="btn-pill"
                 aria-label="Agendar exame na Total Quality via WhatsApp"
               >
                 Agendar Exame
@@ -98,7 +71,7 @@ export default function HeroSection() {
                   const el = document.querySelector("#exames");
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="btn-pill !bg-transparent !text-text border border-black/15 hover:!bg-black/5"
+                className="btn-pill-outline"
                 // O nome acessivel precisa conter o texto visivel: sem isso o
                 // Lighthouse acusa `label-content-name-mismatch` e quem usa
                 // controle por voz nao consegue dizer "clicar em Ver Exames".
@@ -112,7 +85,7 @@ export default function HeroSection() {
             {/* Stats row */}
             <div className="reveal grid grid-cols-3 gap-8" style={{ transitionDelay: "400ms" }}>
               {[
-                { value: "22+", label: "Anos de\nExperiência" },
+                { value: `${anosDeAtuacao()}+`, label: "Anos de\nExperiência" },
                 { value: "3K+", label: "Tipos de\nExames" },
                 { value: "30K+", label: "Famílias\nAtendidas" },
               ].map((stat) => (
@@ -151,21 +124,6 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Marquee strip — SEO: visible service keywords */}
-      <div className="py-4 overflow-hidden bg-surface-dark border-t border-b border-black/5" aria-label="Serviços de exames disponíveis na Total Quality">
-        <div className="animate-marquee whitespace-nowrap flex">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <span key={i} className="inline-flex items-center gap-8 mx-8">
-              {marqueeItems.map((item) => (
-                <span key={`${i}-${item}`} className="inline-flex items-center gap-8">
-                  <span className="heading-display text-2xl text-text">{item}</span>
-                  <span className="w-2 h-2 rounded-full bg-brand" />
-                </span>
-              ))}
-            </span>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }

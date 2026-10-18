@@ -216,7 +216,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
 
   "tomografia-caraguatatuba": {
     title: "Tomografia em Caraguatatuba: O que Saber | Total Quality",
-    description: "Tomografia em Caraguatatuba: indicações, preparo, como funciona e segurança. Diagnóstico preciso com tecnologia de ponta.",
+    description: "Tomografia em Caraguatatuba: indicações, preparo, como funciona e segurança do exame, com hora marcada pelo WhatsApp.",
     keywords: "tomografia, tomografia computadorizada, diagnóstico por imagem, Caraguatatuba",
     ogTitle: "Tomografia em Caraguatatuba",
     ogDescription: "Guia completo sobre tomografia: indicações, preparo e como funciona.",

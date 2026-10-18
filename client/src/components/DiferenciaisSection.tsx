@@ -22,7 +22,7 @@ const diferenciais = [
   {
     icon: Cpu,
     title: "Equipamentos digitais e laboratório automatizado",
-    description: "Equipamentos modernos de tomografia, ultrassonografia, mamografia digital e laboratório automatizado para exames de sangue e análises clínicas com diagnósticos precisos e confiáveis.",
+    description: "Equipamentos modernos de tomografia, ultrassonografia, mamografia digital e laboratório automatizado para exames de sangue e análises clínicas.",
   },
   {
     icon: Sun,
@@ -31,7 +31,7 @@ const diferenciais = [
   },
   {
     icon: Stethoscope,
-    title: "Equipe Médica Altamente Qualificada",
+    title: "Equipe médica especializada",
     description: "Profissionais especializados em cardiologia, diagnóstico por imagem, análises clínicas e exames laboratoriais dedicados ao seu bem-estar.",
   },
   {
@@ -61,8 +61,7 @@ export default function DiferenciaisSection() {
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
-            Nossos diferenciais em Medicina Diagnóstica e Laboratório de Análises Clínicas fazem toda a diferença no cuidado com sua saúde. 
-Referência em exames de sangue, diagnóstico por imagem, cardiologia e prevenção no Litoral Norte de São Paulo.
+            Exames de sangue, diagnóstico por imagem, cardiologia e prevenção no mesmo endereço, no Centro de Caraguatatuba, desde 2003.
           </p>
         </div>
 
@@ -97,7 +96,7 @@ Referência em exames de sangue, diagnóstico por imagem, cardiologia e prevenç
         <div className="reveal mt-20 flex items-center gap-4" style={{ transitionDelay: "500ms" }}>
           <div className="w-12 h-[1px] bg-brand" />
           <p className="text-sm font-medium text-text-muted uppercase tracking-wider">
-            Reconhecida como referência em exames laboratoriais, exames de sangue e medicina diagnóstica no Litoral Norte de São Paulo
+            Mais de 30.000 famílias atendidas no Litoral Norte de São Paulo
           </p>
         </div>
       </div>

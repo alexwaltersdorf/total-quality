@@ -112,7 +112,7 @@ export default function FormSubmissionSuccess() {
         <div className="space-y-3">
           <button
             onClick={openWhatsApp}
-            className="btn-pill w-full justify-center !bg-[#25D366] hover:!bg-[#1da851] !text-white"
+            className="btn-pill w-full justify-center"
           >
             <Phone className="w-4 h-4" />
             Ir para WhatsApp Agora

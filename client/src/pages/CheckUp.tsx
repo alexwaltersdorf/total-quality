@@ -162,7 +162,7 @@ export default function CheckUp() {
       <section className="pt-32 pb-16 lg:pb-24 px-4 bg-white">
         <div className="container grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="reveal-left">
-            <p className="text-sm font-semibold text-brand mb-4 tracking-wide">SAÚDE PREVENTIVA</p>
+            <span className="section-label mb-4 block">Saúde preventiva</span>
             <h1 className="heading-display text-5xl lg:text-6xl mb-6 leading-tight">
               CHECK-UP <span className="text-brand">PREVENTIVO</span>
             </h1>
@@ -172,7 +172,7 @@ export default function CheckUp() {
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => { trackScheduleCheckup("geral"); openWhatsApp("checkup_geral", "Olá! Gostaria de agendar um Check-Up."); }}
-                className="btn-pill !bg-brand !text-white hover:!bg-brand-dark"
+                className="btn-pill"
               >
                 Agendar Check-Up
                 <ArrowUpRight className="w-3.5 h-3.5" />
@@ -192,7 +192,7 @@ export default function CheckUp() {
       <section className="py-20 px-4 bg-gray-50">
         <div className="container">
           <div className="text-center mb-16 reveal">
-            <p className="text-sm font-semibold text-brand mb-4 tracking-wide">NOSSOS PACOTES</p>
+            <span className="section-label mb-4 inline-flex">Nossos pacotes</span>
             <h2 className="heading-display text-4xl lg:text-5xl mb-6">
               ESCOLHA SEU <span className="text-brand">CHECK-UP</span>
             </h2>

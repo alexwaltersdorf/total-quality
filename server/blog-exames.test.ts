@@ -326,3 +326,70 @@ describe("GUARD-RAIL: check-up completo em Caraguatatuba (out/2026)", () => {
     expect(achados).toEqual([]);
   });
 });
+
+describe("GUARD-RAIL: textos do site sem superlativo nem promessa (auditoria de design, out/2026)", () => {
+  // A auditoria de 18/10/2026 achou na HOME "a maior estrutura de medicina
+  // diagnóstica do litoral norte", "referência", "tecnologia de ponta",
+  // "resultados precisos, rápidos" e "Agende seu exame de sangue" — os
+  // guard-rails anteriores olhavam o prerender e o blog, não os componentes.
+  // CFM 2.336/2023, art. 11: comparação, autopromoção e promessa.
+  const PROIBIDO = /a maior estrutura|principal refer[êe]ncia|(?:^|\s)é refer[êe]ncia em|reconhecida como refer[êe]ncia|(?<!de )refer[êe]ncia em (exames|medicina|laborat)|tecnologia de ponta|equipamentos de ponta|alta precis[ãa]o|garantem precis|precisos, r[áa]pidos|altamente qualificad|(?<!Programa de )excel[êe]ncia|com resultados? r[áa]pidos?|agende seu exame de sangue|melhores decis/i;
+
+  it("componentes, páginas e metadados", () => {
+    const base = nodePath.resolve(import.meta.dirname, "..");
+    const pastas = ["client/src/components", "client/src/pages"].map((p) => nodePath.join(base, p));
+    const arquivos = [
+      ...pastas.flatMap((dir) =>
+        fs
+          .readdirSync(dir, { recursive: true, encoding: "utf-8" })
+          .filter((f) => f.endsWith(".tsx"))
+          .map((f) => nodePath.join(dir, f))
+      ),
+      nodePath.join(base, "client/src/lib/examesData.ts"),
+      nodePath.join(base, "server/_core/routes-metadata.ts"),
+    ];
+    const achados: string[] = [];
+    for (const arq of arquivos) {
+      fs.readFileSync(arq, "utf-8")
+        .split("\n")
+        .forEach((linha, i) => {
+          if (/^\s*(\/\/|\*|\/\*|\{\/\*)/.test(linha)) return; // comentario
+          const m = linha.match(PROIBIDO);
+          if (m) achados.push(`${nodePath.relative(base, arq)}:${i + 1}: "${m[0]}"`);
+        });
+    }
+    expect(achados, achados.join("\n")).toEqual([]);
+  });
+
+  it("o prerender de todas as rotas", () => {
+    // Artigos citam "resultado rápido" para criticar a expressão (critério de
+    // escolha de laboratório) e comparar EAS x urocultura; ali vale o texto
+    // inteiro, revisado pela skill de compliance. Promessa da clínica não.
+    for (const route of getAllRoutes()) {
+      const path = new URL(route.canonical).pathname;
+      const html = getSeoContentForPath(path) ?? "";
+      const m = html.match(PROIBIDO);
+      expect(m?.[0], path).toBeUndefined();
+    }
+  });
+});
+
+describe("GUARD-RAIL: menu e botão de resultados (out/2026)", () => {
+  const navbar = fs.readFileSync(
+    nodePath.resolve(import.meta.dirname, "../client/src/components/Navbar.tsx"),
+    "utf-8"
+  );
+  it("Resultados abre o portal de laudos, não o próprio site", () => {
+    expect(navbar).toContain('RESULTADOS_URL = "https://app.totalquality.med.br/"');
+    expect(navbar).not.toMatch(/window\.open\("https:\/\/totalquality\.med\.br"/);
+  });
+  it("menu na ordem decidida pelo Alex: Início, Sobre, Contato, Nossos Exames, Blog, Resultados, Agendar", () => {
+    const ordem = ["Início", '"Sobre"', '"Contato"', "Nossos Exames", "Blog", "Resultados", "Agendar"];
+    const desktop = navbar.slice(navbar.indexOf("{/* Desktop nav links */}"), navbar.indexOf("{/* Mobile menu button */}"));
+    const pos = ordem.map((t) => (t.startsWith('"') ? navbar.indexOf(t) : desktop.indexOf(t)));
+    expect(pos.every((p) => p >= 0), pos.join(",")).toBe(true);
+    const nav = ordem.slice(3).map((t) => desktop.indexOf(t));
+    expect([...nav].sort((a, b) => a - b)).toEqual(nav);
+    expect(desktop).not.toMatch(/Diferenciais|>\s*Exames\s*</);
+  });
+});

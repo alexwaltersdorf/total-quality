@@ -18,12 +18,12 @@ const values = [
   {
     icon: Eye,
     title: "Visão",
-    description: "Ser reconhecida como a principal referência em exames de sangue, laboratório de análises clínicas e medicina diagnóstica no Litoral Norte de São Paulo.",
+    description: "Ser a escolha de confiança das famílias do Litoral Norte de São Paulo para exames de sangue, análises clínicas e diagnóstico por imagem.",
   },
   {
     icon: Heart,
     title: "Valores",
-    description: "Ética, qualidade, inovação tecnológica, sustentabilidade e compromisso com a excelência no atendimento.",
+    description: "Ética, qualidade, inovação tecnológica, sustentabilidade e compromisso com a qualidade no atendimento.",
   },
 ];
 
@@ -68,7 +68,7 @@ export default function SobreSection() {
             <p className="text-lg text-text-light leading-relaxed mb-8">
               Fundada em 2003 em Caraguatatuba - SP, a Total Quality Medicina Diagnóstica atende o Litoral
               Norte de São Paulo no Centro da cidade. Nossa trajetória de
-              mais de {anosDeAtuacao()} anos é marcada pela excelência em{" "}
+              mais de {anosDeAtuacao()} anos é dedicada a{" "}
               <Link href="/exames/tomografia-computadorizada" className="text-brand hover:underline">
                 tomografia
               </Link>

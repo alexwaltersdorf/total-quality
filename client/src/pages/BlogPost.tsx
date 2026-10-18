@@ -141,11 +141,11 @@ export default function BlogPost() {
       {/* Breadcrumb */}
       <div className="pt-28 pb-4 border-b border-black/5">
         <div className="container flex items-center gap-2 text-xs">
-          <Link href="/" className="font-semibold uppercase tracking-[0.15em] text-text-muted hover:text-brand transition-colors">
+          <Link href="/" className="py-3 font-semibold uppercase tracking-[0.15em] text-text-muted hover:text-brand transition-colors">
             Início
           </Link>
           <span className="text-text-muted">/</span>
-          <Link href="/blog" className="font-semibold uppercase tracking-[0.15em] text-text-muted hover:text-brand transition-colors">
+          <Link href="/blog" className="py-3 font-semibold uppercase tracking-[0.15em] text-text-muted hover:text-brand transition-colors">
             Blog
           </Link>
           <span className="text-text-muted">/</span>
@@ -168,7 +168,9 @@ export default function BlogPost() {
             </span>
           </div>
 
-          <h1 className="heading-display text-5xl md:text-6xl lg:text-7xl text-text mb-6 leading-tight">
+          {/* DM Sans em caixa normal: titulo de artigo e frase inteira, e a Bebas
+              em caixa alta virava um bloco de 4 linhas dificil de ler no celular. */}
+          <h1 className="font-semibold tracking-tight text-3xl md:text-5xl text-text mb-6 leading-[1.15]">
             {post.title}
           </h1>
 
@@ -218,7 +220,7 @@ export default function BlogPost() {
               <ol className="list-decimal pl-5 space-y-1.5 text-sm">
                 {toc.map((item) => (
                   <li key={item.id}>
-                    <a href={`#${item.id}`} className="text-text hover:text-brand underline-offset-2 hover:underline">
+                    <a href={`#${item.id}`} className="inline-block py-1.5 text-text hover:text-brand underline-offset-2 hover:underline">
                       {item.text}
                     </a>
                   </li>

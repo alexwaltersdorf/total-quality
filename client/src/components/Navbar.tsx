@@ -10,19 +10,24 @@ import { Link, useLocation } from "wouter";
 import { trackNavClick, trackScheduleExam, trackResultsClick, trackWhatsAppClick } from "@/lib/tracking";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
-const navLinks = [
-  { label: "Início", href: "/" },
-  { label: "Diferenciais", href: "#diferenciais" },
-  { label: "Exames", href: "#exames" },
+/*
+ * Menu (decisao do Alex, 18/10/2026): Inicio · Sobre · Contato · Nossos Exames ·
+ * Blog · Resultados · Agendar. "Diferenciais", "Exames" (duplicava "Nossos
+ * Exames") e "Cartao" sairam do menu; o Cartao segue no rodape do dropdown de
+ * exames e na home. Cor: cinza para todos, vinho so no item da pagina atual —
+ * antes 4 itens eram vinho sem criterio e a cor deixava de significar algo.
+ */
+const RESULTADOS_URL = "https://app.totalquality.med.br/";
+
+const ancoras = [
   { label: "Sobre", href: "#sobre" },
-  { label: "Cartão", href: "/cartao" },
   { label: "Contato", href: "#contato" },
 ];
 
-const serviceLinks = [
-  { label: "Check-Up", href: "/checkup" },
+const extrasExames = [
+  { label: "Check-up", href: "/checkup" },
   { label: "Bioimpedância", href: "/bioimpedancia" },
-  { label: "Blog", href: "/blog" },
+  { label: "Cartão Total Quality", href: "/cartao" },
 ];
 
 const examSitelinks = [
@@ -67,12 +72,21 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Ancoras da home (#sobre, #contato). Fora da home o querySelector nao acha
+  // nada e o clique morria em silencio; agora leva a home na secao certa.
   const scrollTo = (href: string) => {
     setMobileOpen(false);
     trackNavClick(href.replace("#", ""));
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: "smooth" });
+    else window.location.assign("/" + href);
   };
+
+  const ativo = (href: string) => (href === "/" ? location === "/" : location.startsWith(href));
+  const itemDesktop = (on: boolean) =>
+    `relative py-2 text-xs font-semibold uppercase tracking-[0.15em] transition-colors duration-200 ${
+      on ? "text-brand after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-0.5 after:bg-brand" : "text-text-light hover:text-text"
+    }`;
 
   const handleHomeClick = (event: ReactMouseEvent<HTMLAnchorElement>) => {
     if (location === "/") {
@@ -108,7 +122,8 @@ export default function Navbar() {
   const handleResultsClick = () => {
     setMobileOpen(false);
     trackResultsClick();
-    window.open("https://totalquality.med.br", "_blank");
+    // Era "https://totalquality.med.br" — abria o proprio site, nao os laudos.
+    window.open(RESULTADOS_URL, "_blank", "noopener,noreferrer");
   };
 
   const handleDropdownEnter = () => {
@@ -152,29 +167,14 @@ export default function Navbar() {
 
         {/* Desktop nav links */}
         <div className="hidden lg:flex items-center gap-8">
-          {navLinks.map((link) => {
-            if (link.href === "/" || link.href === "/cartao") {
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-xs font-semibold uppercase tracking-[0.15em] text-brand hover:text-brand-dark transition-colors duration-300"
-                  onClick={link.href === "/" ? handleHomeClick : () => trackNavClick(link.label.toLowerCase())}
-                >
-                  {link.label}
-                </Link>
-              );
-            }
-            return (
-              <button
-                key={link.href}
-                onClick={() => scrollTo(link.href)}
-                className="text-xs font-semibold uppercase tracking-[0.15em] text-text-light hover:text-brand transition-colors duration-300"
-              >
-                {link.label}
-              </button>
-            );
-          })}
+          <Link href="/" className={itemDesktop(ativo("/"))} onClick={handleHomeClick}>
+            Início
+          </Link>
+          {ancoras.map((link) => (
+            <button key={link.href} type="button" onClick={() => scrollTo(link.href)} className={itemDesktop(false)}>
+              {link.label}
+            </button>
+          ))}
 
           {/* Exames Dropdown */}
           <div
@@ -184,8 +184,10 @@ export default function Navbar() {
             onMouseLeave={handleDropdownLeave}
           >
             <button
-              className="flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.15em] text-brand hover:text-brand-dark transition-colors duration-300"
+              type="button"
+              className={`flex items-center gap-1 ${itemDesktop(ativo("/exames") || ativo("/checkup") || ativo("/bioimpedancia") || ativo("/cartao"))}`}
               onClick={() => setExamesDropdownOpen(!examesDropdownOpen)}
+              aria-expanded={examesDropdownOpen}
             >
               Nossos Exames
               <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${examesDropdownOpen ? "rotate-180" : ""}`} />
@@ -211,49 +213,32 @@ export default function Navbar() {
                   </Link>
                 ))}
               </div>
-              <div className="border-t border-black/10 p-3">
-                <Link
-                  href="/checkup"
-                  className="block px-2 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-brand hover:text-brand-dark transition-colors"
-                  onClick={() => { setExamesDropdownOpen(false); trackNavClick("checkup"); }}
-                >
-                  Check-Up Preventivo →
-                </Link>
-                <Link
-                  href="/bioimpedancia"
-                  className="block px-2 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-brand hover:text-brand-dark transition-colors"
-                  onClick={() => { setExamesDropdownOpen(false); trackNavClick("bioimpedancia"); }}
-                >
-                  Bioimpedância →
-                </Link>
+              <div className="border-t border-black/10 py-2">
+                {extrasExames.map((x) => (
+                  <Link
+                    key={x.href}
+                    href={x.href}
+                    className="block px-5 py-2.5 text-sm font-semibold text-text hover:text-brand hover:bg-brand/5 transition-colors"
+                    onClick={() => { setExamesDropdownOpen(false); trackNavClick(x.label.toLowerCase()); }}
+                  >
+                    {x.label}
+                  </Link>
+                ))}
               </div>
             </div>
           </div>
 
-          {serviceLinks.filter(l => l.label === "Blog").map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-xs font-semibold uppercase tracking-[0.15em] text-brand hover:text-brand-dark transition-colors duration-300"
-              onClick={() => trackNavClick(link.label.toLowerCase())}
-            >
-              {link.label}
-            </Link>
-          ))}
+          <Link href="/blog" className={itemDesktop(ativo("/blog"))} onClick={() => trackNavClick("blog")}>
+            Blog
+          </Link>
+          <button type="button" onClick={handleResultsClick} className={itemDesktop(false)}>
+            Resultados
+          </button>
         </div>
 
         {/* Desktop CTA */}
-        <div className="hidden lg:flex items-center gap-4">
-          <button
-            onClick={handleResultsClick}
-            className="text-xs font-semibold uppercase tracking-[0.15em] text-text-light hover:text-brand transition-colors"
-          >
-            Resultados
-          </button>
-          <button
-            onClick={handleScheduleClick}
-            className="btn-pill"
-          >
+        <div className="hidden lg:flex items-center">
+          <button type="button" onClick={handleScheduleClick} className="btn-pill">
             Agendar
             <ArrowUpRight className="w-3.5 h-3.5" />
           </button>
@@ -278,46 +263,32 @@ export default function Navbar() {
       >
         <div className="container pt-24 pb-8">
           <div className="space-y-1">
-            {navLinks.map((link, i) => {
-              if (link.href === "/" || link.href === "/cartao") {
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block w-full text-left py-4 border-b border-black/10"
-                    onClick={link.href === "/" ? handleHomeClick : () => { setMobileOpen(false); trackNavClick(link.label.toLowerCase()); }}
-                    style={{ animationDelay: `${i * 50}ms` }}
-                  >
-                    <span className="heading-display text-4xl text-brand hover:text-brand-dark transition-colors">
-                      {link.label.toUpperCase()}
-                    </span>
-                  </Link>
-                );
-              }
-              return (
-                <button
-                  key={link.href}
-                  onClick={() => scrollTo(link.href)}
-                  className="block w-full text-left py-4 border-b border-black/10"
-                  style={{ animationDelay: `${i * 50}ms` }}
-                >
-                  <span className="heading-display text-4xl text-text hover:text-brand transition-colors">
-                    {link.label.toUpperCase()}
-                  </span>
-                </button>
-              );
-            })}
+            <Link href="/" className="block w-full text-left py-4 border-b border-black/10" onClick={handleHomeClick}>
+              <span className={`heading-display text-4xl ${ativo("/") ? "text-brand" : "text-text"}`}>INÍCIO</span>
+            </Link>
+            {ancoras.map((link) => (
+              <button
+                key={link.href}
+                type="button"
+                onClick={() => scrollTo(link.href)}
+                className="block w-full text-left py-4 border-b border-black/10"
+              >
+                <span className="heading-display text-4xl text-text">{link.label.toUpperCase()}</span>
+              </button>
+            ))}
 
             {/* Mobile Exames Accordion */}
             <div className="border-b border-black/10">
               <button
+                type="button"
                 onClick={() => setMobileExamesOpen(!mobileExamesOpen)}
                 className="flex items-center justify-between w-full text-left py-4"
+                aria-expanded={mobileExamesOpen}
               >
-                <span className="heading-display text-4xl text-brand">NOSSOS EXAMES</span>
-                <ChevronDown className={`w-6 h-6 text-brand transition-transform duration-200 ${mobileExamesOpen ? "rotate-180" : ""}`} />
+                <span className="heading-display text-4xl text-text">NOSSOS EXAMES</span>
+                <ChevronDown className={`w-6 h-6 text-text transition-transform duration-200 ${mobileExamesOpen ? "rotate-180" : ""}`} />
               </button>
-              <div className={`overflow-hidden transition-all duration-300 ${mobileExamesOpen ? "max-h-[600px] pb-4" : "max-h-0"}`}>
+              <div className={`overflow-hidden transition-all duration-300 ${mobileExamesOpen ? "max-h-[800px] pb-4" : "max-h-0"}`}>
                 <div className="pl-4 space-y-1">
                   {examSitelinks.map((exam) => (
                     <Link
@@ -329,20 +300,16 @@ export default function Navbar() {
                       {exam.label}
                     </Link>
                   ))}
-                  <Link
-                    href="/checkup"
-                    className="block py-2.5 text-lg font-semibold text-brand"
-                    onClick={() => { setMobileOpen(false); trackNavClick("checkup"); }}
-                  >
-                    Check-Up Preventivo →
-                  </Link>
-                  <Link
-                    href="/bioimpedancia"
-                    className="block py-2.5 text-lg font-semibold text-brand"
-                    onClick={() => { setMobileOpen(false); trackNavClick("bioimpedancia"); }}
-                  >
-                    Bioimpedância →
-                  </Link>
+                  {extrasExames.map((x) => (
+                    <Link
+                      key={x.href}
+                      href={x.href}
+                      className="block py-2.5 text-lg font-semibold text-text"
+                      onClick={() => { setMobileOpen(false); trackNavClick(x.label.toLowerCase()); }}
+                    >
+                      {x.label}
+                    </Link>
+                  ))}
                 </div>
               </div>
             </div>
@@ -352,22 +319,22 @@ export default function Navbar() {
               className="block w-full text-left py-4 border-b border-black/10"
               onClick={() => { setMobileOpen(false); trackNavClick("blog"); }}
             >
-              <span className="heading-display text-4xl text-brand hover:text-brand-dark transition-colors">
-                BLOG
-              </span>
+              <span className={`heading-display text-4xl ${ativo("/blog") ? "text-brand" : "text-text"}`}>BLOG</span>
             </Link>
           </div>
           <div className="mt-10 space-y-4">
             <button
+              type="button"
               onClick={handleScheduleClick}
-              className="btn-pill w-full justify-center"
+              className="btn-pill w-full"
             >
-              Agendar Exame
+              Agendar
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
             <button
+              type="button"
               onClick={handleResultsClick}
-              className="btn-pill w-full justify-center !bg-transparent !text-text border border-black/20 hover:!bg-black/5"
+              className="btn-pill-outline w-full"
             >
               Resultados Online
             </button>
@@ -377,7 +344,7 @@ export default function Navbar() {
             <p>Seg-Sex: 07h30 às 18h</p>
             <button
               type="button"
-              className="block text-left hover:text-brand"
+              className="block text-left hover:text-brand py-3"
               onClick={() => { setMobileOpen(false); abrirTelefone("mobile_menu"); }}
             >
               (12) 3887-3535

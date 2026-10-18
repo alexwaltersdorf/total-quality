@@ -46,7 +46,7 @@ const examData: Record<
     tag: "Equipamentos Digitais",
     description: (
       <>
-        Equipamentos de ponta para diagnósticos por imagem em Caraguatatuba.{" "}
+        Diagnóstico por imagem em Caraguatatuba, com hora marcada pelo WhatsApp:{" "}
         <Link href="/exames/tomografia-computadorizada" className="text-brand hover:underline">
           Tomografia computadorizada multislice
         </Link>
@@ -62,7 +62,7 @@ const examData: Record<
         <Link href="/exames/raio-x" className="text-brand hover:underline">
           raio-X digital
         </Link>{" "}
-        com alta precisão e rapidez nos resultados.
+        com laudo disponível online.
       </>
     ),
     exams: [
@@ -159,8 +159,7 @@ export default function ExamesSection() {
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
-            Oferecemos mais de 3.000 tipos de Exames Laboratoriais, Diagnósticos por Imagem e Cardiologicos em Caraguatatuba - SP. 
-Hemograma, Glicemia, Colesterol, Hormônios, Vitaminas, Tomografia Computadorizada, Ultrassonografia, Raio-x, Eletrocardiograma, Espirometria, Eletroencefalograma com tecnologia de ponta.
+            Mais de 3.000 tipos de exames laboratoriais, de imagem e cardiológicos em Caraguatatuba - SP: hemograma, glicemia, colesterol, hormônios, vitaminas, tomografia computadorizada, ultrassonografia, raio-X, eletrocardiograma, espirometria e eletroencefalograma.
           </p>
         </div>
 
@@ -246,14 +245,14 @@ Hemograma, Glicemia, Colesterol, Hormônios, Vitaminas, Tomografia Computadoriza
               </button>
               <Link
                 href="/checkup"
-                className="btn-pill !bg-transparent !text-text border border-black/15 hover:!bg-black/5"
+                className="btn-pill-outline"
               >
                 Check-Up
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </Link>
               <Link
                 href="/bioimpedancia"
-                className="btn-pill !bg-transparent !text-text border border-black/15 hover:!bg-black/5"
+                className="btn-pill-outline"
               >
                 Bioimpedância
                 <ArrowUpRight className="w-3.5 h-3.5" />

@@ -149,7 +149,7 @@ export default function LaboratorioCaraguatatuba() {
                   <button
                     type="button"
                     onClick={() => abrirTelefone("landing_lab_hero")}
-                    className="btn-pill !bg-transparent !text-text border border-black/15 hover:!bg-black/5"
+                    className="btn-pill-outline"
                   >
                     <Phone className="w-3.5 h-3.5" />
                     (12) 3887-3535
@@ -181,7 +181,7 @@ export default function LaboratorioCaraguatatuba() {
             </h2>
             <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
               Nosso laboratório em Caraguatatuba realiza mais de 3.000 tipos de exames laboratoriais com
-              equipamentos automatizados de alta precisão. A coleta é feita por profissionais treinados em
+              equipamentos automatizados. A coleta é feita por profissionais treinados em
               ambiente confortável e seguro. Os resultados ficam disponíveis online em até 24 horas para a
               maioria dos{" "}
               <Link href="/exames/exames-de-sangue" className="text-brand hover:underline">

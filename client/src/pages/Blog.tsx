@@ -155,7 +155,7 @@ export default function Blog() {
           <div className="grid lg:grid-cols-2 gap-8 items-end">
             <div>
               <span className="section-label mb-4 block">Saúde &amp; Bem-Estar</span>
-              <h1 className="heading-display text-7xl md:text-8xl lg:text-9xl text-text mt-4">
+              <h1 className="heading-display text-6xl md:text-7xl lg:text-8xl text-text mt-4">
                 BLOG
               </h1>
             </div>
@@ -251,7 +251,7 @@ export default function Blog() {
           </h2>
           <p className="text-text-light max-w-lg mx-auto mb-8">
             Na Total Quality em Caraguatatuba, oferecemos exames laboratoriais, diagnóstico por imagem
-            e cardiologia com resultados rápidos e atendimento humanizado.
+            e cardiologia no Centro, com resultados online e atendimento humanizado.
           </p>
           <button
             type="button"
