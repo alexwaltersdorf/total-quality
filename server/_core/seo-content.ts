@@ -767,6 +767,12 @@ const CLIENT_ROUTES = new Set([
   "/formulario-sucesso",
   "/cartao",
   "/404",
+  // Esquecer uma rota de primeiro nivel aqui NAO quebra a pagina: o servidor
+  // entrega o documento inteiro, so que com status 404. O Google nao indexa
+  // pagina servida assim, e um anuncio pago leva o clique para uma URL
+  // marcada como inexistente. Foi o que aconteceu com /outubro-rosa entre
+  // 18 e 19/10/2026, numa pagina de campanha com preco anunciado.
+  "/outubro-rosa",
 ]);
 
 const VALID_EXAM_SLUGS = new Set(examesData.map((exam) => exam.slug));
