@@ -561,6 +561,17 @@ const staticRoutes: Record<string, RouteMetadata> = {
     changefreq: "weekly",
   },
 
+  "/quem-somos": {
+    title: "Quem Somos e Responsável Técnico | Total Quality",
+    description: `Conheça a Total Quality: ${anosDeAtuacao()} anos de medicina diagnóstica no Litoral Norte, responsável técnico identificado, estrutura de análises clínicas e imagem no Centro de Caraguatatuba.`,
+    keywords: "Total Quality, quem somos, responsável técnico, clínica de diagnóstico, Litoral Norte",
+    ogTitle: "Quem Somos | Total Quality Medicina Diagnóstica",
+    ogDescription: "Responsável técnico, registro, estrutura e histórico da Total Quality em Caraguatatuba - SP.",
+    canonical: "https://totalquality.med.br/quem-somos",
+    priority: 0.8,
+    changefreq: "monthly",
+  },
+
   "/laboratorio-caraguatatuba": {
     // Intencao distinta da home para evitar canibalizacao: home = "laboratório em
     // caraguatatuba" (transacional); esta pagina = "laboratório de análises clínicas".

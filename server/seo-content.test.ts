@@ -1497,3 +1497,94 @@ describe("GUARD-RAIL: rota de primeiro nivel responde 200 em PRODUCAO (out/2026)
     expect(resolveHttpStatus("/pagina-que-nunca-existiu", getKnownBlogSlugs(), AUTOSEO_CARREGADO)).toBe(404);
   });
 });
+
+describe("GUARD-RAIL: identificacao obrigatoria do art. 5o (CFM 2.336/2023)", () => {
+  /*
+   * Peca de estabelecimento precisa trazer o nome com o numero de registro e o
+   * do responsavel tecnico com o dele. Ate out/2026 o site inteiro nao dizia
+   * isso em lugar nenhum. A /quem-somos e a pagina que carrega essa obrigacao —
+   * se ela perder os numeros, o site volta a ficar irregular.
+   *
+   * A sigla "CRM" nao entra em texto renderizado: apenas os digitos.
+   */
+  it("a /quem-somos traz registro e responsavel tecnico", () => {
+    const html = getSeoContentForPath("/quem-somos");
+    expect(html, "/quem-somos sem conteudo pre-renderizado").toBeTruthy();
+    /*
+     * Exigir so os digitos nao basta: a primeira versao deste teste passou com
+     * o bloco de identificacao apagado, porque o numero sobrevivia solto numa
+     * resposta do FAQ. O que o art. 5o pede e a identificacao DECLARADA —
+     * "Registro <numero>" e "Responsavel Tecnico: <nome> - <numero>" —, entao e
+     * isso que o teste cobra, com rotulo colado no numero.
+     */
+    expect(html, "falta o registro do estabelecimento rotulado").toMatch(/Registro\s*970616/);
+    expect(html, "falta o responsavel tecnico rotulado").toMatch(
+      /Respons[áa]vel T[ée]cnico:<\/strong>\s*Alex Waltersdorf - 267\.339|Respons[áa]vel T[ée]cnico:\s*<\/strong>\s*Alex Waltersdorf - 267\.339|Respons[áa]vel T[ée]cnico:\*?\*?\s*Alex Waltersdorf - 267\.339/
+    );
+  });
+
+  it("a pagina React tambem identifica (e o que o visitante com JavaScript ve)", async () => {
+    // Esta parte FALTAVA: a versao portada do #53 so lia o pre-render. Apagar
+    // o registro de QuemSomos.tsx passava batido, e a pagina React e
+    // justamente a que o visitante com JavaScript enxerga — o pre-render e
+    // substituido quando o React monta. Mesmo buraco que o #53 ja tinha
+    // fechado para o Footer, e que ficou aberto aqui.
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const pagina = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "../client/src/pages/QuemSomos.tsx"),
+      "utf-8"
+    );
+    expect(pagina, "QuemSomos.tsx sem o registro do estabelecimento").toMatch(/\b970616\b/);
+    expect(pagina, "QuemSomos.tsx sem o responsavel tecnico").toMatch(
+      /Alex Waltersdorf - 267\.339/
+    );
+    expect(pagina, "QuemSomos.tsx sem o rotulo do registro").toMatch(/Registro/);
+    expect(pagina, "QuemSomos.tsx sem o rotulo do responsavel tecnico").toMatch(
+      /Respons[áa]vel T[ée]cnico/
+    );
+  });
+
+  it("nem o pre-render nem a pagina React escrevem a sigla CRM", async () => {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const html = getSeoContentForPath("/quem-somos")!;
+    const pagina = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "../client/src/pages/QuemSomos.tsx"),
+      "utf-8"
+    );
+    // \bCRM\b pegaria "CFM" nao; o risco real e alguem escrever "CRM 970616".
+    expect(html).not.toMatch(/\bCRMs?\b/);
+    expect(pagina).not.toMatch(/\bCRMs?\b/);
+  });
+});
+
+describe("GUARD-RAIL: data de atualizacao do conteudo (out/2026)", () => {
+  /*
+   * Sem dateModified o Google e os robos de IA tratam a pagina como de idade
+   * desconhecida. A data e DERIVADA do mtime do modulo, nunca cravada: data
+   * fixa no codigo envelhece do mesmo jeito que a nota autodeclarada que ja
+   * saiu daqui.
+   */
+  it.each(["/", "/laboratorio-caraguatatuba", "/quem-somos", "/checkup"])(
+    "%s emite dateModified em JSON-LD",
+    (rota) => {
+      const html = getSeoContentForPath(rota)!;
+      const m = html.match(/"dateModified":"(\d{4}-\d{2}-\d{2})"/);
+      expect(m, `${rota} nao emite dateModified`).toBeTruthy();
+    }
+  );
+
+  it("a data nao esta cravada no codigo", async () => {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const fonte = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "_core/seo-content.ts"),
+      "utf-8"
+    );
+    const atribuicao = fonte.match(/CONTEUDO_ATUALIZADO_EM[^=]*=\s*([\s\S]{0,80})/)?.[1] ?? "";
+    expect(atribuicao, "CONTEUDO_ATUALIZADO_EM nao encontrada").not.toBe("");
+    expect(atribuicao, "a data foi cravada como literal").not.toMatch(/["'`]\d{4}-\d{2}-\d{2}["'`]/);
+  });
+});
+
