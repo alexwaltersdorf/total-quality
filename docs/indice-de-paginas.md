@@ -9,6 +9,7 @@ Relação de **todo documento HTML que este repositório produz ou contém**.
 | Páginas no sitemap | **47** |
 | Páginas servidas fora do sitemap | 4 |
 | Arquivos `.html` versionados | 4 |
+| Painéis e links externos | 7 |
 
 ## Antes de usar esta lista: o site não tem "arquivos .html"
 
@@ -130,12 +131,20 @@ Quatro, e só um deles tem a ver com as páginas do site.
 | `client/index.html` | **Molde**, não página. É o HTML base onde o servidor injeta o conteúdo pré-renderizado de cada rota. Não tem URL própria. |
 | `automacao/ana-agenda/auditoria-ana.html` | Relatório interno de auditoria da Ana. Não é publicado. |
 | `automacao/ana-agenda/painel-jornada-artefato.html` | Artefato do painel da jornada. Não é publicado. |
-| `client/public/painel/3vlGKBrUwBfsNPbbOtH2HAxx9HDOCAVQrQlzv_knvSM.html` | Painel operacional. **É publicado** — ver o aviso abaixo. |
+| `client/public/painel/<token>.html` | Painel operacional da Jornada do Paciente. **É publicado** — ver o aviso abaixo. |
+
+> `<token>` segue a convenção que `automacao/ana-agenda/PAINEL-jornada.md` já
+> usava antes desta lista: o nome embaralhado não se escreve por extenso na
+> documentação. Quem precisar dele obtém com
+> `git ls-files 'client/public/painel/*'`.
 
 ### Aviso sobre o painel operacional
 
 Esse arquivo fica em `client/public/`, então **vai ao ar** em
-`https://totalquality.med.br/painel/<nome-do-arquivo>.html`.
+`https://totalquality.med.br/painel/<token>.html`. O caminho tem
+`Disallow: /painel/` no `robots.txt` e a página leva
+`noindex, nofollow, noarchive` — o que mantém a URL fora do índice de busca,
+mas não a protege de quem tem o link.
 
 O nome embaralhado é a única barreira para a maior parte dele. Verificado em
 19/10/2026:
@@ -155,6 +164,53 @@ O nome embaralhado é a única barreira para a maior parte dele. Verificado em
 Não é vazamento de dado de paciente. É exposição de dado operacional, e o
 nome embaralhado não resolve. Se isso incomodar, a correção é pedir a mesma
 senha de servidor para o painel inteiro, não trocar o nome do arquivo.
+
+---
+
+## 8. Painéis, relatórios e links externos do projeto
+
+Não são páginas do site nem arquivos deste repositório, mas fazem parte da
+operação e é aqui que se procura por eles.
+
+### Painéis vivos
+
+| O que é | Link | Observação |
+|---|---|---|
+| **Jornada do Paciente** — painel no site da clínica | `https://totalquality.med.br/painel/<token>.html` | **Pede senha** na seção de pacientes. Ver a seção 7 e o aviso de senha abaixo. |
+| **Jornada do Paciente** — mesma coisa, como artefato | [abrir](https://claude.ai/artifact/MXxhL1qsnesv8AQzK7GRo5) | Só abre para o Alex logado. Já estava citado em `automacao/ana-agenda/PAINEL-jornada.md`. |
+| **Mapa operacional da Ana** | [abrir](https://claude.ai/artifact/5Kkei4KL95LZbSui5SDTEY) | |
+| **Monitor de Palavras-chave** | [abrir](https://claude.ai/artifact/TtEo7f3USWrbCcM4RGFTPi) | Atualizado por rotina semanal. |
+
+As duas primeiras linhas são **a mesma informação em dois lugares**: a página
+publicada e o artefato. Mudar uma não muda a outra.
+
+### Relatórios e infraestrutura
+
+| O que é | Link |
+|---|---|
+| **Sitemap** do site | [abrir](https://totalquality.med.br/sitemap.xml) |
+| **Relatório de sitelinks pagos** (Brasil Backlinks) | [abrir](https://publish.brasilbacklinks.com.br/report.php?id=e1c0ece61eb1aac08f033bd0&t=e0aae3dfadabba807421a3a6074a6f5d) |
+| `ns.html` do Google Tag Manager | [abrir](https://www.googletagmanager.com/ns.html?id=GTM-WLR7JD57) |
+
+O `ns.html` entra na lista por honestidade — é o único outro link terminado em
+`.html` que existe no repositório (`client/index.html`, linha 312, no
+`<noscript>` do GTM). É infraestrutura de terceiro, não documento nosso.
+
+### Sobre a senha do painel
+
+**A senha do painel não está escrita aqui, e não deve ser.**
+
+Ela é o que protege a seção "Pacientes e conversas", que mostra conversa de
+paciente — dado pessoal sensível de saúde pela LGPD, art. 11. Este
+repositório é **público**: uma senha escrita aqui vale o mesmo que nenhuma
+senha.
+
+Conferido em 19/10/2026: ela **não** aparece em nenhum arquivo versionado nem
+em nenhum commit do histórico. Essa é a condição a manter.
+
+Quem precisa dela já a tem. Quem não tem, pede a quem administra — não
+procura no Git.
+
 
 ---
 
