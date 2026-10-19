@@ -723,6 +723,42 @@ function renderBlogBodyHtml(content: string[], currentPath: string): string {
     .join("");
 }
 
+/* Funil do conteudo informacional para a pagina comercial do exame.
+ *
+ * Auditoria out/2026 (docs/organico-search-console no repo de SEO): em 28 dias
+ * /blog/eletrocardiograma-o-que-e-como-e-feito fez 25.880 impressoes e 15
+ * cliques, e /blog/hemograma-completo-o-que-avalia 13.189 e 16 — posicao ~8,9
+ * em consultas informacionais de alcance nacional ("ecg o que e", "hemograma
+ * completo"), que entram na media do site e derrubam o CTR sem virar paciente.
+ * O CTA do artigo era generico ("Precisa fazer seus exames?") e nao levava a
+ * pagina do exame. Aqui cada artigo ganha a ponte explicita para o destino
+ * comercial correspondente, para a demanda informacional que chega ter para
+ * onde ir. */
+export const ARTIGO_PARA_EXAME: Record<string, { slug: string; nome: string }> = {
+  "eletrocardiograma-o-que-e-como-e-feito": { slug: "eletrocardiograma", nome: "eletrocardiograma" },
+  "hemograma-completo-o-que-avalia": { slug: "hemograma", nome: "hemograma completo" },
+  "exames-de-sangue-guia-completo": { slug: "exames-de-sangue", nome: "exames de sangue" },
+  "tomografia-computadorizada-como-funciona": { slug: "tomografia-computadorizada", nome: "tomografia computadorizada" },
+  "diferenca-raio-x-tomografia": { slug: "raio-x", nome: "raio-x" },
+  "diferenca-ultrassom-comum-doppler": { slug: "ultrassonografia", nome: "ultrassonografia" },
+  "mamografia-ultrassom-mamas-diferencas": { slug: "mamografia", nome: "mamografia" },
+  "mapa-ou-holter-diferenca": { slug: "mapa", nome: "MAPA 24 horas" },
+  "exame-toxicologico-cnh": { slug: "exame-toxicologico", nome: "exame toxicológico" },
+  "aso-exames-ocupacionais": { slug: "exame-admissional", nome: "exame admissional" },
+  "exame-de-urina-eas-como-coletar": { slug: "exames-de-sangue", nome: "exames laboratoriais" },
+  "hemograma-caraguatatuba": { slug: "hemograma", nome: "hemograma completo" },
+  "ultrassonografia-caraguatatuba": { slug: "ultrassonografia", nome: "ultrassonografia" },
+  "tomografia-caraguatatuba": { slug: "tomografia-computadorizada", nome: "tomografia computadorizada" },
+};
+
+function ponteParaExameHtml(slug: string): string {
+  const destino = ARTIGO_PARA_EXAME[slug];
+  if (!destino) return "";
+  return `
+    <h2>Onde fazer ${escapeHtml(destino.nome)} em Caraguatatuba</h2>
+    <p>A Total Quality realiza ${escapeHtml(destino.nome)} em Caraguatatuba, no Centro, de segunda a sexta. Veja preparo, convênios aceitos e prazo de resultado na <a href="/exames/${destino.slug}">página de ${escapeHtml(destino.nome)}</a>.</p>`;
+}
+
 function renderBlogHtml(post: BlogPost): string {
   const currentPath = `/blog/${post.slug}`;
   const bodyHtml = renderBlogBodyHtml(post.content, currentPath);
@@ -733,6 +769,7 @@ function renderBlogHtml(post: BlogPost): string {
       <p>${escapeHtml(post.author)} · ${escapeHtml(post.authorRole)} · ${escapeHtml(post.date)} · ${escapeHtml(post.readTime)} de leitura</p>
       ${bodyHtml}
     </article>
+    ${ponteParaExameHtml(post.slug)}
     ${napHtml("Precisa fazer seus exames? Agende pelo WhatsApp e tenha resultados online em até 24 horas.")}
     ${internalLinksHtml("/blog/" + post.slug)}`;
 }

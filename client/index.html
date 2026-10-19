@@ -261,6 +261,27 @@
          navegador no primeiro paint e o texto saltaria quando o CSS chegasse. */
       *, *::before, *::after { box-sizing: border-box; }
       body { margin: 0; background: #fff; }
+      /* CLS: o fallback metrico tem que estar AQUI. Este bloco e o primeiro
+         paint; a folha principal e assincrona (nonBlockingCss), entao citar
+         "DM Sans Fallback" sem definir a @font-face aqui nao teria efeito —
+         o navegador pularia direto para system-ui e o texto saltaria quando
+         a DM Sans chegasse. Metricas iguais as de client/src/index.css. */
+      @font-face {
+        font-family: 'DM Sans Fallback';
+        src: local('Arial'), local('Helvetica');
+        size-adjust: 95%;
+        ascent-override: 95%;
+        descent-override: 25%;
+        line-gap-override: 0%;
+      }
+      @font-face {
+        font-family: 'Bebas Neue Fallback';
+        src: local('Arial Black'), local('Impact');
+        size-adjust: 86%;
+        ascent-override: 90%;
+        descent-override: 20%;
+        line-gap-override: 0%;
+      }
       .seo-prerender h1, .seo-prerender h2, .seo-prerender h3 { font-weight: 600; }
       .seo-prerender ul { list-style: disc; }
       .seo-prerender a { text-decoration: none; }
@@ -268,7 +289,7 @@
         max-width: 68ch;
         margin: 0 auto;
         padding: 6rem 1.5rem 4rem;
-        font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+        font-family: "DM Sans", "DM Sans Fallback", system-ui, -apple-system, sans-serif;
         color: #5a5a5a;
         line-height: 1.7;
       }

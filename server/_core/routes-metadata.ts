@@ -277,10 +277,10 @@ const blogMetadata: Record<string, RouteMetadata> = {
   },
 
   "hemograma-completo-o-que-avalia": {
-    title: "Hemograma Completo: O Que o Exame Avalia? | Total Quality",
-    description: "Entenda o que o hemograma completo avalia, quais células são analisadas, para que serve e se o exame precisa de jejum.",
+    title: "Hemograma Completo: O Que Avalia e Onde Fazer em Caraguatatuba",
+    description: "O que o hemograma completo avalia, quais células são analisadas e se precisa de jejum. Faça o seu em Caraguatatuba, com resultado online em até 24 horas.",
     keywords: "hemograma completo, hemograma, exame de sangue, hemácias, leucócitos, plaquetas, Caraguatatuba",
-    ogTitle: "Hemograma Completo: O Que o Exame Avalia?",
+    ogTitle: "Hemograma Completo: O Que Avalia e Onde Fazer em Caraguatatuba",
     ogDescription: "Entenda quais células e parâmetros são analisados no hemograma completo.",
     ogImage: "https://totalquality.med.br/images/blog/hemograma-completo-o-que-avalia.webp",
     canonical: "https://totalquality.med.br/blog/hemograma-completo-o-que-avalia",
@@ -385,10 +385,10 @@ const blogMetadata: Record<string, RouteMetadata> = {
   },
 
   "eletrocardiograma-o-que-e-como-e-feito": {
-    title: "Eletrocardiograma (ECG): O Que É | Total Quality",
-    description: "Entenda o que é o eletrocardiograma, como funciona, se dói, quanto tempo dura e em quais situações o médico costuma solicitar o exame.",
+    title: "Eletrocardiograma (ECG): O Que É e Onde Fazer em Caraguatatuba",
+    description: "O que é o eletrocardiograma, como funciona, se dói e quanto tempo dura. Faça o seu em Caraguatatuba na Total Quality: rápido, indolor e agendado pelo WhatsApp.",
     keywords: "eletrocardiograma, ECG, o que é eletrocardiograma, exame cardiológico, saúde do coração, Caraguatatuba",
-    ogTitle: "Eletrocardiograma (ECG): O Que É e Como É Feito",
+    ogTitle: "Eletrocardiograma (ECG): O Que É e Onde Fazer em Caraguatatuba",
     ogDescription: "Entenda como funciona o exame, se dói, quanto tempo dura e quando costuma ser solicitado.",
     ogImage: "https://totalquality.med.br/images/blog/eletrocardiograma-o-que-e-como-e-feito.webp",
     canonical: "https://totalquality.med.br/blog/eletrocardiograma-o-que-e-como-e-feito",
@@ -469,7 +469,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
     keywords: "laboratório Caraguatatuba, exames de sangue, tomografia, ultrassom, check-up",
     ogTitle: "Total Quality Medicina Diagnóstica e Laboratorial | Exames de Sangue em Caraguatatuba - SP",
     ogDescription: "Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba - SP. Exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia e mais de 3.000 tipos de exames. Agende pelo WhatsApp.",
-    ogImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png",
+    ogImage: "https://totalquality.med.br/images/fachada-1024.webp",
     canonical: "https://totalquality.med.br/",
     priority: 1.0,
     changefreq: "weekly",
