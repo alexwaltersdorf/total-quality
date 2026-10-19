@@ -1,5 +1,26 @@
 [
   {
+    "id": "42",
+    "slug": "hipoglicemia-sintomas-e-exames",
+    "title": "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer",
+    "subtitle": "Quando a glicose cai abaixo de 70 mg/dL, o que fazer na hora e quais exames investigam a causa",
+    "excerpt": "Hipoglicemia é a queda da glicose no sangue abaixo de 70 mg/dL. Veja os sinais de alerta, quando o caso é de emergência, a diferença entre a reativa e a de jejum, e quais exames o médico pede para achar a causa.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "18 Out 2026",
+    "readTime": "7 min",
+    "image": "https://totalquality.med.br/images/blog/hipoglicemia-sintomas-e-exames.webp",
+    "tags": [
+      "hipoglicemia",
+      "glicemia",
+      "exames de sangue",
+      "diabetes",
+      "Caraguatatuba"
+    ],
+    "metaTitle": "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer"
+  },
+  {
     "id": "1",
     "slug": "check-up-preventivo-quando-fazer",
     "title": "Check-Up Preventivo: Quando Fazer e Por Que É Tão Importante",
@@ -11,7 +32,7 @@
     "authorRole": "Diretor Clínico — Total Quality",
     "date": "10 Abr 2026",
     "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/check-up-preventivo-quando-fazer.webp",
     "tags": [
       "check-up",
       "medicina preventiva",
@@ -32,7 +53,7 @@
     "authorRole": "Patologista Clínica — Total Quality",
     "date": "05 Abr 2026",
     "readTime": "10 min",
-    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/exames-de-sangue-guia-completo.webp",
     "tags": [
       "exames de sangue",
       "hemograma",
@@ -54,7 +75,7 @@
     "authorRole": "Cardiologista — Total Quality",
     "date": "28 Mar 2026",
     "readTime": "7 min",
-    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/saude-do-coracao-prevencao.webp",
     "tags": [
       "cardiologia",
       "saúde do coração",
@@ -74,7 +95,7 @@
     "authorRole": "Nutróloga — Total Quality",
     "date": "20 Mar 2026",
     "readTime": "6 min",
-    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/alimentacao-e-exames-laboratoriais.webp",
     "tags": [
       "alimentação",
       "exames laboratoriais",
@@ -95,7 +116,7 @@
     "authorRole": "Diretor Clínico — Total Quality",
     "date": "12 Mar 2026",
     "readTime": "7 min",
-    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/vitamina-d-importancia-saude.webp",
     "tags": [
       "vitamina D",
       "bem-estar",
@@ -138,7 +159,7 @@
     "authorRole": "Diretor Clínico — Total Quality",
     "date": "23 Abr 2026",
     "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/cardiologia-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/ultrassonografia-caraguatatuba.webp",
     "tags": [
       "ultrassonografia",
       "ultrassom",
@@ -180,7 +201,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
     "readTime": "9 min",
-    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/hemograma-completo-o-que-avalia.webp",
     "tags": [
       "hemograma completo",
       "hemograma",
@@ -201,7 +222,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
     "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/tomografia-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/tomografia-computadorizada-como-funciona.webp",
     "tags": [
       "tomografia computadorizada",
       "tomografia",
@@ -222,7 +243,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
     "readTime": "9 min",
-    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/mapa-ou-holter-diferenca.webp",
     "tags": [
       "MAPA",
       "Holter",
@@ -244,7 +265,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
     "readTime": "10 min",
-    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/check-up-medico-quais-exames-fazer.webp",
     "tags": [
       "check-up médico",
       "check-up preventivo",
@@ -286,7 +307,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
     "readTime": "10 min",
-    "image": "https://totalquality.med.br/images/cardiologia-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/mamografia-ultrassom-mamas-diferencas.webp",
     "tags": [
       "mamografia",
       "ultrassom da mama",
@@ -307,7 +328,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
     "readTime": "10 min",
-    "image": "https://totalquality.med.br/images/tomografia-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/diferenca-raio-x-tomografia.webp",
     "tags": [
       "raio-x",
       "tomografia computadorizada",
@@ -328,7 +349,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
     "readTime": "9 min",
-    "image": "https://totalquality.med.br/images/fachada-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/aso-exames-ocupacionais.webp",
     "tags": [
       "ASO",
       "exame ocupacional",
@@ -350,7 +371,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
     "readTime": "9 min",
-    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/exame-toxicologico-cnh.webp",
     "tags": [
       "exame toxicológico",
       "CNH",
@@ -372,7 +393,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
     "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/eletrocardiograma-o-que-e-como-e-feito.webp",
     "tags": [
       "eletrocardiograma",
       "ECG",
@@ -436,7 +457,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "09 Out 2026",
     "readTime": "6 min",
-    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/resultado-de-exames-online-seguranca.webp",
     "tags": [
       "resultado de exames",
       "LGPD",
@@ -457,7 +478,7 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "09 Out 2026",
     "readTime": "6 min",
-    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
+    "image": "https://totalquality.med.br/images/blog/exame-de-urina-eas-como-coletar.webp",
     "tags": [
       "exame de urina",
       "EAS",
@@ -477,8 +498,8 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "17 Out 2026",
     "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
-    "imageAlt": "Tubos de coleta em bancada de laboratório de análises clínicas — exame de hemoglobina glicada (HbA1c)",
+    "image": "https://totalquality.med.br/images/blog/hemoglobina-glicada-exame.webp",
+    "imageAlt": "Estante com tubos de coleta de sangue de tampas coloridas — exame de hemoglobina glicada (HbA1c)",
     "tags": [
       "hemoglobina glicada",
       "HbA1c",
@@ -510,8 +531,8 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "17 Out 2026",
     "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
-    "imageAlt": "Tubos de coleta em bancada de laboratório de análises clínicas — exame de beta HCG",
+    "image": "https://totalquality.med.br/images/blog/beta-hcg-exame-de-gravidez.webp",
+    "imageAlt": "Profissionais de jaleco examinando um tubo com amostra de sangue — exame de beta HCG",
     "tags": [
       "beta HCG",
       "bhcg",
@@ -543,8 +564,8 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "17 Out 2026",
     "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
-    "imageAlt": "Tubos de coleta em bancada de laboratório de análises clínicas — exame de TSH e T4 livre",
+    "image": "https://totalquality.med.br/images/blog/exame-tsh-t4-livre-tireoide.webp",
+    "imageAlt": "Mão de luva segurando tubo com amostra de sangue no laboratório — exame de TSH e T4 livre",
     "tags": [
       "TSH",
       "T4 livre",
@@ -576,8 +597,8 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "17 Out 2026",
     "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
-    "imageAlt": "Bancada de laboratório de análises clínicas — urocultura com antibiograma",
+    "image": "https://totalquality.med.br/images/blog/urocultura-exame-de-urina.webp",
+    "imageAlt": "Colônias de bactérias crescendo em placa de cultura — urocultura com antibiograma",
     "tags": [
       "urocultura",
       "urocultura com antibiograma",
@@ -609,8 +630,8 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "17 Out 2026",
     "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
-    "imageAlt": "Tubos de coleta em bancada de laboratório de análises clínicas — curva glicêmica (TOTG)",
+    "image": "https://totalquality.med.br/images/blog/curva-glicemica-teste-tolerancia-glicose.webp",
+    "imageAlt": "Estante com tubos de coleta ao lado de centrífuga de laboratório — curva glicêmica (TOTG)",
     "tags": [
       "curva glicêmica",
       "TOTG",
@@ -642,8 +663,8 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "17 Out 2026",
     "readTime": "7 min",
-    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
-    "imageAlt": "Tubos de coleta em bancada de laboratório de análises clínicas — exame de glicemia de jejum",
+    "image": "https://totalquality.med.br/images/blog/glicemia-de-jejum-exame.webp",
+    "imageAlt": "Tubos de coleta de sangue de tampas coloridas em estante — exame de glicemia de jejum",
     "tags": [
       "glicemia de jejum",
       "exame de glicemia",
@@ -675,8 +696,8 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "17 Out 2026",
     "readTime": "7 min",
-    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
-    "imageAlt": "Tubos de coleta de sangue em laboratório de análises clínicas — coleta domiciliar de exames",
+    "image": "https://totalquality.med.br/images/blog/coleta-domiciliar-exames-caraguatatuba.webp",
+    "imageAlt": "Profissional de luvas coletando sangue do braço, com garrote — coleta domiciliar de exames",
     "tags": [
       "coleta domiciliar",
       "exame de sangue em casa",
@@ -707,8 +728,8 @@
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "17 Out 2026",
     "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
-    "imageAlt": "Tubos de coleta e analisadores em laboratório — exames laboratoriais, tipos e preparo",
+    "image": "https://totalquality.med.br/images/blog/exames-laboratoriais-tipos-e-preparo.webp",
+    "imageAlt": "Microtubos enfileirados em estante de laboratório — exames laboratoriais, tipos e preparo",
     "tags": [
       "exames laboratoriais",
       "exame de sangue",
