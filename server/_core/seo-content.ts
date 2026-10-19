@@ -523,6 +523,7 @@ export function getSeoContentForPath(pathname: string): string | null {
   if (path === "/privacidade") return wrap(privacidadeHtml);
   if (path === "/checkup") return wrap(checkupHtml);
   if (path === "/convenios") return wrap(conveniosHtml());
+  if (path === "/outubro-rosa") return wrap(outubroRosaHtml);
   if (path === "/exames") return wrap(examesHubHtml());
 
   const examMatch = path.match(/^\/exames\/([a-z0-9\-]+)$/);
@@ -541,6 +542,40 @@ export function getSeoContentForPath(pathname: string): string | null {
 
   return null;
 }
+
+/*
+ * Campanha Check-up Outubro Rosa.
+ *
+ * O texto aqui e o que o robo le antes do React montar, entao precisa dizer o
+ * mesmo que a pagina: os tres exames, os dois precos e a ressalva da
+ * mamografia. Nada de "a partir de" nem de prazo que nao foi confirmado.
+ *
+ * Sazonal: sai junto com a rota quando a campanha encerrar.
+ */
+const outubroRosaHtml = `
+    <h1>Check-up Outubro Rosa</h1>
+    <p><strong>Cuidar de você é um gesto de amor.</strong> Conheça a condição especial da Total Quality para três exames voltados à saúde mamária e ginecológica, em Caraguatatuba.</p>
+    <h2>Os três exames do Check-up Rosa</h2>
+    <ul>
+      <li><strong>Ultrassonografia das mamas</strong> — exame de imagem que auxilia na avaliação das mamas, conforme a indicação e o contexto clínico.</li>
+      <li><strong>Ultrassonografia transvaginal</strong> — exame de imagem utilizado para avaliar estruturas ginecológicas, como útero e ovários, conforme indicação médica.</li>
+      <li><strong>Preventivo — Papanicolau</strong> — exame que avalia células do colo do útero para identificar alterações que possam precisar de acompanhamento.</li>
+    </ul>
+    <p>De R$ 500,00 por <strong>R$ 399,90</strong>. Valor do conjunto dos três exames. Exames conforme indicação médica.</p>
+    <p>A ultrassonografia das mamas não substitui a <a href="/exames/mamografia">mamografia</a> quando indicada. A escolha dos exames deve considerar a avaliação individual.</p>
+    <h2>Como agendar</h2>
+    <p>O agendamento começa por uma conversa: fale com a equipe pelo WhatsApp para verificar disponibilidade, documentos e preparo. A confirmação de data e horário é feita pela equipe.</p>
+    <h2>Perguntas frequentes</h2>
+    <h3>O que está incluído no valor de R$ 399,90?</h3>
+    <p>O valor anunciado corresponde ao conjunto de ultrassonografia das mamas, ultrassonografia transvaginal e preventivo — Papanicolau.</p>
+    <h3>A mamografia está incluída?</h3>
+    <p>Não. A oferta apresentada contempla os três exames listados. A ultrassonografia das mamas não substitui a mamografia quando ela é indicada.</p>
+    <h3>Esse pacote é indicado para qualquer pessoa?</h3>
+    <p>A necessidade de cada exame depende da avaliação individual. Converse com o profissional que acompanha sua saúde e esclareça as orientações com nossa equipe.</p>
+    <h3>Posso fazer os três exames no mesmo dia?</h3>
+    <p>Essa possibilidade depende da disponibilidade dos profissionais e das orientações de cada exame. Confirme com a equipe pelo WhatsApp.</p>
+    ${napHtml("Fale com a Total Quality e saiba como agendar seu Check-up Outubro Rosa.")}
+    ${internalLinksHtml("/outubro-rosa")}`;
 
 const privacidadeHtml = `
     <h1>Política de Privacidade</h1>
@@ -823,6 +858,12 @@ const CLIENT_ROUTES = new Set([
   "/formulario-sucesso",
   "/cartao",
   "/404",
+  // Esquecer uma rota de primeiro nivel aqui NAO quebra a pagina: o servidor
+  // entrega o documento inteiro, so que com status 404. O Google nao indexa
+  // pagina servida assim, e um anuncio pago leva o clique para uma URL
+  // marcada como inexistente. Foi o que aconteceu com /outubro-rosa entre
+  // 18 e 19/10/2026, numa pagina de campanha com preco anunciado.
+  "/outubro-rosa",
 ]);
 
 const VALID_EXAM_SLUGS = new Set(examesData.map((exam) => exam.slug));
