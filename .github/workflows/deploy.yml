@@ -129,7 +129,11 @@ jobs:
               find "$APP/dist/public/assets" -type f -mtime +7 -delete 2>/dev/null || true
               PUBLICADO=1
               echo "    publicado em $APP/dist"
-              echo "    bundle agora servido: $(ls "$APP"/dist/public/assets/index-*.js 2>/dev/null | head -1)"
+              # Lido do index.html: o build gera mais de um assets/index-*.js, e
+              # um `ls` pega o primeiro em ordem alfabetica, que nem sempre e o
+              # bundle principal.
+              echo "    bundle agora servido: $(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' \
+                "$APP/dist/public/index.html" 2>/dev/null | head -1)"
             else
               echo "::warning::Nao foi possivel publicar em '$APP/dist' (inexistente \
               ou sem permissao de escrita). O site seguira servindo o build anterior."
@@ -170,7 +174,19 @@ jobs:
       - name: Verificar a producao (o site, nao o servidor)
         run: |
           set -e
-          ESPERADO=$(basename "$(ls dist/public/assets/index-*.js | head -1)")
+          # O bundle esperado sai do index.html construido, nao de um `ls`: o
+          # build gera mais de um arquivo assets/index-*.js (o principal, de
+          # ~450 KB, e um pedaco menor), e `ls | head -1` pega o primeiro em
+          # ordem alfabetica, que pode ser o pedaco errado. Foi o que reprovou o
+          # deploy de 20/10 depois de ele ter publicado corretamente: comparou
+          # um chunk de 34 KB com o bundle principal servido. Lendo do
+          # index.html dos dois lados, a comparacao e entre as mesmas coisas.
+          ESPERADO=$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' dist/public/index.html | head -1)
+          if [ -z "$ESPERADO" ]; then
+            echo "::error::Nao achei a referencia de assets/index-*.js no index.html \
+            construido. O build saiu diferente do esperado."
+            exit 1
+          fi
           echo "Bundle construido e testado no runner: $ESPERADO"
 
           # O CDN da Hostinger cacheia HTML por 300s; furar o cache e obrigatorio.
@@ -183,7 +199,7 @@ jobs:
             SERVIDO=$(printf '%s' "$HTML" | grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' | head -1)
             TEM_ROOT=$(printf '%s' "$HTML" | grep -c '<div id="root"' || true)
 
-            if [ "$(basename "${SERVIDO:-nenhum}")" = "$ESPERADO" ] && [ "$TEM_ROOT" -ge 1 ]; then
+            if [ "${SERVIDO:-nenhum}" = "$ESPERADO" ] && [ "$TEM_ROOT" -ge 1 ]; then
               echo "OK: site respondendo, HTML integro, servindo o bundle desta publicacao"
               OK=1
               break
