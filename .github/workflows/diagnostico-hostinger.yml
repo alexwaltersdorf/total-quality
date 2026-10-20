@@ -58,14 +58,32 @@ jobs:
               echo "==> Conteudo do build servido"
               echo "    raiz:"
               ls -la "$CURRENT" 2>/dev/null | head -25 | sed 's/^/      /'
-              echo "    dist/public/painel:"
-              ls -la "$CURRENT/dist/public/painel" 2>/dev/null | sed 's/^/      /'
+              echo "    .metadata.json:"
+              cat "$CURRENT/.metadata.json" 2>/dev/null | sed 's/^/      /'
+
+              # A raiz do build tem nodejs/ e public_html/: a aplicacao fica um
+              # nivel abaixo do que a primeira versao deste diagnostico olhava.
+              APP="$CURRENT/nodejs"
+              echo
+              echo "    nodejs/ e um link? $(readlink "$APP" 2>/dev/null || echo 'nao, diretorio real')"
+              echo "    nodejs/ (raiz da aplicacao servida):"
+              ls -la "$APP" 2>/dev/null | head -25 | sed 's/^/      /'
+              echo "    nodejs/dist e um link? $(readlink "$APP/dist" 2>/dev/null || echo 'nao, diretorio real')"
+              echo "    nodejs/dist/public/painel:"
+              ls -la "$APP/dist/public/painel" 2>/dev/null | sed 's/^/      /'
               echo "    bundle servido:"
-              ls -la "$CURRENT"/dist/public/assets/index-*.js 2>/dev/null | sed 's/^/      /'
+              ls -la "$APP"/dist/public/assets/index-*.js 2>/dev/null | sed 's/^/      /'
               echo "    commit do fonte desse build:"
-              git -C "$CURRENT" log -1 --format='      %h %ci %s' 2>/dev/null \
+              git -C "$APP" log -1 --format='      %h %ci %s' 2>/dev/null \
                 || echo "      (sem repositorio git dentro do build)"
+              echo "    da para escrever em nodejs/dist? $([ -w "$APP/dist" ] && echo sim || echo nao)"
+              echo "    da para escrever na raiz do build? $([ -w "$APP" ] && echo sim || echo nao)"
             fi
+
+            echo
+            echo "==> Vizinhanca do dominio (onde a Hostinger guarda seus controles)"
+            ls -la .. 2>/dev/null | head -20 | sed 's/^/      /'
+            ls -la ../.builds 2>/dev/null | sed 's/^/      /'
 
             echo
             echo "==> Todas as versoes de build que a Hostinger guarda"

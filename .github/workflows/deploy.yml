@@ -86,29 +86,64 @@ jobs:
             tar -xzf dist.tar.gz
             rm -f dist.tar.gz
 
-            echo "==> [4.5/5] Onde o Passenger serve (topologia conhecida)"
+            echo "==> [4.5/5] Publicando no diretorio que o Passenger serve"
             # DESCOBERTO EM 06/09/2026 pelo diagnostico deste workflow:
             #
             #   ../.builds/current -> .../totalquality.med.br/hbuilds/versions/<uuid>
             #
-            # A Hostinger tem sistema de build proprio ("hbuilds"): a cada push
-            # ela reconstroi o app a partir do FONTE num diretorio versionado
-            # novo e repontta o symlink `current`. O Passenger serve DE LA.
+            # A Hostinger tem sistema de build proprio ("hbuilds"): ela
+            # reconstroi o app a partir do FONTE num diretorio versionado novo e
+            # repontta o symlink `current`. O Passenger serve DE LA, e a
+            # aplicacao fica em `<versao>/nodejs` (entry `dist/index.js`,
+            # conforme o .metadata.json que a propria Hostinger grava).
             #
-            # Consequencia: o dist.tar.gz que este workflow envia para
-            # `nodejs/dist` NUNCA e servido. As mudancas chegam ao publico
-            # porque o passo [1/5] sincroniza o fonte e a Hostinger reconstroi —
-            # nao porque o pacote testado aqui tenha sido publicado.
+            # Ate 20/10/2026 este passo so OBSERVAVA isso, na suposicao de que a
+            # Hostinger reconstruiria a cada push. Nesse dia ficou provado que
+            # ela nao reconstroi: a lista de ligacoes entrou na main as 11:26,
+            # CI e deploy verdes, e a URL devolveu 404. O diagnostico por SSH
+            # mostrou o build servido parado em 19/10 01:13, com o fonte de
+            # 246edd6 — duas publicacoes atras. Havia UMA unica versao em
+            # hbuilds/versions, nenhuma nova. Ou seja: desde 19/10 nada do que
+            # este workflow enviava chegava ao publico, e o deploy reportava
+            # sucesso assim mesmo.
             #
-            # Este passo so registra o estado para acompanhamento.
-            set +e
-            CURRENT=$(readlink -f ../.builds/current 2>/dev/null)
-            echo "    build servido pela Hostinger: ${CURRENT:-nao encontrado}"
-            echo "    repontado em: $(stat -c %y ../.builds/current 2>/dev/null | cut -d. -f1)"
-            echo "    bundle enviado pelo runner (nao servido): $(ls dist/public/assets/index-*.js 2>/dev/null | head -1)"
-            set -e
+            # Agora o pacote construido e testado no runner e copiado para
+            # dentro do build servido. Isso conserta de uma vez o problema de
+            # fundo: o que vai ao ar passa a ser exatamente o artefato que
+            # passou nos testes, em vez de um build feito em outro lugar a
+            # partir do fonte.
+            #
+            # A copia e por cima (`cp -a dist/.`), sem apagar o diretorio antes:
+            # nao existe instante em que o site fica sem arquivos. O preco e que
+            # chunks antigos ficam para tras — o que ate ajuda quem carregou o
+            # index.html de um minuto atras — entao os assets com mais de 7 dias
+            # sao podados no fim.
+            CURRENT=$(readlink -f ../.builds/current 2>/dev/null || true)
+            APP="${CURRENT:+$CURRENT/nodejs}"
+            echo "    build servido: ${CURRENT:-nao encontrado}"
+            echo "    repontado em: $(stat -c %y ../.builds/current 2>/dev/null | cut -d. -f1 || true)"
+
+            PUBLICADO=0
+            if [ -n "$APP" ] && [ -d "$APP/dist" ] && [ -w "$APP/dist" ]; then
+              cp -a dist/. "$APP/dist/"
+              find "$APP/dist/public/assets" -type f -mtime +7 -delete 2>/dev/null || true
+              PUBLICADO=1
+              echo "    publicado em $APP/dist"
+              echo "    bundle agora servido: $(ls "$APP"/dist/public/assets/index-*.js 2>/dev/null | head -1)"
+            else
+              echo "::warning::Nao foi possivel publicar em '$APP/dist' (inexistente \
+              ou sem permissao de escrita). O site seguira servindo o build anterior."
+            fi
 
             echo "==> [5/5] Restart via Phusion Passenger"
+            # O Passenger observa tmp/restart.txt da RAIZ DA APLICACAO, que e o
+            # diretorio servido — nao este. Enquanto so o de ca era tocado, o
+            # restart nao acontecia.
+            if [ -n "$APP" ] && [ -w "$APP" ]; then
+              mkdir -p "$APP/tmp"
+              touch "$APP/tmp/restart.txt"
+              echo "    restart pedido em $APP/tmp/restart.txt"
+            fi
             mkdir -p tmp
             touch tmp/restart.txt
 
@@ -122,22 +157,25 @@ jobs:
       # nao. O passo abaixo pergunta ao site, nao ao servidor.
       # Verifica que o SITE esta saudavel depois do deploy.
       #
-      # Ate 06/09/2026 este passo exigia que a producao servisse o MESMO bundle
-      # que o runner acabara de construir. Na topologia real isso nunca pode ser
-      # verdade: a Hostinger reconstroi do fonte e serve o build dela. O passo
-      # ficava vermelho em todo deploy — alarme que sempre toca deixa de ser
-      # alarme, e ninguem mais olha.
+      # Entre 06/09 e 20/10/2026 este passo NAO comparava o bundle servido com o
+      # que o runner acabara de construir, porque na topologia de entao isso
+      # nunca podia ser verdade: a Hostinger servia um build proprio. O passo se
+      # contentava com "o site responde e o HTML esta integro".
       #
-      # Agora ele verifica o que de fato importa e e verificavel: o site
-      # responde, o HTML esta integro, e a rota de 404 continua correta (o que
-      # so acontece se o servidor estiver rodando o codigo atual).
+      # Foi exatamente por isso que o deploy de 20/10 reportou sucesso enquanto
+      # a pagina nova devolvia 404: o site respondia — servindo o build de dois
+      # dias antes. Agora que o passo [4.5] publica no diretorio servido, a
+      # comparacao voltou a ser possivel, e ela e a unica que prova que o que
+      # esta no ar e o que foi testado aqui.
       - name: Verificar a producao (o site, nao o servidor)
         run: |
           set -e
-          echo "Bundle enviado pelo runner (informativo): $(basename "$(ls dist/public/assets/index-*.js | head -1)")"
+          ESPERADO=$(basename "$(ls dist/public/assets/index-*.js | head -1)")
+          echo "Bundle construido e testado no runner: $ESPERADO"
 
           # O CDN da Hostinger cacheia HTML por 300s; furar o cache e obrigatorio.
           OK=0
+          SERVIDO=""
           for TENTATIVA in 1 2 3 4 5 6; do
             HTML=$(curl -fsS --max-time 25 -H "Cache-Control: no-cache" \
               "https://totalquality.med.br/?deploy_check=${GITHUB_SHA}${TENTATIVA}" || true)
@@ -145,18 +183,20 @@ jobs:
             SERVIDO=$(printf '%s' "$HTML" | grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' | head -1)
             TEM_ROOT=$(printf '%s' "$HTML" | grep -c '<div id="root"' || true)
 
-            if [ -n "$SERVIDO" ] && [ "$TEM_ROOT" -ge 1 ]; then
-              echo "OK: site respondendo, HTML integro, servindo $SERVIDO"
+            if [ "$(basename "${SERVIDO:-nenhum}")" = "$ESPERADO" ] && [ "$TEM_ROOT" -ge 1 ]; then
+              echo "OK: site respondendo, HTML integro, servindo o bundle desta publicacao"
               OK=1
               break
             fi
-            echo "  tentativa $TENTATIVA: site ainda nao respondeu integro, aguardando 20s"
+            echo "  tentativa $TENTATIVA: servindo '${SERVIDO:-nada}', esperado '$ESPERADO' — aguardando 20s"
             sleep 20
           done
 
           if [ "$OK" -ne 1 ]; then
-            echo "::error::Apos ~2min a producao nao devolve HTML integro. O deploy \
-            reportou sucesso mas o site nao esta saudavel."
+            echo "::error::Apos ~2min a producao nao serve o bundle desta publicacao \
+            (servindo '${SERVIDO:-nada}', esperado '$ESPERADO'). O deploy nao chegou \
+            ao publico — foi assim que a pagina nova de 20/10 ficou em 404 com o \
+            deploy verde."
             exit 1
           fi
 
