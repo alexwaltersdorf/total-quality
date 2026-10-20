@@ -1442,3 +1442,58 @@ describe("GUARD-RAIL: artigo de hipoglicemia, conteudo de terceiro (out/2026)", 
     expect(vedado.filter((r) => r.test(texto)).map(String)).toEqual([]);
   });
 });
+
+describe("GUARD-RAIL: rota de primeiro nivel responde 200 em PRODUCAO (out/2026)", () => {
+  // /outubro-rosa entrou no ar em 18/10/2026 devolvendo 404 — com a pagina
+  // inteira no corpo da resposta. O sitemap a listava, o bundle tinha o chunk,
+  // o conteudo aparecia. So o status estava errado, que e o unico pedaco que o
+  // Google e o Google Ads leem para decidir se a URL existe.
+  //
+  // A causa: resolveHttpStatus trata caminho de primeiro nivel como slug de
+  // artigo AutoSEO. Quando `knownAutoSeoSlugs` vem carregado (producao), um
+  // caminho que nao esta em CLIENT_ROUTES e nao e artigo cai em 404.
+  //
+  // POR QUE A TRAVA DA #62 NAO PEGOU: ela chamava resolveHttpStatus(path, blog)
+  // com DOIS argumentos. Sem o terceiro, a funcao entra no ramo
+  // `if (!knownAutoSeoSlugs) return 200` — que existe para o boot com banco
+  // fora do ar. O teste exercitava o caminho degradado e nunca o de producao.
+  // Verde que nao provava nada.
+  //
+  // Esta trava cobre a CLASSE: toda rota de primeiro nivel declarada em
+  // routes-metadata, nao so a que quebrou.
+  const AUTOSEO_CARREGADO = new Set(["artigo-autoseo-de-exemplo"]);
+
+  const primeiroNivel = () =>
+    getAllRoutes()
+      .map((r) => new URL(r.canonical).pathname)
+      .filter((p) => /^\/[a-z0-9-]+$/i.test(p));
+
+  it("existe rota de primeiro nivel para cobrir (o teste nao e vacuo)", () => {
+    expect(primeiroNivel().length).toBeGreaterThan(3);
+  });
+
+  it("toda rota de primeiro nivel do sitemap responde 200 com AutoSEO carregado", () => {
+    const blog = getKnownBlogSlugs();
+    const quebradas = primeiroNivel().filter(
+      (p) => resolveHttpStatus(p, blog, AUTOSEO_CARREGADO) !== 200
+    );
+    expect(
+      quebradas,
+      "rota anunciada no sitemap que devolve 404 em producao — falta em CLIENT_ROUTES"
+    ).toEqual([]);
+  });
+
+  it("o 200 nao vem do ramo degradado: vale com e sem AutoSEO carregado", () => {
+    // Se alguem "consertar" removendo o terceiro argumento, isto quebra.
+    const blog = getKnownBlogSlugs();
+    for (const p of primeiroNivel()) {
+      expect(resolveHttpStatus(p, blog, AUTOSEO_CARREGADO), `${p} com AutoSEO carregado`).toBe(200);
+      expect(resolveHttpStatus(p, blog, null), `${p} com AutoSEO fora do ar`).toBe(200);
+    }
+  });
+
+  it("caminho de primeiro nivel inexistente continua 404", () => {
+    // A trava acima nao pode ser satisfeita devolvendo 200 para tudo.
+    expect(resolveHttpStatus("/pagina-que-nunca-existiu", getKnownBlogSlugs(), AUTOSEO_CARREGADO)).toBe(404);
+  });
+});
