@@ -221,7 +221,7 @@ select.estado option{background:var(--papel);color:var(--tinta);font-weight:500}
 #tbLeads th.cst{min-width:148px}
 #tbLeads th.cconv{min-width:152px}
 #tbLeads th.int{min-width:122px}
-#tbLeads th.cdata{min-width:108px}
+#tbLeads th.cdata{min-width:140px}
 .tmp-quente{background:var(--grave-fundo);color:var(--grave)}
 .tmp-morno{background:var(--alerta-fundo);color:var(--alerta)}
 .tmp-frio{background:var(--acento-fundo);color:var(--acento)}
@@ -605,6 +605,33 @@ let lNome = '', lFone = '', lData = '';
 const chave = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 const digitos = s => String(s ?? '').replace(/\D/g, '');
 
+// "dd/mm/aaaa" -> ha quantos dias, contado por DIA DE CALENDARIO e nao por
+// hora. Mensagem de ontem as 23h continua sendo "ontem" as 7h da manha, que e
+// como quem olha a lista pensa. O campo r.dias do payload conta por hora e por
+// isso nao serve aqui.
+const diasAtras = s => {
+  const m = /^(\d{2})\/(\d{2})\/(\d{4})/.exec(String(s ?? ''));
+  if (!m) return null;
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+  return Math.round((hoje - new Date(+m[3], +m[2] - 1, +m[1])) / 86400000);
+};
+
+// Mesma convencao dos atalhos do grafico, logo acima nesta pagina: "7 dias" e
+// hoje mais os seis anteriores, nao hoje mais sete.
+const FAIXAS = [
+  ['hoje',  'hoje',             d => d === 0],
+  ['ontem', 'ontem',            d => d === 1],
+  ['7',     'últimos 7 dias',   d => d >= 0 && d <= 6],
+  ['15',    'últimos 15 dias',  d => d >= 0 && d <= 14],
+  ['30',    'últimos 30 dias',  d => d >= 0 && d <= 29],
+];
+const naFaixa = (u, k) => {
+  const f = FAIXAS.find(x => x[0] === k);
+  if (!f) return true;
+  const d = diasAtras(u);
+  return d === null ? false : f[2](d);
+};
+
 // quente, morno, frio — nesta ordem, que e a da urgencia. Ordem alfabetica
 // poria "frio" na frente, que e o contrario do que a lista serve para fazer.
 const ORDEM_TMP = ['quente', 'morno', 'frio'];
@@ -692,8 +719,11 @@ function montarLeads(geradoEm) {
           <select id="ltmp" aria-label="Filtrar por interesse"><option value="">todos</option>${
             tmps.map(t => `<option value="${esc(t)}">${esc(t)} · ${br(porTmp[t])}</option>`).join('')}</select></th>
         <th class="cdata"><span class="rot">Data</span>
-          <input type="search" id="ldata" placeholder="dd/mm" autocomplete="off"
-            aria-label="Filtrar por data"></th></tr></thead>
+          <select id="ldata" aria-label="Filtrar por data"><option value="">todos</option>${
+            FAIXAS.map(([k, rot]) => {
+              const n = LEADS.filter(r => naFaixa(r.u, k)).length;
+              return `<option value="${esc(k)}">${esc(rot)} · ${br(n)}</option>`;
+            }).join('')}</select></th></tr></thead>
       <tbody id="lcorpo"></tbody></table>
       <div class="vazio" id="lvazio" hidden style="border:none">Nenhum paciente com esses filtros.</div>
     </div>
@@ -706,7 +736,7 @@ function montarLeads(geradoEm) {
   el('lbusca').addEventListener('input', e => { lTermo = chave(e.target.value).trim(); pintaLeads(); });
   el('lnome').addEventListener('input', e => { lNome = chave(e.target.value).trim(); pintaLeads(); });
   el('lfone').addEventListener('input', e => { lFone = digitos(e.target.value); pintaLeads(); });
-  el('ldata').addEventListener('input', e => { lData = e.target.value.trim(); pintaLeads(); });
+  el('ldata').addEventListener('change', e => { lData = e.target.value; pintaLeads(); });
   el('lsit').addEventListener('change', e => { lSit = e.target.value; sincTiles(); pintaLeads(); });
   el('lstatus').addEventListener('change', e => { lStatus = e.target.value; pintaLeads(); });
   el('lfam').addEventListener('change', e => { lFam = e.target.value; pintaLeads(); });
@@ -743,7 +773,7 @@ const visiveisL = () => LEADS.filter(r =>
   (!lTmp || r.tmp === lTmp) &&
   (!lNome || chave(r.n).includes(lNome)) &&
   (!lFone || digitos(r.tr).includes(lFone)) &&
-  (!lData || String(r.u ?? '').includes(lData)) &&
+  (!lData || naFaixa(r.u, lData)) &&
   (!lTermo || chave(r.n + ' ' + r.t + ' ' + r.tr + ' ' + r.e + ' ' + r.f + ' ' + r.c + ' ' + (r.tmp ?? ''))
     .includes(lTermo)));
 
