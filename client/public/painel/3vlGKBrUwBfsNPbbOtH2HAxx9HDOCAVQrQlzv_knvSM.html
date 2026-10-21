@@ -205,13 +205,23 @@ select.estado option{background:var(--papel);color:var(--tinta);font-weight:500}
    propria coluna, que e onde se procura filtro de planilha. */
 .selo-tmp{display:inline-block;padding:1px 7px;border-radius:999px;
   font-size:10.5px;font-weight:700;white-space:nowrap}
-#tbLeads th.int{min-width:122px}
 #tbLeads td.int .det{font-size:11px;color:var(--tinta-fraca)}
-#tbLeads th.int .rot{display:block;margin-bottom:4px}
-#tbLeads th.int select{width:100%;min-width:0;font-family:var(--ui);font-size:11.5px;
-  font-weight:400;text-transform:none;letter-spacing:0;padding:4px 6px;
-  border:1px solid var(--borda-forte);border-radius:7px;
-  background:var(--papel);color:var(--tinta)}
+/* Cada coluna filtra a si mesma: rotulo em cima, controle embaixo. O cabecalho
+   e montado uma vez e so o <tbody> e reescrito a cada filtro, entao o cursor
+   nao pula fora de quem esta digitando. */
+#tbLeads thead th .rot{display:block;margin-bottom:4px}
+#tbLeads thead th select,#tbLeads thead th input{width:100%;min-width:0;
+  font-family:var(--ui);font-size:11.5px;font-weight:400;text-transform:none;
+  letter-spacing:0;padding:4px 6px;border:1px solid var(--borda-forte);
+  border-radius:7px;background:var(--papel);color:var(--tinta)}
+#tbLeads thead th input::placeholder{color:var(--tinta-fraca);opacity:.75}
+#tbLeads th.cnome{min-width:148px}
+#tbLeads th.cfone{min-width:142px}
+#tbLeads th.cex{min-width:158px}
+#tbLeads th.cst{min-width:148px}
+#tbLeads th.cconv{min-width:152px}
+#tbLeads th.int{min-width:122px}
+#tbLeads th.cdata{min-width:108px}
 .tmp-quente{background:var(--grave-fundo);color:var(--grave)}
 .tmp-morno{background:var(--alerta-fundo);color:var(--alerta)}
 .tmp-frio{background:var(--acento-fundo);color:var(--acento)}
@@ -588,6 +598,12 @@ const acentos = s => ACENTOS[s] ?? String(s)
 
 let SENHA = '', LEADS = [], CONVERSAS = new Map(), abertas = new Set();
 let lTermo = '', lSit = '', lStatus = '', lFam = '', lTmp = '';
+let lNome = '', lFone = '', lData = '';
+
+// comparar sem acento e sem caixa; telefone compara so por digito, para que
+// "99749" e "(35) 99749" achem a mesma pessoa
+const chave = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const digitos = s => String(s ?? '').replace(/\D/g, '');
 
 // quente, morno, frio — nesta ordem, que e a da urgencia. Ordem alfabetica
 // poria "frio" na frente, que e o contrario do que a lista serve para fazer.
@@ -648,26 +664,36 @@ function montarLeads(geradoEm) {
         <div class="v" style="color:${CORSIT[s] || 'var(--tinta-fraca)'}">${br(porSit[s])}</div>
         <div class="l">${esc(s)}</div></button>`).join('')}</div>
     <div class="lbarra">
-      <input type="search" id="lbusca" placeholder="Nome, telefone ou exame…" autocomplete="off">
-      <select id="lsit"><option value="">Todas as situações</option>${
-        sits.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('')}</select>
-      <select id="lstatus"><option value="">Todos os status</option>
-        <option>Agendou</option><option>Não Agendou</option><option>Não Aplica</option>
-        <option>Encerrado</option></select>
-      <select id="lfam"><option value="">Todos os exames</option>${
-        fams.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}</select>
-      <button type="button" id="llimpar">Limpar</button>
+      <input type="search" id="lbusca" placeholder="Buscar em qualquer coluna…" autocomplete="off">
+      <button type="button" id="llimpar">Limpar filtros</button>
       <button type="button" id="lcsv">Baixar CSV</button>
       <button type="button" id="lfechar" title="Esquece a senha nesta aba">Fechar</button>
     </div>
     <p class="lconta" id="lconta"></p>
     <div class="quadro"><table id="tbLeads">
-      <thead><tr><th></th><th>Nome</th><th>WhatsApp</th><th>Exame procurado</th>
-        <th>Status</th><th>Conversa</th>
+      <thead><tr><th></th>
+        <th class="cnome"><span class="rot">Nome</span>
+          <input type="search" id="lnome" placeholder="filtrar" autocomplete="off"
+            aria-label="Filtrar por nome"></th>
+        <th class="cfone"><span class="rot">WhatsApp</span>
+          <input type="search" id="lfone" placeholder="filtrar" autocomplete="off"
+            aria-label="Filtrar por telefone"></th>
+        <th class="cex"><span class="rot">Exame procurado</span>
+          <select id="lfam" aria-label="Filtrar por exame"><option value="">todos</option>${
+            fams.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}</select></th>
+        <th class="cst"><span class="rot">Status</span>
+          <select id="lstatus" aria-label="Filtrar por status"><option value="">todos</option>
+            <option>Agendou</option><option>Não Agendou</option><option>Não Aplica</option>
+            <option>Encerrado</option></select></th>
+        <th class="cconv"><span class="rot">Conversa</span>
+          <select id="lsit" aria-label="Filtrar por situação"><option value="">todas</option>${
+            sits.map(s => `<option value="${esc(s)}">${esc(s)} · ${br(porSit[s])}</option>`).join('')}</select></th>
         <th class="int"><span class="rot">Interesse</span>
           <select id="ltmp" aria-label="Filtrar por interesse"><option value="">todos</option>${
             tmps.map(t => `<option value="${esc(t)}">${esc(t)} · ${br(porTmp[t])}</option>`).join('')}</select></th>
-        <th>Data</th></tr></thead>
+        <th class="cdata"><span class="rot">Data</span>
+          <input type="search" id="ldata" placeholder="dd/mm" autocomplete="off"
+            aria-label="Filtrar por data"></th></tr></thead>
       <tbody id="lcorpo"></tbody></table>
       <div class="vazio" id="lvazio" hidden style="border:none">Nenhum paciente com esses filtros.</div>
     </div>
@@ -677,15 +703,18 @@ function montarLeads(geradoEm) {
       valer, e <i>Automático</i> devolve o controle ao sistema.</p>
     </div>`;
 
-  el('lbusca').addEventListener('input', e => { lTermo = e.target.value.trim().toLowerCase(); pintaLeads(); });
+  el('lbusca').addEventListener('input', e => { lTermo = chave(e.target.value).trim(); pintaLeads(); });
+  el('lnome').addEventListener('input', e => { lNome = chave(e.target.value).trim(); pintaLeads(); });
+  el('lfone').addEventListener('input', e => { lFone = digitos(e.target.value); pintaLeads(); });
+  el('ldata').addEventListener('input', e => { lData = e.target.value.trim(); pintaLeads(); });
   el('lsit').addEventListener('change', e => { lSit = e.target.value; sincTiles(); pintaLeads(); });
   el('lstatus').addEventListener('change', e => { lStatus = e.target.value; pintaLeads(); });
   el('lfam').addEventListener('change', e => { lFam = e.target.value; pintaLeads(); });
   el('ltmp').addEventListener('change', e => { lTmp = e.target.value; pintaLeads(); });
   el('llimpar').addEventListener('click', () => {
-    lTermo = lSit = lStatus = lFam = lTmp = '';
-    el('lbusca').value = ''; el('lsit').value = ''; el('lstatus').value = '';
-    el('lfam').value = ''; el('ltmp').value = '';
+    lTermo = lSit = lStatus = lFam = lTmp = lNome = lFone = lData = '';
+    ['lbusca','lnome','lfone','ldata','lsit','lstatus','lfam','ltmp']
+      .forEach(id => el(id).value = '');
     sincTiles(); pintaLeads();
   });
   el('lcsv').addEventListener('click', baixarCsv);
@@ -707,11 +736,16 @@ function montarLeads(geradoEm) {
 const sincTiles = () => document.querySelectorAll('#tilesSit .t.clica')
   .forEach(b => b.setAttribute('aria-pressed', b.dataset.c === lSit));
 
+// Cada coluna filtra a si mesma; a busca da barra continua varrendo tudo, para
+// quem nao sabe em qual coluna o que procura esta.
 const visiveisL = () => LEADS.filter(r =>
   (!lSit || r.c === lSit) && (!lStatus || r.s === lStatus) && (!lFam || r.f === lFam) &&
   (!lTmp || r.tmp === lTmp) &&
-  (!lTermo || (r.n + ' ' + r.t + ' ' + r.tr + ' ' + r.e + ' ' + r.f + ' ' + r.c)
-    .toLowerCase().includes(lTermo)));
+  (!lNome || chave(r.n).includes(lNome)) &&
+  (!lFone || digitos(r.tr).includes(lFone)) &&
+  (!lData || String(r.u ?? '').includes(lData)) &&
+  (!lTermo || chave(r.n + ' ' + r.t + ' ' + r.tr + ' ' + r.e + ' ' + r.f + ' ' + r.c + ' ' + (r.tmp ?? ''))
+    .includes(lTermo)));
 
 // O sistema continua lendo a fase da conversa: o automatico e sempre calculado
 // e fica na primeira opcao. Escolher um valor sobrepoe, 'Automatico' devolve.
