@@ -199,9 +199,19 @@ select.estado option{background:var(--papel);color:var(--tinta);font-weight:500}
 .b-h .q{color:var(--alerta)}
 .anexo{display:inline-block;margin-right:6px;font-size:9.5px;font-weight:700;
   letter-spacing:.05em;text-transform:uppercase;color:var(--tinta-fraca)}
-/* interesse: so faz sentido filtrar por algo que da para ver na linha */
-.selo-tmp{display:inline-block;margin-left:5px;padding:1px 7px;border-radius:999px;
-  font-size:10.5px;font-weight:700;white-space:nowrap;vertical-align:1px}
+/* Interesse tem coluna propria: colado na situacao ele parecia um detalhe da
+   conversa, e e outra dimensao — a situacao diz quem falou por ultimo, o
+   interesse diz o quanto a pessoa quer o exame. O filtro mora no cabecalho da
+   propria coluna, que e onde se procura filtro de planilha. */
+.selo-tmp{display:inline-block;padding:1px 7px;border-radius:999px;
+  font-size:10.5px;font-weight:700;white-space:nowrap}
+#tbLeads th.int{min-width:122px}
+#tbLeads td.int .det{font-size:11px;color:var(--tinta-fraca)}
+#tbLeads th.int .rot{display:block;margin-bottom:4px}
+#tbLeads th.int select{width:100%;min-width:0;font-family:var(--ui);font-size:11.5px;
+  font-weight:400;text-transform:none;letter-spacing:0;padding:4px 6px;
+  border:1px solid var(--borda-forte);border-radius:7px;
+  background:var(--papel);color:var(--tinta)}
 .tmp-quente{background:var(--grave-fundo);color:var(--grave)}
 .tmp-morno{background:var(--alerta-fundo);color:var(--alerta)}
 .tmp-frio{background:var(--acento-fundo);color:var(--acento)}
@@ -646,8 +656,6 @@ function montarLeads(geradoEm) {
         <option>Encerrado</option></select>
       <select id="lfam"><option value="">Todos os exames</option>${
         fams.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}</select>
-      <select id="ltmp" aria-label="Interesse"><option value="">Qualquer interesse</option>${
-        tmps.map(t => `<option value="${esc(t)}">${esc(t)} · ${br(porTmp[t])}</option>`).join('')}</select>
       <button type="button" id="llimpar">Limpar</button>
       <button type="button" id="lcsv">Baixar CSV</button>
       <button type="button" id="lfechar" title="Esquece a senha nesta aba">Fechar</button>
@@ -655,7 +663,11 @@ function montarLeads(geradoEm) {
     <p class="lconta" id="lconta"></p>
     <div class="quadro"><table id="tbLeads">
       <thead><tr><th></th><th>Nome</th><th>WhatsApp</th><th>Exame procurado</th>
-        <th>Status</th><th>Conversa</th><th>Data</th></tr></thead>
+        <th>Status</th><th>Conversa</th>
+        <th class="int"><span class="rot">Interesse</span>
+          <select id="ltmp" aria-label="Filtrar por interesse"><option value="">todos</option>${
+            tmps.map(t => `<option value="${esc(t)}">${esc(t)} · ${br(porTmp[t])}</option>`).join('')}</select></th>
+        <th>Data</th></tr></thead>
       <tbody id="lcorpo"></tbody></table>
       <div class="vazio" id="lvazio" hidden style="border:none">Nenhum paciente com esses filtros.</div>
     </div>
@@ -730,8 +742,10 @@ function pintaLeads() {
       <td class="ex">${resumoExame(r.e)}<span class="fam">${esc(r.f)}</span></td>
       <td class="est">${seletor(r)}</td>
       <td class="conv"><span class="sel ${CLSC[r.c] || 'c-par'}">${esc(r.c)}</span>${
-        r.tmp ? `<span class="selo-tmp tmp-${esc(r.tmp)}">${esc(r.tmp)}</span>` : ''}${
         r.det ? `<span class="det">${esc(r.det)}</span>` : ''}</td>
+      <td class="int">${r.tmp
+        ? `<span class="selo-tmp tmp-${esc(r.tmp)}">${esc(r.tmp)}</span>`
+        : '<span class="det">—</span>'}</td>
       <td class="quando">${esc(r.u)}</td></tr>` + (ab ? gaveta(r) : '');
   }).join('');
   el('lvazio').hidden = rs.length > 0;
@@ -747,7 +761,7 @@ function gaveta(r) {
     r.conv && r.conv !== 'particular' ? `convênio ${r.conv}` : '',
   ].filter(Boolean);
   const ms = CONVERSAS.get(r.tr);
-  return `<tr class="gaveta"><td colspan="7"><div class="gav">
+  return `<tr class="gaveta"><td colspan="8"><div class="gav">
     <div class="gtopo">${seletor(r)}${marcas.map(m => `<span class="marca">${esc(m)}</span>`).join('')}
       ${ms ? `<button type="button" class="copiar espaco" data-f="${esc(r.tr)}">Copiar conversa</button>` : ''}
     </div>
