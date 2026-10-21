@@ -199,6 +199,12 @@ select.estado option{background:var(--papel);color:var(--tinta);font-weight:500}
 .b-h .q{color:var(--alerta)}
 .anexo{display:inline-block;margin-right:6px;font-size:9.5px;font-weight:700;
   letter-spacing:.05em;text-transform:uppercase;color:var(--tinta-fraca)}
+/* interesse: so faz sentido filtrar por algo que da para ver na linha */
+.selo-tmp{display:inline-block;margin-left:5px;padding:1px 7px;border-radius:999px;
+  font-size:10.5px;font-weight:700;white-space:nowrap;vertical-align:1px}
+.tmp-quente{background:var(--grave-fundo);color:var(--grave)}
+.tmp-morno{background:var(--alerta-fundo);color:var(--alerta)}
+.tmp-frio{background:var(--acento-fundo);color:var(--acento)}
 .c-ag{background:var(--ok-fundo);color:var(--ok)}
 .c-esc,.c-bot{background:var(--alerta-fundo);color:var(--alerta)}
 .c-cli{background:var(--acento-fundo);color:var(--acento)}
@@ -571,7 +577,11 @@ const acentos = s => ACENTOS[s] ?? String(s)
   .replace('o paciente falou por ultimo', 'o paciente falou por último');
 
 let SENHA = '', LEADS = [], CONVERSAS = new Map(), abertas = new Set();
-let lTermo = '', lSit = '', lStatus = '', lFam = '';
+let lTermo = '', lSit = '', lStatus = '', lFam = '', lTmp = '';
+
+// quente, morno, frio — nesta ordem, que e a da urgencia. Ordem alfabetica
+// poria "frio" na frente, que e o contrario do que a lista serve para fazer.
+const ORDEM_TMP = ['quente', 'morno', 'frio'];
 
 const fone = t => {
   const d = String(t).replace(/\D/g, '');
@@ -615,6 +625,11 @@ function montarLeads(geradoEm) {
   const sits = ORDEM_SIT.filter(s => porSit[s])
     .concat(Object.keys(porSit).filter(s => !ORDEM_SIT.includes(s)));
   const fams = [...new Set(LEADS.map(r => r.f))].sort();
+  // so entram as temperaturas que existem nos dados, na ordem da urgencia
+  const porTmp = {};
+  LEADS.forEach(r => { if (r.tmp) porTmp[r.tmp] = (porTmp[r.tmp] || 0) + 1; });
+  const tmps = ORDEM_TMP.filter(t => porTmp[t])
+    .concat(Object.keys(porTmp).filter(t => !ORDEM_TMP.includes(t)).sort());
 
   el('cxLeads').innerHTML = `
     <div class="largo">
@@ -631,6 +646,8 @@ function montarLeads(geradoEm) {
         <option>Encerrado</option></select>
       <select id="lfam"><option value="">Todos os exames</option>${
         fams.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}</select>
+      <select id="ltmp" aria-label="Interesse"><option value="">Qualquer interesse</option>${
+        tmps.map(t => `<option value="${esc(t)}">${esc(t)} · ${br(porTmp[t])}</option>`).join('')}</select>
       <button type="button" id="llimpar">Limpar</button>
       <button type="button" id="lcsv">Baixar CSV</button>
       <button type="button" id="lfechar" title="Esquece a senha nesta aba">Fechar</button>
@@ -652,9 +669,11 @@ function montarLeads(geradoEm) {
   el('lsit').addEventListener('change', e => { lSit = e.target.value; sincTiles(); pintaLeads(); });
   el('lstatus').addEventListener('change', e => { lStatus = e.target.value; pintaLeads(); });
   el('lfam').addEventListener('change', e => { lFam = e.target.value; pintaLeads(); });
+  el('ltmp').addEventListener('change', e => { lTmp = e.target.value; pintaLeads(); });
   el('llimpar').addEventListener('click', () => {
-    lTermo = lSit = lStatus = lFam = '';
-    el('lbusca').value = ''; el('lsit').value = ''; el('lstatus').value = ''; el('lfam').value = '';
+    lTermo = lSit = lStatus = lFam = lTmp = '';
+    el('lbusca').value = ''; el('lsit').value = ''; el('lstatus').value = '';
+    el('lfam').value = ''; el('ltmp').value = '';
     sincTiles(); pintaLeads();
   });
   el('lcsv').addEventListener('click', baixarCsv);
@@ -678,6 +697,7 @@ const sincTiles = () => document.querySelectorAll('#tilesSit .t.clica')
 
 const visiveisL = () => LEADS.filter(r =>
   (!lSit || r.c === lSit) && (!lStatus || r.s === lStatus) && (!lFam || r.f === lFam) &&
+  (!lTmp || r.tmp === lTmp) &&
   (!lTermo || (r.n + ' ' + r.t + ' ' + r.tr + ' ' + r.e + ' ' + r.f + ' ' + r.c)
     .toLowerCase().includes(lTermo)));
 
@@ -710,6 +730,7 @@ function pintaLeads() {
       <td class="ex">${resumoExame(r.e)}<span class="fam">${esc(r.f)}</span></td>
       <td class="est">${seletor(r)}</td>
       <td class="conv"><span class="sel ${CLSC[r.c] || 'c-par'}">${esc(r.c)}</span>${
+        r.tmp ? `<span class="selo-tmp tmp-${esc(r.tmp)}">${esc(r.tmp)}</span>` : ''}${
         r.det ? `<span class="det">${esc(r.det)}</span>` : ''}</td>
       <td class="quando">${esc(r.u)}</td></tr>` + (ab ? gaveta(r) : '');
   }).join('');
@@ -820,13 +841,16 @@ document.addEventListener('keydown', e => {
 });
 
 function baixarCsv() {
+  // Interesse entra no fim: planilha ja salva por alguem continua com as
+  // colunas antigas no mesmo lugar.
   const L = [['Nome','WhatsApp','Exame','Familia','Status','Status automatico',
               'Definido a mao','Situacao da conversa','Detalhe','Mensagens',
               'Dias sem falar','Etapa do follow-up','Data do contato',
-              'Data da ultima mensagem','Recontato']];
+              'Data da ultima mensagem','Recontato','Interesse']];
   visiveisL().forEach(r => L.push([r.n, r.tr, r.e, r.f, r.s, r.sa,
     r.sm ? 'sim' : 'nao', r.c, r.det, r.nm,
-    r.dias === null ? '' : r.dias, r.et, r.d, r.u, r.r ? 'sim' : 'nao']));
+    r.dias === null ? '' : r.dias, r.et, r.d, r.u, r.r ? 'sim' : 'nao',
+    r.tmp ?? '']));
   const asp = s => '"' + String(s).replace(/"/g, '""') + '"';
   const blob = new Blob(['\ufeff' + L.map(l => l.map(asp).join(';')).join('\r\n')],
     { type: 'text/csv;charset=utf-8' });
