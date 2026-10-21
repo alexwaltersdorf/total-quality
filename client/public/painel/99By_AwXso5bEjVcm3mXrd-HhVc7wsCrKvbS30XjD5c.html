@@ -77,6 +77,16 @@ td.quando{font-family:var(--dados);white-space:nowrap;color:var(--tinta-fraca)}
 .det{display:block;font-size:11.5px;color:var(--tinta-fraca);margin-top:2px}
 .vazio{padding:28px;text-align:center;color:var(--tinta-fraca);background:var(--papel);
   border:1px dashed var(--borda-forte);border-radius:11px}
+/* a mensagem de "nada encontrado" vive DENTRO da tabela: se trocasse a tabela
+   inteira, o filtro que acabou de zerar a lista sumiria junto, e nao haveria
+   como desfazer o recorte */
+td.vazio-cel{padding:26px 10px;text-align:center;color:var(--tinta-fraca)}
+/* ───────── filtros no cabeçalho da planilha ───────── */
+tr.ftr th{padding:6px 8px;border-bottom:1px solid var(--borda);background:#fafbfb;
+  text-transform:none;letter-spacing:0;font-weight:400}
+tr.ftr select,tr.ftr input{width:100%;min-width:0;font-size:12.5px;padding:5px 7px}
+tr.ftr .pilha{display:flex;flex-direction:column;gap:5px}
+th.sit{min-width:150px}
 /* colunas que a equipe preenche na mão, no papel */
 th.mao,td.mao{width:80px}
 th.res,td.res{width:170px}
@@ -148,14 +158,6 @@ não agendaram. Escolha o recorte, imprima e distribua para a equipe ligar.</p>
         </select>
       </div>
       <div class="campo">
-        <label for="fFamilia">Tipo de exame</label>
-        <select id="fFamilia"><option value="">todos</option></select>
-      </div>
-      <div class="campo">
-        <label for="fSit">Situação da conversa</label>
-        <select id="fSit"><option value="">todas</option></select>
-      </div>
-      <div class="campo">
         <label for="fTemp">Interesse</label>
         <select id="fTemp">
           <option value="">qualquer</option>
@@ -189,7 +191,8 @@ não agendaram. Escolha o recorte, imprima e distribua para a equipe ligar.</p>
     </div>
 
     <div class="caixas">
-      <label><input type="checkbox" id="cExame" checked> só quem disse qual exame quer</label>
+      <label><input type="checkbox" id="cExame" checked> só quem disse qual exame quer
+        <span style="color:var(--tinta-fraca)">(tira os "não informado")</span></label>
       <label><input type="checkbox" id="cEscalada" checked> esconder quem já está com a recepção</label>
       <label><input type="checkbox" id="cFila" checked> esconder quem a Ana já vai procurar sozinha</label>
       <label><input type="checkbox" id="cColunas" checked> deixar espaço para anotar no papel</label>
@@ -231,6 +234,12 @@ const br = n => Number(n).toLocaleString('pt-BR');
 
 let SENHA = '', LEADS = [], GERADO = '';
 
+// Os filtros das colunas vivem aqui, e nao no DOM: o cabecalho da tabela e
+// remontado quando as colunas de anotacao entram ou saem, e sem esta copia a
+// escolha da pessoa se perderia na remontagem.
+const F = { fam: '', sit: '', txt: '' };
+let COLUNAS = null;   // com ou sem as colunas de anotar, para saber quando remontar
+
 // A senha vai no cabeçalho, nunca na query string: query string entra em log de
 // servidor, histórico do navegador e cabeçalho Referer.
 async function pedir(qs) {
@@ -247,6 +256,19 @@ const fone = t => {
   if (n.length === 10) return `(${n.slice(0,2)}) ${n.slice(2,6)}-${n.slice(6)}`;
   return t ?? '';
 };
+// comparar sem acento e sem caixa: quem digita "cardiologico" acha "cardiológico"
+const chave = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+// "(não informado)", "nao informado", "Não informada" — a Ana grava assim quando
+// a conversa nao chegou a dizer o exame. E texto preenchido, entao um teste de
+// campo vazio deixa essas linhas passarem; foi o que colocou "(não informado)"
+// numa lista marcada como "só quem disse qual exame quer".
+const SEM_EXAME = /^\(?\s*n[aã]o\s+informad[oa]s?\s*\)?$/i;
+const temExame = r => {
+  const e = String(r.e ?? '').trim();
+  return !!e && !SEM_EXAME.test(chave(e));
+};
+
 // o texto vem do banco sem acento em alguns campos
 const acentos = s => String(s ?? '')
   .replace(/\bclinica\b/g, 'clínica').replace(/\bultima\b/g, 'última')
@@ -264,18 +286,18 @@ function entrar(d) {
   }));
   el('cxSenha').hidden = true;
   el('cxLista').hidden = false;
-  preencherSelects();
+  COLUNAS = null;            // forca remontar o cabeçalho com os dados novos
   pintar();
 }
 
-function preencherSelects() {
-  const fams = [...new Set(LEADS.map(r => r.f).filter(Boolean))].sort((a,b) => a.localeCompare(b,'pt-BR'));
-  el('fFamilia').innerHTML = '<option value="">todos</option>'
-    + fams.map(f => `<option>${esc(f)}</option>`).join('');
-  // só as situações que fazem sentido para ligar: agendada e opt-out ficam fora
-  const sits = [...new Set(LEADS.filter(elegivel).map(r => r.c))].sort((a,b) => a.localeCompare(b,'pt-BR'));
-  el('fSit').innerHTML = '<option value="">todas</option>'
-    + sits.map(s => `<option>${esc(s)}</option>`).join('');
+// As opções saem dos dados que estão na tela, não de uma lista fixa: exame que
+// ninguém procurou não vira opção, e situação que sumiu do recorte não fica
+// oferecendo zero resultado.
+function opcoes(valores, atual, rotuloTodos) {
+  const lista = [...new Set(valores.filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  const escolha = lista.includes(atual) ? atual : '';   // sumiu dos dados, volta para todos
+  return `<option value="">${esc(rotuloTodos)}</option>`
+    + lista.map(v => `<option${v === escolha ? ' selected' : ''}>${esc(v)}</option>`).join('');
 }
 
 // Quem nunca pode entrar na lista, independentemente de filtro.
@@ -286,21 +308,32 @@ function elegivel(r) {
   return true;
 }
 
-function selecionar() {
-  const per = Number(el('fPeriodo').value);
-  const fam = el('fFamilia').value, sit = el('fSit').value, tmp = el('fTemp').value;
+// o que passa por tudo, menos pelos dois filtros de coluna — e o universo de
+// onde saem as opcoes de "exame procurado" e "situacao"
+function baseDasColunas() {
+  const per = Number(el('fPeriodo').value), tmp = el('fTemp').value;
   const soExame = el('cExame').checked, semEsc = el('cEscalada').checked, semFila = el('cFila').checked;
-
-  let fora = LEADS.filter(r => {
+  return LEADS.filter(r => {
     if (!elegivel(r)) return false;
-    if (soExame && !String(r.e || '').trim()) return false;
+    if (soExame && !temExame(r)) return false;
     if (semEsc && (r.c === 'Escalada' || r.c === 'Bot pausado')) return false;
     if (semFila && r.fila) return false;
-    if (fam && r.f !== fam) return false;
-    if (sit && r.c !== sit) return false;
     if (tmp && r.tmp !== tmp) return false;
     if (per > 0 && !(r.dias !== null && r.dias <= per)) return false;
     if (per < 0 && !(r.dias !== null && r.dias > -per)) return false;
+    return true;
+  });
+}
+
+function selecionar() {
+  const busca = chave(F.txt).trim();
+
+  let fora = baseDasColunas().filter(r => {
+    if (F.fam && r.f !== F.fam) return false;
+    if (F.sit && r.c !== F.sit) return false;
+    // a busca livre olha o exame E a familia: quem digita "sangue" acha tanto
+    // "hemograma" pela familia quanto "exame de sangue" pelo texto
+    if (busca && !chave(`${r.e ?? ''} ${r.f ?? ''}`).includes(busca)) return false;
     return true;
   });
 
@@ -318,9 +351,42 @@ function selecionar() {
   return lim > 0 ? fora.slice(0, lim) : fora;
 }
 
+// Monta a tabela inteira (cabeçalho + linha de filtros + corpo vazio). Só roda
+// quando as colunas mudam ou os dados são recarregados — nunca a cada tecla
+// digitada na busca, que roubaria o foco de quem está digitando.
+function montarTabela(comAnot) {
+  const base = baseDasColunas();
+  const selFam = opcoes(base.map(r => r.f), F.fam, 'todos os exames');
+  const selSit = opcoes(base.map(r => r.c), F.sit, 'todas as situações');
+
+  el('tabela').innerHTML = '<table><thead>'
+    + '<tr>'
+    +   '<th></th><th>Paciente</th><th>Telefone</th><th>Exame procurado</th>'
+    +   '<th>Parado</th><th class="sit">Situação</th>'
+    +   (comAnot ? '<th class="mao">Atendeu?</th><th class="res">O que ficou combinado</th>' : '')
+    + '</tr>'
+    + '<tr class="ftr nao-imprime">'
+    +   '<th></th><th></th><th></th>'
+    +   '<th><div class="pilha">'
+    +     `<select id="fFamilia" aria-label="Filtrar por tipo de exame">${selFam}</select>`
+    +     `<input type="search" id="fExameTxt" placeholder="buscar no exame…" `
+    +       `aria-label="Buscar no exame procurado" value="${esc(F.txt)}">`
+    +   '</div></th>'
+    +   '<th></th>'
+    +   `<th><select id="fSit" aria-label="Filtrar por situação">${selSit}</select></th>`
+    +   (comAnot ? '<th></th><th></th>' : '')
+    + '</tr>'
+    + '</thead><tbody id="corpo"></tbody></table>';
+
+  // se a escolha anterior sumiu dos dados, opcoes() volta para "todos"
+  F.fam = el('fFamilia').value;
+  F.sit = el('fSit').value;
+}
+
 function pintar() {
-  const lista = selecionar();
   const comAnot = el('cColunas').checked;
+  if (COLUNAS !== comAnot) { montarTabela(comAnot); COLUNAS = comAnot; }
+  const lista = selecionar();
 
   const quentes = lista.filter(r => r.tmp === 'quente').length;
   const semFalar = lista.filter(r => (r.dias ?? 0) > 7).length;
@@ -333,13 +399,6 @@ function pintar() {
 
   const hoje = new Date().toLocaleDateString('pt-BR');
   el('metaPapel').innerHTML = `${esc(hoje)} · ${br(lista.length)} ligações<br>${esc(resumoFiltro())}`;
-
-  if (!lista.length) {
-    el('tabela').innerHTML = '<div class="vazio">Nenhum paciente com esse recorte. '
-      + 'Tente ampliar o período ou desmarcar algum filtro.</div>';
-    el('rodape').textContent = '';
-    return;
-  }
 
   const linhas = lista.map((r, i) => {
     const t = r.tmp ? `<span class="marca m-${esc(r.tmp)}">${esc(r.tmp)}</span>` : '';
@@ -358,11 +417,10 @@ function pintar() {
       + '</tr>';
   }).join('');
 
-  el('tabela').innerHTML = '<table><thead><tr>'
-    + '<th></th><th>Paciente</th><th>Telefone</th><th>Exame procurado</th>'
-    + '<th>Parado</th><th>Situação</th>'
-    + (comAnot ? '<th class="mao">Atendeu?</th><th class="res">O que ficou combinado</th>' : '')
-    + '</tr></thead><tbody>' + linhas + '</tbody></table>';
+  const colspan = comAnot ? 8 : 6;
+  el('corpo').innerHTML = lista.length ? linhas
+    : `<tr><td class="vazio-cel" colspan="${colspan}">Nenhum paciente com esse recorte. `
+      + 'Tente ampliar o período, limpar a busca do exame ou voltar a situação para todas.</td></tr>';
 
   el('rodape').textContent = 'Dados lidos em ' + GERADO
     + '. A lista nasce das conversas no WhatsApp: quem a Ana entendeu que procura um exame '
@@ -370,11 +428,12 @@ function pintar() {
 }
 
 function resumoFiltro() {
-  const p = el('fPeriodo'), f = el('fFamilia'), s = el('fSit'), t = el('fTemp');
+  const p = el('fPeriodo'), t = el('fTemp');
   const partes = [];
   if (p.value !== '0') partes.push('parado ' + p.selectedOptions[0].textContent);
-  if (f.value) partes.push(f.value);
-  if (s.value) partes.push(s.value);
+  if (F.fam) partes.push(F.fam);
+  if (F.txt.trim()) partes.push(`exame contendo "${F.txt.trim()}"`);
+  if (F.sit) partes.push(F.sit);
   if (t.value) partes.push('interesse ' + t.value);
   return partes.length ? partes.join(' · ') : 'todos os pacientes sem agendamento';
 }
@@ -399,8 +458,24 @@ el('formSenha').addEventListener('submit', async e => {
   }
 });
 
-['fPeriodo','fFamilia','fSit','fTemp','fLimite','fOrdem','cExame','cEscalada','cFila','cColunas']
-  .forEach(id => el(id).addEventListener('change', pintar));
+// Os filtros de cima podem mudar o universo das colunas (quem some do período
+// não deve continuar aparecendo como opção de exame), então remontam o
+// cabeçalho; os de apresentação só repintam.
+['fPeriodo','fTemp','cExame','cEscalada','cFila']
+  .forEach(id => el(id).addEventListener('change', () => { COLUNAS = null; pintar(); }));
+['fLimite','fOrdem','cColunas'].forEach(id => el(id).addEventListener('change', pintar));
+
+// Delegação: os controles das colunas são recriados a cada remontagem do
+// cabeçalho, então ouvir neles pelo id deixaria de funcionar na segunda vez.
+el('tabela').addEventListener('change', e => {
+  if (e.target.id === 'fFamilia') { F.fam = e.target.value; pintar(); }
+  if (e.target.id === 'fSit')     { F.sit = e.target.value; pintar(); }
+});
+el('tabela').addEventListener('input', e => {
+  if (e.target.id !== 'fExameTxt') return;
+  F.txt = e.target.value;
+  pintar();          // só o <tbody> é reescrito: o cursor fica onde estava
+});
 
 el('btImprimir').addEventListener('click', () => window.print());
 
