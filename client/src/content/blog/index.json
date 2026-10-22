@@ -1057,8 +1057,8 @@
       "hemograma",
       "preparo para exames"
     ],
-    "draft": true,
-    "reviewStatus": "revisao_medica_pendente",
+    "draft": false,
+    "reviewStatus": "aprovado",
     "dateModified": "2026-10-22",
     "examName": "exames laboratoriais",
     "examType": "exames-de-sangue",
@@ -1071,7 +1071,8 @@
       "hemograma-completo-o-que-avalia",
       "exames-de-sangue-guia-completo",
       "exame-de-urina-eas-como-coletar"
-    ]
+    ],
+    "lastReviewed": "2026-10-22"
   },
   {
     "id": "44",
