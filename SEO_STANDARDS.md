@@ -255,23 +255,17 @@ Padrão: `/exames/{slug}`
 | Teste de Esforço | `teste-esforco` | 0.9 |
 | Holter 24h | `holter-24h` | 0.9 |
 
-### Rotas de Blog (11)
+### Rotas de Blog
 
-Padrão: `/blog/{slug}`
+Padrão: `/blog/{slug}`. A fonte única é `client/src/content/blog/index.json` — a lista que
+existia aqui envelheceu. Rascunho (`draft: true`) responde 200 com `noindex` e fica fora do
+sitemap.
 
-| Artigo | Slug | Priority |
-|--------|------|----------|
-| Check-up Preventivo | `check-up-preventivo-quando-fazer` | 0.7 |
-| Exames de Sangue | `exames-de-sangue-guia-completo` | 0.7 |
-| Saúde do Coração | `saude-do-coracao-prevencao` | 0.7 |
-| Alimentação | `alimentacao-e-exames-laboratoriais` | 0.7 |
-| Vitamina D | `vitamina-d-importancia-saude` | 0.7 |
-| Exame de Sangue Caraguatatuba | `exame-de-sangue-caraguatatuba` | 0.8 |
-| Convênios | `convenios-laboratorio-caraguatatuba` | 0.7 |
-| Hemograma | `hemograma-caraguatatuba` | 0.8 |
-| Ultrassonografia | `ultrassonografia-caraguatatuba` | 0.7 |
-| Tomografia | `tomografia-caraguatatuba` | 0.7 |
-| Convênios (alt) | `convênios-laboratório-caraguatatuba` | 0.6 |
+Consolidados com 301 em 22/10/2026 (regra 24): `hemograma-caraguatatuba`,
+`ultrassonografia-caraguatatuba`, `tomografia-caraguatatuba`, `check-up-preventivo-quando-fazer`,
+`laboratorio-regiao-sul-caraguatatuba`, `laboratorio-jardim-primavera-caraguatatuba` (rascunho),
+`convenios-laboratorio-caraguatatuba` e `exame-de-sangue-caraguatatuba`. Destinos em
+`server/_core/legacy-redirects.ts`.
 
 ---
 
@@ -371,9 +365,15 @@ por testes em `server/seo-content.test.ts`:
    metadata em `routes-metadata.ts` + conteúdo em `seo-content.ts` (o teste
    guard-rail falha se esquecer).
 2. **Uma intenção de busca por página (sem canibalização).** Home = "laboratório
-   em caraguatatuba"; `/laboratorio-caraguatatuba` = "laboratório de análises
+   em caraguatatuba" (e "laboratório"); `/laboratorio-caraguatatuba` = "análises
    clínicas"; cada `/exames/:slug` = o nome do exame. Não repetir o mesmo
-   título-alvo em duas páginas.
+   título-alvo em duas páginas — **nem no servidor, nem no React**: título,
+   description e H1 da home e da landing vêm de `shared/const.ts`
+   (`HOME_TITLE`, `HOME_H1`, `ANALISES_TITLE`…). Até out/2026 a landing dizia
+   "Análises Clínicas" ao robô e "Laboratório em Caraguatatuba" depois do JS.
+   Quem é dona de um termo se decide por Search Console (90 dias, por página),
+   nunca por opinião: em 16/10/2026 a home era a URL escolhida pelo Google
+   para "laboratório caraguatatuba" (posição ~3–4) e a URL do perfil do Google.
 3. **H1 limpo, sem marca empilhada.** A marca vai no `<title>` (após o pipe),
    nunca dentro do `<h1>`.
 4. **robots.txt não bloqueia crawlers de IA** (GPTBot/CCBot liberados — o site já
@@ -463,3 +463,43 @@ por testes em `server/seo-content.test.ts`:
     curl na home; o teste unitário não pegava porque exercitava
     `getSeoContentForPath("/")` isolado, sem passar pelo servidor. **Ao mexer no
     `serveStatic`, conferir a home por curl, não só por teste.**
+22. **Regra de ouro — os cinco indicadores do Google** ("Como a Pesquisa Google
+    determina a classificação de resultados"): **significado** (a intenção, que
+    para "laboratório" é local e transacional), **relevância** (o termo no título
+    e no corpo, com conteúdo útil ao redor — não repetição), **qualidade**
+    (conhecimento, legitimidade e confiabilidade: responsável técnico
+    identificado, só fatos verificáveis, links de sites legítimos), **usabilidade**
+    (celular e velocidade desempatam) e **contexto** (local e personalização —
+    não existe "1º lugar" único; medir por Search Console e grade). Toda
+    mudança precisa melhorar um indicador sem piorar outro, e nunca às custas da
+    verdade: nada de "última geração", "mais completo", nota declarada pelo site
+    ou "diversos convênios" (são três, `CONVENIOS_TEXTO`). Um único nó de
+    negócio no JSON-LD (`#medicalbusiness`, com `DiagnosticLab` e `hasMap`).
+    Travas em `server/regra-ouro-ranking.test.ts`. Documento completo, com os
+    dados de out/2026: `REGRA-OURO-RANKING-GOOGLE.md` no repositório
+    `SEO---Total-Quality`.
+
+23. **Artigo de saúde nasce rascunho** (out/2026): todo artigo novo entra em
+    `client/src/content/blog/` com `"draft": true` e `"reviewStatus":
+    "revisao_medica_pendente"`. Rascunho abre pela URL com `noindex, nofollow`
+    (para revisão), mas fica fora do sitemap, da listagem, da home, dos
+    relacionados e de qualquer link de página publicada. Publicar = `draft:
+    false`, `reviewStatus: "aprovado"` e `lastReviewed` preenchido, sem
+    marcador `{{PRAZO}}` pendente. Metadados da rota vêm do `index.json`
+    (`metaTitle` = `<title>` no prerender e no React); `lastmod` do sitemap só
+    com data real (`dateModified`). Schema do artigo: `BlogPosting` com
+    `publisher` → `#medicalbusiness` e `MedicalWebPage` sobre `MedicalTest`.
+    O quadro de contato (`ExamCTA`) nunca diz "agende" para coleta
+    laboratorial. Travas em `server/blog-exames.test.ts`.
+
+24. **Blog: uma URL por intenção, e do artigo para o exame** (out/2026, system prompt do
+    blog de 21/10): busca com "Caraguatatuba" pertence à página `/exames/` (ou à landing);
+    artigo de blog não leva o nome da cidade no title nem no H1 quando existe página de
+    serviço equivalente — a ligação local fica no quadro de contato (`ExamCTA`), que entra
+    no meio e no fim de todo artigo publicado, com botão para a página do exame
+    (`examPages`) e WhatsApp. Artigo que disputa a intenção de uma página de serviço é
+    consolidado nela com 301, levando antes o conteúdo útil. Autoria é a clínica; o topo
+    mostra "Revisado por Alex Waltersdorf, Responsável Técnico · Atualizado em …" (nunca em
+    rascunho). Link de WhatsApp só por `whatsappUrl()` (api.whatsapp.com, fixo
+    (12) 3887-3535) — nunca `wa.me`. Relatório: `docs/seo-blog-2026-10-22.md`. Travas em
+    `server/blog-exames.test.ts` e `server/seo-content.test.ts`.

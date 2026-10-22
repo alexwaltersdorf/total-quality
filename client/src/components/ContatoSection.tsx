@@ -109,7 +109,7 @@ export default function ContatoSection() {
         {/* Section header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-16">
           <div>
-            <span className="reveal section-label mb-4 block">Agende seu exame de sangue ou diagnóstico em Caraguatatuba</span>
+            <span className="reveal section-label mb-4 block">Exames de sangue e diagnóstico em Caraguatatuba</span>
             <h2 className="reveal heading-display text-5xl sm:text-6xl lg:text-7xl text-text" style={{ transitionDelay: "100ms" }}>
               ENTRE EM{" "}
               <br />
@@ -117,15 +117,12 @@ export default function ContatoSection() {
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
-            Agende seu{" "}
+            {/* Sem "Agende seu exame de sangue": a coleta laboratorial e sem
+                agendamento, por ordem de chegada (decisao de 01/08/2026). */}
             <Link href="/exames/exames-de-sangue" className="text-brand hover:underline">
-              exame de sangue
-            </Link>
-            ,{" "}
-            <Link href="/exames/hemograma" className="text-brand hover:underline">
-              hemograma
-            </Link>
-            , glicemia, colesterol, hormônios,{" "}
+              Exames de sangue
+            </Link>{" "}
+            sem agendamento, por ordem de chegada;{" "}
             <Link href="/exames/tomografia-computadorizada" className="text-brand hover:underline">
               tomografia
             </Link>
@@ -137,11 +134,11 @@ export default function ContatoSection() {
             <Link href="/exames/mamografia" className="text-brand hover:underline">
               mamografia
             </Link>{" "}
-            ou{" "}
+            e{" "}
             <Link href="/checkup" className="text-brand hover:underline">
               check-up
             </Link>{" "}
-            na Total Quality em Caraguatatuba - SP. Atendemos de segunda a sexta, das 07h30 às 18h.
+            com hora marcada pelo WhatsApp. Atendemos de segunda a sexta, das 07h30 às 18h.
           </p>
         </div>
 
@@ -226,7 +223,7 @@ export default function ContatoSection() {
               <div className="mt-10 space-y-3">
                 <button
                   onClick={() => { trackWhatsAppClick("contato_quick_action"); openWhatsApp("contato_quick_action", "Olá! Gostaria de informações."); }}
-                  className="btn-pill w-full justify-center !bg-[#25D366] hover:!bg-[#1da851] !text-white"
+                  className="btn-pill w-full justify-center"
                 >
                   <MessageCircle className="w-4 h-4" />
                   WhatsApp

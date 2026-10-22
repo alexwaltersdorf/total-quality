@@ -2,6 +2,7 @@
   "id": "18",
   "slug": "aso-exames-ocupacionais",
   "title": "ASO: O Que É e Qual Sua Relação com os Exames Ocupacionais?",
+  "metaTitle": "ASO: O Que É e Quando Deve Ser Emitido | Total Quality",
   "subtitle": "Entenda a diferença entre o exame ocupacional e o documento, e o que a NR-7 exige",
   "excerpt": "Entenda o que é ASO, quando o documento é emitido, sua relação com os exames ocupacionais e as responsabilidades de empresas e trabalhadores.",
   "category": "Saúde Ocupacional",
@@ -40,6 +41,7 @@
     "O conteúdo obrigatório deve seguir a NR-7 vigente. De forma geral, o documento reúne informações como:",
     "- Identificação do trabalhador.\n- Função exercida.\n- Riscos ocupacionais que exigem controle médico, quando aplicável.\n- Procedimentos e exames realizados.\n- Data da avaliação.\n- Identificação do médico responsável.\n- Conclusão de apto ou inapto para a função.",
     "Informações clínicas detalhadas pertencem ao prontuário médico e não devem ser expostas indevidamente no ASO. A empresa precisa tratar os documentos ocupacionais com confidencialidade e de acordo com as regras de proteção de dados.",
+    "[[cta]]",
     "## Quem pode emitir e assinar o ASO?",
     "O ASO deve ser emitido e assinado pelo médico responsável pela avaliação ocupacional, conforme as exigências da regulamentação aplicável.",
     "A empresa não pode preencher previamente a conclusão nem alterar o documento após a avaliação. Ao empregador cabe fornecer as informações ocupacionais necessárias e encaminhar o trabalhador ao serviço responsável.",
@@ -73,5 +75,12 @@
     "A Total Quality realiza [exames admissionais e ocupacionais](https://totalquality.med.br/exames/exame-admissional) para empresas e trabalhadores de Caraguatatuba, Ubatuba, São Sebastião e Ilhabela.",
     "**Entre em contato pelo WhatsApp ou pelo telefone (12) 3887-3535 para organizar o atendimento da sua empresa.**",
     "Este conteúdo é informativo e não substitui orientação médica, jurídica ou de saúde e segurança do trabalho."
-  ]
+  ],
+  "examName": "exames ocupacionais",
+  "examType": "exame-admissional",
+  "examPages": [
+    "/exames/exame-admissional"
+  ],
+  "horaMarcada": true,
+  "dateModified": "2026-10-22"
 }

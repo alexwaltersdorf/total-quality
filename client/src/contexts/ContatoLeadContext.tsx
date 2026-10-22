@@ -53,8 +53,8 @@ import {
 import { consentState, readFbCookies, readGaClientId } from "@/lib/conversionContext";
 import { examTypeAtual } from "@/lib/pageContext";
 import { resolveLeadValue } from "@/lib/leadValues";
+import { whatsappUrl } from "@shared/const";
 
-const WHATSAPP_NUMBER = "551238873535";
 
 /**
  * Mesmo numero, no formato que o discador entende. NAO e exportado de
@@ -201,7 +201,7 @@ function mensagemComCodigo(message: string, source: string): string {
  */
 function abrirConversa(message: string, source: string) {
   window.open(
-    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemComCodigo(message, source))}`,
+    whatsappUrl(mensagemComCodigo(message, source)),
     "_blank",
     "noopener,noreferrer"
   );

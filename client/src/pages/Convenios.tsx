@@ -4,8 +4,8 @@
  * Criada na auditoria de ago/2026 (fila C6): "convênio" aparece nas buscas
  * reais do perfil do Google e a landing /laboratorio-caraguatatuba só linkava
  * para um post de blog informacional. Esta página responde a intenção
- * transacional; o post /blog/convenios-laboratorio-caraguatatuba segue como
- * conteúdo de apoio.
+ * transacional. O antigo post /blog/convenios-laboratorio-caraguatatuba foi
+ * consolidado aqui com 301 em 22/10/2026.
  *
  * O conteúdo prerenderizado (com FAQPage schema) vive em
  * server/_core/seo-content.ts (conveniosHtml) — manter os dois textos
@@ -16,31 +16,17 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
-import { CONVENIOS } from "@/lib/conveniosData";
+import { CONVENIOS, CONVENIOS_FAQS as FAQS } from "@/lib/conveniosData";
+import { blogPosts } from "@/lib/blogData";
+
+// Artigo de coleta domiciliar: o link so aparece depois que ele for publicado.
+const COLETA_DOMICILIAR = blogPosts.find((p) => p.slug === "coleta-domiciliar-exames-caraguatatuba");
 import { trackWhatsAppConversion } from "@/lib/tracking";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
 const WHATSAPP_MESSAGE =
   "Olá! Gostaria de confirmar se meu convênio é aceito na Total Quality.";
 
-const FAQS = [
-  {
-    q: "Quais convênios a Total Quality atende?",
-    a: "Atendemos Cartão de Todos, Solumedi e Leader. Fora desses, o atendimento é particular, com tabela própria. Confirme condições e valores pelo WhatsApp (12) 3887-3535 antes de vir.",
-  },
-  {
-    q: "Preciso de liberação prévia?",
-    a: "Alguns exames de maior complexidade, como tomografia e mamografia, podem exigir procedimento próprio de liberação. Nossa equipe orienta sobre o seu caso no momento do agendamento.",
-  },
-  {
-    q: "O que preciso levar para usar o convênio?",
-    a: "O cartão do convênio, um documento de identidade com foto e o pedido médico.",
-  },
-  {
-    q: "E se eu não tiver convênio?",
-    a: "Atendemos particular com valores acessíveis e pagamento em dinheiro, cartão de crédito, débito ou PIX. Há condições especiais para check-ups e pacotes de exames.",
-  },
-];
 
 export default function Convenios() {
   const openWhatsApp = useWhatsAppRedirect();
@@ -109,6 +95,15 @@ export default function Convenios() {
                 </button>{" "}
                 antes de agendar.
               </p>
+              {COLETA_DOMICILIAR && (
+                <p className="mt-4">
+                  Não pode vir até a unidade? Veja como funciona a{" "}
+                  <Link href={`/blog/${COLETA_DOMICILIAR.slug}`} className="text-primary underline">
+                    coleta domiciliar de exames
+                  </Link>
+                  .
+                </p>
+              )}
             </section>
 
             <section>

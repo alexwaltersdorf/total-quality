@@ -1,6 +1,6 @@
 [
   {
-    "id": "25",
+    "id": "42",
     "slug": "hipoglicemia-sintomas-e-exames",
     "title": "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer",
     "subtitle": "Quando a glicose cai abaixo de 70 mg/dL, o que fazer na hora e quais exames investigam a causa",
@@ -17,39 +17,27 @@
       "exames de sangue",
       "diabetes",
       "Caraguatatuba"
-    ]
-  },
-  {
-    "id": "1",
-    "slug": "check-up-preventivo-quando-fazer",
-    "title": "Check-Up Preventivo: Quando Fazer e Por Que É Tão Importante",
-    "subtitle": "Descubra a frequência ideal e os exames essenciais para cada faixa etária",
-    "excerpt": "O check-up preventivo é a principal ferramenta para detectar doenças em estágio inicial, quando o tratamento é mais eficaz. Saiba quando fazer e quais exames são recomendados para cada idade.",
-    "category": "Medicina Preventiva",
-    "author": "Dr. Alexandre Ribeiro",
-    "authorRole": "Diretor Clínico — Total Quality",
-    "date": "10 Abr 2026",
-    "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/blog/check-up-preventivo-quando-fazer.webp",
-    "tags": [
-      "check-up",
-      "medicina preventiva",
-      "exames",
-      "saúde",
-      "Caraguatatuba"
-    ]
+    ],
+    "metaTitle": "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer",
+    "examName": "exames de glicemia",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue"
+    ],
+    "dateModified": "2026-10-22"
   },
   {
     "id": "2",
     "slug": "exames-de-sangue-guia-completo",
-    "title": "Exames de Sangue: Guia Completo Para Entender Seus Resultados",
-    "subtitle": "Hemograma, glicemia, colesterol e mais — o que cada exame revela sobre sua saúde",
-    "excerpt": "Entender os resultados dos exames de sangue pode parecer complicado, mas é fundamental para acompanhar sua saúde. Conheça os principais exames e o que cada valor significa.",
+    "title": "Exames de Sangue: Tipos e Como Entender o Resultado",
+    "metaTitle": "Tipos de Exame de Sangue e Como Entender o Resultado",
+    "subtitle": "Hemograma, glicemia, colesterol, tireoide e mais: o que cada exame avalia, como se preparar e como ler o laudo",
+    "excerpt": "Conheça os tipos de exame de sangue mais pedidos, o preparo de cada um e como ler o laudo: resultado, unidade e valor de referência. Tire dúvidas.",
     "category": "Exames Laboratoriais",
-    "author": "Dra. Mariana Costa",
-    "authorRole": "Patologista Clínica — Total Quality",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "05 Abr 2026",
-    "readTime": "10 min",
+    "readTime": "8 min",
     "image": "https://totalquality.med.br/images/blog/exames-de-sangue-guia-completo.webp",
     "tags": [
       "exames de sangue",
@@ -58,36 +46,53 @@
       "colesterol",
       "laboratório",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "exames de sangue",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue"
+    ],
+    "dateModified": "2026-10-22"
   },
   {
     "id": "3",
     "slug": "saude-do-coracao-prevencao",
-    "title": "Saúde do Coração: 7 Hábitos Que Podem Salvar Sua Vida",
-    "subtitle": "Doenças cardiovasculares são a principal causa de morte no Brasil — saiba como se proteger",
-    "excerpt": "As doenças cardiovasculares são responsáveis por mais de 400 mil mortes por ano no Brasil. Conheça os 7 hábitos comprovados pela ciência que protegem seu coração.",
+    "title": "Saúde do Coração: 7 Hábitos e os Exames de Acompanhamento",
+    "metaTitle": "Saúde do Coração: 7 Hábitos e Exames | Total Quality",
+    "subtitle": "Hábitos que ajudam a reduzir o risco de doenças do coração e os exames que o médico pode pedir para acompanhar",
+    "excerpt": "Conheça 7 hábitos que ajudam a reduzir o risco de doenças do coração, os exames que o médico pode pedir e os sinais de alerta que pedem emergência.",
     "category": "Saúde do Coração",
-    "author": "Dr. Carlos Mendes",
-    "authorRole": "Cardiologista — Total Quality",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "28 Mar 2026",
-    "readTime": "7 min",
+    "readTime": "6 min",
     "image": "https://totalquality.med.br/images/blog/saude-do-coracao-prevencao.webp",
     "tags": [
       "cardiologia",
       "saúde do coração",
       "prevenção",
       "eletrocardiograma"
-    ]
+    ],
+    "examName": "eletrocardiograma",
+    "examType": "eletrocardiograma",
+    "examPages": [
+      "/exames/eletrocardiograma",
+      "/exames/holter",
+      "/exames/mapa"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "4",
     "slug": "alimentacao-e-exames-laboratoriais",
-    "title": "Como a Alimentação Influencia Seus Exames Laboratoriais",
-    "subtitle": "Entenda a relação entre dieta, jejum e a precisão dos resultados dos seus exames",
-    "excerpt": "Sua alimentação pode alterar significativamente os resultados dos exames de sangue. Saiba como se preparar corretamente e quais alimentos podem interferir nos seus resultados.",
+    "title": "Alimentação Antes do Exame: o Que Pode Alterar o Resultado",
+    "metaTitle": "Alimentação e Exames: Jejum e o Que Evitar | Total Quality",
+    "subtitle": "Jejum, gordura, álcool, café e suplementos: como o que você come e toma antes da coleta pode mudar os resultados",
+    "excerpt": "Veja como jejum, refeições gordurosas, álcool, café e suplementos como a biotina podem alterar exames laboratoriais e como se preparar para a coleta.",
     "category": "Nutrição",
-    "author": "Dra. Fernanda Lima",
-    "authorRole": "Nutróloga — Total Quality",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "20 Mar 2026",
     "readTime": "6 min",
     "image": "https://totalquality.med.br/images/blog/alimentacao-e-exames-laboratoriais.webp",
@@ -97,17 +102,24 @@
       "jejum",
       "nutrição",
       "preparo para exames"
-    ]
+    ],
+    "examName": "exames de sangue",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue"
+    ],
+    "dateModified": "2026-10-22"
   },
   {
     "id": "5",
     "slug": "vitamina-d-importancia-saude",
-    "title": "Vitamina D: Por Que Você Provavelmente Está Com Deficiência",
-    "subtitle": "Mesmo no Brasil tropical, a deficiência de vitamina D atinge milhões de pessoas",
-    "excerpt": "Estima-se que 60% dos brasileiros tenham níveis insuficientes de vitamina D. Entenda por que isso acontece, os riscos para a saúde e como manter seus níveis adequados.",
+    "title": "Vitamina D: Para Que Serve, Exame e Valores de Referência",
+    "metaTitle": "Vitamina D: Exame, Valores e Deficiência | Total Quality",
+    "subtitle": "O que a vitamina D faz no corpo, quem tem mais risco de deficiência, como é o exame 25(OH)D e como as faixas são usadas",
+    "excerpt": "Para que serve a vitamina D, quem tem mais risco de deficiência, como é o exame 25(OH)D e o que indicam as faixas de referência. Entenda o laudo.",
     "category": "Bem-Estar",
-    "author": "Dr. Alexandre Ribeiro",
-    "authorRole": "Diretor Clínico — Total Quality",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Mar 2026",
     "readTime": "7 min",
     "image": "https://totalquality.med.br/images/blog/vitamina-d-importancia-saude.webp",
@@ -117,100 +129,26 @@
       "exames de sangue",
       "saúde óssea",
       "imunidade"
-    ]
-  },
-  {
-    "id": "7",
-    "slug": "convenios-laboratorio-caraguatatuba",
-    "title": "Convênios Aceitos no Laboratório em Caraguatatuba",
-    "subtitle": "Cartão de Todos, Solumedi e Leader — e como funciona o atendimento particular",
-    "excerpt": "Saiba quais convênios são aceitos no laboratório Total Quality em Caraguatatuba - SP: Cartão de Todos, Solumedi e Leader. Nos demais casos, atendimento particular.",
-    "category": "Exames Laboratoriais",
-    "author": "Equipe Total Quality",
-    "authorRole": "Atendimento — Total Quality",
-    "date": "23 Abr 2026",
-    "readTime": "6 min",
-    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
-    "tags": [
-      "convênios",
-      "Cartão de Todos",
-      "Solumedi",
-      "Leader",
-      "laboratório Caraguatatuba",
-      "Caraguatatuba"
-    ]
-  },
-  {
-    "id": "8",
-    "slug": "hemograma-caraguatatuba",
-    "title": "Hemograma em Caraguatatuba: Como Agendar, Preparo e Resultados",
-    "subtitle": "Tudo sobre o exame de sangue mais solicitado no laboratório",
-    "excerpt": "Hemograma em Caraguatatuba sem agendamento: veja o preparo necessário, o que o exame avalia e como interpretar os resultados.",
-    "category": "Exames Laboratoriais",
-    "author": "Dr. Alexandre Ribeiro",
-    "authorRole": "Diretor Clínico — Total Quality",
-    "date": "23 Abr 2026",
-    "readTime": "10 min",
-    "image": "https://totalquality.med.br/images/blog/hemograma-caraguatatuba.webp",
-    "tags": [
-      "hemograma",
-      "exame de sangue",
-      "laboratório Caraguatatuba",
-      "análises clínicas",
-      "Caraguatatuba"
-    ]
-  },
-  {
-    "id": "9",
-    "slug": "ultrassonografia-caraguatatuba",
-    "title": "Ultrassonografia em Caraguatatuba — Agende Sem Fila",
-    "subtitle": "Exame de imagem seguro, indolor e sem radiação no litoral norte",
-    "excerpt": "Saiba tudo sobre ultrassonografia em Caraguatatuba: tipos de exame, preparo, como agendar e onde realizar com equipamentos de última geração.",
-    "category": "Medicina Preventiva",
-    "author": "Dr. Alexandre Ribeiro",
-    "authorRole": "Diretor Clínico — Total Quality",
-    "date": "23 Abr 2026",
-    "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/blog/ultrassonografia-caraguatatuba.webp",
-    "tags": [
-      "ultrassonografia",
-      "ultrassom",
-      "diagnóstico por imagem",
-      "Caraguatatuba",
-      "exame de imagem"
-    ]
-  },
-  {
-    "id": "10",
-    "slug": "tomografia-caraguatatuba",
-    "title": "Tomografia em Caraguatatuba — Quando Fazer e Como Se Preparar",
-    "subtitle": "Guia completo sobre tomografia computadorizada no litoral norte paulista",
-    "excerpt": "Saiba quando a tomografia é indicada, como se preparar para o exame e onde realizar em Caraguatatuba com equipamento multislice de última geração.",
-    "category": "Medicina Preventiva",
-    "author": "Dr. Alexandre Ribeiro",
-    "authorRole": "Diretor Clínico — Total Quality",
-    "date": "23 Abr 2026",
-    "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/tomografia-1024.webp",
-    "tags": [
-      "tomografia",
-      "tomografia computadorizada",
-      "diagnóstico por imagem",
-      "Caraguatatuba",
-      "exame de imagem"
-    ]
+    ],
+    "examName": "exame de vitamina D",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue"
+    ],
+    "dateModified": "2026-10-22"
   },
   {
     "id": "11",
     "slug": "hemograma-completo-o-que-avalia",
-    "title": "Hemograma Completo: O Que o Exame de Sangue Avalia?",
-    "subtitle": "Entenda quais células e parâmetros são analisados no hemograma completo",
-    "excerpt": "Entenda o que o hemograma completo avalia, quais células são analisadas, se precisa de jejum e como o exame auxilia na avaliação da saúde.",
+    "title": "Hemograma Completo: O Que Avalia e Quais Exames Inclui",
+    "metaTitle": "Hemograma Completo: O Que Avalia e Quais Exames Inclui",
+    "subtitle": "Série vermelha, série branca e plaquetas: o que cada parte do exame mostra, se precisa de jejum e como é a coleta",
+    "excerpt": "O hemograma completo avalia hemácias, leucócitos e plaquetas em uma só amostra de sangue. Veja o que cada série mostra e se o exame precisa de jejum.",
     "category": "Exames Laboratoriais",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
-    "readTime": "9 min",
+    "readTime": "7 min",
     "image": "https://totalquality.med.br/images/blog/hemograma-completo-o-que-avalia.webp",
     "tags": [
       "hemograma completo",
@@ -218,12 +156,19 @@
       "exame de sangue",
       "exames laboratoriais",
       "Caraguatatuba"
+    ],
+    "dateModified": "2026-10-22",
+    "examName": "hemograma completo",
+    "examType": "hemograma",
+    "examPages": [
+      "/exames/hemograma"
     ]
   },
   {
     "id": "12",
     "slug": "tomografia-computadorizada-como-funciona",
     "title": "Tomografia Computadorizada: Como Funciona e Quando É Indicada?",
+    "metaTitle": "Tomografia Computadorizada: Como Funciona? | Total Quality",
     "subtitle": "Entenda como é feito o exame, se dói, quanto tempo dura e quando o contraste é necessário",
     "excerpt": "Saiba como funciona a tomografia computadorizada, como é feito o exame, quando o contraste é necessário e em quais situações o médico costuma solicitar.",
     "category": "Medicina Preventiva",
@@ -238,12 +183,20 @@
       "diagnóstico por imagem",
       "Caraguatatuba",
       "exame de imagem"
-    ]
+    ],
+    "examName": "tomografia computadorizada",
+    "examType": "tomografia-computadorizada",
+    "examPages": [
+      "/exames/tomografia-computadorizada"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "13",
     "slug": "mapa-ou-holter-diferenca",
     "title": "MAPA ou Holter: Qual a Diferença Entre os Exames?",
+    "metaTitle": "MAPA ou Holter: Qual a Diferença? | Total Quality",
     "subtitle": "Entenda o que cada exame monitora, para que serve e como se preparar",
     "excerpt": "MAPA e Holter são exames cardiológicos diferentes: entenda o que cada um monitora, para que serve, se podem ser feitos juntos e como se preparar.",
     "category": "Saúde do Coração",
@@ -259,12 +212,21 @@
       "pressão arterial",
       "arritmia",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "MAPA e Holter",
+    "examType": "mapa",
+    "examPages": [
+      "/exames/mapa",
+      "/exames/holter"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "14",
     "slug": "check-up-medico-quais-exames-fazer",
     "title": "Check-up Médico: Quais Exames Fazer e Com Que Frequência?",
+    "metaTitle": "Check-up Médico: Quais Exames Fazer? | Total Quality",
     "subtitle": "Entenda como o check-up se organiza entre exames laboratoriais, cardiológicos e de imagem",
     "excerpt": "Entenda o que compõe um check-up médico, quais exames laboratoriais, cardiológicos e de imagem podem fazer parte e com que frequência repetir.",
     "category": "Medicina Preventiva",
@@ -279,12 +241,20 @@
       "exames laboratoriais",
       "medicina preventiva",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "check-up",
+    "examType": "checkup",
+    "examPages": [
+      "/checkup"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "15",
     "slug": "diferenca-ultrassom-comum-doppler",
     "title": "Ultrassom Comum e Ultrassom com Doppler: Qual a Diferença?",
+    "metaTitle": "Ultrassom Comum e com Doppler: Diferença | Total Quality",
     "subtitle": "Entenda o que o Doppler acrescenta ao exame, quando é utilizado e como se preparar",
     "excerpt": "Descubra a diferença entre ultrassom comum e ultrassom com Doppler, o que cada modalidade avalia e como pode ser o preparo.",
     "category": "Medicina Preventiva",
@@ -299,12 +269,20 @@
       "Doppler",
       "diagnóstico por imagem",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "ultrassonografia com Doppler",
+    "examType": "ultrassonografia",
+    "examPages": [
+      "/exames/ultrassonografia"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "16",
     "slug": "mamografia-ultrassom-mamas-diferencas",
     "title": "Mamografia e Ultrassom das Mamas: Entenda as Diferenças",
+    "metaTitle": "Mamografia e Ultrassom das Mamas: Diferenças | Total Quality",
     "subtitle": "Por que um exame não substitui automaticamente o outro",
     "excerpt": "Mamografia e ultrassom das mamas não são iguais. Entenda como cada exame funciona, suas diferenças e por que um não substitui automaticamente o outro.",
     "category": "Medicina Preventiva",
@@ -319,12 +297,21 @@
       "saúde da mulher",
       "diagnóstico por imagem",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "mamografia e ultrassom das mamas",
+    "examType": "mamografia",
+    "examPages": [
+      "/exames/mamografia",
+      "/exames/ultrassonografia"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "17",
     "slug": "diferenca-raio-x-tomografia",
     "title": "Raio-X e Tomografia: Quais São as Principais Diferenças?",
+    "metaTitle": "Raio-X e Tomografia: Qual a Diferença? | Total Quality",
     "subtitle": "Entenda quando o contraste é usado, quem tem mais detalhe e como se preparar",
     "excerpt": "Saiba como raio-X e tomografia funcionam, as diferenças nas imagens, quando o contraste pode ser usado e como é o preparo.",
     "category": "Medicina Preventiva",
@@ -339,12 +326,21 @@
       "diagnóstico por imagem",
       "Caraguatatuba",
       "exame de imagem"
-    ]
+    ],
+    "examName": "raio-X e tomografia",
+    "examType": "raio-x",
+    "examPages": [
+      "/exames/raio-x",
+      "/exames/tomografia-computadorizada"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "18",
     "slug": "aso-exames-ocupacionais",
     "title": "ASO: O Que É e Qual Sua Relação com os Exames Ocupacionais?",
+    "metaTitle": "ASO: O Que É e Quando Deve Ser Emitido | Total Quality",
     "subtitle": "Entenda a diferença entre o exame ocupacional e o documento, e o que a NR-7 exige",
     "excerpt": "Entenda o que é ASO, quando o documento é emitido, sua relação com os exames ocupacionais e as responsabilidades de empresas e trabalhadores.",
     "category": "Saúde Ocupacional",
@@ -360,12 +356,20 @@
       "NR-7",
       "medicina do trabalho",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "exames ocupacionais",
+    "examType": "exame-admissional",
+    "examPages": [
+      "/exames/exame-admissional"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "19",
     "slug": "exame-toxicologico-cnh",
     "title": "Exame Toxicológico para CNH: Quem Precisa e Quando Fazer?",
+    "metaTitle": "Exame Toxicológico para CNH: Quem Precisa? | Total Quality",
     "subtitle": "Entenda a janela de detecção, como consultar o prazo e quais documentos levar",
     "excerpt": "Entenda quem precisa fazer exame toxicológico para CNH, quando ele pode ser exigido, como consultar o prazo e quais documentos levar.",
     "category": "Saúde Ocupacional",
@@ -381,19 +385,27 @@
       "Detran",
       "exames ocupacionais",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "exame toxicológico",
+    "examType": "exame-toxicologico",
+    "examPages": [
+      "/exames/exame-toxicologico"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "20",
     "slug": "eletrocardiograma-o-que-e-como-e-feito",
-    "title": "Eletrocardiograma (ECG): O Que É, Para Que Serve e Como É Feito",
-    "subtitle": "Entenda como funciona o exame, se dói, quanto tempo dura e quando costuma ser solicitado",
-    "excerpt": "Entenda o que é o eletrocardiograma, como funciona, se dói, quanto tempo dura e em quais situações o médico costuma solicitar o exame.",
+    "title": "Eletrocardiograma (ECG): Para Que Serve e Como É Feito",
+    "metaTitle": "Eletrocardiograma (ECG): Para Que Serve e Como É Feito",
+    "subtitle": "O que significa ECG, para que serve, como é feito, quanto tempo demora e se precisa de jejum ou preparo",
+    "excerpt": "O eletrocardiograma (ECG) registra a atividade elétrica do coração em poucos minutos, sem dor e sem jejum. Veja para que serve, como é feito e o preparo.",
     "category": "Saúde do Coração",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
-    "readTime": "8 min",
+    "readTime": "7 min",
     "image": "https://totalquality.med.br/images/blog/eletrocardiograma-o-que-e-como-e-feito.webp",
     "tags": [
       "eletrocardiograma",
@@ -401,33 +413,20 @@
       "exame cardiológico",
       "saúde do coração",
       "Caraguatatuba"
-    ]
-  },
-  {
-    "id": "21",
-    "slug": "laboratorio-regiao-sul-caraguatatuba",
-    "title": "Laboratório na Região Sul de Caraguatatuba: Como Escolher e o Que Conferir",
-    "subtitle": "Perequê-Mirim, Travessão, Porto Novo, Morro do Algodão e os outros bairros do sul da cidade",
-    "excerpt": "A região sul é a parte de Caraguatatuba que cresce mais rápido, mas a estrutura de diagnóstico continua concentrada no Centro. Veja quais bairros formam o sul, o que a distância muda no preparo do exame e seis pontos para conferir antes de escolher um laboratório.",
-    "category": "Medicina Preventiva",
-    "author": "Equipe Total Quality",
-    "authorRole": "Total Quality Medicina Diagnóstica",
-    "date": "09 Out 2026",
-    "readTime": "7 min",
-    "image": "https://totalquality.med.br/images/fachada-1024.webp",
-    "tags": [
-      "região sul",
-      "Perequê-Mirim",
-      "Travessão",
-      "Porto Novo",
-      "Caraguatatuba",
-      "análises clínicas"
+    ],
+    "dateModified": "2026-10-22",
+    "examName": "eletrocardiograma",
+    "examType": "eletrocardiograma",
+    "horaMarcada": true,
+    "examPages": [
+      "/exames/eletrocardiograma"
     ]
   },
   {
     "id": "22",
     "slug": "como-escolher-laboratorio-analises-clinicas",
     "title": "Como Escolher um Laboratório de Análises Clínicas: 8 Critérios Técnicos",
+    "metaTitle": "Como Escolher um Laboratório: 8 Critérios Técnicos",
     "subtitle": "Os critérios técnicos que o paciente pode conferir antes de decidir onde coletar",
     "excerpt": "O que mostra se um resultado é confiável não está na fachada nem na tabela de preços: está em critérios técnicos verificáveis. São oito, e o paciente pode conferir todos antes de coletar.",
     "category": "Exames Laboratoriais",
@@ -442,12 +441,19 @@
       "controle de qualidade",
       "Anvisa",
       "escolha de laboratório"
-    ]
+    ],
+    "examName": "exames laboratoriais",
+    "examType": "laboratorio",
+    "examPages": [
+      "/laboratorio-caraguatatuba"
+    ],
+    "dateModified": "2026-10-22"
   },
   {
     "id": "23",
     "slug": "resultado-de-exames-online-seguranca",
     "title": "Resultado de Exames Online: Como Acessar com Segurança",
+    "metaTitle": "Resultado de Exames Online: Acesso Seguro e LGPD",
     "subtitle": "Quem pode receber, o que a LGPD garante e por que o laudo nunca vai para um grupo de mensagens",
     "excerpt": "Resultado de exame é dado sensível de saúde. Veja como acessar o seu laudo online, quem tem direito a recebê-lo, o que a LGPD garante na prática e o que fazer quando o acesso falha.",
     "category": "Bem-Estar",
@@ -462,14 +468,21 @@
       "dado sensível",
       "sigilo",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "exames laboratoriais",
+    "examType": "laboratorio",
+    "examPages": [
+      "/laboratorio-caraguatatuba"
+    ],
+    "dateModified": "2026-10-22"
   },
   {
     "id": "24",
     "slug": "exame-de-urina-eas-como-coletar",
-    "title": "Exame de Urina (EAS): Para Que Serve e Como Coletar Corretamente",
-    "subtitle": "O exame mais simples do pedido médico é também o que mais se perde por erro de coleta",
-    "excerpt": "O EAS — exame de urina de rotina — avalia infecção, função renal, hidratação e sinais de diabetes. É simples, barato e o que mais precisa ser repetido por coleta mal feita. Veja o passo a passo correto.",
+    "title": "Exame de Urina (EAS): O Que É e Como Coletar Corretamente",
+    "metaTitle": "Exame de Urina EAS: O Que É e Como Coletar | Total Quality",
+    "subtitle": "O que o EAS avalia, se precisa de jejum e o passo a passo da coleta para reduzir a chance de repetir o exame",
+    "excerpt": "O EAS (urina tipo 1) é o exame de urina de rotina: não precisa de jejum, mas exige coleta certa. Veja o que avalia e como coletar para evitar repetições.",
     "category": "Exames Laboratoriais",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
@@ -482,6 +495,733 @@
       "urina tipo 1",
       "preparo de exame",
       "urocultura"
+    ],
+    "dateModified": "2026-10-22",
+    "examName": "exame de urina (EAS)",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue"
+    ]
+  },
+  {
+    "id": "25",
+    "slug": "hemoglobina-glicada-exame",
+    "title": "Hemoglobina Glicada (HbA1c): o que é, para que serve e como é feito o exame",
+    "subtitle": "O exame que mostra a média da glicose dos últimos meses, sem depender do jejum da manhã",
+    "excerpt": "Entenda o exame de hemoglobina glicada (HbA1c): para que serve, se precisa de jejum e como ler o resultado. Dúvidas em Caraguatatuba: (12) 3887-3535.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "17 Out 2026",
+    "readTime": "8 min",
+    "image": "https://totalquality.med.br/images/blog/hemoglobina-glicada-exame.webp",
+    "imageAlt": "Estante com tubos de coleta de sangue de tampas coloridas — exame de hemoglobina glicada (HbA1c)",
+    "tags": [
+      "hemoglobina glicada",
+      "HbA1c",
+      "hemoglobina glicosilada",
+      "diabetes",
+      "exame de sangue",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-17",
+    "examName": "hemoglobina glicada",
+    "examType": "exames-de-sangue",
+    "related": [
+      "glicemia-de-jejum-exame",
+      "curva-glicemica-teste-tolerancia-glicose",
+      "exames-de-sangue-guia-completo"
+    ],
+    "metaTitle": "Hemoglobina Glicada (HbA1c): o que é e preparo"
+  },
+  {
+    "id": "26",
+    "slug": "beta-hcg-exame-de-gravidez",
+    "title": "Beta HCG: como funciona o exame de sangue de gravidez e como entender o resultado",
+    "subtitle": "O que o exame mede, quando colher, se precisa de jejum e como as faixas em mUI/mL costumam ser lidas",
+    "excerpt": "Beta HCG, o exame de sangue de gravidez: quando fazer, se precisa de jejum e como ler o resultado em mUI/mL. Tire suas dúvidas pelo WhatsApp.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "17 Out 2026",
+    "readTime": "8 min",
+    "image": "https://totalquality.med.br/images/blog/beta-hcg-exame-de-gravidez.webp",
+    "imageAlt": "Profissionais de jaleco examinando um tubo com amostra de sangue — exame de beta HCG",
+    "tags": [
+      "beta HCG",
+      "bhcg",
+      "exame de gravidez",
+      "beta HCG quantitativo",
+      "exames de sangue",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-17",
+    "examName": "beta HCG",
+    "examType": "exames-de-sangue",
+    "related": [
+      "exames-de-sangue-guia-completo",
+      "resultado-de-exames-online-seguranca",
+      "exames-laboratoriais-tipos-e-preparo"
+    ],
+    "metaTitle": "Beta HCG: exame de gravidez e como ler o resultado"
+  },
+  {
+    "id": "27",
+    "slug": "exame-tsh-t4-livre-tireoide",
+    "title": "Exame de TSH e T4 livre: como avaliar a tireoide pelo exame de sangue",
+    "subtitle": "Entenda o que mede cada hormônio, como se preparar e como as faixas de referência aparecem no laudo",
+    "excerpt": "Exame de TSH e T4 livre: entenda o que avalia na tireoide, o preparo e como ler o laudo. Tire dúvidas pelo WhatsApp da Total Quality em Caraguatatuba.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "17 Out 2026",
+    "readTime": "8 min",
+    "image": "https://totalquality.med.br/images/blog/exame-tsh-t4-livre-tireoide.webp",
+    "imageAlt": "Mão de luva segurando tubo com amostra de sangue no laboratório — exame de TSH e T4 livre",
+    "tags": [
+      "TSH",
+      "T4 livre",
+      "exame de tireoide",
+      "tireoide",
+      "exames laboratoriais",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-17",
+    "examName": "TSH e T4 livre",
+    "examType": "exames-de-sangue",
+    "related": [
+      "exames-de-sangue-guia-completo",
+      "check-up-medico-quais-exames-fazer",
+      "hemoglobina-glicada-exame"
+    ],
+    "metaTitle": "Exame de TSH e T4 Livre: como avaliar a tireoide"
+  },
+  {
+    "id": "28",
+    "slug": "urocultura-exame-de-urina",
+    "title": "Urocultura: o que é, como coletar e qual a diferença para o exame de urina tipo 1",
+    "subtitle": "Para que serve a cultura de urina, como colher o jato médio sem contaminar e o que o antibiograma mostra",
+    "excerpt": "Urocultura com antibiograma: o que é, como coletar a urina sem contaminar e qual a diferença para o EAS. Tire suas dúvidas de coleta pelo WhatsApp.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "17 Out 2026",
+    "readTime": "8 min",
+    "image": "https://totalquality.med.br/images/blog/urocultura-exame-de-urina.webp",
+    "imageAlt": "Colônias de bactérias crescendo em placa de cultura — urocultura com antibiograma",
+    "tags": [
+      "urocultura",
+      "urocultura com antibiograma",
+      "exame de urina",
+      "cultura de urina",
+      "infecção urinária",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-17",
+    "examName": "urocultura",
+    "examType": "exames-de-sangue",
+    "related": [
+      "exame-de-urina-eas-como-coletar",
+      "exames-laboratoriais-tipos-e-preparo",
+      "exames-de-sangue-guia-completo"
+    ],
+    "metaTitle": "Urocultura com Antibiograma: o que é e como coletar"
+  },
+  {
+    "id": "29",
+    "slug": "curva-glicemica-teste-tolerancia-glicose",
+    "title": "Curva glicêmica: como é feito o teste de tolerância à glicose e como se preparar",
+    "subtitle": "Entenda o TOTG, o preparo, quanto tempo dura e como são lidas as faixas de referência, inclusive na gestação",
+    "excerpt": "Curva glicêmica (TOTG): veja o preparo, quanto tempo dura e como é o exame na gestação. Tire dúvidas pelo WhatsApp da Total Quality em Caraguatatuba.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "17 Out 2026",
+    "readTime": "8 min",
+    "image": "https://totalquality.med.br/images/blog/curva-glicemica-teste-tolerancia-glicose.webp",
+    "imageAlt": "Estante com tubos de coleta ao lado de centrífuga de laboratório — curva glicêmica (TOTG)",
+    "tags": [
+      "curva glicêmica",
+      "TOTG",
+      "teste de tolerância à glicose",
+      "diabetes gestacional",
+      "exames laboratoriais",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-17",
+    "examName": "curva glicêmica",
+    "examType": "exames-de-sangue",
+    "related": [
+      "glicemia-de-jejum-exame",
+      "hemoglobina-glicada-exame",
+      "alimentacao-e-exames-laboratoriais"
+    ],
+    "metaTitle": "Curva Glicêmica (TOTG): como é feita e preparo"
+  },
+  {
+    "id": "30",
+    "slug": "glicemia-de-jejum-exame",
+    "title": "Exame de glicemia de jejum: para que serve, preparo e valores de referência",
+    "subtitle": "Quantas horas de jejum fazer, o que pode quebrar o jejum e como ler as faixas usuais do exame",
+    "excerpt": "Exame de glicemia de jejum: quantas horas de jejum fazer, o que quebra o jejum e as faixas de referência. Dúvidas em Caraguatatuba: (12) 3887-3535.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "17 Out 2026",
+    "readTime": "7 min",
+    "image": "https://totalquality.med.br/images/blog/glicemia-de-jejum-exame.webp",
+    "imageAlt": "Tubos de coleta de sangue de tampas coloridas em estante — exame de glicemia de jejum",
+    "tags": [
+      "glicemia de jejum",
+      "exame de glicemia",
+      "glicose no sangue",
+      "diabetes",
+      "exame de sangue",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-17",
+    "examName": "glicemia de jejum",
+    "examType": "exames-de-sangue",
+    "related": [
+      "hemoglobina-glicada-exame",
+      "curva-glicemica-teste-tolerancia-glicose",
+      "alimentacao-e-exames-laboratoriais"
+    ],
+    "metaTitle": "Glicemia de Jejum: preparo e valores de referência"
+  },
+  {
+    "id": "31",
+    "slug": "coleta-domiciliar-exames-caraguatatuba",
+    "title": "Coleta domiciliar de exames de sangue em Caraguatatuba: como funciona",
+    "subtitle": "Como pedir, como se preparar e quais exames podem ser colhidos sem sair de casa",
+    "excerpt": "Saiba como funciona a coleta domiciliar de exames em Caraguatatuba, quem pode pedir e como se preparar. Peça a visita pelo WhatsApp (12) 3887-3535.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "17 Out 2026",
+    "readTime": "7 min",
+    "image": "https://totalquality.med.br/images/blog/coleta-domiciliar-exames-caraguatatuba.webp",
+    "imageAlt": "Profissional de luvas coletando sangue do braço, com garrote — coleta domiciliar de exames",
+    "tags": [
+      "coleta domiciliar",
+      "exame de sangue em casa",
+      "coleta domiciliar de exames",
+      "laboratório que vai em casa",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-17",
+    "examName": "coleta domiciliar",
+    "examType": "laboratorio",
+    "related": [
+      "exames-laboratoriais-tipos-e-preparo",
+      "alimentacao-e-exames-laboratoriais",
+      "como-escolher-laboratorio-analises-clinicas"
+    ],
+    "metaTitle": "Coleta Domiciliar de Exames em Caraguatatuba"
+  },
+  {
+    "id": "32",
+    "slug": "exames-laboratoriais-tipos-e-preparo",
+    "title": "Exames laboratoriais: principais tipos, para que servem e como se preparar",
+    "subtitle": "Um mapa dos exames de sangue e de urina mais pedidos, com o jejum de cada um",
+    "excerpt": "Conheça os principais exames laboratoriais, quais pedem jejum e como se preparar. Em Caraguatatuba, a coleta é sem agendamento. Tire dúvidas no WhatsApp.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "17 Out 2026",
+    "readTime": "8 min",
+    "image": "https://totalquality.med.br/images/blog/exames-laboratoriais-tipos-e-preparo.webp",
+    "imageAlt": "Microtubos enfileirados em estante de laboratório — exames laboratoriais, tipos e preparo",
+    "tags": [
+      "exames laboratoriais",
+      "exame de sangue",
+      "jejum para exames",
+      "preparo de exames",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-17",
+    "examName": "exames laboratoriais",
+    "examType": "exames-de-sangue",
+    "related": [
+      "hemoglobina-glicada-exame",
+      "exames-de-sangue-guia-completo",
+      "alimentacao-e-exames-laboratoriais"
+    ],
+    "metaTitle": "Exames Laboratoriais: tipos, preparo e jejum | Guia"
+  },
+  {
+    "id": "34",
+    "slug": "papanicolau-exame-preventivo",
+    "title": "Exame de Papanicolau (preventivo): para que serve, preparo e quando fazer",
+    "subtitle": "Quem deve fazer, como se preparar, como é a coleta e como ler o resultado do preventivo",
+    "excerpt": "Exame de Papanicolau: veja quem deve fazer o preventivo, o preparo nas 48 h antes e como é a coleta. Marque o horário pelo WhatsApp (12) 3887-3535.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "18 Out 2026",
+    "readTime": "8 min",
+    "image": "https://totalquality.med.br/images/blog/papanicolau-exame-preventivo.webp",
+    "imageAlt": "Objetivas de microscópio sobre a platina — leitura do exame preventivo (Papanicolau)",
+    "tags": [
+      "exame de Papanicolau",
+      "preventivo",
+      "citologia oncótica",
+      "saúde da mulher",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-18",
+    "examName": "exame de Papanicolau",
+    "examType": "laboratorio",
+    "horaMarcada": true,
+    "related": [
+      "ultrassom-transvaginal-preparo",
+      "mamografia-ultrassom-mamas-diferencas",
+      "check-up-medico-quais-exames-fazer"
+    ],
+    "metaTitle": "Papanicolau (Preventivo): para que serve e preparo"
+  },
+  {
+    "id": "35",
+    "slug": "ultrassom-transvaginal-preparo",
+    "title": "Ultrassom transvaginal: para que serve, preparo e como é feito o exame",
+    "subtitle": "Bexiga vazia, menstruação, duração e a diferença para o ultrassom pélvico pela barriga",
+    "excerpt": "Ultrassom transvaginal: veja para que serve, o preparo com bexiga vazia e como é feito o exame. Marque seu horário pelo WhatsApp (12) 3887-3535.",
+    "category": "Medicina Preventiva",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "18 Out 2026",
+    "readTime": "7 min",
+    "image": "https://totalquality.med.br/images/blog/ultrassom-transvaginal-preparo.webp",
+    "imageAlt": "Mãos de luva no painel de um aparelho de ultrassom — preparo para o ultrassom transvaginal",
+    "tags": [
+      "ultrassom transvaginal",
+      "ultrassonografia transvaginal",
+      "ultrassom endovaginal",
+      "ultrassom pélvico",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-18",
+    "examName": "ultrassom transvaginal",
+    "examType": "ultrassonografia",
+    "horaMarcada": true,
+    "related": [
+      "papanicolau-exame-preventivo",
+      "diferenca-ultrassom-comum-doppler",
+      "beta-hcg-exame-de-gravidez"
+    ],
+    "metaTitle": "Ultrassom Transvaginal: para que serve e preparo"
+  },
+  {
+    "id": "36",
+    "slug": "exame-de-colesterol-lipidograma",
+    "title": "Exame de colesterol (lipidograma): o que avalia, jejum e como ler o resultado",
+    "subtitle": "Colesterol total, HDL, LDL e triglicerídeos explicados, com o que mudou sobre o jejum e como o médico usa cada valor",
+    "excerpt": "Exame de colesterol (lipidograma): o que mede, se precisa de jejum e como ler HDL, LDL e triglicerídeos. Dúvidas em Caraguatatuba: (12) 3887-3535.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "18 Out 2026",
+    "readTime": "8 min",
+    "image": "https://totalquality.med.br/images/blog/exame-de-colesterol-lipidograma.webp",
+    "imageAlt": "Ilustração de células do sangue em suspensão — exame de colesterol (lipidograma)",
+    "tags": [
+      "exame de colesterol",
+      "lipidograma",
+      "perfil lipídico",
+      "LDL e HDL",
+      "triglicerídeos",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-18",
+    "examName": "exame de colesterol",
+    "examType": "exames-de-sangue",
+    "horaMarcada": false,
+    "related": [
+      "lipoproteina-a-apolipoproteina-b",
+      "exames-diagnostico-infarto",
+      "saude-do-coracao-prevencao"
+    ],
+    "metaTitle": "Exame de Colesterol (Lipidograma): jejum e resultado"
+  },
+  {
+    "id": "37",
+    "slug": "lipoproteina-a-apolipoproteina-b",
+    "title": "Lipoproteína(a) e apolipoproteína B: o que são esses exames e quando pedir",
+    "subtitle": "Dois exames que ajudam o médico a refinar o risco cardiovascular quando o colesterol sozinho não conta toda a história",
+    "excerpt": "Exame de lipoproteína(a) e apolipoproteína B (ApoB): o que medem, quando o médico pede e se precisa de jejum. Dúvidas em Caraguatatuba: (12) 3887-3535.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "18 Out 2026",
+    "readTime": "8 min",
+    "image": "https://totalquality.med.br/images/blog/lipoproteina-a-apolipoproteina-b.webp",
+    "imageAlt": "Mão abrindo uma centrífuga de laboratório — exames de lipoproteína(a) e apolipoproteína B",
+    "tags": [
+      "lipoproteína(a)",
+      "Lp(a)",
+      "apolipoproteína B",
+      "ApoB",
+      "risco cardiovascular",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-18",
+    "examName": "lipoproteína(a) e apolipoproteína B",
+    "examType": "exames-de-sangue",
+    "horaMarcada": false,
+    "related": [
+      "exame-de-colesterol-lipidograma",
+      "exames-diagnostico-infarto",
+      "saude-do-coracao-prevencao"
+    ],
+    "metaTitle": "Lipoproteína(a) e ApoB: o que são e quando pedir"
+  },
+  {
+    "id": "38",
+    "slug": "exames-diagnostico-infarto",
+    "title": "Exames para diagnóstico de infarto: o que o médico usa na emergência e na prevenção",
+    "subtitle": "No hospital, eletrocardiograma e troponina; na rotina, os exames que acompanham o coração e os fatores de risco",
+    "excerpt": "Veja quais exames diagnosticam o infarto no hospital e quais ajudam na prevenção. Com sintomas, ligue 192. Dúvidas sobre ECG e Holter: (12) 3887-3535.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "18 Out 2026",
+    "readTime": "9 min",
+    "image": "https://totalquality.med.br/images/blog/exames-diagnostico-infarto.webp",
+    "imageAlt": "Traçados em tela de monitor cardíaco — exames usados no diagnóstico do infarto",
+    "tags": [
+      "exame para diagnóstico de infarto",
+      "exames do coração",
+      "troponina",
+      "eletrocardiograma",
+      "risco cardiovascular",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-18",
+    "examName": "eletrocardiograma e exames do coração",
+    "examType": "eletrocardiograma",
+    "horaMarcada": true,
+    "related": [
+      "exame-de-colesterol-lipidograma",
+      "eletrocardiograma-o-que-e-como-e-feito",
+      "saude-do-coracao-prevencao"
+    ],
+    "metaTitle": "Exames para Diagnóstico de Infarto | Total Quality"
+  },
+  {
+    "id": "39",
+    "slug": "exames-diagnostico-avc",
+    "title": "Exames para diagnóstico de AVC: o que é feito no hospital e o que ajuda a prevenir",
+    "subtitle": "Como reconhecer os sinais de alerta, o que a emergência investiga e quais exames de rotina acompanham o risco",
+    "excerpt": "Veja os sinais de AVC, os exames feitos no hospital e os que ajudam a prevenir. Com sinais de alerta, ligue 192. Dúvidas de exames: (12) 3887-3535.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "18 Out 2026",
+    "readTime": "9 min",
+    "image": "https://totalquality.med.br/images/blog/exames-diagnostico-avc.webp",
+    "imageAlt": "Médico de jaleco diante de um aparelho de ultrassom — exames usados na investigação do AVC",
+    "tags": [
+      "exame para diagnóstico de AVC",
+      "exames AVC",
+      "derrame",
+      "prevenção de AVC",
+      "doppler de carótidas",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-18",
+    "examName": "exames de prevenção do AVC",
+    "examType": "exames-de-sangue",
+    "horaMarcada": false,
+    "related": [
+      "exames-diagnostico-hipertensao",
+      "exame-de-colesterol-lipidograma",
+      "mapa-ou-holter-diferenca"
+    ],
+    "metaTitle": "Exames para Diagnóstico de AVC e Prevenção | Total Quality"
+  },
+  {
+    "id": "40",
+    "slug": "exames-diagnostico-hipertensao",
+    "title": "Exames para diagnóstico de hipertensão: MAPA, medida em casa e exames de rotina",
+    "subtitle": "Por que uma medida isolada não basta e como a MAPA 24 horas ajuda o médico a confirmar a pressão alta",
+    "excerpt": "Entenda como a MAPA 24 horas, a medida em casa e os exames de rotina confirmam a hipertensão. MAPA em Caraguatatuba com hora marcada: (12) 3887-3535.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "18 Out 2026",
+    "readTime": "8 min",
+    "image": "https://totalquality.med.br/images/blog/exames-diagnostico-hipertensao.webp",
+    "imageAlt": "Medidor digital de pressão com braçadeira no braço — exames na investigação da hipertensão",
+    "tags": [
+      "exame para diagnóstico de hipertensão",
+      "MAPA 24 horas",
+      "pressão alta",
+      "MRPA",
+      "holter de pressão",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-18",
+    "examName": "MAPA e exames de pressão",
+    "examType": "mapa",
+    "horaMarcada": true,
+    "related": [
+      "mapa-ou-holter-diferenca",
+      "exames-diagnostico-avc",
+      "exames-diagnostico-infarto"
+    ],
+    "metaTitle": "Exames para Diagnóstico de Hipertensão | Total Quality"
+  },
+  {
+    "id": "41",
+    "slug": "exames-diagnostico-diabetes",
+    "title": "Exames para diagnóstico de diabetes: quais são e como o médico interpreta",
+    "subtitle": "Glicemia de jejum, hemoglobina glicada e curva glicêmica: o que cada exame mostra e quais critérios o médico usa",
+    "excerpt": "Exame para diagnóstico de diabetes: glicemia, hemoglobina glicada, curva glicêmica e critérios da SBD. Dúvidas em Caraguatatuba: (12) 3887-3535.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "18 Out 2026",
+    "readTime": "8 min",
+    "image": "https://totalquality.med.br/images/blog/exames-diagnostico-diabetes.webp",
+    "imageAlt": "Mãos de luva com seringa e estojo de glicosímetro — exames usados no diagnóstico do diabetes",
+    "tags": [
+      "diagnóstico de diabetes",
+      "exames para diabetes",
+      "glicemia de jejum",
+      "hemoglobina glicada",
+      "curva glicêmica",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-18",
+    "examName": "exames para diabetes",
+    "examType": "exames-de-sangue",
+    "horaMarcada": false,
+    "related": [
+      "glicemia-de-jejum-exame",
+      "hemoglobina-glicada-exame",
+      "curva-glicemica-teste-tolerancia-glicose"
+    ],
+    "metaTitle": "Exames para Diagnóstico de Diabetes | Total Quality"
+  },
+  {
+    "id": "43",
+    "slug": "siglas-exames-laboratoriais",
+    "title": "Siglas de exames laboratoriais: o que significa cada uma no pedido médico",
+    "metaTitle": "Siglas de Exames Laboratoriais: Guia | Total Quality",
+    "subtitle": "HMG, VHS, PCR, TGO, TGP, TSH, HbA1c, EAS, PSA e outras: o que cada sigla avalia e quais costumam pedir jejum",
+    "excerpt": "Entenda as siglas de exames laboratoriais do pedido médico: HMG, TGO, TGP, TSH, HbA1c, EAS, PSA e outras. Saiba o que avaliam e quando pedem jejum.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "22 Out 2026",
+    "readTime": "10 min",
+    "image": "https://totalquality.med.br/images/blog/siglas-exames-laboratoriais.webp",
+    "imageAlt": "Mão de luva colocando tubos de coleta de sangue identificados em uma estante de laboratório, ao lado de pedidos de exame",
+    "tags": [
+      "siglas de exames laboratoriais",
+      "siglas exame de sangue",
+      "pedido de exame de sangue",
+      "exames laboratoriais",
+      "hemograma",
+      "preparo para exames"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-22",
+    "examName": "exames laboratoriais",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue",
+      "/exames/hemograma"
+    ],
+    "horaMarcada": false,
+    "related": [
+      "hemograma-completo-o-que-avalia",
+      "exames-de-sangue-guia-completo",
+      "exame-de-urina-eas-como-coletar"
+    ]
+  },
+  {
+    "id": "44",
+    "slug": "ultrassom-abdome-total-preparo",
+    "title": "Ultrassom de abdome total: preparo, o que avalia e como é feito",
+    "metaTitle": "Ultrassom de Abdome Total: Preparo e Exame | Total Quality",
+    "subtitle": "Jejum, gases e bexiga cheia: o que o exame mostra e a diferença para o abdome superior e o de rins e vias urinárias",
+    "excerpt": "Ultrassom de abdome total: o que avalia, quando o médico pede, preparo com jejum e dieta sem gases, como é feito e a diferença para o abdome superior.",
+    "category": "Exames de Imagem",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "22 Out 2026",
+    "readTime": "9 min",
+    "image": "https://totalquality.med.br/images/blog/ultrassom-abdome-total-preparo.webp",
+    "imageAlt": "Mãos com luvas no painel de um aparelho de ultrassom, segurando o transdutor usado no ultrassom de abdome total",
+    "tags": [
+      "ultrassom de abdome total",
+      "preparo ultrassom abdome total",
+      "ultrassonografia abdominal",
+      "ultrassom",
+      "exames de imagem",
+      "jejum para exame"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-22",
+    "examName": "ultrassom de abdome total",
+    "examType": "ultrassonografia",
+    "examPages": [
+      "/exames/ultrassonografia"
+    ],
+    "horaMarcada": true,
+    "related": [
+      "diferenca-ultrassom-comum-doppler",
+      "mamografia-ultrassom-mamas-diferencas",
+      "diferenca-raio-x-tomografia"
+    ]
+  },
+  {
+    "id": "45",
+    "slug": "tomografia-com-contraste",
+    "title": "Tomografia com contraste: para que serve, jejum, preparo e segurança",
+    "metaTitle": "Tomografia com Contraste: Jejum e Segurança | Total Quality",
+    "subtitle": "O que o contraste iodado mostra, quem precisa de avaliação antes, o que se sente na hora e o que dizem as diretrizes sobre reações",
+    "excerpt": "Tomografia com contraste: para que serve o contraste iodado, se precisa de jejum, quem precisa de avaliação antes e o que as diretrizes dizem das reações.",
+    "category": "Exames de Imagem",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "22 Out 2026",
+    "readTime": "10 min",
+    "image": "https://totalquality.med.br/images/blog/tomografia-com-contraste.webp",
+    "imageAlt": "Vista por dentro do anel de um tomógrafo, com a mesa de exame ao fundo — tomografia com contraste iodado",
+    "tags": [
+      "tomografia com contraste",
+      "contraste iodado",
+      "tomografia computadorizada",
+      "jejum para tomografia",
+      "preparo para tomografia",
+      "diagnóstico por imagem"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-22",
+    "examName": "tomografia computadorizada com contraste",
+    "examType": "tomografia-computadorizada",
+    "examPages": [
+      "/exames/tomografia-computadorizada"
+    ],
+    "horaMarcada": true,
+    "related": [
+      "tomografia-computadorizada-como-funciona",
+      "diferenca-raio-x-tomografia",
+      "exames-de-sangue-guia-completo"
+    ]
+  },
+  {
+    "id": "46",
+    "slug": "check-up-cardiologico-prevencao-infarto",
+    "title": "Check-up cardiológico: exames do coração e prevenção do infarto",
+    "metaTitle": "Check-up Cardiológico: Exames e Infarto | Total Quality",
+    "subtitle": "Os fatores de risco do infarto costumam ser silenciosos; veja como o eletrocardiograma, a MAPA, o Holter e os exames de sangue ajudam o médico a acompanhá-los",
+    "excerpt": "Veja quais exames compõem o check-up cardiológico, como ajudam a acompanhar os fatores de risco do infarto e quais sintomas pedem o SAMU 192 na hora.",
+    "category": "Cardiologia",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "22 Out 2026",
+    "readTime": "10 min",
+    "image": "https://totalquality.med.br/images/blog/check-up-cardiologico-prevencao-infarto.webp",
+    "imageAlt": "Estetoscópio sobre uma superfície clara cercado de pequenos corações vermelhos — check-up cardiológico e prevenção do infarto",
+    "tags": [
+      "check-up cardiológico",
+      "prevenção do infarto",
+      "sintomas de infarto",
+      "exames do coração",
+      "risco cardiovascular",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-22",
+    "examName": "check-up cardiológico",
+    "examType": "eletrocardiograma",
+    "examPages": [
+      "/exames/eletrocardiograma",
+      "/exames/mapa",
+      "/exames/holter"
+    ],
+    "horaMarcada": true,
+    "related": [
+      "mapa-ou-holter-diferenca",
+      "eletrocardiograma-o-que-e-como-e-feito",
+      "saude-do-coracao-prevencao"
+    ]
+  },
+  {
+    "id": "47",
+    "slug": "exame-toxicologico-clt-motorista",
+    "title": "Exame toxicológico CLT: admissional, demissional e o que muda para o motorista",
+    "metaTitle": "Exame Toxicológico CLT para Motorista | Total Quality",
+    "subtitle": "O que a CLT e o Ministério do Trabalho exigem do motorista empregado: quem paga, validade, sigilo, contraprova e a diferença para o exame da CNH",
+    "excerpt": "Exame toxicológico CLT: quando o motorista empregado faz o admissional e o demissional, quem paga, sigilo, contraprova e a diferença para o da CNH.",
+    "category": "Saúde Ocupacional",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "22 Out 2026",
+    "readTime": "10 min",
+    "image": "https://totalquality.med.br/images/blog/exame-toxicologico-clt-motorista.webp",
+    "imageAlt": "Dois caminhões de carga em uma rodovia de serra — exame toxicológico do motorista profissional empregado",
+    "tags": [
+      "exame toxicológico CLT",
+      "toxicológico admissional",
+      "toxicológico demissional",
+      "motorista profissional",
+      "Lei 13.103/2015",
+      "saúde ocupacional"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-22",
+    "examName": "exame toxicológico",
+    "examType": "exame-toxicologico",
+    "examPages": [
+      "/exames/exame-toxicologico",
+      "/exames/exame-admissional"
+    ],
+    "horaMarcada": true,
+    "related": [
+      "exame-toxicologico-cnh",
+      "aso-exames-ocupacionais",
+      "resultado-de-exames-online-seguranca"
     ]
   }
 ]

@@ -6,29 +6,29 @@
 import { ArrowUpRight, CheckCircle, Award, Users, Microscope, MapPin, Clock } from "lucide-react";
 import { Link } from "wouter";
 import { trackScheduleExam } from "@/lib/tracking";
-import { anosDeAtuacao } from "@shared/const";
+import { anosDeAtuacao, CONVENIOS_TEXTO } from "@shared/const";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
 const diferenciais = [
   {
     icon: Microscope,
-    title: "Tecnologia de Última Geração",
-    text: "Nosso laboratório em Caraguatatuba conta com equipamentos automatizados de alta precisão para análises clínicas e diagnósticos por imagem, garantindo resultados confiáveis e rápidos.",
+    title: "Laboratório Automatizado",
+    text: "Nosso laboratório em Caraguatatuba conta com equipamentos automatizados para análises clínicas e equipamentos digitais para diagnóstico por imagem.",
   },
   {
     icon: Award,
     title: `Mais de ${anosDeAtuacao()} Anos de Experiência`,
-    text: "Desde 2003, a Total Quality é referência em medicina diagnóstica no litoral norte paulista, com parceria acadêmica com a UNITAU e equipe médica altamente qualificada.",
+    text: "Desde 2003 no Litoral Norte paulista, com parceria acadêmica com a UNITAU e laudos assinados por médicos.",
   },
   {
     icon: Users,
     title: "Mais de 30.000 Famílias Atendidas",
-    text: "Somos o laboratório de análises clínicas mais completo de Caraguatatuba - SP, com mais de 3.000 tipos de exames laboratoriais e diagnósticos por imagem disponíveis.",
+    text: "No Centro de Caraguatatuba - SP, reunimos em um só endereço mais de 3.000 tipos de exames laboratoriais e diagnósticos por imagem.",
   },
   {
     icon: Clock,
-    title: "Resultados Rápidos e Online",
-    text: "Os resultados dos exames laboratoriais ficam disponíveis online em até 24 horas para a maioria dos exames de sangue. Acesse de qualquer lugar, a qualquer hora.",
+    title: "Resultados Online",
+    text: "Os resultados ficam disponíveis online, com acesso seguro, de qualquer lugar. O prazo de cada exame é informado no momento da coleta.",
   },
 ];
 
@@ -45,19 +45,19 @@ export default function PorQueEscolherSection() {
         {/* Header */}
         <div className="grid lg:grid-cols-12 gap-12 mb-16">
           <div className="lg:col-span-5">
-            <span className="section-label mb-4 block">Laboratório Caraguatatuba</span>
-            <h2 className="reveal heading-display text-3xl lg:text-4xl xl:text-5xl text-text">
-              POR QUE ESCOLHER A TOTAL QUALITY COMO SEU{" "}
-              <span className="text-brand">LABORATÓRIO EM CARAGUATATUBA?</span>
+            <span className="section-label mb-4 block">Laboratório em Caraguatatuba</span>
+            {/* Titulo curto: a Bebas so funciona em poucas palavras; o termo
+                "laboratorio em Caraguatatuba" foi para a chamada acima. */}
+            <h2 className="reveal heading-display text-4xl lg:text-5xl xl:text-6xl text-text">
+              Por que a <span className="text-brand">Total Quality</span>
             </h2>
           </div>
           <div className="lg:col-span-7 flex items-end">
             <p className="reveal text-text-light text-lg leading-relaxed">
-              A Total Quality é referência em laboratório de análises clínicas em Caraguatatuba - SP desde 2003.
-              Com mais de {anosDeAtuacao()} anos de experiência e mais de 30.000 famílias atendidas, oferecemos a maior
-              estrutura de medicina diagnóstica do litoral norte paulista. Nosso laboratório em Caraguatatuba
-              realiza mais de 3.000 tipos de exames laboratoriais e diagnósticos por imagem, com resultados
-              precisos, rápidos e disponíveis online.
+              A Total Quality é laboratório de análises clínicas e clínica de diagnóstico em Caraguatatuba - SP
+              desde 2003. São mais de {anosDeAtuacao()} anos e mais de 30.000 famílias atendidas. No mesmo endereço,
+              no Centro, o nosso laboratório em Caraguatatuba realiza mais de 3.000 tipos de exames laboratoriais
+              e de imagem, com coleta sem agendamento e resultados disponíveis online.
             </p>
           </div>
         </div>
@@ -88,7 +88,7 @@ export default function PorQueEscolherSection() {
               hemograma completo, glicemia em jejum, colesterol total e frações, triglicerídeos, TSH, T4 livre,
               PSA total e livre, vitamina D, hemoglobina glicada, ureia, creatinina, TGO, TGP, ácido úrico,
               hormônios e marcadores tumorais. Todos os exames laboratoriais em Caraguatatuba - SP são realizados
-              com equipamentos automatizados que garantem precisão e confiabilidade nos resultados.
+              com equipamentos automatizados.
             </p>
             <p className="reveal text-text-light leading-relaxed">
               Além dos exames de sangue, realizamos exames de urina, exames de fezes (parasitológico),
@@ -102,7 +102,7 @@ export default function PorQueEscolherSection() {
               DIAGNÓSTICO POR IMAGEM EM <span className="text-brand">CARAGUATATUBA</span>
             </h3>
             <p className="reveal text-text-light leading-relaxed mb-4">
-              A Total Quality é a clínica de medicina diagnóstica mais completa de Caraguatatuba, oferecendo{" "}
+              A Total Quality reúne em Caraguatatuba{" "}
               <Link href="/exames/tomografia-computadorizada" className="text-brand hover:underline">
                 tomografia computadorizada multislice
               </Link>
@@ -142,12 +142,12 @@ export default function PorQueEscolherSection() {
               <Link href="/bioimpedancia" className="text-brand hover:underline">
                 bioimpedância
               </Link>
-              . Nossos equipamentos de diagnóstico por imagem em Caraguatatuba são de última geração,
-              proporcionando imagens de alta resolução para diagnósticos mais precisos.
+              . Os equipamentos de diagnóstico por imagem são digitais e produzem imagens de alta resolução
+              para o laudo médico.
             </p>
             <p className="reveal text-text-light leading-relaxed">
-              Contamos com equipe médica especializada em radiologia, cardiologia e neurologia, garantindo
-              laudos detalhados e confiáveis. O check-up preventivo em Caraguatatuba inclui uma combinação
+              Contamos com equipe médica especializada em radiologia, cardiologia e neurologia, que assina
+              laudos detalhados. O check-up preventivo em Caraguatatuba inclui uma combinação
               personalizada de exames laboratoriais e de imagem, adaptada às necessidades de cada paciente.
             </p>
           </div>
@@ -164,7 +164,7 @@ export default function PorQueEscolherSection() {
               <p className="text-text-light leading-relaxed mb-4">
                 O laboratório Total Quality está localizado no centro de Caraguatatuba, na R. Padre Anchieta, 1010,
                 com fácil acesso de carro, ônibus ou a pé. Funcionamos de segunda a sexta-feira, das 07h30 às 18h.
-                Aceitamos diversos convênios de saúde e oferecemos atendimento particular com preços acessíveis.
+                Atendemos {CONVENIOS_TEXTO}; fora deles, o atendimento é particular, com tabela própria.
               </p>
               <div className="flex flex-wrap gap-3">
                 {["Estacionamento próximo", "Acessibilidade", "Aceita cartão e PIX", "Convênios aceitos"].map((item) => (

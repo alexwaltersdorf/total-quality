@@ -2,6 +2,7 @@
   "id": "13",
   "slug": "mapa-ou-holter-diferenca",
   "title": "MAPA ou Holter: Qual a Diferença Entre os Exames?",
+  "metaTitle": "MAPA ou Holter: Qual a Diferença? | Total Quality",
   "subtitle": "Entenda o que cada exame monitora, para que serve e como se preparar",
   "excerpt": "MAPA e Holter são exames cardiológicos diferentes: entenda o que cada um monitora, para que serve, se podem ser feitos juntos e como se preparar.",
   "category": "Saúde do Coração",
@@ -39,6 +40,7 @@
     "Como avaliam parâmetros diferentes do organismo, MAPA e Holter respondem a perguntas clínicas distintas, e a indicação de um exame não elimina, por si só, a eventual necessidade do outro, conforme avaliação do médico responsável.",
     "## Como se preparar para o MAPA?",
     "De forma geral, o MAPA não exige preparo especial, mas é recomendável manter as atividades cotidianas normais durante o período de uso do equipamento, já que o objetivo do exame é justamente acompanhar a pressão arterial em condições reais do dia a dia.",
+    "[[cta]]",
     "## Como se preparar para o Holter?",
     "O Holter também costuma dispensar preparo específico, sendo recomendado evitar produtos que possam interferir na fixação dos eletrodos na pele, como cremes ou óleos, no dia da instalação do equipamento.",
     "### Rotina durante o exame",
@@ -48,12 +50,20 @@
     "### Registro de sintomas e atividades",
     "Muitos exames pedem que o paciente anote em um diário os horários de atividades específicas, sintomas percebidos ou momentos de maior esforço, o que ajuda o médico a correlacionar os dados do exame com situações vividas durante o período de monitorização.",
     "## É possível trabalhar e dormir usando MAPA ou Holter?",
-    "Sim. Tanto o MAPA quanto o Holter são projetados para acompanhar o paciente durante suas atividades normais, incluindo trabalho e sono. O equipamento é leve e portátil, permitindo que a rotina siga praticamente inalterada durante o período de uso, o que é justamente o que garante a qualidade das informações coletadas.",
+    "Sim. Tanto o MAPA quanto o Holter são projetados para acompanhar o paciente durante suas atividades normais, incluindo trabalho e sono. O equipamento é leve e portátil, permitindo que a rotina siga praticamente inalterada durante o período de uso, e é isso que torna as informações coletadas representativas do dia a dia.",
     "## MAPA ou Holter: qual exame o médico deve solicitar?",
     "A escolha entre MAPA e Holter depende do que está sendo investigado: questões relacionadas à pressão arterial direcionam para o MAPA, enquanto sintomas ligados ao ritmo cardíaco costumam levar à solicitação do Holter. Essa decisão cabe sempre ao médico responsável pela avaliação, com base no quadro clínico e no histórico de cada paciente.",
     "## Onde fazer exames cardiológicos em Caraguatatuba?",
     "A **Total Quality** realiza MAPA e Holter em **Caraguatatuba**, além de outros exames cardiológicos como o eletrocardiograma, contando com equipamentos modernos e equipe especializada para o acompanhamento completo da saúde cardiovascular.",
     "**Precisa realizar um exame cardiológico? Conheça os exames disponíveis na Total Quality em Caraguatatuba e agende pelo WhatsApp (12) 3887-3535.**",
     "Este conteúdo tem caráter informativo e não substitui a avaliação de um médico. A indicação do exame adequado depende sempre da avaliação clínica individual."
-  ]
+  ],
+  "examName": "MAPA e Holter",
+  "examType": "mapa",
+  "examPages": [
+    "/exames/mapa",
+    "/exames/holter"
+  ],
+  "horaMarcada": true,
+  "dateModified": "2026-10-22"
 }

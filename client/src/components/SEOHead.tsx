@@ -4,6 +4,7 @@
  * Uses React Helmet-like approach via useEffect + DOM manipulation.
  */
 import { useEffect } from "react";
+import { blogPostingLd, type BlogPostMeta } from "@/lib/blogMeta";
 
 const SITE_URL = "https://totalquality.med.br";
 const ORG_NAME = "Total Quality Medicina Diagnóstica";
@@ -168,6 +169,24 @@ export function useBlogPostingSchema(props: BlogPostingSchemaProps) {
 
     return () => { document.getElementById("schema-blogposting")?.remove(); };
   }, [props.title, props.description, props.url, props.datePublished, props.dateModified, props.authorName, props.imageUrl]);
+}
+
+// ── Artigo do blog (JSON em content/blog) ──
+// Mesmo objeto que o prerender emite (blogPostingLd): datas em ISO e
+// publisher apontando para a entidade unica #medicalbusiness.
+export function useBlogArticleSchema(post: BlogPostMeta | undefined) {
+  useEffect(() => {
+    if (!post) return;
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.id = "schema-blogposting";
+    script.textContent = JSON.stringify(blogPostingLd(post));
+
+    document.getElementById("schema-blogposting")?.remove();
+    document.head.appendChild(script);
+
+    return () => { document.getElementById("schema-blogposting")?.remove(); };
+  }, [post]);
 }
 
 // ── Canonical URL helper ──

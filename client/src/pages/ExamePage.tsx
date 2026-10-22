@@ -11,17 +11,11 @@ import { useParams, useLocation, Link } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
-import { getExamBySlug, examesData, type ExamData } from "@/lib/examesData";
+import { getExamBySlug, examesData } from "@/lib/examesData";
+import { blogPosts } from "@/lib/blogData";
+import { blogLinksFor, examesDeSangueLista } from "@/lib/examBlogLinks";
 import { useBreadcrumbSchema, useFAQSchema, useMedicalTestSchema, useCanonical } from "@/components/SEOHead";
 const ScrollVideo = lazy(() => import("@/components/ScrollVideo"));
-
-const CATEGORY_BACKGROUNDS: Record<ExamData["category"], string> = {
-  laboratorio: "/images/laboratorio-1440.webp",
-  imagem: "/images/tomografia-1440.webp",
-  cardiologia: "/images/cardiologia-1440.webp",
-  neurologia: "/images/recepcao-1024.webp",
-  outros: "/images/recepcao-1024.webp",
-};
 
 export default function ExamePage() {
   const openWhatsApp = useWhatsAppRedirect();
@@ -82,7 +76,6 @@ export default function ExamePage() {
   }
 
   const otherExams = examesData.filter((e) => e.slug !== exam.slug).slice(0, 4);
-  const backgroundImage = exam.backgroundImage || CATEGORY_BACKGROUNDS[exam.category];
   const questionPrefix = exam.slug === "exames-de-sangue" ? "O QUE SÃO OS" : `O QUE É ${exam.slug === "ultrassonografia" ? "A" : "O"}`;
 
   return (
@@ -90,24 +83,15 @@ export default function ExamePage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="pt-24 lg:pt-28 relative overflow-hidden">
-        {/* Background Image with Transparency */}
-        {backgroundImage && (
-          <div
-            className="absolute inset-0 opacity-15 pointer-events-none"
-            style={{
-              backgroundImage: `url(${backgroundImage})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center right',
-              backgroundAttachment: 'fixed',
-            }}
-          />
-        )}
+      {/* Fundo liso (auditoria de design, 18/10/2026): a foto de banco lavada a
+          15% ficava atras do texto, tirava contraste e mostrava "ADVANCED
+          DIAGNOSTICS" em ingles na parede. Volta quando houver foto real. */}
+      <section className="pt-24 lg:pt-28 relative overflow-hidden bg-surface-light">
         <div className="container relative z-10">
           <div className="pt-8 lg:pt-16 max-w-4xl">
             {/* Breadcrumb */}
-            <div className="reveal flex items-center gap-2 text-xs text-text-muted mb-6">
-              <Link href="/" className="hover:text-brand transition-colors">Início</Link>
+            <div className="reveal flex items-center gap-2 text-xs text-text-muted mb-4">
+              <Link href="/" className="py-3 hover:text-brand transition-colors">Início</Link>
               <ChevronRight className="w-3 h-3" />
               <span className="text-brand">{exam.shortTitle}</span>
             </div>
@@ -124,7 +108,7 @@ export default function ExamePage() {
               ))}
             </h1>
             <p className="reveal block text-base lg:text-lg text-text-light font-light tracking-wide mt-4 normal-case">
-              {exam.shortTitle} em Caraguatatuba - SP | Total Quality Medicina Diagnóstica
+              {exam.shortTitle} em Caraguatatuba - SP
             </p>
 
             <p className="reveal text-text-light text-lg lg:text-xl leading-relaxed max-w-3xl mb-10" style={{ transitionDelay: "200ms" }}>
@@ -139,7 +123,7 @@ export default function ExamePage() {
                 {exam.category === "laboratorio" ? "Consultar preparo e orçamento" : "Agendar pelo WhatsApp"}
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
-              <button type="button" onClick={() => abrirTelefone("exame_topo")} className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">
+              <button type="button" onClick={() => abrirTelefone("exame_topo")} className="btn-pill-outline">
                 Ligar: (12) 3887-3535
               </button>
             </div>
@@ -268,6 +252,52 @@ export default function ExamePage() {
       {/* Divider */}
       <div className="container"><div className="border-t border-black/10" /></div>
 
+      {/* Exames de sangue que realizamos + Saiba mais no nosso blog: o caminho
+          da pagina transacional para os artigos (lib/examBlogLinks.ts). So
+          artigos publicados — rascunho nunca recebe link. */}
+      {(exam.slug === "exames-de-sangue" || blogLinksFor(exam.slug, blogPosts).length > 0) && (
+        <section className="py-16 lg:py-24">
+          <div className="container max-w-4xl">
+            {exam.slug === "exames-de-sangue" && (
+              <div className="mb-12">
+                <h2 className="heading-display text-3xl lg:text-4xl text-text mb-6">
+                  EXAMES DE SANGUE QUE <span className="text-brand">REALIZAMOS</span>
+                </h2>
+                <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-2 list-disc pl-5 text-text-light">
+                  {examesDeSangueLista(blogPosts).map((item) => (
+                    <li key={item.nome}>
+                      {item.href ? (
+                        <Link href={item.href} className="text-brand underline underline-offset-2 hover:opacity-80">
+                          {item.nome}
+                        </Link>
+                      ) : (
+                        item.nome
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {blogLinksFor(exam.slug, blogPosts).length > 0 && (
+              <>
+                <h2 className="heading-display text-3xl lg:text-4xl text-text mb-6">
+                  SAIBA MAIS NO <span className="text-brand">NOSSO BLOG</span>
+                </h2>
+                <ul className="space-y-3">
+                  {blogLinksFor(exam.slug, blogPosts).map((post) => (
+                    <li key={post.slug}>
+                      <Link href={`/blog/${post.slug}`} className="text-brand underline underline-offset-2 hover:opacity-80">
+                        {post.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* FAQ */}
       <section className="py-16 lg:py-24 bg-surface">
         <div className="container">
@@ -345,7 +375,7 @@ export default function ExamePage() {
               {exam.category === "laboratorio" ? "Tirar dúvidas no WhatsApp" : "Agendar pelo WhatsApp"}
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
-            <button type="button" onClick={() => abrirTelefone("exame_rodape")} className="btn-pill !bg-transparent !text-text border border-black/20 hover:!bg-black/5">
+            <button type="button" onClick={() => abrirTelefone("exame_rodape")} className="btn-pill-outline">
               Ligar: (12) 3887-3535
             </button>
           </div>

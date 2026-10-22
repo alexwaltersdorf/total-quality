@@ -11,12 +11,14 @@ export function generateSitemap(): string {
   // Ordenar por prioridade decrescente
   routes.sort((a, b) => (b.priority || 0.5) - (a.priority || 0.5));
 
+  // lastmod so quando ha data real de alteracao (artigos do blog). Antes toda
+  // URL saia com a data do dia em que o sitemap era gerado — o Google aprende
+  // a ignorar um lastmod que muda sem a pagina mudar.
   const urlEntries = routes
     .map((route) => {
       return `  <url>
     <loc>${escapeXml(route.canonical)}</loc>
-    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
-    <changefreq>${route.changefreq || "monthly"}</changefreq>
+${route.lastmod ? `    <lastmod>${route.lastmod}</lastmod>\n` : ""}    <changefreq>${route.changefreq || "monthly"}</changefreq>
     <priority>${(route.priority || 0.5).toFixed(1)}</priority>
   </url>`;
     })
