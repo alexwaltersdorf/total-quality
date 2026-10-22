@@ -154,3 +154,16 @@ São mais de 63 mil impressões no fim da primeira página, com quase nenhum cli
 URLs para o top 3 rende mais tráfego que qualquer artigo novo. O caminho é aprofundar o conteúdo e
 reescrever title e description para a intenção real ("ecg o que é": 3.200 impressões). É a próxima
 frente sugerida.
+
+## Respostas do Alex (22/10/2026), já aplicadas neste PR
+
+1. **Ultrassom de abdome total é feito com bexiga cheia.** Mudaram o artigo (preparo, tabela, FAQ) e a
+   página `/exames/ultrassonografia` ("jejum de 6 a 8 horas e bexiga cheia").
+2. **Tomografia com contraste EV e VO.** Mudaram o artigo e a página `/exames/tomografia-computadorizada`,
+   no preparo.
+3. **Toxicológico: janela de 180 dias e resultado em 5 dias úteis.** Mudaram a página
+   `/exames/exame-toxicologico` (saíram "90 a 180 dias" e "5 a 10 dias úteis"), o artigo da CLT e o
+   artigo publicado da CNH. O mínimo legal de 90 dias continua citado como referência.
+4. **O toxicológico pode entrar nos exames admissionais.** Ficou assim no artigo e na página
+   `/exames/exame-admissional`: a coleta pode ser feita no mesmo pacote e na mesma ida à clínica, e o
+   resultado segue à parte, fora do ASO, como manda o art. 61 da Portaria MTP 672/2021.

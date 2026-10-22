@@ -101,6 +101,7 @@ export const examesData: ExamData[] = [
     ],
     preparations: [
       { icon: Clock, text: "Jejum de 4 horas para exames com contraste" },
+      { icon: CheckCircle, text: "Contraste na veia (EV) ou bebido (VO), conforme o pedido médico" },
       { icon: AlertTriangle, text: "Informe alergias, especialmente a iodo ou contraste" },
       { icon: FileText, text: "Traga exames anteriores para comparação" },
       { icon: Shield, text: "Informe se está grávida ou com suspeita de gravidez" },
@@ -177,7 +178,7 @@ export const examesData: ExamData[] = [
     ],
     preparations: [
       { icon: Droplets, text: "Ultrassom pélvico: bexiga cheia (beber 4 copos de água 1h antes)" },
-      { icon: Clock, text: "Ultrassom abdominal: jejum de 6 a 8 horas" },
+      { icon: Clock, text: "Ultrassom de abdome total: jejum de 6 a 8 horas e bexiga cheia" },
       { icon: CheckCircle, text: "Ultrassom de tireoide e mama: sem preparo especial" },
       { icon: FileText, text: "Traga exames anteriores para comparação" },
     ],
@@ -414,11 +415,11 @@ export const examesData: ExamData[] = [
     title: "EXAME TOXICOLÓGICO",
     shortTitle: "Exame Toxicológico",
     subtitle: "Análise Toxicológica",
-    description: "Exame toxicológico para detecção de substâncias com janela de até 180 dias.",
+    description: "Exame toxicológico para detecção de substâncias com janela de 180 dias.",
     metaTitle: "Exame Toxicológico em Caraguatatuba | Total Quality",
     metaDescription: "Exame toxicológico em Caraguatatuba para CNH C, D e E e motorista profissional: coleta de cabelo ou pelo, laboratório credenciado. Dúvidas no WhatsApp.",
     heroDescription: "O exame toxicológico para CNH é obrigatório para o motorista profissional das categorias C, D e E, na obtenção e na renovação da habilitação, e pode ser pedido em processos admissionais e demissionais. Na Total Quality, a coleta é feita na unidade e a amostra segue para laboratório credenciado.",
-    whatIs: "O Exame Toxicológico é uma análise laboratorial que detecta o uso de substâncias psicoativas (drogas) através de amostras de cabelo, pelo ou unha. Possui janela de detecção de 90 a 180 dias, maior que a do exame de urina. É obrigatório por lei para motoristas profissionais das categorias C, D e E.",
+    whatIs: "O Exame Toxicológico é uma análise laboratorial que detecta o uso de substâncias psicoativas (drogas) através de amostras de cabelo, pelo ou unha. Na Total Quality, o exame tem janela de detecção de 180 dias (a lei exige no mínimo 90), maior que a do exame de urina. É obrigatório por lei para motoristas profissionais das categorias C, D e E.",
     howItWorks: "Uma pequena amostra de cabelo (ou pelo corporal) é coletada e enviada ao laboratório credenciado. A análise identifica metabólitos de substâncias como maconha, cocaína, anfetaminas, metanfetaminas, opiáceos e outras drogas. O resultado é emitido em formato padronizado e aceito pelo DETRAN.",
     indications: [
       "Renovação ou obtenção de CNH categorias C, D e E",
@@ -436,11 +437,11 @@ export const examesData: ExamData[] = [
       { icon: Shield, text: "Não raspe os cabelos ou pelos antes do exame" },
     ],
     faqs: [
-      { q: "Qual a janela de detecção do exame?", a: "O exame toxicológico de cabelo detecta o uso de substâncias nos últimos 90 a 180 dias, dependendo do comprimento do cabelo ou pelo coletado." },
+      { q: "Qual a janela de detecção do exame?", a: "Na Total Quality, o exame tem janela de detecção de 180 dias: ele detecta o uso de substâncias nos últimos 180 dias. A lei exige janela mínima de 90 dias." },
       { q: "É obrigatório para qual categoria de CNH?", a: "É obrigatório para motoristas das categorias C, D e E, tanto para obtenção quanto para renovação da CNH, conforme Lei 13.103/2015." },
       { q: "E se eu tiver cabelo muito curto?", a: "Se o cabelo da cabeça for muito curto, pode ser coletado pelo de outras regiões do corpo (braço, perna, tórax). O importante é ter no mínimo 3cm." },
       { q: "Exames toxicológicos para CNH e para empresa são iguais?", a: "A coleta é a mesma: amostra de cabelo ou pelo. O que muda é a finalidade. O toxicológico da CNH segue o padrão exigido pelo DETRAN para o motorista profissional das categorias C, D e E; o admissional, demissional ou periódico segue o pedido da empresa. Informe a finalidade na coleta." },
-      { q: "Quanto tempo demora o resultado?", a: "O resultado fica pronto em média 5 a 10 dias úteis. É emitido em formato padronizado aceito pelo DETRAN." },
+      { q: "Quanto tempo demora o resultado?", a: "O resultado sai em 5 dias úteis. É emitido em formato padronizado aceito pelo DETRAN." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar um exame toxicológico.",
     category: "outros",
@@ -493,7 +494,7 @@ export const examesData: ExamData[] = [
     metaDescription: "Exame admissional, periódico, demissional e ASO em Caraguatatuba. Medicina ocupacional completa para empresas do Litoral Norte, com agilidade.",
     heroDescription: "A Total Quality realiza todos os exames de medicina ocupacional exigidos por lei — admissional, periódico, demissional, retorno ao trabalho e mudança de função — com emissão do ASO e exames complementares no mesmo local. Atendemos empresas de Caraguatatuba, Ubatuba, São Sebastião e Ilhabela.",
     whatIs: "Os exames ocupacionais são avaliações médicas obrigatórias previstas na CLT e nas Normas Regulamentadoras (NR-7/PCMSO). O exame admissional é realizado antes da contratação; o periódico acompanha a saúde do trabalhador ao longo do contrato; o demissional encerra o vínculo; e há ainda os exames de retorno ao trabalho e de mudança de riscos ocupacionais. Ao final de cada avaliação é emitido o ASO (Atestado de Saúde Ocupacional).",
-    howItWorks: "A empresa ou o candidato agenda pelo WhatsApp ou telefone. A avaliação inclui exame clínico com médico do trabalho e, conforme o risco da função, exames complementares como audiometria, espirometria, acuidade visual, eletrocardiograma, raio-X e exames laboratoriais — todos realizados aqui mesmo, em uma única visita. O ASO é emitido na hora e a documentação atende ao eSocial.",
+    howItWorks: "A empresa ou o candidato agenda pelo WhatsApp ou telefone. A avaliação inclui exame clínico com médico do trabalho e, conforme o risco da função, exames complementares como audiometria, espirometria, acuidade visual, eletrocardiograma, raio-X e exames laboratoriais — todos realizados aqui mesmo, em uma única visita. Para motorista profissional, o exame toxicológico também pode entrar no admissional, com resultado à parte em 5 dias úteis. O ASO é emitido na hora e a documentação atende ao eSocial.",
     indications: [
       "Contratação de novos funcionários (admissional)",
       "Exames periódicos anuais ou conforme PCMSO",
