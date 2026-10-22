@@ -20,8 +20,8 @@
   "hemograma",
   "preparo para exames"
  ],
- "draft": true,
- "reviewStatus": "revisao_medica_pendente",
+ "draft": false,
+ "reviewStatus": "aprovado",
  "dateModified": "2026-10-22",
  "examName": "exames laboratoriais",
  "examType": "exames-de-sangue",
@@ -108,5 +108,6 @@
   "Na maioria das vezes, sim: vários exames de sangue saem da mesma punção. A exceção são testes com várias coletas, como a curva glicêmica. Se o pedido misturar exames com e sem jejum, faça o jejum.",
   "### Onde fazer exames laboratoriais em Caraguatatuba?",
   "Na Total Quality, na Rua Padre Anchieta, 1010 – Centro, Caraguatatuba-SP. A coleta de exames de sangue e de urina é sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Leve o pedido médico e um documento com foto. Dúvidas sobre siglas e preparo pelo WhatsApp (12) 3887-3535."
- ]
+ ],
+ "lastReviewed": "2026-10-22"
 }
