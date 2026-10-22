@@ -226,7 +226,9 @@ describe("GUARD-RAIL: artigos de exame laboratorial (out/2026)", () => {
     expect(html).not.toContain(CTA_MARKER);
     // Os dois quadros de contato: no meio (marcador) e no fim.
     expect(html.match(/Na unidade da Rua Padre Anchieta, 1010 – Centro,/g)!.length).toBe(2);
-    expect(html).toContain("Conteúdo informativo. Não substitui consulta médica.");
+    expect(html).toContain(
+      "Este conteúdo é informativo e não substitui a consulta médica. A interpretação dos resultados deve ser feita pelo seu médico."
+    );
     expect(html).toMatch(/Registro\s*970616/);
     expect(html).toContain("Alex Waltersdorf - 267.339");
     const blocos = Array.from(html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)).map(
@@ -414,8 +416,11 @@ describe("GUARD-RAIL: autoria e revisao visiveis (system prompt do blog, out/202
   it.each(publicados.map((p) => p.slug))("%s mostra revisao, data e identificacao", (slug) => {
     const html = getSeoContentForPath(`/blog/${slug}`)!;
     expect(html).toContain("Revisado por Alex Waltersdorf, Responsável Técnico · Atualizado em");
-    expect(html).toContain("Registro 970616 · Responsável Técnico: Alex Waltersdorf - 267.339");
-    expect(html).toMatch(/n[ãa]o substitui consulta m[ée]dica/i);
+    // Modelo de fechamento do Alex (22/10/2026): identificacao em tres linhas.
+    expect(html).toContain(
+      "Total Quality Medicina Diagnóstica — Registro 970616<br>Responsável Técnico: Alex Waltersdorf - 267.339<br>Rua Padre Anchieta, 1010 – Centro – Caraguatatuba-SP · (12) 3887-3535"
+    );
+    expect(html).toMatch(/n[ãa]o substitui a consulta m[ée]dica/i);
     const ld = Array.from(html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)).map((m) =>
       JSON.parse(m[1])
     );

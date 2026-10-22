@@ -118,8 +118,12 @@ export function textoContato(horaMarcada?: boolean): string[] {
       ];
 }
 
-/** Aviso padrao do fim de todo artigo. */
-export const AVISO_INFORMATIVO = "Conteúdo informativo. Não substitui consulta médica.";
+/**
+ * Aviso padrao do fim de todo artigo — texto literal do modelo de fechamento
+ * definido pelo Alex em 22/10/2026 (MODELO-FECHAMENTO-ARTIGO.md, repo de SEO).
+ */
+export const AVISO_INFORMATIVO =
+  "Este conteúdo é informativo e não substitui a consulta médica. A interpretação dos resultados deve ser feita pelo seu médico.";
 
 /**
  * Responsavel tecnico que assina a revisao dos artigos publicados (system
@@ -128,9 +132,16 @@ export const AVISO_INFORMATIVO = "Conteúdo informativo. Não substitui consulta
  */
 export const REVISOR = { name: "Alex Waltersdorf", jobTitle: "Responsável Técnico" } as const;
 
-/** Identificacao do art. 5o da Resolucao CFM 2.336/2023, no formato decidido pelo Alex. */
-export const IDENTIFICACAO =
-  "Total Quality Medicina Diagnóstica — Registro 970616 · Responsável Técnico: Alex Waltersdorf - 267.339";
+/**
+ * Identificacao do art. 5o da Resolucao CFM 2.336/2023 no fim de cada artigo:
+ * as tres linhas do modelo de fechamento do Alex (22/10/2026) — clinica com o
+ * registro, responsavel tecnico, endereco e telefone. Sem a sigla do conselho.
+ */
+export const IDENTIFICACAO = [
+  "Total Quality Medicina Diagnóstica — Registro 970616",
+  "Responsável Técnico: Alex Waltersdorf - 267.339",
+  "Rua Padre Anchieta, 1010 – Centro – Caraguatatuba-SP · (12) 3887-3535",
+] as const;
 
 /**
  * Linha visivel no topo do artigo. Rascunho nunca diz "revisado": a revisao

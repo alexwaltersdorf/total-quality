@@ -1054,7 +1054,7 @@ describe("GUARD-RAIL: blog de SEO local da regiao sul (out/2026)", () => {
     // Nicho YMYL: conteudo de saude sem encaminhamento ao medico e risco
     // clinico antes de ser risco de ranking.
     const html = getSeoContentForPath(`/blog/${slug}`)!;
-    expect(html).toMatch(/n[ãa]o substitui consulta m[ée]dica/i);
+    expect(html).toMatch(/n[ãa]o substitui a consulta m[ée]dica/i);
   });
 
   it("nenhum artigo do blog volta a disputar o termo da landing", () => {

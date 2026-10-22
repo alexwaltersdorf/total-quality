@@ -781,7 +781,7 @@ function blogFooterHtml(post: BlogPost): string {
   return `
     <footer>
       <p><strong>${AVISO_INFORMATIVO}</strong></p>
-      <p>${IDENTIFICACAO}</p>
+      <p>${IDENTIFICACAO.join("<br>")}</p>
       <p>Última atualização: ${isoToBr(blogModifiedIso(post))}</p>
       ${revisao}
     </footer>`;

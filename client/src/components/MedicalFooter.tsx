@@ -18,7 +18,14 @@ export default function MedicalFooter({ dateModified, lastReviewed, draft }: Pro
   return (
     <footer className="mt-12 pt-6 border-t border-black/10 text-xs text-text-muted leading-relaxed space-y-1">
       <p className="text-text-light font-medium">{AVISO_INFORMATIVO}</p>
-      <p>{IDENTIFICACAO}</p>
+      <p>
+        {IDENTIFICACAO.map((linha, i) => (
+          <span key={linha}>
+            {i > 0 && <br />}
+            {linha}
+          </span>
+        ))}
+      </p>
       {dateModified && <p>Última atualização: {isoToBr(dateModified)}</p>}
       {lastReviewed ? (
         <p>Última revisão médica: {isoToBr(lastReviewed)}</p>
