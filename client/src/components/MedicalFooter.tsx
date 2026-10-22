@@ -6,7 +6,7 @@
  * (guard-rail em server/seo-content.test.ts). O equivalente pre-renderizado
  * esta em blogFooterHtml(), em server/_core/seo-content.ts.
  */
-import { AVISO_INFORMATIVO, isoToBr } from "@/lib/blogMeta";
+import { AVISO_INFORMATIVO, IDENTIFICACAO, isoToBr } from "@/lib/blogMeta";
 
 type Props = {
   dateModified: string;
@@ -18,9 +18,7 @@ export default function MedicalFooter({ dateModified, lastReviewed, draft }: Pro
   return (
     <footer className="mt-12 pt-6 border-t border-black/10 text-xs text-text-muted leading-relaxed space-y-1">
       <p className="text-text-light font-medium">{AVISO_INFORMATIVO}</p>
-      <p>
-        Total Quality Medicina Diagnóstica — Registro 970616 · Responsável Técnico: Alex Waltersdorf - 267.339
-      </p>
+      <p>{IDENTIFICACAO}</p>
       {dateModified && <p>Última atualização: {isoToBr(dateModified)}</p>}
       {lastReviewed ? (
         <p>Última revisão médica: {isoToBr(lastReviewed)}</p>

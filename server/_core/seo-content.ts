@@ -25,6 +25,8 @@ import {
   AVISO_INFORMATIVO,
   blogModifiedIso,
   blogPostingLd,
+  linhaRevisao,
+  IDENTIFICACAO,
   CTA_MARKER,
   extractFaqs,
   headingId,
@@ -770,6 +772,7 @@ function blogFooterHtml(post: BlogPost): string {
   return `
     <footer>
       <p><strong>${AVISO_INFORMATIVO}</strong></p>
+      <p>${IDENTIFICACAO}</p>
       <p>Última atualização: ${isoToBr(blogModifiedIso(post))}</p>
       ${revisao}
     </footer>`;
@@ -796,7 +799,8 @@ function renderBlogHtml(post: BlogPost): string {
     <article>
       <h1>${escapeHtml(post.title)}</h1>
       <p><em>${escapeHtml(post.subtitle)}</em></p>
-      <p>${escapeHtml(post.author)} · ${escapeHtml(post.authorRole)} · ${escapeHtml(post.date)} · ${escapeHtml(post.readTime)} de leitura</p>
+      <p>${escapeHtml(post.author)} · ${escapeHtml(post.authorRole)} · ${escapeHtml(post.readTime)} de leitura</p>
+      <p>${escapeHtml(linhaRevisao(post))}</p>
       ${tocHtml}
       ${bodyHtml}
       ${cta}

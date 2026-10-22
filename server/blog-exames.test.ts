@@ -392,3 +392,39 @@ describe("GUARD-RAIL: menu e botão de resultados (out/2026)", () => {
     expect(desktop).not.toMatch(/Diferenciais|>\s*Exames\s*</);
   });
 });
+
+describe("GUARD-RAIL: autoria e revisao visiveis (system prompt do blog, out/2026)", () => {
+  // Conteudo de saude (YMYL): quem escreve e quem revisa precisam aparecer no
+  // texto e no schema. Os artigos antigos traziam medicos que nao existem na
+  // equipe ("Dra. Mariana Costa", "Dr. Carlos Mendes"…) — autoria inventada e
+  // pior que nenhuma. A clinica assina; o responsavel tecnico revisa.
+  it("nenhum artigo e assinado por medico inventado", () => {
+    for (const p of index) {
+      expect(p.author, `${p.slug} assinado por pessoa`).toBe("Equipe Total Quality");
+      expect(`${p.author} ${p.authorRole}`).not.toMatch(/\bDra?\.\s/);
+    }
+  });
+
+  it.each(publicados.map((p) => p.slug))("%s mostra revisao, data e identificacao", (slug) => {
+    const html = getSeoContentForPath(`/blog/${slug}`)!;
+    expect(html).toContain("Revisado por Alex Waltersdorf, Responsável Técnico · Atualizado em");
+    expect(html).toContain("Registro 970616 · Responsável Técnico: Alex Waltersdorf - 267.339");
+    expect(html).toMatch(/n[ãa]o substitui consulta m[ée]dica/i);
+    const ld = Array.from(html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)).map((m) =>
+      JSON.parse(m[1])
+    );
+    const posting = ld.flat().find((o) => o["@type"] === "BlogPosting");
+    expect(posting, "sem BlogPosting").toBeTruthy();
+    expect(posting.datePublished).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(posting.dateModified).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(posting.author).toEqual({ "@id": "https://totalquality.med.br/#medicalbusiness" });
+    expect(posting.mainEntityOfPage.reviewedBy.name).toBe("Alex Waltersdorf");
+    expect(ld.flat().some((o) => o["@type"] === "BreadcrumbList")).toBe(true);
+  });
+
+  it.each(rascunhos.map((p) => p.slug))("rascunho %s nunca diz que foi revisado", (slug) => {
+    const html = getSeoContentForPath(`/blog/${slug}`)!;
+    expect(html).not.toContain("Revisado por");
+    expect(html).not.toContain('"reviewedBy"');
+  });
+});

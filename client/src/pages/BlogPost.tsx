@@ -9,7 +9,7 @@ import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, ArrowUpRight, Clock, Calendar, Tag, Share2 } from "lucide-react";
 import { allBlogPosts, blogPosts, loadBlogPost, extractFaqs } from "@/lib/blogData";
-import { blogModifiedIso, relatedPosts as pickRelated, tableOfContents, isPublished } from "@/lib/blogMeta";
+import { linhaRevisao, blogModifiedIso, relatedPosts as pickRelated, tableOfContents, isPublished } from "@/lib/blogMeta";
 import { renderBlogContent } from "@/lib/renderBlogContent";
 import { trpc } from "@/lib/trpc";
 import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
@@ -179,14 +179,12 @@ export default function BlogPost() {
           </p>
 
           <div className="flex items-center justify-between border-t border-b border-black/10 py-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-brand/10 flex items-center justify-center">
-                <span className="text-brand font-bold text-sm">{post.author.split(" ").map(n => n[0]).join("").slice(0, 2)}</span>
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-text">{post.author}</p>
-                <p className="text-xs text-text-muted">{post.authorRole}</p>
-              </div>
+            {/* Autoria e revisao (E-E-A-T de conteudo de saude): a clinica
+                assina, o responsavel tecnico revisa. Mesmo texto do prerender
+                (linhaRevisao, em blogMeta.ts). */}
+            <div>
+              <p className="text-sm font-semibold text-text">{post.author} · {post.authorRole}</p>
+              <p className="text-xs text-text-muted">{linhaRevisao(post)}</p>
             </div>
             <button
               onClick={handleShare}

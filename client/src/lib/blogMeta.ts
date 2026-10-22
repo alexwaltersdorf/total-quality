@@ -79,6 +79,28 @@ export function textoContato(horaMarcada?: boolean): string[] {
 /** Aviso padrao do fim de todo artigo. */
 export const AVISO_INFORMATIVO = "Conteúdo informativo. Não substitui consulta médica.";
 
+/**
+ * Responsavel tecnico que assina a revisao dos artigos publicados (system
+ * prompt do blog, 21/10/2026, fase 2). Sem a sigla do conselho: so o nome e
+ * o cargo aqui; o numero vai no rodape, no bloco padrao de identificacao.
+ */
+export const REVISOR = { name: "Alex Waltersdorf", jobTitle: "Responsável Técnico" } as const;
+
+/** Identificacao do art. 5o da Resolucao CFM 2.336/2023, no formato decidido pelo Alex. */
+export const IDENTIFICACAO =
+  "Total Quality Medicina Diagnóstica — Registro 970616 · Responsável Técnico: Alex Waltersdorf - 267.339";
+
+/**
+ * Linha visivel no topo do artigo. Rascunho nunca diz "revisado": a revisao
+ * medica e justamente o que falta para ele ser publicado.
+ */
+export function linhaRevisao(post: Pick<BlogPostMeta, "draft" | "date" | "dateModified">): string {
+  const atualizado = `Atualizado em ${isoToBr(blogModifiedIso(post))}`;
+  return isPublished(post)
+    ? `Revisado por ${REVISOR.name}, ${REVISOR.jobTitle} · ${atualizado}`
+    : `Rascunho — revisão médica pendente · ${atualizado}`;
+}
+
 export function isPublished(post: Pick<BlogPostMeta, "draft">): boolean {
   return post.draft !== true;
 }
@@ -228,12 +250,13 @@ const BUSINESS_ID = `${SITE}/#medicalbusiness`;
  * entidade do index.json (#medicalbusiness): a regra de ouro do ranking pede
  * uma entidade so — antes cada artigo declarava uma Organization nova.
  * A pagina e uma MedicalWebPage sobre um MedicalTest quando o artigo trata de
- * um exame; lastReviewed so entra depois da revisao medica.
+ * um exame; reviewedBy (o responsavel tecnico) e lastReviewed so em artigo
+ * publicado — rascunho ainda nao passou pela revisao medica.
  */
 export function blogPostingLd(post: BlogPostMeta): object {
   const url = `${SITE}/blog/${post.slug}`;
   const published = blogDateIso(post.date);
-  const equipe = /equipe/i.test(post.author);
+  const revisado = isPublished(post);
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -244,14 +267,20 @@ export function blogPostingLd(post: BlogPostMeta): object {
     inLanguage: "pt-BR",
     ...(published && { datePublished: published }),
     dateModified: blogModifiedIso(post) || published,
-    author: equipe ? { "@id": BUSINESS_ID } : { "@type": "Person", name: post.author },
+    // Autor e a clinica (a mesma entidade do index.html). Os nomes de medicos
+    // que assinavam artigos antigos nao correspondiam a pessoas da equipe e
+    // sairam em 22/10/2026 — conteudo de saude nao pode ter autoria inventada.
+    author: { "@id": BUSINESS_ID },
     publisher: { "@id": BUSINESS_ID },
     image: { "@type": "ImageObject", url: post.image },
     mainEntityOfPage: {
       "@type": "MedicalWebPage",
       "@id": `${url}#webpage`,
       url,
-      ...(post.lastReviewed && { lastReviewed: post.lastReviewed }),
+      ...(revisado && {
+        reviewedBy: { "@type": "Person", name: REVISOR.name, jobTitle: REVISOR.jobTitle, worksFor: { "@id": BUSINESS_ID } },
+        lastReviewed: post.lastReviewed || blogModifiedIso(post),
+      }),
       ...(post.examName && { about: { "@type": "MedicalTest", name: post.examName } }),
     },
   };
