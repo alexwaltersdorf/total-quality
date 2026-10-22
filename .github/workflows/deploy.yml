@@ -23,6 +23,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Dois commits: a verificacao do fim compara HEAD com HEAD^ para saber
+          # quais arquivos de client/public este push mexeu. Com a profundidade
+          # 1 do padrao, HEAD^ nao existe e o diff sai vazio — a conferencia
+          # passaria sempre, sem conferir nada.
+          fetch-depth: 2
 
       - name: Node 22
         uses: actions/setup-node@v4
@@ -41,7 +47,15 @@ jobs:
       - name: Compactar artefato
         run: tar -czf dist.tar.gz dist
 
+      # Nao derruba o deploy sozinho. Este envio e um atalho: ele faz a mudanca
+      # aparecer em segundos, mas a Hostinger tambem reconstroi do fonte por
+      # conta propria e serve o build dela. Em 21/10/2026 este passo falhou com
+      # "dial tcp: i/o timeout", o passo seguinte foi pulado, e mesmo assim a
+      # pagina nova estava no ar dois minutos depois — vinda do build da
+      # Hostinger. Derrubar o deploy ali foi alarme falso. Quem decide se o
+      # deploy prestou e a verificacao do fim, que olha o site.
       - name: Enviar artefato para o servidor
+        continue-on-error: true
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOSTINGER_HOST }}
@@ -82,33 +96,81 @@ jobs:
             find node_modules -path "*/.bin/*" -type f -exec chmod +x {} \; 2>/dev/null || true
 
             echo "==> [4/5] Ativando o build enviado pelo runner"
-            rm -rf dist
-            tar -xzf dist.tar.gz
-            rm -f dist.tar.gz
+            if [ -f dist.tar.gz ]; then
+              rm -rf dist
+              tar -xzf dist.tar.gz
+              rm -f dist.tar.gz
+              TEM_PACOTE=1
+            else
+              echo "    pacote nao chegou (o envio falhou); seguindo sem ele"
+              TEM_PACOTE=0
+            fi
 
-            echo "==> [4.5/5] Onde o Passenger serve (topologia conhecida)"
+            echo "==> [4.5/5] Publicando no diretorio que o Passenger serve"
             # DESCOBERTO EM 06/09/2026 pelo diagnostico deste workflow:
             #
             #   ../.builds/current -> .../totalquality.med.br/hbuilds/versions/<uuid>
             #
-            # A Hostinger tem sistema de build proprio ("hbuilds"): a cada push
-            # ela reconstroi o app a partir do FONTE num diretorio versionado
-            # novo e repontta o symlink `current`. O Passenger serve DE LA.
+            # A Hostinger tem sistema de build proprio ("hbuilds"): ela
+            # reconstroi o app a partir do FONTE num diretorio versionado novo e
+            # repontta o symlink `current`. O Passenger serve DE LA, e a
+            # aplicacao fica em `<versao>/nodejs` (entry `dist/index.js`,
+            # conforme o .metadata.json que a propria Hostinger grava).
             #
-            # Consequencia: o dist.tar.gz que este workflow envia para
-            # `nodejs/dist` NUNCA e servido. As mudancas chegam ao publico
-            # porque o passo [1/5] sincroniza o fonte e a Hostinger reconstroi —
-            # nao porque o pacote testado aqui tenha sido publicado.
+            # Ate 20/10/2026 este passo so OBSERVAVA isso, na suposicao de que a
+            # Hostinger reconstruiria a cada push. Nesse dia ficou provado que
+            # ela nao reconstroi: a lista de ligacoes entrou na main as 11:26,
+            # CI e deploy verdes, e a URL devolveu 404. O diagnostico por SSH
+            # mostrou o build servido parado em 19/10 01:13, com o fonte de
+            # 246edd6 — duas publicacoes atras. Havia UMA unica versao em
+            # hbuilds/versions, nenhuma nova. Ou seja: desde 19/10 nada do que
+            # este workflow enviava chegava ao publico, e o deploy reportava
+            # sucesso assim mesmo.
             #
-            # Este passo so registra o estado para acompanhamento.
-            set +e
-            CURRENT=$(readlink -f ../.builds/current 2>/dev/null)
-            echo "    build servido pela Hostinger: ${CURRENT:-nao encontrado}"
-            echo "    repontado em: $(stat -c %y ../.builds/current 2>/dev/null | cut -d. -f1)"
-            echo "    bundle enviado pelo runner (nao servido): $(ls dist/public/assets/index-*.js 2>/dev/null | head -1)"
-            set -e
+            # Agora o pacote construido e testado no runner e copiado para
+            # dentro do build servido. Isso conserta de uma vez o problema de
+            # fundo: o que vai ao ar passa a ser exatamente o artefato que
+            # passou nos testes, em vez de um build feito em outro lugar a
+            # partir do fonte.
+            #
+            # A copia e por cima (`cp -a dist/.`), sem apagar o diretorio antes:
+            # nao existe instante em que o site fica sem arquivos. O preco e que
+            # chunks antigos ficam para tras — o que ate ajuda quem carregou o
+            # index.html de um minuto atras — entao os assets com mais de 7 dias
+            # sao podados no fim.
+            CURRENT=$(readlink -f ../.builds/current 2>/dev/null || true)
+            APP="${CURRENT:+$CURRENT/nodejs}"
+            echo "    build servido: ${CURRENT:-nao encontrado}"
+            echo "    repontado em: $(stat -c %y ../.builds/current 2>/dev/null | cut -d. -f1 || true)"
+
+            PUBLICADO=0
+            if [ "$TEM_PACOTE" = "0" ]; then
+              echo "    nada a publicar: sem pacote. A Hostinger reconstroi do \
+              fonte e a verificacao do fim confere o resultado."
+            elif [ -n "$APP" ] && [ -d "$APP/dist" ] && [ -w "$APP/dist" ]; then
+              cp -a dist/. "$APP/dist/"
+              find "$APP/dist/public/assets" -type f -mtime +7 -delete 2>/dev/null || true
+              PUBLICADO=1
+              echo "    publicado em $APP/dist"
+              # Lido do index.html: o build gera mais de um assets/index-*.js, e
+              # um `ls` pega o primeiro em ordem alfabetica, que nem sempre e o
+              # bundle principal.
+              echo "    bundle agora servido: $(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' \
+                "$APP/dist/public/index.html" 2>/dev/null | head -1)"
+            else
+              echo "::warning::Nao foi possivel publicar em '$APP/dist' (inexistente \
+              ou sem permissao de escrita). O site seguira servindo o build anterior."
+            fi
 
             echo "==> [5/5] Restart via Phusion Passenger"
+            # O Passenger observa tmp/restart.txt da RAIZ DA APLICACAO, que e o
+            # diretorio servido — nao este. Enquanto so o de ca era tocado, o
+            # restart nao acontecia.
+            if [ -n "$APP" ] && [ -w "$APP" ]; then
+              mkdir -p "$APP/tmp"
+              touch "$APP/tmp/restart.txt"
+              echo "    restart pedido em $APP/tmp/restart.txt"
+            fi
             mkdir -p tmp
             touch tmp/restart.txt
 
@@ -122,47 +184,58 @@ jobs:
       # nao. O passo abaixo pergunta ao site, nao ao servidor.
       # Verifica que o SITE esta saudavel depois do deploy.
       #
-      # Ate 06/09/2026 este passo exigia que a producao servisse o MESMO bundle
-      # que o runner acabara de construir. Na topologia real isso nunca pode ser
-      # verdade: a Hostinger reconstroi do fonte e serve o build dela. O passo
-      # ficava vermelho em todo deploy — alarme que sempre toca deixa de ser
-      # alarme, e ninguem mais olha.
+      # POR QUE NAO COMPARAR O HASH DO BUNDLE
       #
-      # Agora ele verifica o que de fato importa e e verificavel: o site
-      # responde, o HTML esta integro, e a rota de 404 continua correta (o que
-      # so acontece se o servidor estiver rodando o codigo atual).
+      # Em 20/10 este passo passou a exigir que a producao servisse o MESMO
+      # arquivo assets/index-*.js que o runner construiu. Parecia a unica prova
+      # possivel, e durou um dia. Em 21/10 ficou claro que ela e falsa: a
+      # Hostinger reconstroi do fonte por conta propria — o diagnostico pegou um
+      # build dela criado as 02:05, a partir do commit 8b06764, com hashes
+      # proprios (index-xsWxjW_L.js, 474.352 bytes) diferentes dos do runner.
+      # Quando o build dela chega antes, os hashes divergem e o deploy fica
+      # vermelho com o site inteiramente correto. Alarme que toca sem motivo e
+      # o comeco de alarme que ninguem olha.
+      #
+      # O QUE PROVA DE VERDADE: os arquivos que o build apenas COPIA, sem
+      # compilar (tudo em client/public). Eles saem identicos dos dois builds,
+      # porque nenhum dos dois os toca. Se o que a producao devolve bate byte a
+      # byte com o que acabou de ser construido, a producao esta nesta revisao,
+      # nao importa quem compilou.
+      #
+      # A comparacao e so sobre os arquivos que ESTE push mexeu. Push que nao
+      # mexe em client/public nao tem o que provar por fora, e o passo diz isso
+      # em vez de inventar uma garantia.
+      #
+      # Isto teria pego o 404 de 20/10: a pagina nova estava no push e faltava
+      # na producao.
       - name: Verificar a producao (o site, nao o servidor)
         run: |
           set -e
-          echo "Bundle enviado pelo runner (informativo): $(basename "$(ls dist/public/assets/index-*.js | head -1)")"
 
-          # O CDN da Hostinger cacheia HTML por 300s; furar o cache e obrigatorio.
+          # O CDN cacheia HTML por 300s; furar o cache e obrigatorio em tudo.
+          BUSTA="deploy_check=${GITHUB_SHA}"
+
+          echo "== Saude do site =="
           OK=0
           for TENTATIVA in 1 2 3 4 5 6; do
             HTML=$(curl -fsS --max-time 25 -H "Cache-Control: no-cache" \
-              "https://totalquality.med.br/?deploy_check=${GITHUB_SHA}${TENTATIVA}" || true)
-
-            SERVIDO=$(printf '%s' "$HTML" | grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' | head -1)
+              "https://totalquality.med.br/?${BUSTA}${TENTATIVA}" || true)
             TEM_ROOT=$(printf '%s' "$HTML" | grep -c '<div id="root"' || true)
-
-            if [ -n "$SERVIDO" ] && [ "$TEM_ROOT" -ge 1 ]; then
-              echo "OK: site respondendo, HTML integro, servindo $SERVIDO"
-              OK=1
-              break
+            TEM_BUNDLE=$(printf '%s' "$HTML" | grep -c 'assets/index-' || true)
+            if [ "$TEM_ROOT" -ge 1 ] && [ "$TEM_BUNDLE" -ge 1 ]; then
+              echo "OK: site respondendo com HTML integro"
+              OK=1; break
             fi
-            echo "  tentativa $TENTATIVA: site ainda nao respondeu integro, aguardando 20s"
+            echo "  tentativa $TENTATIVA: HTML ainda nao integro, aguardando 20s"
             sleep 20
           done
-
           if [ "$OK" -ne 1 ]; then
-            echo "::error::Apos ~2min a producao nao devolve HTML integro. O deploy \
-            reportou sucesso mas o site nao esta saudavel."
+            echo "::error::Apos ~2min a producao nao devolve HTML integro."
             exit 1
           fi
 
-          # Caminho de primeiro nivel inexistente tem de dar 404 real. So responde
-          # certo se o servidor estiver rodando o codigo atual, entao serve de
-          # prova de que o deploy propagou — sem depender do hash do bundle.
+          echo "== Caminho inexistente tem de dar 404 real =="
+          # So responde certo se o servidor estiver rodando o codigo atual.
           CODIGO=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 \
             "https://totalquality.med.br/verificacao-de-deploy-${GITHUB_SHA}")
           if [ "$CODIGO" != "404" ]; then
@@ -170,4 +243,42 @@ jobs:
             o servidor pode estar rodando codigo antigo."
             exit 1
           fi
-          echo "OK: 404 real em caminho inexistente — servidor rodando o codigo atual"
+          echo "OK: 404 real em caminho inexistente"
+
+          echo "== Arquivos de client/public que este push mexeu =="
+          # HEAD^ e o commit anterior da main (os merges aqui sao squash).
+          MEXIDOS=$(git diff --name-only --diff-filter=d HEAD^ HEAD -- client/public \
+            2>/dev/null || true)
+          if [ -z "$MEXIDOS" ]; then
+            echo "Nenhum. Nada a conferir por fora nesta publicacao."
+            exit 0
+          fi
+
+          FALHOU=0
+          for ARQ in $MEXIDOS; do
+            CAMINHO=${ARQ#client/public/}
+            LOCAL=$(sha256sum "dist/public/$CAMINHO" | cut -d' ' -f1)
+            # nome encurtado: o log do CI nao precisa carregar o endereco inteiro
+            # das paginas do painel
+            CURTO=$(printf '%s' "$CAMINHO" | cut -c1-24)
+
+            SERVIDO=""
+            for TENTATIVA in 1 2 3 4 5 6; do
+              SERVIDO=$(curl -fsS --max-time 30 -H "Cache-Control: no-cache" \
+                -H "Accept-Encoding: identity" \
+                "https://totalquality.med.br/$CAMINHO?${BUSTA}${TENTATIVA}" \
+                | sha256sum | cut -d' ' -f1 || true)
+              [ "$SERVIDO" = "$LOCAL" ] && break
+              echo "  $CURTO…: ainda diferente, aguardando 20s ($TENTATIVA/6)"
+              sleep 20
+            done
+
+            if [ "$SERVIDO" = "$LOCAL" ]; then
+              echo "OK: $CURTO… bate byte a byte com o que foi construido"
+            else
+              echo "::error::'$CURTO…' nao bate com o que este push construiu. \
+              A producao nao esta nesta revisao."
+              FALHOU=1
+            fi
+          done
+          [ "$FALHOU" -eq 0 ] || exit 1

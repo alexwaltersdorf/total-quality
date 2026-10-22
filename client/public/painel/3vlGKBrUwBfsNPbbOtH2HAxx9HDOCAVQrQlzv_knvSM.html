@@ -199,6 +199,32 @@ select.estado option{background:var(--papel);color:var(--tinta);font-weight:500}
 .b-h .q{color:var(--alerta)}
 .anexo{display:inline-block;margin-right:6px;font-size:9.5px;font-weight:700;
   letter-spacing:.05em;text-transform:uppercase;color:var(--tinta-fraca)}
+/* Interesse tem coluna propria: colado na situacao ele parecia um detalhe da
+   conversa, e e outra dimensao — a situacao diz quem falou por ultimo, o
+   interesse diz o quanto a pessoa quer o exame. O filtro mora no cabecalho da
+   propria coluna, que e onde se procura filtro de planilha. */
+.selo-tmp{display:inline-block;padding:1px 7px;border-radius:999px;
+  font-size:10.5px;font-weight:700;white-space:nowrap}
+#tbLeads td.int .det{font-size:11px;color:var(--tinta-fraca)}
+/* Cada coluna filtra a si mesma: rotulo em cima, controle embaixo. O cabecalho
+   e montado uma vez e so o <tbody> e reescrito a cada filtro, entao o cursor
+   nao pula fora de quem esta digitando. */
+#tbLeads thead th .rot{display:block;margin-bottom:4px}
+#tbLeads thead th select,#tbLeads thead th input{width:100%;min-width:0;
+  font-family:var(--ui);font-size:11.5px;font-weight:400;text-transform:none;
+  letter-spacing:0;padding:4px 6px;border:1px solid var(--borda-forte);
+  border-radius:7px;background:var(--papel);color:var(--tinta)}
+#tbLeads thead th input::placeholder{color:var(--tinta-fraca);opacity:.75}
+#tbLeads th.cnome{min-width:148px}
+#tbLeads th.cfone{min-width:142px}
+#tbLeads th.cex{min-width:158px}
+#tbLeads th.cst{min-width:148px}
+#tbLeads th.cconv{min-width:152px}
+#tbLeads th.int{min-width:122px}
+#tbLeads th.cdata{min-width:140px}
+.tmp-quente{background:var(--grave-fundo);color:var(--grave)}
+.tmp-morno{background:var(--alerta-fundo);color:var(--alerta)}
+.tmp-frio{background:var(--acento-fundo);color:var(--acento)}
 .c-ag{background:var(--ok-fundo);color:var(--ok)}
 .c-esc,.c-bot{background:var(--alerta-fundo);color:var(--alerta)}
 .c-cli{background:var(--acento-fundo);color:var(--acento)}
@@ -571,7 +597,44 @@ const acentos = s => ACENTOS[s] ?? String(s)
   .replace('o paciente falou por ultimo', 'o paciente falou por último');
 
 let SENHA = '', LEADS = [], CONVERSAS = new Map(), abertas = new Set();
-let lTermo = '', lSit = '', lStatus = '', lFam = '';
+let lTermo = '', lSit = '', lStatus = '', lFam = '', lTmp = '';
+let lNome = '', lFone = '', lData = '';
+
+// comparar sem acento e sem caixa; telefone compara so por digito, para que
+// "99749" e "(35) 99749" achem a mesma pessoa
+const chave = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const digitos = s => String(s ?? '').replace(/\D/g, '');
+
+// "dd/mm/aaaa" -> ha quantos dias, contado por DIA DE CALENDARIO e nao por
+// hora. Mensagem de ontem as 23h continua sendo "ontem" as 7h da manha, que e
+// como quem olha a lista pensa. O campo r.dias do payload conta por hora e por
+// isso nao serve aqui.
+const diasAtras = s => {
+  const m = /^(\d{2})\/(\d{2})\/(\d{4})/.exec(String(s ?? ''));
+  if (!m) return null;
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+  return Math.round((hoje - new Date(+m[3], +m[2] - 1, +m[1])) / 86400000);
+};
+
+// Mesma convencao dos atalhos do grafico, logo acima nesta pagina: "7 dias" e
+// hoje mais os seis anteriores, nao hoje mais sete.
+const FAIXAS = [
+  ['hoje',  'hoje',             d => d === 0],
+  ['ontem', 'ontem',            d => d === 1],
+  ['7',     'últimos 7 dias',   d => d >= 0 && d <= 6],
+  ['15',    'últimos 15 dias',  d => d >= 0 && d <= 14],
+  ['30',    'últimos 30 dias',  d => d >= 0 && d <= 29],
+];
+const naFaixa = (u, k) => {
+  const f = FAIXAS.find(x => x[0] === k);
+  if (!f) return true;
+  const d = diasAtras(u);
+  return d === null ? false : f[2](d);
+};
+
+// quente, morno, frio — nesta ordem, que e a da urgencia. Ordem alfabetica
+// poria "frio" na frente, que e o contrario do que a lista serve para fazer.
+const ORDEM_TMP = ['quente', 'morno', 'frio'];
 
 const fone = t => {
   const d = String(t).replace(/\D/g, '');
@@ -615,6 +678,11 @@ function montarLeads(geradoEm) {
   const sits = ORDEM_SIT.filter(s => porSit[s])
     .concat(Object.keys(porSit).filter(s => !ORDEM_SIT.includes(s)));
   const fams = [...new Set(LEADS.map(r => r.f))].sort();
+  // so entram as temperaturas que existem nos dados, na ordem da urgencia
+  const porTmp = {};
+  LEADS.forEach(r => { if (r.tmp) porTmp[r.tmp] = (porTmp[r.tmp] || 0) + 1; });
+  const tmps = ORDEM_TMP.filter(t => porTmp[t])
+    .concat(Object.keys(porTmp).filter(t => !ORDEM_TMP.includes(t)).sort());
 
   el('cxLeads').innerHTML = `
     <div class="largo">
@@ -623,22 +691,39 @@ function montarLeads(geradoEm) {
         <div class="v" style="color:${CORSIT[s] || 'var(--tinta-fraca)'}">${br(porSit[s])}</div>
         <div class="l">${esc(s)}</div></button>`).join('')}</div>
     <div class="lbarra">
-      <input type="search" id="lbusca" placeholder="Nome, telefone ou exame…" autocomplete="off">
-      <select id="lsit"><option value="">Todas as situações</option>${
-        sits.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('')}</select>
-      <select id="lstatus"><option value="">Todos os status</option>
-        <option>Agendou</option><option>Não Agendou</option><option>Não Aplica</option>
-        <option>Encerrado</option></select>
-      <select id="lfam"><option value="">Todos os exames</option>${
-        fams.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}</select>
-      <button type="button" id="llimpar">Limpar</button>
+      <input type="search" id="lbusca" placeholder="Buscar em qualquer coluna…" autocomplete="off">
+      <button type="button" id="llimpar">Limpar filtros</button>
       <button type="button" id="lcsv">Baixar CSV</button>
       <button type="button" id="lfechar" title="Esquece a senha nesta aba">Fechar</button>
     </div>
     <p class="lconta" id="lconta"></p>
     <div class="quadro"><table id="tbLeads">
-      <thead><tr><th></th><th>Nome</th><th>WhatsApp</th><th>Exame procurado</th>
-        <th>Status</th><th>Conversa</th><th>Data</th></tr></thead>
+      <thead><tr><th></th>
+        <th class="cnome"><span class="rot">Nome</span>
+          <input type="search" id="lnome" placeholder="filtrar" autocomplete="off"
+            aria-label="Filtrar por nome"></th>
+        <th class="cfone"><span class="rot">WhatsApp</span>
+          <input type="search" id="lfone" placeholder="filtrar" autocomplete="off"
+            aria-label="Filtrar por telefone"></th>
+        <th class="cex"><span class="rot">Exame procurado</span>
+          <select id="lfam" aria-label="Filtrar por exame"><option value="">todos</option>${
+            fams.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}</select></th>
+        <th class="cst"><span class="rot">Status</span>
+          <select id="lstatus" aria-label="Filtrar por status"><option value="">todos</option>
+            <option>Agendou</option><option>Não Agendou</option><option>Não Aplica</option>
+            <option>Encerrado</option></select></th>
+        <th class="cconv"><span class="rot">Conversa</span>
+          <select id="lsit" aria-label="Filtrar por situação"><option value="">todas</option>${
+            sits.map(s => `<option value="${esc(s)}">${esc(s)} · ${br(porSit[s])}</option>`).join('')}</select></th>
+        <th class="int"><span class="rot">Interesse</span>
+          <select id="ltmp" aria-label="Filtrar por interesse"><option value="">todos</option>${
+            tmps.map(t => `<option value="${esc(t)}">${esc(t)} · ${br(porTmp[t])}</option>`).join('')}</select></th>
+        <th class="cdata"><span class="rot">Data</span>
+          <select id="ldata" aria-label="Filtrar por data"><option value="">todos</option>${
+            FAIXAS.map(([k, rot]) => {
+              const n = LEADS.filter(r => naFaixa(r.u, k)).length;
+              return `<option value="${esc(k)}">${esc(rot)} · ${br(n)}</option>`;
+            }).join('')}</select></th></tr></thead>
       <tbody id="lcorpo"></tbody></table>
       <div class="vazio" id="lvazio" hidden style="border:none">Nenhum paciente com esses filtros.</div>
     </div>
@@ -648,13 +733,18 @@ function montarLeads(geradoEm) {
       valer, e <i>Automático</i> devolve o controle ao sistema.</p>
     </div>`;
 
-  el('lbusca').addEventListener('input', e => { lTermo = e.target.value.trim().toLowerCase(); pintaLeads(); });
+  el('lbusca').addEventListener('input', e => { lTermo = chave(e.target.value).trim(); pintaLeads(); });
+  el('lnome').addEventListener('input', e => { lNome = chave(e.target.value).trim(); pintaLeads(); });
+  el('lfone').addEventListener('input', e => { lFone = digitos(e.target.value); pintaLeads(); });
+  el('ldata').addEventListener('change', e => { lData = e.target.value; pintaLeads(); });
   el('lsit').addEventListener('change', e => { lSit = e.target.value; sincTiles(); pintaLeads(); });
   el('lstatus').addEventListener('change', e => { lStatus = e.target.value; pintaLeads(); });
   el('lfam').addEventListener('change', e => { lFam = e.target.value; pintaLeads(); });
+  el('ltmp').addEventListener('change', e => { lTmp = e.target.value; pintaLeads(); });
   el('llimpar').addEventListener('click', () => {
-    lTermo = lSit = lStatus = lFam = '';
-    el('lbusca').value = ''; el('lsit').value = ''; el('lstatus').value = ''; el('lfam').value = '';
+    lTermo = lSit = lStatus = lFam = lTmp = lNome = lFone = lData = '';
+    ['lbusca','lnome','lfone','ldata','lsit','lstatus','lfam','ltmp']
+      .forEach(id => el(id).value = '');
     sincTiles(); pintaLeads();
   });
   el('lcsv').addEventListener('click', baixarCsv);
@@ -676,10 +766,16 @@ function montarLeads(geradoEm) {
 const sincTiles = () => document.querySelectorAll('#tilesSit .t.clica')
   .forEach(b => b.setAttribute('aria-pressed', b.dataset.c === lSit));
 
+// Cada coluna filtra a si mesma; a busca da barra continua varrendo tudo, para
+// quem nao sabe em qual coluna o que procura esta.
 const visiveisL = () => LEADS.filter(r =>
   (!lSit || r.c === lSit) && (!lStatus || r.s === lStatus) && (!lFam || r.f === lFam) &&
-  (!lTermo || (r.n + ' ' + r.t + ' ' + r.tr + ' ' + r.e + ' ' + r.f + ' ' + r.c)
-    .toLowerCase().includes(lTermo)));
+  (!lTmp || r.tmp === lTmp) &&
+  (!lNome || chave(r.n).includes(lNome)) &&
+  (!lFone || digitos(r.tr).includes(lFone)) &&
+  (!lData || naFaixa(r.u, lData)) &&
+  (!lTermo || chave(r.n + ' ' + r.t + ' ' + r.tr + ' ' + r.e + ' ' + r.f + ' ' + r.c + ' ' + (r.tmp ?? ''))
+    .includes(lTermo)));
 
 // O sistema continua lendo a fase da conversa: o automatico e sempre calculado
 // e fica na primeira opcao. Escolher um valor sobrepoe, 'Automatico' devolve.
@@ -711,6 +807,9 @@ function pintaLeads() {
       <td class="est">${seletor(r)}</td>
       <td class="conv"><span class="sel ${CLSC[r.c] || 'c-par'}">${esc(r.c)}</span>${
         r.det ? `<span class="det">${esc(r.det)}</span>` : ''}</td>
+      <td class="int">${r.tmp
+        ? `<span class="selo-tmp tmp-${esc(r.tmp)}">${esc(r.tmp)}</span>`
+        : '<span class="det">—</span>'}</td>
       <td class="quando">${esc(r.u)}</td></tr>` + (ab ? gaveta(r) : '');
   }).join('');
   el('lvazio').hidden = rs.length > 0;
@@ -726,7 +825,7 @@ function gaveta(r) {
     r.conv && r.conv !== 'particular' ? `convênio ${r.conv}` : '',
   ].filter(Boolean);
   const ms = CONVERSAS.get(r.tr);
-  return `<tr class="gaveta"><td colspan="7"><div class="gav">
+  return `<tr class="gaveta"><td colspan="8"><div class="gav">
     <div class="gtopo">${seletor(r)}${marcas.map(m => `<span class="marca">${esc(m)}</span>`).join('')}
       ${ms ? `<button type="button" class="copiar espaco" data-f="${esc(r.tr)}">Copiar conversa</button>` : ''}
     </div>
@@ -820,13 +919,16 @@ document.addEventListener('keydown', e => {
 });
 
 function baixarCsv() {
+  // Interesse entra no fim: planilha ja salva por alguem continua com as
+  // colunas antigas no mesmo lugar.
   const L = [['Nome','WhatsApp','Exame','Familia','Status','Status automatico',
               'Definido a mao','Situacao da conversa','Detalhe','Mensagens',
               'Dias sem falar','Etapa do follow-up','Data do contato',
-              'Data da ultima mensagem','Recontato']];
+              'Data da ultima mensagem','Recontato','Interesse']];
   visiveisL().forEach(r => L.push([r.n, r.tr, r.e, r.f, r.s, r.sa,
     r.sm ? 'sim' : 'nao', r.c, r.det, r.nm,
-    r.dias === null ? '' : r.dias, r.et, r.d, r.u, r.r ? 'sim' : 'nao']));
+    r.dias === null ? '' : r.dias, r.et, r.d, r.u, r.r ? 'sim' : 'nao',
+    r.tmp ?? '']));
   const asp = s => '"' + String(s).replace(/"/g, '""') + '"';
   const blob = new Blob(['\ufeff' + L.map(l => l.map(asp).join(';')).join('\r\n')],
     { type: 'text/csv;charset=utf-8' });

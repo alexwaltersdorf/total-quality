@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Lista de ligações do dia — Total Quality</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --fundo:#f5f7f6; --papel:#ffffff; --tinta:#13201d; --tinta-fraca:#5a6d68;
+  --borda:#e0e6e4; --borda-forte:#c8d3d0;
+  --acento:#0d5247; --acento-fundo:#e6f1ee; --acento-tinta:#ffffff; --trilho:#eceeed;
+  --ok:#0a6340; --ok-fundo:#e2f3ea;
+  --alerta:#7d5100; --alerta-fundo:#fcefd9;
+  --grave:#8a2f22; --grave-fundo:#fbe9e5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --dados:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--tinta);font-family:var(--ui);
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.pag{max-width:1180px;margin-inline:auto;padding:30px 20px 60px}
+h1{font-size:clamp(22px,3.4vw,30px);line-height:1.15;margin:0 0 6px;letter-spacing:-.015em}
+.sub{color:var(--tinta-fraca);font-size:14.5px;margin:0 0 20px}
+.num{font-family:var(--dados);font-variant-numeric:tabular-nums}
+
+/* ───────── senha ───────── */
+.cx{background:var(--papel);border:1px solid var(--borda);border-radius:13px;padding:20px 22px}
+#cxSenha{max-width:430px}
+#cxSenha p{margin:0 0 13px;font-size:14px;color:var(--tinta-fraca)}
+#formSenha{display:flex;gap:8px;flex-wrap:wrap}
+input[type=password],input[type=text],select{font-family:var(--ui);font-size:14px;
+  padding:8px 10px;border:1px solid var(--borda-forte);border-radius:8px;
+  background:var(--papel);color:var(--tinta);min-width:150px}
+button{font-family:var(--ui);font-size:14px;font-weight:600;padding:8px 15px;
+  border:1px solid var(--acento);border-radius:8px;background:var(--acento);
+  color:var(--acento-tinta);cursor:pointer}
+button.sec{background:var(--papel);color:var(--acento)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.recado{font-size:13px;color:var(--grave);margin-top:9px;min-height:18px}
+.recado.ok{color:var(--tinta-fraca)}
+
+/* ───────── filtros ───────── */
+.filtros{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
+.campo{display:flex;flex-direction:column;gap:4px}
+.campo label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--tinta-fraca)}
+.caixas{display:flex;gap:16px;flex-wrap:wrap;margin:4px 0 16px;font-size:13.5px}
+.caixas label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.acoes{display:flex;gap:9px;flex-wrap:wrap;margin-left:auto}
+
+/* ───────── resumo ───────── */
+.tiles{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));margin:0 0 16px}
+.t{background:var(--papel);border:1px solid var(--borda);border-radius:9px;padding:11px 13px}
+.t .v{font-family:var(--dados);font-size:22px;font-weight:500;display:block;line-height:1.15}
+.t .r{font-size:12px;color:var(--tinta-fraca);display:block;margin-top:2px}
+
+/* ───────── tabela ───────── */
+.rolo{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--papel)}
+thead th{text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--tinta-fraca);font-weight:600;padding:9px 8px;border-bottom:2px solid var(--borda-forte);
+  background:var(--papel)}
+tbody td{padding:9px 8px;border-bottom:1px solid var(--borda);vertical-align:top}
+tbody tr:nth-child(even){background:#fafbfb}
+td.ord{font-family:var(--dados);color:var(--tinta-fraca);width:30px}
+td.nome{font-weight:600;min-width:150px}
+td.fone{font-family:var(--dados);white-space:nowrap}
+td.exame{min-width:180px}
+td.quando{font-family:var(--dados);white-space:nowrap;color:var(--tinta-fraca)}
+.marca{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:99px;
+  background:var(--trilho);color:var(--tinta-fraca);white-space:nowrap}
+.m-quente{background:var(--grave-fundo);color:var(--grave)}
+.m-morno{background:var(--alerta-fundo);color:var(--alerta)}
+.m-frio{background:var(--acento-fundo);color:var(--acento)}
+.det{display:block;font-size:11.5px;color:var(--tinta-fraca);margin-top:2px}
+.vazio{padding:28px;text-align:center;color:var(--tinta-fraca);background:var(--papel);
+  border:1px dashed var(--borda-forte);border-radius:11px}
+/* a mensagem de "nada encontrado" vive DENTRO da tabela: se trocasse a tabela
+   inteira, o filtro que acabou de zerar a lista sumiria junto, e nao haveria
+   como desfazer o recorte */
+td.vazio-cel{padding:26px 10px;text-align:center;color:var(--tinta-fraca)}
+/* ───────── filtros no cabeçalho da planilha ───────── */
+tr.ftr th{padding:6px 8px;border-bottom:1px solid var(--borda);background:#fafbfb;
+  text-transform:none;letter-spacing:0;font-weight:400}
+tr.ftr select,tr.ftr input{width:100%;min-width:0;font-size:12.5px;padding:5px 7px}
+tr.ftr .pilha{display:flex;flex-direction:column;gap:5px}
+th.sit{min-width:150px}
+/* colunas que a equipe preenche na mão, no papel */
+th.mao,td.mao{width:80px}
+th.res,td.res{width:170px}
+.linha{display:block;height:15px;border-bottom:1px dotted var(--borda-forte)}
+td.res .linha+.linha{margin-top:6px}
+
+.aviso{background:var(--alerta-fundo);border-left:3px solid var(--alerta);border-radius:5px;
+  padding:11px 14px;font-size:13px;margin:18px 0 0;color:var(--tinta)}
+.rodape{margin-top:22px;font-size:12px;color:var(--tinta-fraca);line-height:1.55}
+
+/* ───────── impressão / PDF ───────── */
+@page{size:A4 landscape;margin:11mm 9mm 13mm}
+.so-papel{display:none}
+@media print{
+  :root{--fundo:#fff;--papel:#fff}
+  body{background:#fff;font-size:10.5pt}
+  .pag{max-width:none;padding:0}
+  .nao-imprime{display:none !important}
+  .so-papel{display:block}
+  .rolo{overflow:visible}
+  table{font-size:9.6pt}
+  thead{display:table-header-group}          /* repete o cabeçalho em cada página */
+  tr{break-inside:avoid;page-break-inside:avoid}
+  tbody tr:nth-child(even){background:#f4f6f6 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  thead th{border-bottom:1.4pt solid #333}
+  tbody td{padding:4.5px 6px;border-bottom:.5pt solid #ccc}
+  .marca{border:.5pt solid #999;background:#fff !important;color:#333 !important}
+  .linha{border-bottom:.6pt dotted #666 !important;height:13px}
+  td.res .linha+.linha{margin-top:4px}
+  h1,.sub{display:none}            /* o cabeçalho do papel já diz o que é */
+  .cabpapel{display:flex;justify-content:space-between;align-items:flex-end;
+    border-bottom:1.6pt solid #333;padding-bottom:6px;margin-bottom:9px}
+  .cabpapel h2{margin:0;font-size:14pt}
+  .cabpapel .meta{text-align:right;font-size:9pt;line-height:1.4}
+  .notapapel{margin-top:10px;font-size:8pt;color:#444;border-top:.5pt solid #bbb;padding-top:5px}
+}
+</style>
+</head>
+<body>
+<div class="pag">
+
+<h1>Lista de ligações do dia</h1>
+<p class="sub">Pacientes que procuraram a Total Quality, disseram qual exame queriam e ainda
+não agendaram. Escolha o recorte, imprima e distribua para a equipe ligar.</p>
+
+<div class="cx" id="cxSenha">
+  <p>Esta lista traz nome, telefone e exame de pacientes. Informe a senha da gestão.</p>
+  <form id="formSenha" autocomplete="off">
+    <input type="password" id="senha" placeholder="Senha" autocomplete="current-password" required>
+    <button type="submit">Entrar</button>
+  </form>
+  <div class="recado" id="recadoSenha"></div>
+</div>
+
+<div id="cxLista" hidden>
+
+  <div class="nao-imprime">
+    <div class="filtros">
+      <div class="campo">
+        <label for="fPeriodo">Parado há</label>
+        <select id="fPeriodo">
+          <option value="0">qualquer tempo</option>
+          <option value="3">até 3 dias</option>
+          <option value="7" selected>até 7 dias</option>
+          <option value="15">até 15 dias</option>
+          <option value="30">até 30 dias</option>
+          <option value="-7">mais de 7 dias</option>
+          <option value="-30">mais de 30 dias</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="fTemp">Interesse</label>
+        <select id="fTemp">
+          <option value="">qualquer</option>
+          <option value="quente">quente</option>
+          <option value="morno">morno</option>
+          <option value="frio">frio</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="fLimite">Quantas ligações</label>
+        <select id="fLimite">
+          <option value="20">20</option>
+          <option value="30" selected>30</option>
+          <option value="50">50</option>
+          <option value="0">todas</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="fOrdem">Ordenar por</label>
+        <select id="fOrdem">
+          <option value="recente">conversa mais recente</option>
+          <option value="antigo">parado há mais tempo</option>
+          <option value="quente">interesse mais quente</option>
+          <option value="nome">nome</option>
+        </select>
+      </div>
+      <div class="acoes">
+        <button type="button" id="btImprimir">Imprimir / salvar em PDF</button>
+        <button type="button" id="btAtualizar" class="sec">Atualizar dados</button>
+      </div>
+    </div>
+
+    <div class="caixas">
+      <label><input type="checkbox" id="cExame" checked> só quem disse qual exame quer
+        <span style="color:var(--tinta-fraca)">(tira os "não informado")</span></label>
+      <label><input type="checkbox" id="cEscalada" checked> esconder quem já está com a recepção</label>
+      <label><input type="checkbox" id="cFila" checked> esconder quem a Ana já vai procurar sozinha</label>
+      <label><input type="checkbox" id="cColunas" checked> deixar espaço para anotar no papel</label>
+    </div>
+
+    <div class="tiles" id="tiles"></div>
+  </div>
+
+  <div class="cabpapel so-papel">
+    <h2>Total Quality · Lista de ligações</h2>
+    <div class="meta" id="metaPapel"></div>
+  </div>
+
+  <div class="rolo"><div id="tabela"></div></div>
+
+  <div class="aviso nao-imprime">
+    <b>Antes de ligar:</b> confira na conversa o que já foi combinado — a coluna
+    <i>situação</i> diz quem falou por último. Quem pediu para não receber mensagens
+    não aparece nesta lista e não deve ser procurado.
+  </div>
+
+  <div class="notapapel so-papel">
+    Documento interno da Total Quality Medicina Diagnóstica. Contém dado pessoal e de saúde
+    (art. 11 da LGPD). Não deixar em área de circulação de pacientes, não fotografar e
+    descartar em fragmentadora após o uso.
+  </div>
+
+  <p class="rodape nao-imprime" id="rodape"></p>
+</div>
+
+</div>
+
+<script>
+'use strict';
+const API = 'https://ajwhrmjzvfdjwsqynbzt.supabase.co/functions/v1/historico';
+const el = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const br = n => Number(n).toLocaleString('pt-BR');
+
+let SENHA = '', LEADS = [], GERADO = '';
+
+// Os filtros das colunas vivem aqui, e nao no DOM: o cabecalho da tabela e
+// remontado quando as colunas de anotacao entram ou saem, e sem esta copia a
+// escolha da pessoa se perderia na remontagem.
+const F = { fam: '', sit: '', txt: '' };
+let COLUNAS = null;   // com ou sem as colunas de anotar, para saber quando remontar
+
+// A senha vai no cabeçalho, nunca na query string: query string entra em log de
+// servidor, histórico do navegador e cabeçalho Referer.
+async function pedir(qs) {
+  const r = await fetch(`${API}?${qs}`, { headers: { 'x-senha': SENHA } });
+  if (r.status === 401) throw new Error('senha');
+  if (!r.ok) throw new Error('rede');
+  return await r.json();
+}
+
+const fone = t => {
+  const d = String(t ?? '').replace(/\D/g, '');
+  const n = d.startsWith('55') ? d.slice(2) : d;
+  if (n.length === 11) return `(${n.slice(0,2)}) ${n.slice(2,7)}-${n.slice(7)}`;
+  if (n.length === 10) return `(${n.slice(0,2)}) ${n.slice(2,6)}-${n.slice(6)}`;
+  return t ?? '';
+};
+// comparar sem acento e sem caixa: quem digita "cardiologico" acha "cardiológico"
+const chave = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+// "(não informado)", "nao informado", "Não informada" — a Ana grava assim quando
+// a conversa nao chegou a dizer o exame. E texto preenchido, entao um teste de
+// campo vazio deixa essas linhas passarem; foi o que colocou "(não informado)"
+// numa lista marcada como "só quem disse qual exame quer".
+const SEM_EXAME = /^\(?\s*n[aã]o\s+informad[oa]s?\s*\)?$/i;
+const temExame = r => {
+  const e = String(r.e ?? '').trim();
+  return !!e && !SEM_EXAME.test(chave(e));
+};
+
+// o texto vem do banco sem acento em alguns campos
+const acentos = s => String(s ?? '')
+  .replace(/\bclinica\b/g, 'clínica').replace(/\bultima\b/g, 'última')
+  .replace(/\bhorario\b/g, 'horário').replace(/\bmedico\b/g, 'médico')
+  .replace(/\bnao\b/g, 'não').replace(/\bsao\b/g, 'são');
+
+function entrar(d) {
+  GERADO = d.gerado_em || '';
+  LEADS = d.leads.map(r => ({
+    ...r,
+    foneFmt: fone(r.t),
+    c: acentos(r.c),
+    det: acentos(r.det),
+    dias: (r.dias === null || r.dias === undefined) ? null : Number(r.dias),
+  }));
+  el('cxSenha').hidden = true;
+  el('cxLista').hidden = false;
+  COLUNAS = null;            // forca remontar o cabeçalho com os dados novos
+  pintar();
+}
+
+// As opções saem dos dados que estão na tela, não de uma lista fixa: exame que
+// ninguém procurou não vira opção, e situação que sumiu do recorte não fica
+// oferecendo zero resultado.
+function opcoes(valores, atual, rotuloTodos) {
+  const lista = [...new Set(valores.filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  const escolha = lista.includes(atual) ? atual : '';   // sumiu dos dados, volta para todos
+  return `<option value="">${esc(rotuloTodos)}</option>`
+    + lista.map(v => `<option${v === escolha ? ' selected' : ''}>${esc(v)}</option>`).join('');
+}
+
+// Quem nunca pode entrar na lista, independentemente de filtro.
+function elegivel(r) {
+  if (r.c === 'Agendada' || r.c === 'Opt-out') return false;
+  if (['Agendou', 'Encerrado', 'Não Aplica'].includes(r.s)) return false;
+  if (!r.t) return false;
+  return true;
+}
+
+// o que passa por tudo, menos pelos dois filtros de coluna — e o universo de
+// onde saem as opcoes de "exame procurado" e "situacao"
+function baseDasColunas() {
+  const per = Number(el('fPeriodo').value), tmp = el('fTemp').value;
+  const soExame = el('cExame').checked, semEsc = el('cEscalada').checked, semFila = el('cFila').checked;
+  return LEADS.filter(r => {
+    if (!elegivel(r)) return false;
+    if (soExame && !temExame(r)) return false;
+    if (semEsc && (r.c === 'Escalada' || r.c === 'Bot pausado')) return false;
+    if (semFila && r.fila) return false;
+    if (tmp && r.tmp !== tmp) return false;
+    if (per > 0 && !(r.dias !== null && r.dias <= per)) return false;
+    if (per < 0 && !(r.dias !== null && r.dias > -per)) return false;
+    return true;
+  });
+}
+
+function selecionar() {
+  const busca = chave(F.txt).trim();
+
+  let fora = baseDasColunas().filter(r => {
+    if (F.fam && r.f !== F.fam) return false;
+    if (F.sit && r.c !== F.sit) return false;
+    // a busca livre olha o exame E a familia: quem digita "sangue" acha tanto
+    // "hemograma" pela familia quanto "exame de sangue" pelo texto
+    if (busca && !chave(`${r.e ?? ''} ${r.f ?? ''}`).includes(busca)) return false;
+    return true;
+  });
+
+  const peso = { quente: 0, morno: 1, frio: 2 };
+  const ordem = el('fOrdem').value;
+  fora.sort((a, b) => {
+    if (ordem === 'nome') return String(a.n).localeCompare(String(b.n), 'pt-BR');
+    if (ordem === 'quente') return (peso[a.tmp] ?? 3) - (peso[b.tmp] ?? 3)
+                                 || (a.dias ?? 1e9) - (b.dias ?? 1e9);
+    if (ordem === 'antigo') return (b.dias ?? -1) - (a.dias ?? -1);
+    return (a.dias ?? 1e9) - (b.dias ?? 1e9);      // conversa mais recente
+  });
+
+  const lim = Number(el('fLimite').value);
+  return lim > 0 ? fora.slice(0, lim) : fora;
+}
+
+// Monta a tabela inteira (cabeçalho + linha de filtros + corpo vazio). Só roda
+// quando as colunas mudam ou os dados são recarregados — nunca a cada tecla
+// digitada na busca, que roubaria o foco de quem está digitando.
+function montarTabela(comAnot) {
+  const base = baseDasColunas();
+  const selFam = opcoes(base.map(r => r.f), F.fam, 'todos os exames');
+  const selSit = opcoes(base.map(r => r.c), F.sit, 'todas as situações');
+
+  el('tabela').innerHTML = '<table><thead>'
+    + '<tr>'
+    +   '<th></th><th>Paciente</th><th>Telefone</th><th>Exame procurado</th>'
+    +   '<th>Parado</th><th class="sit">Situação</th>'
+    +   (comAnot ? '<th class="mao">Atendeu?</th><th class="res">O que ficou combinado</th>' : '')
+    + '</tr>'
+    + '<tr class="ftr nao-imprime">'
+    +   '<th></th><th></th><th></th>'
+    +   '<th><div class="pilha">'
+    +     `<select id="fFamilia" aria-label="Filtrar por tipo de exame">${selFam}</select>`
+    +     `<input type="search" id="fExameTxt" placeholder="buscar no exame…" `
+    +       `aria-label="Buscar no exame procurado" value="${esc(F.txt)}">`
+    +   '</div></th>'
+    +   '<th></th>'
+    +   `<th><select id="fSit" aria-label="Filtrar por situação">${selSit}</select></th>`
+    +   (comAnot ? '<th></th><th></th>' : '')
+    + '</tr>'
+    + '</thead><tbody id="corpo"></tbody></table>';
+
+  // se a escolha anterior sumiu dos dados, opcoes() volta para "todos"
+  F.fam = el('fFamilia').value;
+  F.sit = el('fSit').value;
+}
+
+function pintar() {
+  const comAnot = el('cColunas').checked;
+  if (COLUNAS !== comAnot) { montarTabela(comAnot); COLUNAS = comAnot; }
+  const lista = selecionar();
+
+  const quentes = lista.filter(r => r.tmp === 'quente').length;
+  const semFalar = lista.filter(r => (r.dias ?? 0) > 7).length;
+  el('tiles').innerHTML = [
+    [br(lista.length), 'ligações nesta lista'],
+    [br(quentes), 'marcados como interesse quente'],
+    [br(semFalar), 'parados há mais de 7 dias'],
+    [br(LEADS.filter(elegivel).length), 'no total, sem agendamento'],
+  ].map(([v, r]) => `<div class="t"><span class="v">${v}</span><span class="r">${esc(r)}</span></div>`).join('');
+
+  const hoje = new Date().toLocaleDateString('pt-BR');
+  el('metaPapel').innerHTML = `${esc(hoje)} · ${br(lista.length)} ligações<br>${esc(resumoFiltro())}`;
+
+  const linhas = lista.map((r, i) => {
+    const t = r.tmp ? `<span class="marca m-${esc(r.tmp)}">${esc(r.tmp)}</span>` : '';
+    const d = r.dias === null ? '—' : (r.dias === 0 ? 'hoje' : `${br(r.dias)}d`);
+    return '<tr>'
+      + `<td class="ord">${i + 1}</td>`
+      + `<td class="nome">${esc(r.n || '(sem nome)')}</td>`
+      + `<td class="fone">${esc(r.foneFmt)}</td>`
+      + `<td class="exame">${esc(r.e || '—')}${r.f ? `<span class="det">${esc(r.f)}</span>` : ''}</td>`
+      + `<td class="quando">${esc(d)}</td>`
+      + `<td>${t}<span class="det">${esc(r.c)}</span></td>`
+      + (comAnot
+         ? '<td class="mao"><span class="linha"></span></td>'
+           + '<td class="res"><span class="linha"></span><span class="linha"></span></td>'
+         : '')
+      + '</tr>';
+  }).join('');
+
+  const colspan = comAnot ? 8 : 6;
+  el('corpo').innerHTML = lista.length ? linhas
+    : `<tr><td class="vazio-cel" colspan="${colspan}">Nenhum paciente com esse recorte. `
+      + 'Tente ampliar o período, limpar a busca do exame ou voltar a situação para todas.</td></tr>';
+
+  el('rodape').textContent = 'Dados lidos em ' + GERADO
+    + '. A lista nasce das conversas no WhatsApp: quem a Ana entendeu que procura um exame '
+    + 'e não chegou a agendar. Imprimir gera uma folha A4 deitada, sem os filtros.';
+}
+
+function resumoFiltro() {
+  const p = el('fPeriodo'), t = el('fTemp');
+  const partes = [];
+  if (p.value !== '0') partes.push('parado ' + p.selectedOptions[0].textContent);
+  if (F.fam) partes.push(F.fam);
+  if (F.txt.trim()) partes.push(`exame contendo "${F.txt.trim()}"`);
+  if (F.sit) partes.push(F.sit);
+  if (t.value) partes.push('interesse ' + t.value);
+  return partes.length ? partes.join(' · ') : 'todos os pacientes sem agendamento';
+}
+
+/* ───────── eventos ───────── */
+el('formSenha').addEventListener('submit', async e => {
+  e.preventDefault();
+  const campo = el('senha'), recado = el('recadoSenha');
+  SENHA = campo.value;
+  recado.className = 'recado ok'; recado.textContent = 'Conferindo…';
+  try {
+    const d = await pedir('modo=lista');
+    try { sessionStorage.setItem('tq_h', SENHA); } catch {}
+    campo.value = '';
+    recado.textContent = '';
+    entrar(d);
+  } catch (err) {
+    SENHA = '';
+    recado.className = 'recado';
+    recado.textContent = err.message === 'senha'
+      ? 'Senha não confere.' : 'Não consegui buscar os dados. Tente de novo.';
+  }
+});
+
+// Os filtros de cima podem mudar o universo das colunas (quem some do período
+// não deve continuar aparecendo como opção de exame), então remontam o
+// cabeçalho; os de apresentação só repintam.
+['fPeriodo','fTemp','cExame','cEscalada','cFila']
+  .forEach(id => el(id).addEventListener('change', () => { COLUNAS = null; pintar(); }));
+['fLimite','fOrdem','cColunas'].forEach(id => el(id).addEventListener('change', pintar));
+
+// Delegação: os controles das colunas são recriados a cada remontagem do
+// cabeçalho, então ouvir neles pelo id deixaria de funcionar na segunda vez.
+el('tabela').addEventListener('change', e => {
+  if (e.target.id === 'fFamilia') { F.fam = e.target.value; pintar(); }
+  if (e.target.id === 'fSit')     { F.sit = e.target.value; pintar(); }
+});
+el('tabela').addEventListener('input', e => {
+  if (e.target.id !== 'fExameTxt') return;
+  F.txt = e.target.value;
+  pintar();          // só o <tbody> é reescrito: o cursor fica onde estava
+});
+
+el('btImprimir').addEventListener('click', () => window.print());
+
+el('btAtualizar').addEventListener('click', async () => {
+  const b = el('btAtualizar');
+  b.disabled = true; b.textContent = 'Buscando…';
+  try { entrar(await pedir('modo=lista')); }
+  catch { el('rodape').textContent = 'Não consegui atualizar agora. Os dados na tela são os anteriores.'; }
+  b.disabled = false; b.textContent = 'Atualizar dados';
+});
+
+// se a pessoa já entrou no painel nesta aba, aproveita a senha guardada
+(function () {
+  let g = null;
+  try { g = sessionStorage.getItem('tq_h'); } catch {}
+  if (!g) return;
+  SENHA = g;
+  pedir('modo=lista').then(entrar).catch(() => {
+    SENHA = '';
+    try { sessionStorage.removeItem('tq_h'); } catch {}
+  });
+})();
+</script>
+</body>
+</html>
