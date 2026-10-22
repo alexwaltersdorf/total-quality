@@ -183,7 +183,7 @@ export default function LaboratorioCaraguatatuba() {
             <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
               Nosso laboratório em Caraguatatuba realiza mais de 3.000 tipos de exames laboratoriais com
               equipamentos automatizados. A coleta é feita por profissionais treinados em
-              ambiente confortável e seguro. Os resultados ficam disponíveis online em até 24 horas para a
+              ambiente confortável e seguro. Os resultados ficam disponíveis online, em curto prazo para a
               maioria dos{" "}
               <Link href="/exames/exames-de-sangue" className="text-brand hover:underline">
                 exames de sangue em Caraguatatuba

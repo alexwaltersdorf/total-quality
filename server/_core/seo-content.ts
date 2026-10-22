@@ -341,7 +341,7 @@ const laboratorioHtml = `
       <li>Mais de ${anosDeAtuacao()} anos de experiência em Caraguatatuba</li>
       <li>Mais de 400 avaliações no Google</li>
       <li>Coleta rápida, ambiente confortável e estacionamento no Centro</li>
-      <li>Resultados online em até 24 horas para a maioria dos exames</li>
+      <li>Resultados online em curto prazo para a maioria dos exames</li>
       <li>Atendimento particular, convênios e empresas de Caraguatatuba, Ubatuba, São Sebastião e Ilhabela</li>
     </ul>
     <h2>${BAIRROS_TITULO}</h2>
@@ -354,7 +354,7 @@ const laboratorioHtml = `
     <h3>Quais convênios são aceitos?</h3>
     <p>Atendemos ${CONVENIOS_TEXTO}. Fora deles, o atendimento é particular, com tabela própria. Veja os <a href="/convenios">convênios aceitos</a> ou tire dúvidas pelo WhatsApp (12) 3887-3535.</p>
     <h3>Em quanto tempo sai o resultado?</h3>
-    <p>A maioria dos exames de sangue fica pronta em até 24 horas, com resultados disponíveis online. Exames específicos podem levar até 7 dias úteis.</p>
+    <p>A maioria dos exames de sangue tem resultado em curto prazo, disponível online. Exames específicos podem levar até 7 dias úteis.</p>
     <h3>Vocês fazem coleta domiciliar?</h3>
     <p>Sim. Realizamos coleta domiciliar de <a href="/exames/exames-de-sangue">exames laboratoriais</a> em Caraguatatuba. Agende pelo WhatsApp (12) 3887-3535 para confirmar disponibilidade, horários e valores.</p>
     ${napHtml("Venha fazer seus exames laboratoriais no Centro de Caraguatatuba, a poucos minutos da Praça Cândido Mota.")}
@@ -381,7 +381,7 @@ const laboratorioHtml = `
         },
         {
           q: "Em quanto tempo sai o resultado?",
-          a: "A maioria dos exames de sangue fica pronta em até 24 horas, com resultados disponíveis online. Exames específicos podem levar até 7 dias úteis.",
+          a: "A maioria dos exames de sangue tem resultado em curto prazo, disponível online. Exames específicos podem levar até 7 dias úteis.",
         },
         {
           q: "Vocês fazem coleta domiciliar?",
@@ -477,7 +477,7 @@ const homeHtml = `
     <h1>${HOME_H1}</h1>
     <p>Há mais de ${anosDeAtuacao()} anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>.</p>
     <ul>
-      <li>Resultados online em até 24 horas para a maioria dos exames</li>
+      <li>Resultados online em curto prazo para a maioria dos exames</li>
       <li>Coleta laboratorial sem agendamento, por ordem de chegada — e coleta domiciliar mediante agendamento</li>
       <li>Atendimento particular, empresas e os convênios ${CONVENIOS_TEXTO}</li>
       <li>Mais de 400 avaliações no Google</li>
@@ -610,7 +610,7 @@ const checkupHtml = `
     <h3>Preciso de pedido médico para fazer check-up?</h3>
     <p>Para os pacotes de check-up da Total Quality não é necessário pedido médico — nossa equipe orienta o pacote mais adequado ao seu perfil e histórico.</p>
     <h3>Quanto tempo demoram os resultados?</h3>
-    <p>A maioria dos exames laboratoriais fica pronta em até 24 horas, com acesso online. Exames de imagem têm laudo rápido, geralmente em poucos dias.</p>
+    <p>A maioria dos exames laboratoriais tem resultado em curto prazo, com acesso online. Exames de imagem têm laudo rápido, geralmente em poucos dias.</p>
     ${napHtml("Invista na sua saúde: agende seu check-up preventivo pelo WhatsApp e faça tudo em uma única visita.")}
     ${internalLinksHtml("/checkup")}`;
 
@@ -633,7 +633,7 @@ function examesHubHtml(): string {
     .join("");
   return `
     <h1>Exames Laboratoriais e de Imagem em Caraguatatuba</h1>
-    <p>A Total Quality reúne em um só endereço, no Centro de Caraguatatuba, mais de 3.000 tipos de exames laboratoriais, exames de imagem, cardiológicos e ocupacionais — com resultados online em até 24 horas para a maioria dos exames laboratoriais e equipe especializada há mais de ${anosDeAtuacao()} anos no Litoral Norte.</p>
+    <p>A Total Quality reúne em um só endereço, no Centro de Caraguatatuba, mais de 3.000 tipos de exames laboratoriais, exames de imagem, cardiológicos e ocupacionais — com resultados online em curto prazo para a maioria dos exames laboratoriais e equipe especializada há mais de ${anosDeAtuacao()} anos no Litoral Norte.</p>
     ${sections}
     <p><a href="/bioimpedancia">Bioimpedância</a> — análise completa de composição corporal.</p>
     <p><a href="/checkup">Check-up preventivo</a> — pacotes completos por faixa etária.</p>

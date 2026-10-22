@@ -16,7 +16,7 @@ const CATEGORIES: Array<{ key: ExamData["category"]; label: string; blurb: strin
   {
     key: "laboratorio",
     label: "Exames Laboratoriais",
-    blurb: "Análises clínicas com coleta rápida e resultados online em até 24 horas para a maioria dos exames.",
+    blurb: "Análises clínicas com coleta rápida e resultados online em curto prazo para a maioria dos exames.",
   },
   {
     key: "imagem",
@@ -74,7 +74,7 @@ export default function ExamesHub() {
             <p className="text-text-light leading-relaxed text-lg">
               Mais de 3.000 tipos de exames em um só endereço, no Centro de Caraguatatuba:
               análises clínicas, diagnóstico por imagem, cardiologia e medicina ocupacional.
-              Resultados online em até 24 horas para a maioria dos exames laboratoriais.
+              Resultados online em curto prazo para a maioria dos exames laboratoriais.
             </p>
           </header>
 

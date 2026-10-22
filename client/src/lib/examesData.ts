@@ -49,7 +49,7 @@ export const examesData: ExamData[] = [
     metaDescription: "Exames de sangue em Caraguatatuba na Total Quality. Coleta por ordem de chegada, sem agendamento. Consulte preparo, prazos, convênios e orçamento pelo WhatsApp.",
     heroDescription: "Realizamos mais de 3.000 tipos de exames de sangue e análises clínicas com equipamentos automatizados e equipe especializada. Hemograma, glicemia, colesterol, hormônios, marcadores tumorais, sorologias e muito mais.",
     whatIs: "Os exames de sangue são análises laboratoriais realizadas a partir de uma amostra de sangue coletada por punção venosa. São fundamentais para avaliar o funcionamento dos órgãos, detectar doenças, monitorar tratamentos e realizar check-ups preventivos. Na Total Quality, as amostras são processadas em equipamentos automatizados, e o laudo traz os valores de referência do método usado.",
-    howItWorks: "A coleta é realizada por profissionais treinados em ambiente confortável e seguro. O sangue é processado em nosso laboratório com equipamentos automatizados. Os resultados ficam disponíveis online em até 24 horas para a maioria dos exames.",
+    howItWorks: "A coleta é realizada por profissionais treinados em ambiente confortável e seguro. O sangue é processado em nosso laboratório com equipamentos automatizados. Os resultados ficam disponíveis online, em curto prazo para a maioria dos exames.",
     indications: [
       "Check-up preventivo anual",
       "Acompanhamento de doenças crônicas (diabetes, colesterol alto, tireoide)",
@@ -67,7 +67,7 @@ export const examesData: ExamData[] = [
     ],
     faqs: [
       { q: "Preciso estar em jejum para todos os exames de sangue?", a: "Não. Apenas alguns exames como glicemia de jejum e perfil lipídico exigem jejum de 8 a 12 horas. Muitos exames como hemograma, hormônios e sorologias não necessitam de jejum." },
-      { q: "Quanto tempo demora para sair o resultado?", a: "A maioria dos exames fica pronta em 24 horas. Alguns exames específicos podem levar até 7 dias úteis. Os resultados ficam disponíveis online." },
+      { q: "Quanto tempo demora para sair o resultado?", a: "A maioria dos exames tem resultado em curto prazo. Alguns exames específicos podem levar até 7 dias úteis. Os resultados ficam disponíveis online." },
       { q: "Posso tomar água durante o jejum?", a: "Sim! A ingestão de água é permitida e até recomendada durante o período de jejum. Evite apenas sucos, café e outras bebidas." },
       { q: "Quais exames de sangue vocês realizam?", a: "Realizamos mais de 3.000 tipos, incluindo hemograma, glicemia, colesterol, triglicerídeos, TSH, T4 livre, PSA, vitamina D, ácido úrico, ureia, creatinina, TGO, TGP, hormônios, marcadores tumorais e muito mais." },
       { q: "Preciso agendar horário para fazer exame de sangue?", a: "Não. A coleta é feita sem agendamento, por ordem de chegada: basta comparecer com o pedido médico e documento com foto, de segunda a sexta, das 7h30 às 18h. Se preferir, chame no WhatsApp (12) 3887-3535 para tirar dúvidas e já receber as orientações de preparo." },
@@ -451,12 +451,12 @@ export const examesData: ExamData[] = [
     title: "HEMOGRAMA COMPLETO",
     shortTitle: "Hemograma",
     subtitle: "Análises Clínicas",
-    description: "O exame de sangue mais solicitado do Brasil, com resultado em até 24 horas.",
+    description: "O exame de sangue mais solicitado do Brasil, com resultado em curto prazo.",
     metaTitle: "Hemograma Completo em Caraguatatuba | Total Quality",
-    metaDescription: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Resultado em até 24h.",
-    heroDescription: "O hemograma completo é o exame de sangue mais solicitado na prática médica: avalia glóbulos vermelhos, glóbulos brancos e plaquetas em uma única coleta. Na Total Quality, a coleta leva minutos e o resultado sai em até 24 horas, disponível online.",
+    metaDescription: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Resultado em curto prazo.",
+    heroDescription: "O hemograma completo é o exame de sangue mais solicitado na prática médica: avalia glóbulos vermelhos, glóbulos brancos e plaquetas em uma única coleta. Na Total Quality, a coleta leva minutos e o resultado sai em curto prazo, disponível online.",
     whatIs: "O hemograma completo é uma análise quantitativa e qualitativa das células do sangue, dividida em três partes: o eritrograma (glóbulos vermelhos, hemoglobina e hematócrito, usados para investigar anemias), o leucograma (glóbulos brancos, que indicam infecções, inflamações e alterações imunológicas) e a contagem de plaquetas (relacionada à coagulação). É um exame de triagem fundamental em check-ups, no pré-operatório, no pré-natal e na investigação de sintomas como cansaço, febre prolongada e sangramentos.",
-    howItWorks: "A coleta é feita por punção venosa no braço e leva poucos minutos. Não é necessário jejum para o hemograma isolado — apenas evite atividade física intensa imediatamente antes. A amostra é processada em analisador hematológico automatizado e revisada pela equipe do laboratório. O resultado fica disponível online em até 24 horas; os valores de referência vêm impressos no laudo e devem sempre ser interpretados pelo seu médico, junto ao seu histórico clínico.",
+    howItWorks: "A coleta é feita por punção venosa no braço e leva poucos minutos. Não é necessário jejum para o hemograma isolado — apenas evite atividade física intensa imediatamente antes. A amostra é processada em analisador hematológico automatizado e revisada pela equipe do laboratório. O resultado fica disponível online em curto prazo; os valores de referência vêm impressos no laudo e devem sempre ser interpretados pelo seu médico, junto ao seu histórico clínico.",
     indications: [
       "Check-up de rotina e avaliação geral de saúde",
       "Investigação de anemia (cansaço, palidez, fraqueza)",
@@ -475,7 +475,7 @@ export const examesData: ExamData[] = [
     faqs: [
       { q: "Hemograma precisa de jejum?", a: "Não. O hemograma isolado não exige jejum. Se o seu pedido incluir também glicemia de jejum ou perfil lipídico, siga a orientação de jejum desses exames (8 a 12 horas) e faça tudo na mesma coleta." },
       { q: "O que o hemograma completo detecta?", a: "Ele avalia glóbulos vermelhos (anemias), glóbulos brancos (infecções, inflamações e alterações da imunidade) e plaquetas (coagulação). É um exame de triagem: alterações devem sempre ser interpretadas pelo médico junto ao quadro clínico." },
-      { q: "Em quanto tempo sai o resultado do hemograma?", a: "Na Total Quality, o resultado do hemograma fica pronto em até 24 horas e pode ser acessado online, sem precisar voltar ao laboratório." },
+      { q: "Em quanto tempo sai o resultado do hemograma?", a: "Na Total Quality, o resultado do hemograma fica pronto em curto prazo e pode ser acessado online, sem precisar voltar ao laboratório." },
       { q: "Quanto custa um hemograma completo?", a: `Consulte o valor particular atualizado pelo WhatsApp (12) 3887-3535. Nos convênios atendidos (${CONVENIOS_TEXTO}), a equipe confirma a cobertura antes do exame.` },
       { q: "Preciso agendar para fazer o hemograma?", a: "Não é necessário agendamento: basta comparecer com o pedido médico e um documento com foto. A coleta funciona de segunda a sexta a partir das 7h30." },
     ],

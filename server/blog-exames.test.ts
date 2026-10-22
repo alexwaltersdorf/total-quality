@@ -498,3 +498,20 @@ describe("GUARD-RAIL: blog externo nao fica orfao (system prompt do blog, fase 6
     expect(html).toContain('href="https://blog.totalquality.med.br/"');
   });
 });
+
+describe("GUARD-RAIL: prazo de resultado (decisao do Alex, 22/10/2026)", () => {
+  // "Resultado em ate 24 horas" nunca foi confirmado. O Alex decidiu em
+  // 22/10/2026 trocar por "resultados em curto prazo" no site inteiro. Holter,
+  // MAPA e urina de 24 horas sao duracao de exame, nao prazo, e ficam de fora.
+  it.each(getAllRoutes().map((r) => new URL(r.canonical).pathname))("%s nao promete resultado em 24 horas", (pathname) => {
+    const html = getSeoContentForPath(pathname);
+    if (!html) return;
+    const semDuracao = html.replace(/(Holter|MAPA|urina)[^.<]{0,60}24 ?h(oras)?/gi, "");
+    expect(semDuracao).not.toMatch(/(resultado|pront[ao]|dispon[íi]ve)[^.<]{0,60}(at[ée]|em) 24 ?h(oras)?/i);
+  });
+
+  it("componentes da home nao voltam a dizer 24H", () => {
+    const fonte = fs.readFileSync(nodePath.resolve(import.meta.dirname, "../client/src/components/ExamesSection.tsx"), "utf-8");
+    expect(fonte).not.toMatch(/em até 24 horas|"24H"/);
+  });
+});

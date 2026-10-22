@@ -124,7 +124,7 @@ const examData: Record<
           vitamina D
         </Link>
         , ácido úrico, ureia, creatinina, TGO, TGP, hemoglobina glicada, hormônios e marcadores
-        tumorais com resultados online em até 24 horas.
+        tumorais com resultados online em curto prazo.
       </>
     ),
     exams: [
@@ -264,7 +264,7 @@ export default function ExamesSection() {
         {/* Stats strip */}
         <div className="reveal grid grid-cols-2 sm:grid-cols-4 gap-8 mt-20 pt-12 border-t border-black/10" style={{ transitionDelay: "500ms" }}>
           {[
-            { value: "24H", label: "Resultados em até" },
+            { value: "Online", label: "Resultados em curto prazo" },
             { value: "3K+", label: "Tipos de exames" },
             { value: "22", label: "Anos de experiência" },
             { value: "2003", label: "Cuidando de você desde" },
