@@ -6,6 +6,7 @@ import { Phone, MessageCircle, Instagram, MapPin, ArrowUpRight } from "lucide-re
 import { Link } from "wouter";
 import { trackScheduleExam, trackWhatsAppClick, trackExternalLink } from "@/lib/tracking";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import { BLOG_EXTERNO_URL } from "@shared/const";
 
 const footerLinks = [
   { label: "Início", href: "#inicio" },
@@ -13,6 +14,7 @@ const footerLinks = [
   { label: "Sobre", href: "#sobre" },
   { label: "Contato", href: "#contato" },
   { label: "Blog", href: "/blog", isRoute: true },
+  { label: "Mais artigos de saúde", href: BLOG_EXTERNO_URL, external: true },
   { label: "Check-Up Preventivo", href: "/checkup", isRoute: true },
   { label: "Bioimpedância", href: "/bioimpedancia", isRoute: true },
 ];
@@ -76,7 +78,11 @@ export default function Footer({ laboratory = false }: { laboratory?: boolean })
             <ul className="space-y-3">
               {footerLinks.map((link) => (
                 <li key={link.href}>
-                  {"isRoute" in link && link.isRoute ? (
+                  {"external" in link && link.external ? (
+                    <a href={link.href} className="text-text-light hover:text-brand text-sm transition-colors">
+                      {link.label}
+                    </a>
+                  ) : "isRoute" in link && link.isRoute ? (
                     <Link
                       href={link.href}
                       className="text-text-light hover:text-brand text-sm transition-colors"

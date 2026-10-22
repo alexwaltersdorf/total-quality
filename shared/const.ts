@@ -85,3 +85,12 @@ export function whatsappUrl(text?: string): string {
   const base = `https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}`;
   return text ? `${base}&text=${encodeURIComponent(text)}` : base;
 }
+
+/**
+ * Blog externo da clinica (gerado pela Airticles, CNAME no subdominio). Antes
+ * de 22/10/2026 nenhuma pagina do site linkava para ele, e ele ficava orfao.
+ * Temas dos dois blogs nao se repetem — lista em CLAUDE.md do repositorio de
+ * SEO e no relatorio docs/seo-blog-2026-10-22.md.
+ */
+export const BLOG_EXTERNO_URL = "https://blog.totalquality.med.br/";
+export const BLOG_EXTERNO_TEXTO = "Mais artigos de saúde no blog da Total Quality";

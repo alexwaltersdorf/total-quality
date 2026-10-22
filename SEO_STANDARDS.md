@@ -491,3 +491,15 @@ por testes em `server/seo-content.test.ts`:
     `publisher` → `#medicalbusiness` e `MedicalWebPage` sobre `MedicalTest`.
     O quadro de contato (`ExamCTA`) nunca diz "agende" para coleta
     laboratorial. Travas em `server/blog-exames.test.ts`.
+
+24. **Blog: uma URL por intenção, e do artigo para o exame** (out/2026, system prompt do
+    blog de 21/10): busca com "Caraguatatuba" pertence à página `/exames/` (ou à landing);
+    artigo de blog não leva o nome da cidade no title nem no H1 quando existe página de
+    serviço equivalente — a ligação local fica no quadro de contato (`ExamCTA`), que entra
+    no meio e no fim de todo artigo publicado, com botão para a página do exame
+    (`examPages`) e WhatsApp. Artigo que disputa a intenção de uma página de serviço é
+    consolidado nela com 301, levando antes o conteúdo útil. Autoria é a clínica; o topo
+    mostra "Revisado por Alex Waltersdorf, Responsável Técnico · Atualizado em …" (nunca em
+    rascunho). Link de WhatsApp só por `whatsappUrl()` (api.whatsapp.com, fixo
+    (12) 3887-3535) — nunca `wa.me`. Relatório: `docs/seo-blog-2026-10-22.md`. Travas em
+    `server/blog-exames.test.ts` e `server/seo-content.test.ts`.

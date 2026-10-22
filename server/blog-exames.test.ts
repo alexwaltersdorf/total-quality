@@ -491,3 +491,10 @@ describe("GUARD-RAIL: uma URL por intencao — titulo do artigo (system prompt d
     expect(post.metaTitle ?? "").not.toMatch(/Caraguatatuba/);
   });
 });
+
+describe("GUARD-RAIL: blog externo nao fica orfao (system prompt do blog, fase 6)", () => {
+  it("o indice /blog linka o blog externo da clinica", () => {
+    const html = getSeoContentForPath("/blog")!;
+    expect(html).toContain('href="https://blog.totalquality.med.br/"');
+  });
+});
