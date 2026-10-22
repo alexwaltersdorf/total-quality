@@ -58,6 +58,11 @@ original.
 | `ultrassom-transvaginal-preparo` | `photo-1691933880096-4046bc9e2fa0` | mãos enluvadas no painel de um aparelho de ultrassom |
 | `exame-de-colesterol-lipidograma` | `photo-1638271522560-a247d127deb8` | ilustração de células do sangue em suspensão |
 | `lipoproteina-a-apolipoproteina-b` | `photo-1748278739348-d9886621530f` | mão abrindo uma centrífuga de laboratório |
+| `siglas-exames-laboratoriais` | `photo-1697192156499-d85cfe1452c0` | mão enluvada colocando tubos de coleta etiquetados numa estante |
+| `ultrassom-abdome-total-preparo` | `photo-1691933880037-ce9d151ab922` | mãos enluvadas no painel de um aparelho de ultrassom, com o transdutor (recortada sem a marca do aparelho) |
+| `tomografia-com-contraste` | `photo-1718395316662-2da03810ba9d` | anel do tomógrafo visto por dentro, com a mesa de exame |
+| `check-up-cardiologico-prevencao-infarto` | `photo-1708418395773-708fd2b67adf` | diafragma de estetoscópio entre pequenos corações de vidro vermelho |
+| `exame-toxicologico-clt-motorista` | `photo-1766785368863-f2188a8c8b32` | caminhões baú numa rodovia de serra, de traseira |
 | `exames-diagnostico-infarto` | `photo-1682706841281-f723c5bfcd83` | traçados coloridos em tela de monitor cardíaco |
 | `exames-diagnostico-avc` | `photo-1691935052741-c8ce0a1ef543` | médico de jaleco diante de aparelho de ultrassom |
 | `exames-diagnostico-hipertensao` | `photo-1615486511484-92e172cc4fe0` | medidor digital de pressão com braçadeira no braço |

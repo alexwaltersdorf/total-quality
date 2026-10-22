@@ -57,6 +57,13 @@ const ARTIGOS_DE_EXAME = [
   "exames-diagnostico-avc",
   "exames-diagnostico-hipertensao",
   "exames-diagnostico-diabetes",
+  // Terceira rodada (22/10/2026): exames prioritarios do Alex — laboratorio,
+  // ultrassom, tomografia, check-up cardiologico e toxicologico.
+  "siglas-exames-laboratoriais",
+  "ultrassom-abdome-total-preparo",
+  "tomografia-com-contraste",
+  "check-up-cardiologico-prevencao-infarto",
+  "exame-toxicologico-clt-motorista",
 ];
 
 const rascunhos = index.filter((p) => !isPublished(p));

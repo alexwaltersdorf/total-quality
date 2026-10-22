@@ -1034,5 +1034,194 @@
       "curva-glicemica-teste-tolerancia-glicose"
     ],
     "metaTitle": "Exames para Diagnóstico de Diabetes | Total Quality"
+  },
+  {
+    "id": "43",
+    "slug": "siglas-exames-laboratoriais",
+    "title": "Siglas de exames laboratoriais: o que significa cada uma no pedido médico",
+    "metaTitle": "Siglas de Exames Laboratoriais: Guia | Total Quality",
+    "subtitle": "HMG, VHS, PCR, TGO, TGP, TSH, HbA1c, EAS, PSA e outras: o que cada sigla avalia e quais costumam pedir jejum",
+    "excerpt": "Entenda as siglas de exames laboratoriais do pedido médico: HMG, TGO, TGP, TSH, HbA1c, EAS, PSA e outras. Saiba o que avaliam e quando pedem jejum.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "22 Out 2026",
+    "readTime": "10 min",
+    "image": "https://totalquality.med.br/images/blog/siglas-exames-laboratoriais.webp",
+    "imageAlt": "Mão de luva colocando tubos de coleta de sangue identificados em uma estante de laboratório, ao lado de pedidos de exame",
+    "tags": [
+      "siglas de exames laboratoriais",
+      "siglas exame de sangue",
+      "pedido de exame de sangue",
+      "exames laboratoriais",
+      "hemograma",
+      "preparo para exames"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-22",
+    "examName": "exames laboratoriais",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue",
+      "/exames/hemograma"
+    ],
+    "horaMarcada": false,
+    "related": [
+      "hemograma-completo-o-que-avalia",
+      "exames-de-sangue-guia-completo",
+      "exame-de-urina-eas-como-coletar"
+    ]
+  },
+  {
+    "id": "44",
+    "slug": "ultrassom-abdome-total-preparo",
+    "title": "Ultrassom de abdome total: preparo, o que avalia e como é feito",
+    "metaTitle": "Ultrassom de Abdome Total: Preparo e Exame | Total Quality",
+    "subtitle": "Jejum, gases e bexiga cheia: o que o exame mostra e a diferença para o abdome superior e o de rins e vias urinárias",
+    "excerpt": "Ultrassom de abdome total: o que avalia, quando o médico pede, preparo com jejum e dieta sem gases, como é feito e a diferença para o abdome superior.",
+    "category": "Exames de Imagem",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "22 Out 2026",
+    "readTime": "9 min",
+    "image": "https://totalquality.med.br/images/blog/ultrassom-abdome-total-preparo.webp",
+    "imageAlt": "Mãos com luvas no painel de um aparelho de ultrassom, segurando o transdutor usado no ultrassom de abdome total",
+    "tags": [
+      "ultrassom de abdome total",
+      "preparo ultrassom abdome total",
+      "ultrassonografia abdominal",
+      "ultrassom",
+      "exames de imagem",
+      "jejum para exame"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-22",
+    "examName": "ultrassom de abdome total",
+    "examType": "ultrassonografia",
+    "examPages": [
+      "/exames/ultrassonografia"
+    ],
+    "horaMarcada": true,
+    "related": [
+      "diferenca-ultrassom-comum-doppler",
+      "mamografia-ultrassom-mamas-diferencas",
+      "diferenca-raio-x-tomografia"
+    ]
+  },
+  {
+    "id": "45",
+    "slug": "tomografia-com-contraste",
+    "title": "Tomografia com contraste: para que serve, jejum, preparo e segurança",
+    "metaTitle": "Tomografia com Contraste: Jejum e Segurança | Total Quality",
+    "subtitle": "O que o contraste iodado mostra, quem precisa de avaliação antes, o que se sente na hora e o que dizem as diretrizes sobre reações",
+    "excerpt": "Tomografia com contraste: para que serve o contraste iodado, se precisa de jejum, quem precisa de avaliação antes e o que as diretrizes dizem das reações.",
+    "category": "Exames de Imagem",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "22 Out 2026",
+    "readTime": "10 min",
+    "image": "https://totalquality.med.br/images/blog/tomografia-com-contraste.webp",
+    "imageAlt": "Vista por dentro do anel de um tomógrafo, com a mesa de exame ao fundo — tomografia com contraste iodado",
+    "tags": [
+      "tomografia com contraste",
+      "contraste iodado",
+      "tomografia computadorizada",
+      "jejum para tomografia",
+      "preparo para tomografia",
+      "diagnóstico por imagem"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-22",
+    "examName": "tomografia computadorizada com contraste",
+    "examType": "tomografia-computadorizada",
+    "examPages": [
+      "/exames/tomografia-computadorizada"
+    ],
+    "horaMarcada": true,
+    "related": [
+      "tomografia-computadorizada-como-funciona",
+      "diferenca-raio-x-tomografia",
+      "exames-de-sangue-guia-completo"
+    ]
+  },
+  {
+    "id": "46",
+    "slug": "check-up-cardiologico-prevencao-infarto",
+    "title": "Check-up cardiológico: exames do coração e prevenção do infarto",
+    "metaTitle": "Check-up Cardiológico: Exames e Infarto | Total Quality",
+    "subtitle": "Os fatores de risco do infarto costumam ser silenciosos; veja como o eletrocardiograma, a MAPA, o Holter e os exames de sangue ajudam o médico a acompanhá-los",
+    "excerpt": "Veja quais exames compõem o check-up cardiológico, como ajudam a acompanhar os fatores de risco do infarto e quais sintomas pedem o SAMU 192 na hora.",
+    "category": "Cardiologia",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "22 Out 2026",
+    "readTime": "10 min",
+    "image": "https://totalquality.med.br/images/blog/check-up-cardiologico-prevencao-infarto.webp",
+    "imageAlt": "Estetoscópio sobre uma superfície clara cercado de pequenos corações vermelhos — check-up cardiológico e prevenção do infarto",
+    "tags": [
+      "check-up cardiológico",
+      "prevenção do infarto",
+      "sintomas de infarto",
+      "exames do coração",
+      "risco cardiovascular",
+      "Caraguatatuba"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-22",
+    "examName": "check-up cardiológico",
+    "examType": "eletrocardiograma",
+    "examPages": [
+      "/exames/eletrocardiograma",
+      "/exames/mapa",
+      "/exames/holter"
+    ],
+    "horaMarcada": true,
+    "related": [
+      "mapa-ou-holter-diferenca",
+      "eletrocardiograma-o-que-e-como-e-feito",
+      "saude-do-coracao-prevencao"
+    ]
+  },
+  {
+    "id": "47",
+    "slug": "exame-toxicologico-clt-motorista",
+    "title": "Exame toxicológico CLT: admissional, demissional e o que muda para o motorista",
+    "metaTitle": "Exame Toxicológico CLT para Motorista | Total Quality",
+    "subtitle": "O que a CLT e o Ministério do Trabalho exigem do motorista empregado: quem paga, validade, sigilo, contraprova e a diferença para o exame da CNH",
+    "excerpt": "Exame toxicológico CLT: quando o motorista empregado faz o admissional e o demissional, quem paga, sigilo, contraprova e a diferença para o da CNH.",
+    "category": "Saúde Ocupacional",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "22 Out 2026",
+    "readTime": "10 min",
+    "image": "https://totalquality.med.br/images/blog/exame-toxicologico-clt-motorista.webp",
+    "imageAlt": "Dois caminhões de carga em uma rodovia de serra — exame toxicológico do motorista profissional empregado",
+    "tags": [
+      "exame toxicológico CLT",
+      "toxicológico admissional",
+      "toxicológico demissional",
+      "motorista profissional",
+      "Lei 13.103/2015",
+      "saúde ocupacional"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-22",
+    "examName": "exame toxicológico",
+    "examType": "exame-toxicologico",
+    "examPages": [
+      "/exames/exame-toxicologico",
+      "/exames/exame-admissional"
+    ],
+    "horaMarcada": true,
+    "related": [
+      "exame-toxicologico-cnh",
+      "aso-exames-ocupacionais",
+      "resultado-de-exames-online-seguranca"
+    ]
   }
 ]
