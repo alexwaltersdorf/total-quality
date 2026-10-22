@@ -18,6 +18,8 @@ import nodePath from "node:path";
 import { examesData, type ExamData } from "../../client/src/lib/examesData";
 import { linkifyText } from "../../client/src/lib/internalLinkTargets";
 import { blogLinksFor, examesDeSangueLista } from "../../client/src/lib/examBlogLinks";
+import { CONVENIOS_FAQS } from "../../client/src/lib/conveniosData";
+import { BAIRROS_TITULO, BAIRROS_INTRO, BAIRROS_GRUPOS, BAIRROS_PARAGRAFOS } from "../../client/src/lib/bairrosAtendidos";
 import blogIndex from "../../client/src/content/blog/index.json";
 import {
   AVISO_INFORMATIVO,
@@ -334,6 +336,10 @@ const laboratorioHtml = `
       <li>Resultados online em até 24 horas para a maioria dos exames</li>
       <li>Atendimento particular, convênios e empresas de Caraguatatuba, Ubatuba, São Sebastião e Ilhabela</li>
     </ul>
+    <h2>${BAIRROS_TITULO}</h2>
+    <p>${BAIRROS_INTRO}</p>
+    <ul>${BAIRROS_GRUPOS.map((g) => `<li><strong>${g.titulo}:</strong> ${g.bairros}</li>`).join("")}</ul>
+    ${BAIRROS_PARAGRAFOS.map((t) => `<p>${t}</p>`).join("\n    ")}
     <h2>Perguntas frequentes</h2>
     <h3>Preciso agendar para fazer exames de sangue?</h3>
     <p>Para a maioria dos exames laboratoriais não é necessário agendamento: basta comparecer com o pedido médico e documento com foto. Veja as <a href="/blog/alimentacao-e-exames-laboratoriais">orientações de preparo e jejum</a> antes de vir. Exames de imagem e procedimentos especiais podem ser agendados pelo WhatsApp.</p>
@@ -420,8 +426,8 @@ const bioimpedanciaHtml = `
  * Pagina /convenios: "aceita meu convenio?" e o principal desempate local
  * entre laboratorios (lacuna verificada na auditoria de 01/08: as queries
  * transacionais de convenio caiam num post de blog). Esta pagina e o destino
- * transacional; o post /blog/convenios-laboratorio-caraguatatuba segue como
- * informacional.
+ * transacional. O antigo post /blog/convenios-laboratorio-caraguatatuba foi
+ * consolidado aqui com 301 em 22/10/2026 (uma URL por intencao).
  *
  * A lista vive tambem em client/src/lib/conveniosData.ts (o client nao pode
  * importar deste modulo, que usa node:fs). Ao mudar um convenio, mudar NOS
@@ -431,24 +437,6 @@ export const CONVENIOS = [
   "Cartão de Todos", "Solumedi", "Leader",
 ];
 
-const CONVENIOS_FAQS: Faq[] = [
-  {
-    q: "Quais convênios a Total Quality atende?",
-    a: "Atendemos Cartão de Todos, Solumedi e Leader. Fora desses, o atendimento é particular, com tabela própria. Confirme condições e valores pelo WhatsApp (12) 3887-3535 antes de vir.",
-  },
-  {
-    q: "O que levar no dia do exame?",
-    a: "Leve um documento de identidade com foto, o cartão do convênio e o pedido médico. Para exames de imagem, a equipe informa no agendamento se há alguma exigência adicional.",
-  },
-  {
-    q: "O que preciso levar para usar o convênio?",
-    a: "Carteirinha do plano de saúde atualizada, documento de identidade com foto e o pedido médico original.",
-  },
-  {
-    q: "E se eu não tiver convênio?",
-    a: "Atendemos particular com valores acessíveis e pagamento em dinheiro, cartão de crédito, débito ou PIX. Há condições especiais para check-ups e pacotes de exames.",
-  },
-];
 
 /** Link para o artigo de coleta domiciliar — so depois de publicado. */
 function coletaDomiciliarLinkHtml(): string {

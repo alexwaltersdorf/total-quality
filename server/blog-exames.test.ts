@@ -49,7 +49,6 @@ const ARTIGOS_DE_EXAME = [
   "coleta-domiciliar-exames-caraguatatuba",
   "exames-laboratoriais-tipos-e-preparo",
   // Segunda rodada (18/10/2026): palavras-chave pedidas pelo Alex.
-  "laboratorio-jardim-primavera-caraguatatuba",
   "papanicolau-exame-preventivo",
   "ultrassom-transvaginal-preparo",
   "exame-de-colesterol-lipidograma",

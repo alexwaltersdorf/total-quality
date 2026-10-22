@@ -21,27 +21,6 @@
     "metaTitle": "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer"
   },
   {
-    "id": "1",
-    "slug": "check-up-preventivo-quando-fazer",
-    "title": "Check-Up Preventivo: Quando Fazer e Por Que É Tão Importante",
-    "metaTitle": "Check-up Preventivo: Quando Fazer | Total Quality",
-    "subtitle": "Descubra a frequência ideal e os exames essenciais para cada faixa etária",
-    "excerpt": "O check-up preventivo é a principal ferramenta para detectar doenças em estágio inicial, quando o tratamento é mais eficaz. Saiba quando fazer e quais exames são recomendados para cada idade.",
-    "category": "Medicina Preventiva",
-    "author": "Dr. Alexandre Ribeiro",
-    "authorRole": "Diretor Clínico — Total Quality",
-    "date": "10 Abr 2026",
-    "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/blog/check-up-preventivo-quando-fazer.webp",
-    "tags": [
-      "check-up",
-      "medicina preventiva",
-      "exames",
-      "saúde",
-      "Caraguatatuba"
-    ]
-  },
-  {
     "id": "2",
     "slug": "exames-de-sangue-guia-completo",
     "title": "Exames de Sangue: Guia Completo Para Entender Seus Resultados",
@@ -123,70 +102,6 @@
       "exames de sangue",
       "saúde óssea",
       "imunidade"
-    ]
-  },
-  {
-    "id": "7",
-    "slug": "convenios-laboratorio-caraguatatuba",
-    "title": "Convênios Aceitos no Laboratório em Caraguatatuba",
-    "metaTitle": "Convênios Aceitos em Caraguatatuba | Total Quality",
-    "subtitle": "Cartão de Todos, Solumedi e Leader — e como funciona o atendimento particular",
-    "excerpt": "Saiba quais convênios são aceitos no laboratório Total Quality em Caraguatatuba - SP: Cartão de Todos, Solumedi e Leader. Nos demais casos, atendimento particular.",
-    "category": "Exames Laboratoriais",
-    "author": "Equipe Total Quality",
-    "authorRole": "Atendimento — Total Quality",
-    "date": "23 Abr 2026",
-    "readTime": "6 min",
-    "image": "https://totalquality.med.br/images/recepcao-1024.webp",
-    "tags": [
-      "convênios",
-      "Cartão de Todos",
-      "Solumedi",
-      "Leader",
-      "laboratório Caraguatatuba",
-      "Caraguatatuba"
-    ]
-  },
-  {
-    "id": "9",
-    "slug": "ultrassonografia-caraguatatuba",
-    "title": "Ultrassonografia em Caraguatatuba — Agende Sem Fila",
-    "metaTitle": "Guia de Ultrassonografia em Caraguatatuba | Total Quality",
-    "subtitle": "Exame de imagem seguro, indolor e sem radiação no litoral norte",
-    "excerpt": "Saiba tudo sobre ultrassonografia em Caraguatatuba: tipos de exame, preparo, como agendar e onde realizar com equipamentos digitais.",
-    "category": "Medicina Preventiva",
-    "author": "Dr. Alexandre Ribeiro",
-    "authorRole": "Diretor Clínico — Total Quality",
-    "date": "23 Abr 2026",
-    "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/blog/ultrassonografia-caraguatatuba.webp",
-    "tags": [
-      "ultrassonografia",
-      "ultrassom",
-      "diagnóstico por imagem",
-      "Caraguatatuba",
-      "exame de imagem"
-    ]
-  },
-  {
-    "id": "10",
-    "slug": "tomografia-caraguatatuba",
-    "title": "Tomografia em Caraguatatuba — Quando Fazer e Como Se Preparar",
-    "metaTitle": "Tomografia em Caraguatatuba: O que Saber | Total Quality",
-    "subtitle": "Guia completo sobre tomografia computadorizada no litoral norte paulista",
-    "excerpt": "Saiba quando a tomografia é indicada, como se preparar para o exame e onde realizar em Caraguatatuba com equipamento multislice.",
-    "category": "Medicina Preventiva",
-    "author": "Dr. Alexandre Ribeiro",
-    "authorRole": "Diretor Clínico — Total Quality",
-    "date": "23 Abr 2026",
-    "readTime": "8 min",
-    "image": "https://totalquality.med.br/images/tomografia-1024.webp",
-    "tags": [
-      "tomografia",
-      "tomografia computadorizada",
-      "diagnóstico por imagem",
-      "Caraguatatuba",
-      "exame de imagem"
     ]
   },
   {
@@ -403,28 +318,6 @@
     ]
   },
   {
-    "id": "21",
-    "slug": "laboratorio-regiao-sul-caraguatatuba",
-    "title": "Laboratório na Região Sul de Caraguatatuba: Como Escolher e o Que Conferir",
-    "metaTitle": "Laboratório na Região Sul de Caraguatatuba | Total Quality",
-    "subtitle": "Perequê-Mirim, Travessão, Porto Novo, Morro do Algodão e os outros bairros do sul da cidade",
-    "excerpt": "A região sul é a parte de Caraguatatuba que cresce mais rápido, mas a estrutura de diagnóstico continua concentrada no Centro. Veja quais bairros formam o sul, o que a distância muda no preparo do exame e seis pontos para conferir antes de escolher um laboratório.",
-    "category": "Medicina Preventiva",
-    "author": "Equipe Total Quality",
-    "authorRole": "Total Quality Medicina Diagnóstica",
-    "date": "09 Out 2026",
-    "readTime": "7 min",
-    "image": "https://totalquality.med.br/images/fachada-1024.webp",
-    "tags": [
-      "região sul",
-      "Perequê-Mirim",
-      "Travessão",
-      "Porto Novo",
-      "Caraguatatuba",
-      "análises clínicas"
-    ]
-  },
-  {
     "id": "22",
     "slug": "como-escolher-laboratorio-analises-clinicas",
     "title": "Como Escolher um Laboratório de Análises Clínicas: 8 Critérios Técnicos",
@@ -581,7 +474,7 @@
     "examType": "exames-de-sangue",
     "related": [
       "exames-de-sangue-guia-completo",
-      "check-up-preventivo-quando-fazer",
+      "check-up-medico-quais-exames-fazer",
       "hemoglobina-glicada-exame"
     ],
     "metaTitle": "Exame de TSH e T4 Livre: tireoide em Caraguatatuba"
@@ -713,7 +606,7 @@
     "related": [
       "exames-laboratoriais-tipos-e-preparo",
       "alimentacao-e-exames-laboratoriais",
-      "convenios-laboratorio-caraguatatuba"
+      "como-escolher-laboratorio-analises-clinicas"
     ],
     "metaTitle": "Coleta Domiciliar de Exames em Caraguatatuba"
   },
@@ -750,39 +643,6 @@
     "metaTitle": "Exames Laboratoriais: tipos, preparo e jejum | Guia"
   },
   {
-    "id": "33",
-    "slug": "laboratorio-jardim-primavera-caraguatatuba",
-    "title": "Jardim Primavera, Caraguatatuba: onde fazer exames de laboratório perto do bairro",
-    "subtitle": "A UPA Central fica no bairro; a coleta de exames com pedido médico é no Centro, bairro vizinho, sem agendamento",
-    "excerpt": "Procura laboratório perto do Jardim Primavera, em Caraguá? Veja quando ir à UPA, como é a coleta sem agendamento no Centro e tire dúvidas pelo WhatsApp.",
-    "category": "Exames Laboratoriais",
-    "author": "Equipe Total Quality",
-    "authorRole": "Total Quality Medicina Diagnóstica",
-    "date": "18 Out 2026",
-    "readTime": "7 min",
-    "image": "https://totalquality.med.br/images/blog/laboratorio-jardim-primavera-caraguatatuba.webp",
-    "imageAlt": "Mão de luva ajustando um microscópio de laboratório — laboratório de análises clínicas perto do Jardim Primavera",
-    "tags": [
-      "Jardim Primavera",
-      "laboratório perto do Jardim Primavera",
-      "exames de sangue",
-      "UPA Central",
-      "Caraguatatuba"
-    ],
-    "draft": true,
-    "reviewStatus": "revisao_medica_pendente",
-    "dateModified": "2026-10-18",
-    "examName": "exames laboratoriais",
-    "examType": "laboratorio",
-    "horaMarcada": false,
-    "related": [
-      "laboratorio-regiao-sul-caraguatatuba",
-      "coleta-domiciliar-exames-caraguatatuba",
-      "exames-laboratoriais-tipos-e-preparo"
-    ],
-    "metaTitle": "Laboratório perto do Jardim Primavera, Caraguatatuba"
-  },
-  {
     "id": "34",
     "slug": "papanicolau-exame-preventivo",
     "title": "Exame de Papanicolau (preventivo): para que serve, preparo e quando fazer",
@@ -811,7 +671,7 @@
     "related": [
       "ultrassom-transvaginal-preparo",
       "mamografia-ultrassom-mamas-diferencas",
-      "check-up-preventivo-quando-fazer"
+      "check-up-medico-quais-exames-fazer"
     ],
     "metaTitle": "Exame de Papanicolau em Caraguatatuba: preparo"
   },

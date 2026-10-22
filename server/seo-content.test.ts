@@ -7,7 +7,7 @@ import {
 } from "./_core/seo-content";
 import { CONVENIOS as CONVENIOS_CLIENT } from "@/lib/conveniosData";
 import { getAllRoutes, getKnownBlogSlugs } from "./_core/routes-metadata";
-import { getLegacyRedirect, isGone } from "./_core/legacy-redirects";
+import { getLegacyRedirect, isGone, LEGACY_REDIRECTS } from "./_core/legacy-redirects";
 import { anosDeAtuacao } from "@shared/const";
 
 const PRIORITY_ROUTES = [
@@ -418,7 +418,10 @@ describe("Redirecionamentos legados (auditoria Search Console jul/2026)", () => 
     expect(getLegacyRedirect("/mapa")).toBe("/exames/mapa");
     expect(getLegacyRedirect("/cartao-desconto")).toBe("/cartao");
     expect(getLegacyRedirect("/blog/index")).toBe("/blog");
-    expect(getLegacyRedirect("/medicos")).toBe("/");
+    // /medicos fazia 301 para a home, que o Google conta como soft 404:
+    // desde 22/10/2026 responde 410 (sem pagina equivalente).
+    expect(getLegacyRedirect("/medicos")).toBeNull();
+    expect(isGone("/medicos")).toBe(true);
     // Placeholder WordPress indexado, achado via site: em 01/08/2026
     expect(getLegacyRedirect("/total-quality")).toBe("/");
     expect(getLegacyRedirect("/total-quality/")).toBe("/");
@@ -507,7 +510,6 @@ describe("GUARD-RAIL: convenio nao atendido nunca volta a peca publica (set/2026
       "client/src/pages/Convenios.tsx",
       "client/src/pages/LaboratorioCaraguatatuba.tsx",
       "client/src/lib/conveniosData.ts",
-      "client/src/content/blog/convenios-laboratorio-caraguatatuba.json",
       "client/src/content/blog/index.json",
       "server/_core/routes-metadata.ts",
     ];
@@ -908,7 +910,6 @@ describe("GUARD-RAIL: soft 404 do catch-all de artigos (Search Console, ago/2026
       "/blog/index",
       "/blog/privacidade",
       "/mapa",
-      "/medicos",
       "/login",
       "/sobre",
       "/contato",
@@ -923,6 +924,56 @@ describe("GUARD-RAIL: soft 404 do catch-all de artigos (Search Console, ago/2026
         resolveHttpStatus(alvo, blogSlugs, new Set<string>()),
         `${url} redireciona para ${alvo}, que não responde 200`
       ).toBe(200);
+    }
+  });
+});
+
+describe("GUARD-RAIL: uma URL por intencao — consolidacao do blog (out/2026)", () => {
+  // Auditoria do Search Console de 21/10/2026: artigos do blog disputavam a
+  // intencao das paginas de servico e a posicao do site caiu. Cada um foi
+  // consolidado no destino com 301. Se um deles voltar ao indice do blog, a
+  // canibalizacao volta junto.
+  const CONSOLIDADOS: Record<string, string> = {
+    "/blog/hemograma-caraguatatuba": "/exames/hemograma",
+    "/blog/ultrassonografia-caraguatatuba": "/exames/ultrassonografia",
+    "/blog/tomografia-caraguatatuba": "/exames/tomografia-computadorizada",
+    "/blog/check-up-preventivo-quando-fazer": "/blog/check-up-medico-quais-exames-fazer",
+    "/blog/laboratorio-regiao-sul-caraguatatuba": "/laboratorio-caraguatatuba",
+    "/blog/laboratorio-jardim-primavera-caraguatatuba": "/laboratorio-caraguatatuba",
+    "/blog/convenios-laboratorio-caraguatatuba": "/convenios",
+    "/blog/exame-de-sangue-caraguatatuba": "/exames/exames-de-sangue",
+    "/blog/hemograma-completo": "/blog/hemograma-completo-o-que-avalia",
+  };
+
+  it.each(Object.entries(CONSOLIDADOS))("%s faz 301 para %s", (origem, destino) => {
+    expect(getLegacyRedirect(origem)).toBe(destino);
+  });
+
+  it("os artigos consolidados saem do blog e do sitemap", () => {
+    const slugs = getKnownBlogSlugs();
+    const sitemap = getAllRoutes().map((r) => new URL(r.canonical).pathname);
+    for (const origem of Object.keys(CONSOLIDADOS)) {
+      expect(slugs.has(origem.replace("/blog/", "")), `${origem} voltou ao indice do blog`).toBe(false);
+      expect(sitemap, `${origem} voltou ao sitemap`).not.toContain(origem);
+    }
+  });
+
+  it("nenhum 301 aponta para outra URL que tambem redireciona (sem cadeia)", () => {
+    const blogSlugs = getKnownBlogSlugs();
+    for (const [origem, destino] of Object.entries(LEGACY_REDIRECTS)) {
+      const alvo = destino.split("#")[0] || "/";
+      expect(getLegacyRedirect(alvo), `${origem} -> ${alvo} faz cadeia de redirecionamento`).toBeNull();
+      expect(resolveHttpStatus(alvo, blogSlugs, new Set<string>()), `${origem} -> ${alvo} nao responde 200`).toBe(200);
+    }
+  });
+
+  it("nenhuma pagina publicada linka um artigo consolidado", () => {
+    for (const route of getAllRoutes()) {
+      const html = getSeoContentForPath(new URL(route.canonical).pathname);
+      if (!html) continue;
+      for (const origem of Object.keys(CONSOLIDADOS)) {
+        expect(html, `${route.canonical} ainda linka ${origem}`).not.toContain(`href="${origem}"`);
+      }
     }
   });
 });
@@ -946,8 +997,9 @@ describe("GUARD-RAIL: blog de SEO local da regiao sul (out/2026)", () => {
     /confiance/i,
   ];
 
+  // O artigo da regiao sul foi consolidado em /laboratorio-caraguatatuba
+  // (301 em 22/10/2026); os guard-rails dele passaram para a landing.
   const ARTIGOS_DO_SUL = [
-    "laboratorio-regiao-sul-caraguatatuba",
     "como-escolher-laboratorio-analises-clinicas",
     "resultado-de-exames-online-seguranca",
     "exame-de-urina-eas-como-coletar",
@@ -978,21 +1030,22 @@ describe("GUARD-RAIL: blog de SEO local da regiao sul (out/2026)", () => {
     }
   });
 
-  it("o artigo da regiao sul nomeia os bairros do sul", () => {
-    // Sem os bairros, o artigo perde a cauda longa que justifica a sua
-    // existencia e passa a competir com a landing de laboratorio.
-    // Os nomes vem da area de referencia do CRAS Sul da Prefeitura.
-    const html = getSeoContentForPath("/blog/laboratorio-regiao-sul-caraguatatuba")!;
-    for (const bairro of ["Perequê-Mirim", "Travessão", "Porto Novo", "Morro do Algodão", "Pegorelli"]) {
-      expect(html, `o artigo da regiao sul perdeu o bairro ${bairro}`).toContain(bairro);
+  it("a landing de analises clinicas nomeia os bairros que antes tinham artigo proprio", () => {
+    // Os artigos da regiao sul e do Jardim Primavera viraram uma secao de
+    // /laboratorio-caraguatatuba (301 em 22/10/2026). Sem os bairros, a pagina
+    // perde a cauda longa que o artigo trazia. Os nomes da regiao sul vem da
+    // area de referencia do CRAS Sul da Prefeitura.
+    const html = getSeoContentForPath("/laboratorio-caraguatatuba")!;
+    for (const bairro of ["Perequê-Mirim", "Travessão", "Porto Novo", "Morro do Algodão", "Pegorelli", "Jardim Primavera"]) {
+      expect(html, `a landing perdeu o bairro ${bairro}`).toContain(bairro);
     }
   });
 
-  it("o artigo da regiao sul continua dizendo que a clinica fica no Centro", () => {
-    // A clinica NAO tem unidade na regiao sul. Um artigo otimizado para
-    // "laboratorio no Pereque-Mirim" sem essa frase vira promessa falsa de
+  it("a landing continua dizendo que a clinica so atende no Centro", () => {
+    // A clinica NAO tem unidade na regiao sul nem no Jardim Primavera. Texto
+    // otimizado para o nome do bairro sem essa frase vira promessa falsa de
     // localidade — o paciente sai de casa e nao encontra nada.
-    const html = getSeoContentForPath("/blog/laboratorio-regiao-sul-caraguatatuba")!;
+    const html = getSeoContentForPath("/laboratorio-caraguatatuba")!;
     expect(html).toContain("Não temos unidade na região sul");
     expect(html).toContain("Rua Padre Anchieta, 1010");
   });
@@ -1086,10 +1139,7 @@ describe("GUARD-RAIL: cada artigo tem a sua propria imagem (out/2026)", () => {
   // em /images/blog/<slug>.webp, com a origem registrada em
   // docs/creditos-imagens-blog.md.
   const FOTO_DA_CLINICA: Record<string, string> = {
-    "convenios-laboratorio-caraguatatuba": "recepcao-1024.webp",
-    "laboratorio-regiao-sul-caraguatatuba": "fachada-1024.webp",
     "como-escolher-laboratorio-analises-clinicas": "laboratorio-1024.webp",
-    "tomografia-caraguatatuba": "tomografia-1024.webp",
     "diferenca-ultrassom-comum-doppler": "cardiologia-1024.webp",
   };
 

@@ -190,41 +190,8 @@ const examesMetadata: Record<string, RouteMetadata> = {
  * sobrescreve os textos — lastmod, og:type e noindex vem sempre do indice.
  */
 const blogMetadata: Record<string, RouteMetadata> = {
-  "check-up-preventivo-quando-fazer": {
-    title: "Check-up Preventivo: Quando Fazer | Total Quality",
-    description: "Guia completo sobre check-up preventivo: quando fazer, quais exames incluir e como manter a saúde. Dicas de especialistas.",
-    keywords: "check-up preventivo, exames preventivos, saúde preventiva, quando fazer check-up",
-    ogTitle: "Check-up Preventivo: Quando Fazer",
-    ogDescription: "Saiba quando fazer seu check-up preventivo e quais exames são essenciais para manter a saúde.",
-    ogImage: "https://totalquality.med.br/images/blog/check-up-preventivo-quando-fazer.webp",
-    canonical: "https://totalquality.med.br/blog/check-up-preventivo-quando-fazer",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
-  "ultrassonografia-caraguatatuba": {
-    title: "Guia de Ultrassonografia em Caraguatatuba | Total Quality",
-    description: "Ultrassonografia em Caraguatatuba: tipos, indicações, preparo e como é realizado. Diagnóstico rápido e preciso.",
-    keywords: "ultrassonografia, ultrassom, diagnóstico por imagem, Caraguatatuba",
-    ogTitle: "Ultrassonografia em Caraguatatuba",
-    ogDescription: "Guia completo sobre ultrassonografia: tipos, indicações e como é realizado.",
-    ogImage: "https://totalquality.med.br/images/blog/ultrassonografia-caraguatatuba.webp",
-    canonical: "https://totalquality.med.br/blog/ultrassonografia-caraguatatuba",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
-  "tomografia-caraguatatuba": {
-    title: "Tomografia em Caraguatatuba: O que Saber | Total Quality",
-    description: "Tomografia em Caraguatatuba: indicações, preparo, como funciona e segurança do exame, com hora marcada pelo WhatsApp.",
-    keywords: "tomografia, tomografia computadorizada, diagnóstico por imagem, Caraguatatuba",
-    ogTitle: "Tomografia em Caraguatatuba",
-    ogDescription: "Guia completo sobre tomografia: indicações, preparo e como funciona.",
-    ogImage: "https://totalquality.med.br/images/tomografia-1024.webp",
-    canonical: "https://totalquality.med.br/blog/tomografia-caraguatatuba",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
   "alimentacao-e-exames-laboratoriais": {
     title: "Como a Alimentação Influencia Seus Exames | Total Quality",
@@ -274,17 +241,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
 
-  "convenios-laboratorio-caraguatatuba": {
-    title: "Convênios Aceitos em Caraguatatuba | Total Quality",
-    description: "Veja os convênios aceitos no laboratório Total Quality em Caraguatatuba - SP: Cartão de Todos, Solumedi e Leader. Nos demais casos, atendimento particular.",
-    keywords: "convênios, laboratório Caraguatatuba, Cartão de Todos, Solumedi, Leader",
-    ogTitle: "Convênios Aceitos | Total Quality",
-    ogDescription: "Confira a lista completa de convênios aceitos no laboratório.",
-    ogImage: "https://totalquality.med.br/images/recepcao-1024.webp",
-    canonical: "https://totalquality.med.br/blog/convenios-laboratorio-caraguatatuba",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
   "hemograma-completo-o-que-avalia": {
     title: "Hemograma Completo: O Que o Exame Avalia? | Total Quality",
@@ -410,17 +366,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
   // pertence a /laboratorio-caraguatatuba; estes artigos atacam a cauda longa
   // dos bairros do sul (Pereque-Mirim, Travessao, Porto Novo, Morro do
   // Algodao), que nenhuma pagina do site disputava.
-  "laboratorio-regiao-sul-caraguatatuba": {
-    title: "Laboratório na Região Sul de Caraguatatuba | Total Quality",
-    description: "Perequê-Mirim, Travessão, Porto Novo ou Morro do Algodão: como escolher laboratório na região sul de Caraguatatuba e o que conferir antes.",
-    keywords: "laboratório região sul Caraguatatuba, laboratório Perequê-Mirim, laboratório Travessão, exame de sangue Porto Novo, análises clínicas Morro do Algodão, coleta domiciliar Caraguatatuba",
-    ogTitle: "Laboratório na Região Sul de Caraguatatuba",
-    ogDescription: "Quais bairros formam o sul da cidade, o que a distância muda no preparo do exame e seis pontos para conferir antes de escolher.",
-    ogImage: "https://totalquality.med.br/images/fachada-1024.webp",
-    canonical: "https://totalquality.med.br/blog/laboratorio-regiao-sul-caraguatatuba",
-    priority: 0.8,
-    changefreq: "monthly",
-  },
 
   "como-escolher-laboratorio-analises-clinicas": {
     title: "Como Escolher um Laboratório: 8 Critérios Técnicos",

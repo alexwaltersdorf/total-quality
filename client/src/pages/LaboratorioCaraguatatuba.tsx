@@ -14,6 +14,7 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { ANALISES_TITLE, ANALISES_H1, ANALISES_DESCRIPTION } from "@shared/const";
 import { trackScheduleExam } from "@/lib/tracking";
+import { BAIRROS_TITULO, BAIRROS_INTRO, BAIRROS_GRUPOS, BAIRROS_PARAGRAFOS } from "@/lib/bairrosAtendidos";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 
 
@@ -335,6 +336,26 @@ export default function LaboratorioCaraguatatuba() {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Quem vem de outros bairros — herdado dos artigos da regiao sul e do
+            Jardim Primavera, consolidados aqui com 301 (22/10/2026). Mesmo
+            texto do prerender: client/src/lib/bairrosAtendidos.ts. */}
+        <section className="py-16 lg:py-24">
+          <div className="container max-w-3xl">
+            <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-6">{BAIRROS_TITULO}</h2>
+            <p className="text-text-light leading-relaxed mb-6">{BAIRROS_INTRO}</p>
+            <ul className="space-y-2 mb-6">
+              {BAIRROS_GRUPOS.map((g) => (
+                <li key={g.titulo} className="text-text-light leading-relaxed">
+                  <span className="font-medium text-text">{g.titulo}:</span> {g.bairros}
+                </li>
+              ))}
+            </ul>
+            {BAIRROS_PARAGRAFOS.map((t) => (
+              <p key={t} className="text-text-light leading-relaxed mb-4">{t}</p>
+            ))}
           </div>
         </section>
 

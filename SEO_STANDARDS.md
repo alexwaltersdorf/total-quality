@@ -255,22 +255,17 @@ Padrão: `/exames/{slug}`
 | Teste de Esforço | `teste-esforco` | 0.9 |
 | Holter 24h | `holter-24h` | 0.9 |
 
-### Rotas de Blog (11)
+### Rotas de Blog
 
-Padrão: `/blog/{slug}`
+Padrão: `/blog/{slug}`. A fonte única é `client/src/content/blog/index.json` — a lista que
+existia aqui envelheceu. Rascunho (`draft: true`) responde 200 com `noindex` e fica fora do
+sitemap.
 
-| Artigo | Slug | Priority |
-|--------|------|----------|
-| Check-up Preventivo | `check-up-preventivo-quando-fazer` | 0.7 |
-| Exames de Sangue | `exames-de-sangue-guia-completo` | 0.7 |
-| Saúde do Coração | `saude-do-coracao-prevencao` | 0.7 |
-| Alimentação | `alimentacao-e-exames-laboratoriais` | 0.7 |
-| Vitamina D | `vitamina-d-importancia-saude` | 0.7 |
-| Exame de Sangue Caraguatatuba | `exame-de-sangue-caraguatatuba` | 0.8 |
-| Convênios | `convenios-laboratorio-caraguatatuba` | 0.7 |
-| Ultrassonografia | `ultrassonografia-caraguatatuba` | 0.7 |
-| Tomografia | `tomografia-caraguatatuba` | 0.7 |
-| Convênios (alt) | `convênios-laboratório-caraguatatuba` | 0.6 |
+Consolidados com 301 em 22/10/2026 (regra 24): `hemograma-caraguatatuba`,
+`ultrassonografia-caraguatatuba`, `tomografia-caraguatatuba`, `check-up-preventivo-quando-fazer`,
+`laboratorio-regiao-sul-caraguatatuba`, `laboratorio-jardim-primavera-caraguatatuba` (rascunho),
+`convenios-laboratorio-caraguatatuba` e `exame-de-sangue-caraguatatuba`. Destinos em
+`server/_core/legacy-redirects.ts`.
 
 ---
 

@@ -110,6 +110,9 @@ export const examesData: ExamData[] = [
       { q: "Quanto tempo dura o exame?", a: "O exame em si dura entre 10 e 30 minutos, dependendo da região examinada e da necessidade de contraste." },
       { q: "Preciso de contraste?", a: "Depende da indicação médica. O contraste é usado para melhorar a visualização de vasos sanguíneos e certos órgãos. Seu médico indicará se é necessário." },
       { q: "Posso fazer tomografia com prótese metálica?", a: "Sim. A tomografia pode ser realizada em pacientes com próteses metálicas, marcapassos e implantes." },
+      // Migradas de /blog/tomografia-caraguatatuba antes do 301 (22/10/2026).
+      { q: "Quem tem problema nos rins pode fazer tomografia com contraste?", a: "Avise antes do exame. O contraste é eliminado pelos rins, e o médico avalia se o exame com contraste é adequado no seu caso. Informe também alergias, especialmente a iodo ou a contraste, e os medicamentos em uso." },
+      { q: "Gestante pode fazer tomografia?", a: "A tomografia usa raios-X e, na gestação, costuma ser evitada, salvo quando o médico avalia que o benefício supera o risco. Informe a gravidez ou a suspeita de gravidez antes do exame." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar uma tomografia computadorizada.",
     heroImage: "/images/tomografia-1440.webp",
@@ -183,6 +186,9 @@ export const examesData: ExamData[] = [
       { q: "É seguro para gestantes?", a: "Sim! A ultrassonografia não utiliza radiação e é o principal exame para acompanhamento da gravidez, sendo totalmente seguro para mãe e bebê." },
       { q: "Preciso de preparo?", a: "Depende do tipo de ultrassom. Abdominal requer jejum de 6-8h. Pélvico requer bexiga cheia. Tireoide e mama não necessitam preparo." },
       { q: "Quanto tempo dura o exame?", a: "Em média, 20 a 30 minutos, dependendo da região examinada e da complexidade do caso." },
+      // Migradas de /blog/ultrassonografia-caraguatatuba antes do 301 (22/10/2026).
+      { q: "Para que serve o ultrassom com Doppler?", a: "O Doppler avalia o fluxo de sangue em artérias e veias. É pedido, por exemplo, na investigação de varizes, de trombose venosa e de estreitamento das artérias carótidas. O médico define no pedido a região a ser examinada." },
+      { q: "O que evitar antes do ultrassom abdominal?", a: "Além do jejum de 6 a 8 horas, evite nas 24 horas anteriores alimentos que formam gases, como feijão, refrigerante e leite. Os gases atrapalham a visualização dos órgãos." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar uma ultrassonografia.",
     category: "imagem",
