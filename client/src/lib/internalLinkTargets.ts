@@ -26,6 +26,9 @@ export const LINK_TARGETS: LinkTarget[] = [
   { terms: ["mamografia digital", "mamografia"], href: "/exames/mamografia" },
   { terms: ["raio-x"], href: "/exames/raio-x" },
   { terms: ["eletrocardiograma"], href: "/exames/eletrocardiograma" },
+  // So expressoes compostas: "mapa" sozinho casaria com "mapa do site".
+  { terms: ["Holter de 24 horas", "Holter 24 horas", "Holter 24h"], href: "/exames/holter" },
+  { terms: ["MAPA de 24 horas", "MAPA 24 horas", "MAPA 24h"], href: "/exames/mapa" },
   { terms: ["eletroencefalograma"], href: "/exames/eletroencefalograma" },
   { terms: ["espirometria"], href: "/exames/espirometria" },
   { terms: ["exame toxicológico"], href: "/exames/exame-toxicologico" },

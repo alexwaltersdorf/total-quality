@@ -193,66 +193,11 @@ const blogMetadata: Record<string, RouteMetadata> = {
 
 
 
-  "alimentacao-e-exames-laboratoriais": {
-    title: "Como a Alimentação Influencia Seus Exames | Total Quality",
-    description: "Saiba como a alimentação afeta seus exames de sangue. Guia completo sobre jejum, alimentos que interferem e preparo correto para exames precisos.",
-    keywords: "alimentação, exames laboratoriais, jejum, nutrição, preparo para exames",
-    ogTitle: "Alimentação e Exames Laboratoriais",
-    ogDescription: "Entenda como sua dieta influencia os resultados dos seus exames de sangue.",
-    ogImage: "https://totalquality.med.br/images/blog/alimentacao-e-exames-laboratoriais.webp",
-    canonical: "https://totalquality.med.br/blog/alimentacao-e-exames-laboratoriais",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
-
-  "vitamina-d-importancia-saude": {
-    title: "Vitamina D: Deficiência é Comum? | Total Quality",
-    description: "60% dos brasileiros têm deficiência de vitamina D. Saiba por que, os riscos e como manter seus níveis adequados. Dicas de especialistas.",
-    keywords: "vitamina D, deficiência, saúde óssea, imunidade, bem-estar",
-    ogTitle: "Vitamina D: Deficiência e Importância",
-    ogDescription: "Descubra por que a deficiência de vitamina D é tão comum e como resolver.",
-    ogImage: "https://totalquality.med.br/images/blog/vitamina-d-importancia-saude.webp",
-    canonical: "https://totalquality.med.br/blog/vitamina-d-importancia-saude",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
-
-  "saude-do-coracao-prevencao": {
-    title: "Saúde do Coração: 7 Hábitos Essenciais | Total Quality",
-    description: "Doenças cardiovasculares são a principal causa de morte no Brasil. Conheça os 7 hábitos comprovados que protegem seu coração.",
-    keywords: "cardiologia, saúde do coração, prevenção, eletrocardiograma",
-    ogTitle: "Saúde do Coração: 7 Hábitos",
-    ogDescription: "Descubra os 7 hábitos que podem salvar sua vida e proteger seu coração.",
-    ogImage: "https://totalquality.med.br/images/blog/saude-do-coracao-prevencao.webp",
-    canonical: "https://totalquality.med.br/blog/saude-do-coracao-prevencao",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
-
-  "exames-de-sangue-guia-completo": {
-    title: "Exames de Sangue: Guia de Resultados | Total Quality",
-    description: "Hemograma, glicemia, colesterol e mais — o que cada exame revela sobre sua saúde. Guia completo para entender seus resultados.",
-    keywords: "exames de sangue, hemograma, glicemia, colesterol, laboratório",
-    ogTitle: "Exames de Sangue: Guia Completo",
-    ogDescription: "Entenda o que cada exame de sangue revela sobre sua saúde.",
-    ogImage: "https://totalquality.med.br/images/blog/exames-de-sangue-guia-completo.webp",
-    canonical: "https://totalquality.med.br/blog/exames-de-sangue-guia-completo",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
 
-  "hemograma-completo-o-que-avalia": {
-    title: "Hemograma Completo: O Que o Exame Avalia? | Total Quality",
-    description: "Entenda o que o hemograma completo avalia, quais células são analisadas, para que serve e se o exame precisa de jejum.",
-    keywords: "hemograma completo, hemograma, exame de sangue, hemácias, leucócitos, plaquetas, Caraguatatuba",
-    ogTitle: "Hemograma Completo: O Que o Exame Avalia?",
-    ogDescription: "Entenda quais células e parâmetros são analisados no hemograma completo.",
-    ogImage: "https://totalquality.med.br/images/blog/hemograma-completo-o-que-avalia.webp",
-    canonical: "https://totalquality.med.br/blog/hemograma-completo-o-que-avalia",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
+
+
+
 
   "tomografia-computadorizada-como-funciona": {
     title: "Tomografia Computadorizada: Como Funciona? | Total Quality",
@@ -350,17 +295,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
 
-  "eletrocardiograma-o-que-e-como-e-feito": {
-    title: "Eletrocardiograma (ECG): O Que É | Total Quality",
-    description: "Entenda o que é o eletrocardiograma, como funciona, se dói, quanto tempo dura e em quais situações o médico costuma solicitar o exame.",
-    keywords: "eletrocardiograma, ECG, o que é eletrocardiograma, exame cardiológico, saúde do coração, Caraguatatuba",
-    ogTitle: "Eletrocardiograma (ECG): O Que É e Como É Feito",
-    ogDescription: "Entenda como funciona o exame, se dói, quanto tempo dura e quando costuma ser solicitado.",
-    ogImage: "https://totalquality.med.br/images/blog/eletrocardiograma-o-que-e-como-e-feito.webp",
-    canonical: "https://totalquality.med.br/blog/eletrocardiograma-o-que-e-como-e-feito",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
   // SEO local da regiao sul (out/2026). O termo "laboratorio em Caraguatatuba"
   // pertence a /laboratorio-caraguatatuba; estes artigos atacam a cauda longa
@@ -403,17 +337,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
 
-  "exame-de-urina-eas-como-coletar": {
-    title: "Exame de Urina (EAS): Como Coletar Corretamente",
-    description: "Para que serve o EAS, como coletar o jato médio da primeira urina da manhã e os cinco erros que fazem repetir o exame. Guia prático de preparo.",
-    keywords: "exame de urina, EAS, urina tipo 1, como coletar urina, jato médio, urocultura, urina de 24 horas, preparo exame de urina",
-    ogTitle: "Exame de Urina (EAS): Para Que Serve e Como Coletar",
-    ogDescription: "O passo a passo correto da coleta e os cinco erros que mais fazem repetir o exame.",
-    ogImage: "https://totalquality.med.br/images/blog/exame-de-urina-eas-como-coletar.webp",
-    canonical: "https://totalquality.med.br/blog/exame-de-urina-eas-como-coletar",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 };
 
 // Rotas estáticas principais

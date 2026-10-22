@@ -234,12 +234,12 @@ export default function BlogPost() {
                 página estratégica. */}
             {renderBlogContent(post.content, `/blog/${post.slug}`, (key) =>
               post.examName ? (
-                <ExamCTA key={key} examName={post.examName} examType={post.examType} horaMarcada={post.horaMarcada} posicao="meio" />
+                <ExamCTA key={key} examName={post.examName} examType={post.examType} horaMarcada={post.horaMarcada} examPages={post.examPages} posicao="meio" />
               ) : null
             )}
           </div>
 
-          {post.examName && <ExamCTA examName={post.examName} examType={post.examType} horaMarcada={post.horaMarcada} posicao="fim" />}
+          {post.examName && <ExamCTA examName={post.examName} examType={post.examType} horaMarcada={post.horaMarcada} examPages={post.examPages} posicao="fim" />}
 
           <MedicalFooter
             dateModified={blogModifiedIso(post)}

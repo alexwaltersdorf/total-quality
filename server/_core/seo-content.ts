@@ -36,6 +36,9 @@ import {
   relatedPosts,
   tableOfContents,
   textoContato,
+  tituloContato,
+  mensagemContato,
+  PAGINA_EXAME_LABEL,
   type BlogPost as BlogPostFull,
   type BlogPostMeta,
 } from "../../client/src/lib/blogMeta";
@@ -46,6 +49,7 @@ import {
   ANALISES_TITLE,
   ANALISES_DESCRIPTION,
   CONVENIOS_TEXTO,
+  whatsappUrl,
 } from "@shared/const";
 
 type BlogPost = BlogPostFull;
@@ -90,7 +94,7 @@ const NAP = {
   city: "Caraguatatuba – SP, 11660-010",
   phoneDisplay: "(12) 3887-3535",
   phoneHref: "tel:+551238873535",
-  whatsappHref: "https://wa.me/551238873535",
+  whatsappHref: whatsappUrl(),
   hours: "Segunda a sexta, das 7h30 às 18h · Sábado e domingo fechado",
 };
 
@@ -748,17 +752,18 @@ function renderBlogBodyHtml(content: string[], currentPath: string, ctaHtml = ""
  * laboratorial e sem agendamento (decisao de 01/08/2026); o WhatsApp tira
  * duvidas e combina a coleta domiciliar.
  */
-function examCtaHtml(examName: string, horaMarcada?: boolean): string {
-  const titulo =
-    examName === "coleta domiciliar"
-      ? "Coleta domiciliar em Caraguatatuba"
-      : `${examName[0].toUpperCase()}${examName.slice(1)} na Total Quality`;
-  const [p1, p2] = textoContato(horaMarcada);
+function examCtaHtml(examName: string, horaMarcada?: boolean, examPages: string[] = []): string {
+  const paragrafos = textoContato(horaMarcada).map((t) => `<p>${escapeHtml(t)}</p>`).join("\n      ");
+  const paginas = examPages
+    .filter((href) => PAGINA_EXAME_LABEL[href])
+    .map((href) => `<a href="${href}">${escapeHtml(PAGINA_EXAME_LABEL[href])}</a>`)
+    .join(" · ");
+  const whats = whatsappUrl(mensagemContato(examName, horaMarcada));
   return `
     <aside>
-      <p><strong>${escapeHtml(titulo)}</strong></p>
-      <p>${escapeHtml(p1)}</p>
-      <p>${escapeHtml(p2)} <a href="${NAP.whatsappHref}" target="_blank" rel="noopener noreferrer">Falar pelo WhatsApp</a></p>
+      <p><strong>${escapeHtml(tituloContato(examName))}</strong></p>
+      ${paragrafos}
+      <p><a href="${escapeHtml(whats)}" target="_blank" rel="noopener noreferrer">${horaMarcada ? "Agendar pelo WhatsApp" : "Tirar dúvidas pelo WhatsApp"}</a>${paginas ? ` · ${paginas}` : ""}</p>
     </aside>`;
 }
 
@@ -780,7 +785,7 @@ function blogFooterHtml(post: BlogPost): string {
 
 function renderBlogHtml(post: BlogPost): string {
   const currentPath = `/blog/${post.slug}`;
-  const cta = post.examName ? examCtaHtml(post.examName, post.horaMarcada) : "";
+  const cta = post.examName ? examCtaHtml(post.examName, post.horaMarcada, post.examPages) : "";
   const bodyHtml = renderBlogBodyHtml(post.content, currentPath, cta);
   const toc = tableOfContents(post.content);
   const tocHtml = toc.length

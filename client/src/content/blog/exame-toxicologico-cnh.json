@@ -44,13 +44,14 @@
     "Um profissional treinado coleta uma pequena quantidade de cabelo ou pêlos conforme o protocolo. O procedimento geralmente é rápido e não envolve agulhas.",
     "Quando não há cabelo suficiente na cabeça, a equipe avalia as alternativas aceitas pelo laboratório responsável. Não raspe o cabelo ou pêlos antes de receber orientação, pois isso pode dificultar a coleta.",
     "O material é identificado e encaminhado a um laboratório credenciado. Para processos de trânsito, é importante confirmar que tanto o laboratório quanto o posto de coleta estão aptos a operar dentro das exigências da Senatran.",
+    "[[cta]]",
     "## Quais documentos levar?",
     "Normalmente é necessário apresentar documento oficial de identificação. CPF e dados da CNH também podem ser utilizados no cadastro, conforme o tipo de processo.",
     "Antes de comparecer, confirme com a unidade:",
     "- Documento aceito.\n- Necessidade de apresentar CNH física ou digital.\n- Dados adicionais exigidos pelo laboratório.\n- Horário e necessidade de agendamento.\n- Orientações sobre medicamentos prescritos.",
     "Não envie documentos pessoais por canais que não tenham sido confirmados como oficiais pela clínica.",
     "## Precisa de jejum?",
-    "O exame realizado com cabelo ou pêlos normalmente não exige jejum. Ainda assim, siga as orientações fornecidas pelo posto de coleta para garantir que o procedimento seja realizado corretamente.",
+    "O exame realizado com cabelo ou pêlos normalmente não exige jejum. Ainda assim, siga as orientações fornecidas pelo posto de coleta para que o procedimento seja feito corretamente.",
     "Também não suspenda medicamentos por conta própria. Informe os medicamentos prescritos e leve os documentos médicos solicitados quando aplicável.",
     "## Medicamentos podem interferir no resultado?",
     "Alguns medicamentos podem conter substâncias ou gerar metabólitos relevantes para a análise. Isso não significa que o paciente deva interromper um tratamento.",
@@ -80,5 +81,12 @@
     "A Total Quality realiza a coleta para [exame toxicológico em Caraguatatuba](https://totalquality.med.br/exames/exame-toxicologico) em parceria com laboratório credenciado.",
     "**Entre em contato pelo WhatsApp ou pelo telefone (12) 3887-3535 para confirmar documentos, horários e prazo estimado.**",
     "Este conteúdo é informativo. Regras de trânsito podem mudar — consulte sempre a Senatran e o Detran antes de iniciar o processo."
-  ]
+  ],
+  "examName": "exame toxicológico",
+  "examType": "exame-toxicologico",
+  "examPages": [
+    "/exames/exame-toxicologico"
+  ],
+  "horaMarcada": true,
+  "dateModified": "2026-10-22"
 }

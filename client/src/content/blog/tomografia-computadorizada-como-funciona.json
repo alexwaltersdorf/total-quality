@@ -38,6 +38,7 @@
     "Auxilia na avaliação de estruturas ósseas da coluna vertebral, podendo ser solicitada em investigações relacionadas a dores ou alterações estruturais.",
     "### Angiotomografia",
     "Modalidade voltada especificamente para a avaliação de vasos sanguíneos, geralmente realizada com o uso de contraste intravenoso.",
+    "[[cta]]",
     "## Tomografia precisa de contraste?",
     "Nem toda tomografia exige o uso de contraste. A necessidade depende da região examinada e do objetivo clínico do exame, sendo uma decisão definida previamente pelo médico solicitante ou pela equipe responsável pelo exame.",
     "### O que é o contraste",
@@ -60,5 +61,12 @@
     "A **Total Quality** realiza tomografia computadorizada em **Caraguatatuba**, contando com equipamentos modernos e equipe especializada em diagnóstico por imagem. O exame pode ser agendado isoladamente ou como parte de uma avaliação mais ampla dentro da estrutura de exames de imagem da clínica, que também inclui ultrassonografia, mamografia e raio-X.",
     "**Recebeu uma solicitação de tomografia? Conte com a estrutura especializada da Total Quality em diagnóstico por imagem em Caraguatatuba, e agende pelo WhatsApp (12) 3887-3535.**",
     "Este conteúdo tem caráter informativo e não substitui a avaliação de um médico. Preparo, indicação e interpretação do exame devem sempre ser definidos pelo profissional responsável."
-  ]
+  ],
+  "examName": "tomografia computadorizada",
+  "examType": "tomografia-computadorizada",
+  "examPages": [
+    "/exames/tomografia-computadorizada"
+  ],
+  "horaMarcada": true,
+  "dateModified": "2026-10-22"
 }

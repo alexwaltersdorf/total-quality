@@ -11,11 +11,17 @@
  *   - o clique passa pelo formulario de qualificacao (useWhatsAppRedirect) e
  *     emite o evento canonico whatsapp_click com exam_type — nao um parametro
  *     novo "exam_name", que o GTM nao conhece.
+ *
+ * System prompt do blog (21/10/2026, fase 3): o quadro leva tambem a pagina do
+ * exame (botao secundario), diz "em Caraguatatuba" no titulo (a ligacao local
+ * fica aqui, nao no title do artigo) e a mensagem do WhatsApp avisa que o
+ * paciente veio do blog. "Agendar" so para exame com hora marcada.
  */
 import { ArrowUpRight } from "lucide-react";
+import { Link } from "wouter";
 import { trackWhatsAppConversion } from "@/lib/tracking";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
-import { textoContato } from "@/lib/blogMeta";
+import { mensagemContato, PAGINA_EXAME_LABEL, textoContato, tituloContato } from "@/lib/blogMeta";
 
 type Props = {
   examName: string;
@@ -24,40 +30,41 @@ type Props = {
   posicao: "meio" | "fim";
   /** Exame com hora marcada (imagem, MAPA, coleta ginecologica). */
   horaMarcada?: boolean;
+  /** Paginas de exame linkadas pelo quadro (botao secundario). */
+  examPages?: string[];
 };
 
-export default function ExamCTA({ examName, examType, posicao, horaMarcada }: Props) {
+export default function ExamCTA({ examName, examType, posicao, horaMarcada, examPages = [] }: Props) {
   const openWhatsApp = useWhatsAppRedirect();
-  const domiciliar = examName === "coleta domiciliar";
   const label = `artigo_cta_${posicao}`;
+  const paginas = examPages.filter((href) => PAGINA_EXAME_LABEL[href]);
 
   return (
     <aside className="my-10 p-6 md:p-8 bg-surface-light border border-black/5" aria-label="Fale com a Total Quality">
-      {/* <p>, nao <h2>: o artigo ja tem o H2 "Onde fazer ... em Caraguatatuba"
-          e o quadro aparece duas vezes — titulo repetido polui o sumario. */}
-      <p className="heading-display text-2xl md:text-3xl text-text mb-3">
-        {domiciliar ? "Coleta domiciliar em Caraguatatuba" : `${examName[0].toUpperCase()}${examName.slice(1)} na Total Quality`}
-      </p>
-      {textoContato(horaMarcada).map((t, i) => (
-        <p key={i} className={`text-text-light text-sm leading-relaxed ${i === 0 ? "mb-2" : "mb-6"}`}>
+      {/* <p>, nao <h2>: o quadro aparece duas vezes — titulo repetido polui o sumario. */}
+      <p className="heading-display text-2xl md:text-3xl text-text mb-3">{tituloContato(examName)}</p>
+      {textoContato(horaMarcada).map((t, i, arr) => (
+        <p key={i} className={`text-text-light text-sm leading-relaxed ${i === arr.length - 1 ? "mb-6" : "mb-2"}`}>
           {t}
         </p>
       ))}
-      <button
-        type="button"
-        onClick={() => {
-          trackWhatsAppConversion(label, "blog", examType);
-          openWhatsApp(
-            label,
-            domiciliar
-              ? "Olá! Gostaria de informações sobre a coleta domiciliar."
-              : `Olá! Tenho uma dúvida sobre ${examName}.`
-          );
-        }}
-        className="btn-pill-brand inline-flex items-center gap-2"
-      >
-        Tirar dúvidas pelo WhatsApp <ArrowUpRight className="w-4 h-4" />
-      </button>
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="button"
+          onClick={() => {
+            trackWhatsAppConversion(label, "blog", examType);
+            openWhatsApp(label, mensagemContato(examName, horaMarcada));
+          }}
+          className="btn-pill-brand inline-flex items-center gap-2"
+        >
+          {horaMarcada ? "Agendar pelo WhatsApp" : "Tirar dúvidas pelo WhatsApp"} <ArrowUpRight className="w-4 h-4" />
+        </button>
+        {paginas.map((href) => (
+          <Link key={href} href={href} className="btn-pill-outline inline-flex items-center gap-2">
+            {PAGINA_EXAME_LABEL[href]}
+          </Link>
+        ))}
+      </div>
     </aside>
   );
 }

@@ -18,20 +18,26 @@
       "diabetes",
       "Caraguatatuba"
     ],
-    "metaTitle": "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer"
+    "metaTitle": "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer",
+    "examName": "exames de glicemia",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue"
+    ],
+    "dateModified": "2026-10-22"
   },
   {
     "id": "2",
     "slug": "exames-de-sangue-guia-completo",
-    "title": "Exames de Sangue: Guia Completo Para Entender Seus Resultados",
-    "metaTitle": "Exames de Sangue: Guia de Resultados | Total Quality",
-    "subtitle": "Hemograma, glicemia, colesterol e mais — o que cada exame revela sobre sua saúde",
-    "excerpt": "Entender os resultados dos exames de sangue pode parecer complicado, mas é fundamental para acompanhar sua saúde. Conheça os principais exames e o que cada valor significa.",
+    "title": "Exames de Sangue: Tipos e Como Entender o Resultado",
+    "metaTitle": "Tipos de Exame de Sangue e Como Entender o Resultado",
+    "subtitle": "Hemograma, glicemia, colesterol, tireoide e mais: o que cada exame avalia, como se preparar e como ler o laudo",
+    "excerpt": "Conheça os tipos de exame de sangue mais pedidos, o preparo de cada um e como ler o laudo: resultado, unidade e valor de referência. Tire dúvidas.",
     "category": "Exames Laboratoriais",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "05 Abr 2026",
-    "readTime": "10 min",
+    "readTime": "8 min",
     "image": "https://totalquality.med.br/images/blog/exames-de-sangue-guia-completo.webp",
     "tags": [
       "exames de sangue",
@@ -40,35 +46,50 @@
       "colesterol",
       "laboratório",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "exames de sangue",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue"
+    ],
+    "dateModified": "2026-10-22"
   },
   {
     "id": "3",
     "slug": "saude-do-coracao-prevencao",
-    "title": "Saúde do Coração: 7 Hábitos Que Podem Salvar Sua Vida",
-    "metaTitle": "Saúde do Coração: 7 Hábitos Essenciais | Total Quality",
-    "subtitle": "Doenças cardiovasculares são a principal causa de morte no Brasil — saiba como se proteger",
-    "excerpt": "As doenças cardiovasculares são responsáveis por mais de 400 mil mortes por ano no Brasil. Conheça os 7 hábitos comprovados pela ciência que protegem seu coração.",
+    "title": "Saúde do Coração: 7 Hábitos de Prevenção e Exames",
+    "metaTitle": "Saúde do Coração: 7 Hábitos e Exames | Total Quality",
+    "subtitle": "Hábitos que ajudam a reduzir o risco de doenças do coração e os exames que o médico pode pedir para acompanhar",
+    "excerpt": "Conheça 7 hábitos que ajudam a reduzir o risco de doenças do coração, os exames que o médico pode pedir e os sinais de alerta que pedem emergência.",
     "category": "Saúde do Coração",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "28 Mar 2026",
-    "readTime": "7 min",
+    "readTime": "6 min",
     "image": "https://totalquality.med.br/images/blog/saude-do-coracao-prevencao.webp",
     "tags": [
       "cardiologia",
       "saúde do coração",
       "prevenção",
       "eletrocardiograma"
-    ]
+    ],
+    "examName": "eletrocardiograma",
+    "examType": "eletrocardiograma",
+    "examPages": [
+      "/exames/eletrocardiograma",
+      "/exames/holter",
+      "/exames/mapa"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "4",
     "slug": "alimentacao-e-exames-laboratoriais",
-    "title": "Como a Alimentação Influencia Seus Exames Laboratoriais",
-    "metaTitle": "Como a Alimentação Influencia Seus Exames | Total Quality",
-    "subtitle": "Entenda a relação entre dieta, jejum e a precisão dos resultados dos seus exames",
-    "excerpt": "Sua alimentação pode alterar significativamente os resultados dos exames de sangue. Saiba como se preparar corretamente e quais alimentos podem interferir nos seus resultados.",
+    "title": "Alimentação Antes do Exame: o Que Pode Alterar o Resultado",
+    "metaTitle": "Alimentação e Exames: Jejum e o Que Evitar | Total Quality",
+    "subtitle": "Jejum, gordura, álcool, café e suplementos: como o que você come e toma antes da coleta pode mudar os resultados",
+    "excerpt": "Veja como jejum, refeições gordurosas, álcool, café e suplementos como a biotina podem alterar exames laboratoriais e como se preparar para a coleta.",
     "category": "Nutrição",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
@@ -81,15 +102,21 @@
       "jejum",
       "nutrição",
       "preparo para exames"
-    ]
+    ],
+    "examName": "exames de sangue",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue"
+    ],
+    "dateModified": "2026-10-22"
   },
   {
     "id": "5",
     "slug": "vitamina-d-importancia-saude",
-    "title": "Vitamina D: Por Que Você Provavelmente Está Com Deficiência",
-    "metaTitle": "Vitamina D: Deficiência é Comum? | Total Quality",
-    "subtitle": "Mesmo no Brasil tropical, a deficiência de vitamina D atinge milhões de pessoas",
-    "excerpt": "Estima-se que 60% dos brasileiros tenham níveis insuficientes de vitamina D. Entenda por que isso acontece, os riscos para a saúde e como manter seus níveis adequados.",
+    "title": "Vitamina D: Para Que Serve, Exame e Valores de Referência",
+    "metaTitle": "Vitamina D: Exame, Valores e Deficiência | Total Quality",
+    "subtitle": "O que a vitamina D faz no corpo, quem tem mais risco de deficiência, como é o exame 25(OH)D e como as faixas são usadas",
+    "excerpt": "Para que serve a vitamina D, quem tem mais risco de deficiência, como é o exame 25(OH)D e o que indicam as faixas de referência. Entenda o laudo.",
     "category": "Bem-Estar",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
@@ -102,20 +129,26 @@
       "exames de sangue",
       "saúde óssea",
       "imunidade"
-    ]
+    ],
+    "examName": "exame de vitamina D",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue"
+    ],
+    "dateModified": "2026-10-22"
   },
   {
     "id": "11",
     "slug": "hemograma-completo-o-que-avalia",
-    "title": "Hemograma Completo: O Que o Exame de Sangue Avalia?",
-    "metaTitle": "Hemograma Completo: O Que o Exame Avalia? | Total Quality",
-    "subtitle": "Entenda quais células e parâmetros são analisados no hemograma completo",
-    "excerpt": "Entenda o que o hemograma completo avalia, quais células são analisadas, se precisa de jejum e como o exame auxilia na avaliação da saúde.",
+    "title": "Hemograma Completo: O Que Avalia e Quais Exames Inclui",
+    "metaTitle": "Hemograma Completo: O Que Avalia e Quais Exames Inclui",
+    "subtitle": "Série vermelha, série branca e plaquetas: o que cada parte do exame mostra, se precisa de jejum e como é a coleta",
+    "excerpt": "O hemograma completo avalia hemácias, leucócitos e plaquetas em uma só amostra de sangue. Veja o que cada série mostra e se o exame precisa de jejum.",
     "category": "Exames Laboratoriais",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
-    "readTime": "9 min",
+    "readTime": "7 min",
     "image": "https://totalquality.med.br/images/blog/hemograma-completo-o-que-avalia.webp",
     "tags": [
       "hemograma completo",
@@ -123,6 +156,12 @@
       "exame de sangue",
       "exames laboratoriais",
       "Caraguatatuba"
+    ],
+    "dateModified": "2026-10-22",
+    "examName": "hemograma completo",
+    "examType": "hemograma",
+    "examPages": [
+      "/exames/hemograma"
     ]
   },
   {
@@ -144,7 +183,14 @@
       "diagnóstico por imagem",
       "Caraguatatuba",
       "exame de imagem"
-    ]
+    ],
+    "examName": "tomografia computadorizada",
+    "examType": "tomografia-computadorizada",
+    "examPages": [
+      "/exames/tomografia-computadorizada"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "13",
@@ -166,7 +212,15 @@
       "pressão arterial",
       "arritmia",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "MAPA e Holter",
+    "examType": "mapa",
+    "examPages": [
+      "/exames/mapa",
+      "/exames/holter"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "14",
@@ -187,7 +241,14 @@
       "exames laboratoriais",
       "medicina preventiva",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "check-up",
+    "examType": "checkup",
+    "examPages": [
+      "/checkup"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "15",
@@ -208,7 +269,14 @@
       "Doppler",
       "diagnóstico por imagem",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "ultrassonografia com Doppler",
+    "examType": "ultrassonografia",
+    "examPages": [
+      "/exames/ultrassonografia"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "16",
@@ -229,7 +297,15 @@
       "saúde da mulher",
       "diagnóstico por imagem",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "mamografia e ultrassom das mamas",
+    "examType": "mamografia",
+    "examPages": [
+      "/exames/mamografia",
+      "/exames/ultrassonografia"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "17",
@@ -250,7 +326,15 @@
       "diagnóstico por imagem",
       "Caraguatatuba",
       "exame de imagem"
-    ]
+    ],
+    "examName": "raio-X e tomografia",
+    "examType": "raio-x",
+    "examPages": [
+      "/exames/raio-x",
+      "/exames/tomografia-computadorizada"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "18",
@@ -272,7 +356,14 @@
       "NR-7",
       "medicina do trabalho",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "exames ocupacionais",
+    "examType": "exame-admissional",
+    "examPages": [
+      "/exames/exame-admissional"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "19",
@@ -294,20 +385,27 @@
       "Detran",
       "exames ocupacionais",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "exame toxicológico",
+    "examType": "exame-toxicologico",
+    "examPages": [
+      "/exames/exame-toxicologico"
+    ],
+    "horaMarcada": true,
+    "dateModified": "2026-10-22"
   },
   {
     "id": "20",
     "slug": "eletrocardiograma-o-que-e-como-e-feito",
-    "title": "Eletrocardiograma (ECG): O Que É, Para Que Serve e Como É Feito",
-    "metaTitle": "Eletrocardiograma (ECG): O Que É | Total Quality",
-    "subtitle": "Entenda como funciona o exame, se dói, quanto tempo dura e quando costuma ser solicitado",
-    "excerpt": "Entenda o que é o eletrocardiograma, como funciona, se dói, quanto tempo dura e em quais situações o médico costuma solicitar o exame.",
+    "title": "Eletrocardiograma (ECG): Para Que Serve e Como É Feito",
+    "metaTitle": "Eletrocardiograma (ECG): Para Que Serve e Como É Feito",
+    "subtitle": "O que significa ECG, para que serve, como é feito, quanto tempo demora e se precisa de jejum ou preparo",
+    "excerpt": "O eletrocardiograma (ECG) registra a atividade elétrica do coração em poucos minutos, sem dor e sem jejum. Veja para que serve, como é feito e o preparo.",
     "category": "Saúde do Coração",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
     "date": "12 Set 2026",
-    "readTime": "8 min",
+    "readTime": "7 min",
     "image": "https://totalquality.med.br/images/blog/eletrocardiograma-o-que-e-como-e-feito.webp",
     "tags": [
       "eletrocardiograma",
@@ -315,6 +413,13 @@
       "exame cardiológico",
       "saúde do coração",
       "Caraguatatuba"
+    ],
+    "dateModified": "2026-10-22",
+    "examName": "eletrocardiograma",
+    "examType": "eletrocardiograma",
+    "horaMarcada": true,
+    "examPages": [
+      "/exames/eletrocardiograma"
     ]
   },
   {
@@ -336,7 +441,13 @@
       "controle de qualidade",
       "Anvisa",
       "escolha de laboratório"
-    ]
+    ],
+    "examName": "exames laboratoriais",
+    "examType": "laboratorio",
+    "examPages": [
+      "/laboratorio-caraguatatuba"
+    ],
+    "dateModified": "2026-10-22"
   },
   {
     "id": "23",
@@ -357,15 +468,21 @@
       "dado sensível",
       "sigilo",
       "Caraguatatuba"
-    ]
+    ],
+    "examName": "exames laboratoriais",
+    "examType": "laboratorio",
+    "examPages": [
+      "/laboratorio-caraguatatuba"
+    ],
+    "dateModified": "2026-10-22"
   },
   {
     "id": "24",
     "slug": "exame-de-urina-eas-como-coletar",
-    "title": "Exame de Urina (EAS): Para Que Serve e Como Coletar Corretamente",
-    "metaTitle": "Exame de Urina (EAS): Como Coletar Corretamente",
-    "subtitle": "O exame mais simples do pedido médico é também o que mais se perde por erro de coleta",
-    "excerpt": "O EAS — exame de urina de rotina — avalia infecção, função renal, hidratação e sinais de diabetes. É simples, barato e o que mais precisa ser repetido por coleta mal feita. Veja o passo a passo correto.",
+    "title": "Exame de Urina (EAS): O Que É e Como Coletar Corretamente",
+    "metaTitle": "Exame de Urina EAS: O Que É e Como Coletar | Total Quality",
+    "subtitle": "O que o EAS avalia, se precisa de jejum e o passo a passo da coleta para não precisar repetir o exame",
+    "excerpt": "O EAS (urina tipo 1) é o exame de urina de rotina: não precisa de jejum, mas exige coleta certa. Veja o que avalia e o passo a passo para não repetir.",
     "category": "Exames Laboratoriais",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
@@ -378,6 +495,12 @@
       "urina tipo 1",
       "preparo de exame",
       "urocultura"
+    ],
+    "dateModified": "2026-10-22",
+    "examName": "exame de urina (EAS)",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue"
     ]
   },
   {
@@ -411,7 +534,7 @@
       "curva-glicemica-teste-tolerancia-glicose",
       "exames-de-sangue-guia-completo"
     ],
-    "metaTitle": "Hemoglobina Glicada (HbA1c) em Caraguatatuba: preparo"
+    "metaTitle": "Hemoglobina Glicada (HbA1c): o que é e preparo"
   },
   {
     "id": "26",
@@ -444,7 +567,7 @@
       "resultado-de-exames-online-seguranca",
       "exames-laboratoriais-tipos-e-preparo"
     ],
-    "metaTitle": "Beta HCG em Caraguatatuba: exame de gravidez e resultado"
+    "metaTitle": "Beta HCG: exame de gravidez e como ler o resultado"
   },
   {
     "id": "27",
@@ -477,7 +600,7 @@
       "check-up-medico-quais-exames-fazer",
       "hemoglobina-glicada-exame"
     ],
-    "metaTitle": "Exame de TSH e T4 Livre: tireoide em Caraguatatuba"
+    "metaTitle": "Exame de TSH e T4 Livre: como avaliar a tireoide"
   },
   {
     "id": "28",
@@ -510,7 +633,7 @@
       "exames-laboratoriais-tipos-e-preparo",
       "exames-de-sangue-guia-completo"
     ],
-    "metaTitle": "Urocultura com Antibiograma em Caraguatatuba: como coletar"
+    "metaTitle": "Urocultura com Antibiograma: o que é e como coletar"
   },
   {
     "id": "29",
@@ -543,7 +666,7 @@
       "hemoglobina-glicada-exame",
       "alimentacao-e-exames-laboratoriais"
     ],
-    "metaTitle": "Curva Glicêmica (TOTG) em Caraguatatuba: preparo"
+    "metaTitle": "Curva Glicêmica (TOTG): como é feita e preparo"
   },
   {
     "id": "30",
@@ -576,7 +699,7 @@
       "curva-glicemica-teste-tolerancia-glicose",
       "alimentacao-e-exames-laboratoriais"
     ],
-    "metaTitle": "Glicemia de Jejum em Caraguatatuba: preparo e valores"
+    "metaTitle": "Glicemia de Jejum: preparo e valores de referência"
   },
   {
     "id": "31",
@@ -673,7 +796,7 @@
       "mamografia-ultrassom-mamas-diferencas",
       "check-up-medico-quais-exames-fazer"
     ],
-    "metaTitle": "Exame de Papanicolau em Caraguatatuba: preparo"
+    "metaTitle": "Papanicolau (Preventivo): para que serve e preparo"
   },
   {
     "id": "35",
@@ -706,7 +829,7 @@
       "diferenca-ultrassom-comum-doppler",
       "beta-hcg-exame-de-gravidez"
     ],
-    "metaTitle": "Ultrassom Transvaginal em Caraguatatuba: preparo"
+    "metaTitle": "Ultrassom Transvaginal: para que serve e preparo"
   },
   {
     "id": "36",
@@ -740,7 +863,7 @@
       "exames-diagnostico-infarto",
       "saude-do-coracao-prevencao"
     ],
-    "metaTitle": "Exame de Colesterol (Lipidograma) em Caraguatatuba"
+    "metaTitle": "Exame de Colesterol (Lipidograma): jejum e resultado"
   },
   {
     "id": "37",
@@ -774,7 +897,7 @@
       "exames-diagnostico-infarto",
       "saude-do-coracao-prevencao"
     ],
-    "metaTitle": "Exame de Lipoproteína(a) e ApoB em Caraguatatuba"
+    "metaTitle": "Lipoproteína(a) e ApoB: o que são e quando pedir"
   },
   {
     "id": "38",
@@ -808,7 +931,7 @@
       "eletrocardiograma-o-que-e-como-e-feito",
       "saude-do-coracao-prevencao"
     ],
-    "metaTitle": "Exames para Diagnóstico de Infarto | Caraguatatuba"
+    "metaTitle": "Exames para Diagnóstico de Infarto | Total Quality"
   },
   {
     "id": "39",
@@ -842,7 +965,7 @@
       "exame-de-colesterol-lipidograma",
       "mapa-ou-holter-diferenca"
     ],
-    "metaTitle": "Exames para Diagnóstico de AVC e Prevenção | Caraguatatuba"
+    "metaTitle": "Exames para Diagnóstico de AVC e Prevenção | Total Quality"
   },
   {
     "id": "40",
@@ -876,7 +999,7 @@
       "exames-diagnostico-avc",
       "exames-diagnostico-infarto"
     ],
-    "metaTitle": "Exames para Diagnóstico de Hipertensão em Caraguatatuba"
+    "metaTitle": "Exames para Diagnóstico de Hipertensão | Total Quality"
   },
   {
     "id": "41",
@@ -910,6 +1033,6 @@
       "hemoglobina-glicada-exame",
       "curva-glicemica-teste-tolerancia-glicose"
     ],
-    "metaTitle": "Exames para Diagnóstico de Diabetes em Caraguatatuba"
+    "metaTitle": "Exames para Diagnóstico de Diabetes | Total Quality"
   }
 ]

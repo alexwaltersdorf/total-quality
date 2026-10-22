@@ -72,3 +72,16 @@ export const CONVENIOS_TEXTO = "Cartão de Todos, Solumedi e Leader";
  */
 export const CHECKUP_TITLE = "Check-up Completo em Caraguatatuba | Total Quality";
 export const CHECKUP_DESCRIPTION = "Check-up em Caraguatatuba com planos Básico, Select e Premium: exames de sangue, cardiológicos e de imagem por faixa etária. Dúvidas pelo WhatsApp.";
+
+/**
+ * Link de WhatsApp da clinica — formato unico do site (system prompt do blog,
+ * 21/10/2026, regra 3): api.whatsapp.com com o telefone fixo (12) 3887-3535.
+ * Nunca wa.me nem o celular antigo. O evento de conversao nao depende do
+ * formato do link (vem do dataLayer, whatsapp_click), entao trocar aqui nao
+ * mexe no rastreamento.
+ */
+export const WHATSAPP_PHONE = "551238873535";
+export function whatsappUrl(text?: string): string {
+  const base = `https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}`;
+  return text ? `${base}&text=${encodeURIComponent(text)}` : base;
+}

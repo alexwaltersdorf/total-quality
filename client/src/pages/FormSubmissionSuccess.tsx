@@ -14,8 +14,8 @@ import { trackWhatsAppConversionWithLead } from "@/lib/tracking";
 import { consumeLeadHandoff, type LeadHandoff } from "@/lib/leadHandoff";
 import { CheckCircle, ArrowUpRight, Phone } from "lucide-react";
 import { useLocation } from "wouter";
+import { whatsappUrl } from "@shared/const";
 
-const WHATSAPP_NUMBER = "551238873535";
 
 /** Monta a mensagem pre-preenchida do WhatsApp a partir do lead em memoria. */
 function buildWhatsAppMessage(lead: LeadHandoff | null): string {
@@ -40,14 +40,14 @@ export default function FormSubmissionSuccess() {
 
   const openWhatsApp = () => {
     const lead = leadRef.current;
-    const msg = encodeURIComponent(buildWhatsAppMessage(lead));
+    const msg = buildWhatsAppMessage(lead);
     // Conversão identificada: o hash do contato entra nas conversões
     // aprimoradas do Ads quando há consentimento de marketing.
     void trackWhatsAppConversionWithLead("form_success_cta", "form_success", "geral", {
       email: lead?.email,
       telefone: lead?.telefone,
     });
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank", "noopener,noreferrer");
+    window.open(whatsappUrl(msg), "_blank", "noopener,noreferrer");
   };
 
   useEffect(() => {

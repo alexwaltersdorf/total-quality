@@ -35,6 +35,7 @@
     "### Depois, os sinais de que falta açúcar no cérebro",
     "- Tontura\n- Visão embaçada ou dupla\n- Dificuldade de raciocinar e de achar palavras\n- Fala arrastada\n- Sonolência\n- Comportamento diferente do habitual",
     "Quem tem episódios repetidos pode deixar de sentir a primeira onda. É um fenômeno descrito na literatura clínica como [perda da percepção da hipoglicemia](https://gpnotebook.com/pt/pages/pediatria/perda-de-consciencia-de-niveis-baixos-de-acucar-no-sangue-glucose): o aviso da adrenalina some, e a pessoa passa direto para os sintomas neurológicos. Se isso está acontecendo, conte ao seu médico — muda a conduta.",
+    "[[cta]]",
     "## Quando é emergência",
     "Não é todo episódio, mas alguns são. Procure atendimento de urgência ou chame o **SAMU 192** se houver:",
     "- Confusão mental, desorientação ou fala incompreensível\n- Convulsão\n- Desmaio ou dificuldade para acordar a pessoa\n- Episódio que não melhora depois de ingerir açúcar",
@@ -60,8 +61,14 @@
     "### Meu glicosímetro mostrou valor baixo. Isso fecha o diagnóstico?",
     "O aparelho de ponta de dedo é a ferramenta certa para o monitoramento do dia a dia, e um valor baixo nele deve ser tratado na hora, conforme o plano do seu médico. Para o diagnóstico da causa, o médico costuma confirmar com dosagem laboratorial, que permite medir insulina e peptídeo C na mesma coleta. Uma coisa não substitui a outra.",
     "### Quanto tempo leva o resultado?",
-    "A maioria dos exames laboratoriais fica disponível em até 24 horas. A curva glicêmica exige permanência na unidade durante as coletas seriadas, e o tempo é informado na recepção no dia do exame.",
+    "O prazo de cada exame laboratorial é informado no atendimento. A curva glicêmica exige permanência na unidade durante as coletas seriadas, e o tempo é informado na recepção no dia do exame.",
     "Este artigo é informativo e não substitui consulta médica. A indicação dos exames e a interpretação de qualquer resultado são do seu médico. Em caso de sintoma grave, procure atendimento de urgência."
   ],
-  "metaTitle": "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer"
+  "metaTitle": "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer",
+  "examName": "exames de glicemia",
+  "examType": "exames-de-sangue",
+  "examPages": [
+    "/exames/exames-de-sangue"
+  ],
+  "dateModified": "2026-10-22"
 }

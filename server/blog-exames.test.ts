@@ -194,7 +194,13 @@ describe("GUARD-RAIL: artigos de exame laboratorial (out/2026)", () => {
     const faqs = extractFaqs(post.content);
     expect(faqs.length).toBeGreaterThanOrEqual(5);
     expect(faqs.length).toBeLessThanOrEqual(6);
-    expect(`${post.title} ${post.metaTitle}`).toMatch(/Caraguatatuba|Guia/);
+    // Regra 5 do system prompt do blog (21/10/2026) substitui a exigencia
+    // anterior de "Caraguatatuba" no titulo: busca local e da pagina /exames/;
+    // o artigo responde a duvida informativa nacional e a ligacao local fica
+    // no quadro de contato. Excecao: coleta domiciliar nao tem pagina de exame.
+    if (slug !== "coleta-domiciliar-exames-caraguatatuba") {
+      expect(`${post.title} ${post.metaTitle}`).not.toMatch(/Caraguatatuba/);
+    }
   });
 
   it.each(ARTIGOS_DE_EXAME)("%s: valor de referencia sempre com fonte e aviso", (slug) => {
@@ -426,5 +432,62 @@ describe("GUARD-RAIL: autoria e revisao visiveis (system prompt do blog, out/202
     const html = getSeoContentForPath(`/blog/${slug}`)!;
     expect(html).not.toContain("Revisado por");
     expect(html).not.toContain('"reviewedBy"');
+  });
+});
+
+describe("GUARD-RAIL: do artigo para o exame (system prompt do blog, fase 3)", () => {
+  // O blog respondia 72% das impressoes do site com CTR de 0,14%: o leitor
+  // chegava e nao tinha caminho para a pagina do exame. Todo artigo publicado
+  // leva o quadro de contato no meio e no fim, com a pagina do exame e o
+  // WhatsApp, e a mensagem diz que o paciente veio do blog.
+  it.each(publicados.map((p) => p.slug))("%s tem quadro de contato ligado a pagina do exame", (slug) => {
+    const post = load(slug);
+    expect(post.examName, "sem examName o quadro nao aparece").toBeTruthy();
+    expect(post.examPages?.length, "quadro sem pagina de exame").toBeGreaterThan(0);
+    expect(post.content.filter((b) => b.trim() === CTA_MARKER)).toHaveLength(1);
+    const html = getSeoContentForPath(`/blog/${slug}`)!;
+    expect(html.match(/<aside>/g)?.length ?? 0, "quadro no meio e no fim").toBeGreaterThanOrEqual(2);
+    for (const href of post.examPages!) expect(html).toContain(`<a href="${href}">`);
+    expect(html).toContain("https://api.whatsapp.com/send?phone=551238873535&amp;text=Ol%C3%A1!%20Vim%20pelo%20blog");
+  });
+});
+
+describe("GUARD-RAIL: um formato de link de WhatsApp (system prompt do blog, regra 3)", () => {
+  // Contato unico: api.whatsapp.com com o fixo (12) 3887-3535, montado por
+  // whatsappUrl() em shared/const.ts. Nunca wa.me nem o celular antigo.
+  it("nenhum codigo do site monta link wa.me ou usa o celular antigo", () => {
+    const raiz = nodePath.resolve(import.meta.dirname, "..");
+    const dirs = ["client/src", "server/_core", "shared", "client/index.html"];
+    const arquivos: string[] = [];
+    for (const d of dirs) {
+      const abs = nodePath.join(raiz, d);
+      if (fs.statSync(abs).isFile()) arquivos.push(abs);
+      else
+        for (const f of fs.readdirSync(abs, { recursive: true, encoding: "utf-8" }))
+          if (/\.(tsx?|json|html)$/.test(f)) arquivos.push(nodePath.join(abs, f));
+    }
+    const ofensores = arquivos.flatMap((f) => {
+      const texto = fs.readFileSync(f, "utf-8");
+      const achados: string[] = [];
+      // utmTracker le "wa.me" no REFERRER de quem chega, nao monta link.
+      if (/wa\.me\//.test(texto) && !f.endsWith("utmTracker.ts")) achados.push(`${f}: wa.me`);
+      if (/99774/.test(texto)) achados.push(`${f}: celular antigo`);
+      return achados;
+    });
+    expect(ofensores).toEqual([]);
+  });
+});
+
+describe("GUARD-RAIL: uma URL por intencao — titulo do artigo (system prompt do blog, regra 5)", () => {
+  // "Ultrassonografia caraguatatuba sp" caiu da posicao 4,7 para 48,3 quando um
+  // artigo do blog passou a disputar a busca com /exames/ultrassonografia.
+  // Artigo de blog nao leva o nome da cidade no title nem no H1; a unica
+  // excecao e o tema sem pagina de servico equivalente.
+  const SEM_PAGINA_EQUIVALENTE = new Set(["coleta-domiciliar-exames-caraguatatuba"]);
+  it.each(index.map((p) => p.slug))("%s nao disputa a busca local da pagina de exame", (slug) => {
+    if (SEM_PAGINA_EQUIVALENTE.has(slug)) return;
+    const post = load(slug);
+    expect(post.title).not.toMatch(/Caraguatatuba/);
+    expect(post.metaTitle ?? "").not.toMatch(/Caraguatatuba/);
   });
 });

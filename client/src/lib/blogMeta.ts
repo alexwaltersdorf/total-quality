@@ -47,6 +47,11 @@ export interface BlogPostMeta {
    * laboratorial e sem agendamento; esses exames, nao.
    */
   horaMarcada?: boolean;
+  /**
+   * Paginas de exame que o quadro de contato do artigo linka (botao "Ver a
+   * pagina"). Caminhos de PAGINA_EXAME_LABEL. Sem isso, so o WhatsApp.
+   */
+  examPages?: string[];
   /** Tres slugs escolhidos a mao para "Artigos relacionados". */
   related?: string[];
   /** <title> da pagina, quando diferente do H1. Fonte: routes-metadata.ts. */
@@ -63,16 +68,53 @@ export const CTA_MARKER = "[[cta]]";
 /** Artigos com mais palavras que isto ganham sumario com ancoras dos H2. */
 export const TOC_MIN_WORDS = 1000;
 
+/** Rotulo do botao de cada pagina que o quadro de contato pode linkar. */
+export const PAGINA_EXAME_LABEL: Record<string, string> = {
+  "/exames/exames-de-sangue": "Exames de sangue",
+  "/exames/hemograma": "Hemograma completo",
+  "/exames/eletrocardiograma": "Eletrocardiograma",
+  "/exames/holter": "Holter 24h",
+  "/exames/mapa": "MAPA 24h",
+  "/exames/ultrassonografia": "Ultrassonografia",
+  "/exames/mamografia": "Mamografia",
+  "/exames/raio-x": "Raio-X",
+  "/exames/tomografia-computadorizada": "Tomografia computadorizada",
+  "/exames/exame-admissional": "Exames ocupacionais",
+  "/exames/exame-toxicologico": "Exame toxicológico",
+  "/checkup": "Check-up",
+  "/laboratorio-caraguatatuba": "Análises clínicas",
+};
+
+/** Titulo do quadro: a ligacao local ("em Caraguatatuba") fica aqui, nao no title do artigo. */
+export function tituloContato(examName: string): string {
+  if (examName === "coleta domiciliar") return "Coleta domiciliar em Caraguatatuba";
+  return `${examName[0].toUpperCase()}${examName.slice(1)} em Caraguatatuba`;
+}
+
+/**
+ * Mensagem do WhatsApp do quadro. Exame com hora marcada: "quero agendar".
+ * Coleta laboratorial e sem agendamento, entao a mensagem e de duvida.
+ */
+export function mensagemContato(examName: string, horaMarcada?: boolean): string {
+  if (examName === "coleta domiciliar") return "Olá! Vim pelo blog e quero informações sobre a coleta domiciliar.";
+  return horaMarcada
+    ? `Olá! Vim pelo blog e quero agendar ${examName}.`
+    : `Olá! Vim pelo blog e tenho uma dúvida sobre ${examName}.`;
+}
+
 /** Texto do quadro de contato — o mesmo no ExamCTA.tsx e no prerender. */
 export function textoContato(horaMarcada?: boolean): string[] {
+  const convenios = "Convênios: Cartão de Todos, Solumedi e Leader. Fora deles, o atendimento é particular.";
   return horaMarcada
     ? [
         "Na unidade da Rua Padre Anchieta, 1010 – Centro, este exame é feito com hora marcada pelo WhatsApp (12) 3887-3535, de segunda a sexta, das 7h30 às 18h. Traga o pedido médico e um documento com foto.",
         "A coleta de exames laboratoriais do mesmo pedido é sem agendamento, por ordem de chegada. Dúvidas de preparo e convênio também pelo WhatsApp.",
+        convenios,
       ]
     : [
         "Na unidade da Rua Padre Anchieta, 1010 – Centro, a coleta de exames laboratoriais é sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Traga o pedido médico e um documento com foto.",
         "Também fazemos coleta domiciliar: área atendida, horário e valor são confirmados pelo WhatsApp (12) 3887-3535, que também tira dúvidas de preparo e convênio.",
+        convenios,
       ];
 }
 
