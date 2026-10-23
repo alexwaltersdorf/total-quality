@@ -1,8 +1,42 @@
 -- Localizacao da empresa pelo CEP: cache, deteccao de centroide e aneis.
 -- Aplicado em producao em 22/10/2026. Acompanha automacao/ana-agenda/edge-cep.ts.
 --
--- A ancora de distancia e ana_km_da_clinica(lat, lon), que ja existia, fixada
--- em -23.6225, -45.4132 (coordenada da clinica no schema do site).
+-- A ancora de distancia e ana_km_da_clinica(lat, lon).
+--
+-- ATENCAO: a ancora foi corrigida em 22/10/2026. Antes vinha do schema
+-- LocalBusiness do site (-23.6225, -45.4132), que esta ~600 m fora do lugar.
+-- Passou a usar a coordenada do Google Business Profile, conferida contra o no
+-- do OpenStreetMap do mesmo endereco (batem em 15 m). O schema do site
+-- continua errado e e uma correcao pendente no repositorio.
+--
+--   GBP   -23.6213648, -45.4075194  (place_id ChIJl9cmhfhjzZQRANUzZnnRLF8)
+--   OSM   -23.6213740, -45.4073685
+--   site  -23.6225000, -45.4132000  <- 592 m do ponto real
+
+create or replace function public.ana_km_da_clinica(p_lat double precision, p_lon double precision)
+returns double precision language sql immutable parallel safe as $function$
+  SELECT CASE WHEN p_lat IS NULL OR p_lon IS NULL THEN NULL ELSE
+    6371.0 * 2 * asin(sqrt(
+      power(sin(radians(p_lat - (-23.6213648)) / 2), 2)
+      + cos(radians(-23.6213648)) * cos(radians(p_lat))
+      * power(sin(radians(p_lon - (-45.4075194)) / 2), 2)
+    )) END
+$function$;
+
+-- Trocar a ancora NAO reescreve o que ja esta gravado numa coluna gerada
+-- STORED, e o Postgres so reavalia a expressao quando uma coluna de que ela
+-- depende entra no UPDATE: mexer em "tentativas" nao basta, tem de ser
+-- latitude/longitude. Rodar isto depois de qualquer troca de ancora.
+create or replace function public.geo_recalcula_distancias()
+returns integer language plpgsql as $$
+declare n integer;
+begin
+  with r as (
+    update public.geo_cep set latitude = latitude, longitude = longitude
+    returning cep)
+  select count(*)::int into n from r;
+  return n;
+end $$;
 
 -- ---------------------------------------------------------------------------
 -- 1. Cache: um registro por CEP, nunca por empresa

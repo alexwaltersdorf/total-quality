@@ -29,6 +29,27 @@ Toda chamada roda também `geo_cep_reclassifica()` e `prospeccao_aplica_geo()`,
 então a empresa já sai com `latitude`, `longitude`, `km_da_clinica` e
 `anel_10km` carimbados. O resultado da operação se lê em `prospeccao_anel`.
 
+## A âncora: de onde se mede a distância
+
+| fonte | coordenada | |
+|---|---|---|
+| Google Business Profile | `-23.6213648, -45.4075194` | **em uso** |
+| OpenStreetMap | `-23.6213740, -45.4073685` | bate com o GBP em 15 m |
+| schema do site (`useSchemaLocalBusiness.ts`) | `-23.6225, -45.4132` | **592 m fora** |
+
+A primeira versão deste sistema foi ancorada na coordenada do site, porque era
+a que estava à mão no repositório. Está errada. O perfil no Google e o nó do
+OpenStreetMap do mesmo endereço concordam entre si e discordam do site em quase
+600 metros.
+
+**Pendência:** o schema `LocalBusiness` publicado no site continua com a
+coordenada errada. Isso é problema de SEO local, não deste sistema, mas sai da
+mesma causa.
+
+Ao trocar a âncora, rodar `geo_recalcula_distancias()`. Coluna gerada `STORED`
+guarda o valor calculado, e o Postgres só reavalia a expressão quando uma
+coluna de que ela depende entra no `UPDATE` — mexer em `tentativas` não basta.
+
 ## A armadilha que define o desenho
 
 As fontes gratuitas de CEP devolvem, em boa parte do interior, **o centro do
@@ -40,10 +61,12 @@ O efeito num anel de 10 km:
 
 | CEP | bairro | antes | depois do refino |
 |---|---|---|---|
-| 11677000 | Massaguaçu | 0,25 km — anel 1 | **25,73 km — anel 3** |
-| 11670000 | Barranco Alto | 0,25 km — anel 1 | 8,18 km — anel 1 |
-| 11676000 | Balneário Califórnia | 0,25 km — anel 1 | 6,48 km — anel 1 |
-| 11660010 | Centro | 0,25 km — anel 1 | 0,26 km — anel 1 |
+| 11677000 | Massaguaçu | 0,25 km — anel 1 | **25,70 km — anel 3** |
+| 11670000 | Barranco Alto | 0,25 km — anel 1 | 8,58 km — anel 1 |
+| 11676000 | Balneário Califórnia | 0,25 km — anel 1 | 5,90 km — anel 1 |
+| 11660010 | Centro | 0,25 km — anel 1 | 0,38 km — anel 1 |
+
+(distâncias já medidas da âncora corrigida)
 
 Sem a correção, uma empresa de Massaguaçu entraria na primeira leva como se
 fosse vizinha da clínica.
