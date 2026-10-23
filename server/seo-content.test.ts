@@ -978,6 +978,30 @@ describe("GUARD-RAIL: uma URL por intencao — consolidacao do blog (out/2026)",
   });
 });
 
+describe("GUARD-RAIL: auditoria de indexacao (23/10/2026)", () => {
+  // URLs com historico de impressao no Search Console que respondiam 404.
+  const COM_EQUIVALENTE: Record<string, string> = {
+    "/blog/eletrocardiograma-o-que-%C3%A9-como-%C3%A9-feito": "/blog/eletrocardiograma-o-que-e-como-e-feito",
+    "/blog/exame-de-sangue-guia-completo": "/blog/exames-de-sangue-guia-completo",
+    "/exames/ultassonografia": "/exames/ultrassonografia",
+    "/eletroencefalograma": "/exames/eletroencefalograma",
+    "/glossario/tempo-resultado-hemograma-completo/": "/exames/hemograma",
+    "/category/blog/": "/blog",
+    "/about-us/": "/#sobre",
+    "/contact-us/": "/#contato",
+    "/contact-us-2/": "/#contato",
+    "/appointment/": "/#contato",
+  };
+
+  it.each(Object.entries(COM_EQUIVALENTE))("%s faz 301 para %s", (origem, destino) => {
+    expect(getLegacyRedirect(origem)).toBe(destino);
+  });
+
+  it("/faq/ responde 410", () => {
+    expect(isGone("/faq/")).toBe(true);
+  });
+});
+
 describe("GUARD-RAIL: blog de SEO local da regiao sul (out/2026)", () => {
   // O briefing de 09/10/2026 pedia um pilar de artigos comparando a Total
   // Quality com grandes redes nominalmente. A Resolucao CFM 2.336/2023 veda
