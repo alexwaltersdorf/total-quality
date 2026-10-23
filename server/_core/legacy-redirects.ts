@@ -71,6 +71,22 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   "/blog/laboratorio-regiao-sul-caraguatatuba": "/laboratorio-caraguatatuba",
   "/blog/laboratorio-jardim-primavera-caraguatatuba": "/laboratorio-caraguatatuba",
   "/blog/convenios-laboratorio-caraguatatuba": "/convenios",
+
+  // Auditoria de indexacao (23/10/2026): URLs com historico de impressao no
+  // Search Console que respondiam 404 e tem equivalente atual. Erros de
+  // digitacao em links externos, o slug com acento e paginas de um WordPress
+  // antigo. Express entrega req.path ainda codificado (%C3%A9), por isso a
+  // chave do slug acentuado vai codificada.
+  "/blog/eletrocardiograma-o-que-%C3%A9-como-%C3%A9-feito": "/blog/eletrocardiograma-o-que-e-como-e-feito",
+  "/blog/exame-de-sangue-guia-completo": "/blog/exames-de-sangue-guia-completo",
+  "/exames/ultassonografia": "/exames/ultrassonografia",
+  "/eletroencefalograma": "/exames/eletroencefalograma",
+  "/glossario/tempo-resultado-hemograma-completo": "/exames/hemograma",
+  "/category/blog": "/blog",
+  "/about-us": "/#sobre",
+  "/contact-us": "/#contato",
+  "/contact-us-2": "/#contato",
+  "/appointment": "/#contato",
 };
 
 /**
@@ -84,6 +100,9 @@ export const GONE_PATHS = new Set([
   // faziam 301 para a home, e o Google trata redirecionamento para a home como
   // "soft 404" (relatorio do GSC de out/2026). Sem pagina equivalente, 410.
   "/medicos", "/corpo-clinico", "/equipe",
+  // FAQ geral do WordPress antigo (auditoria de indexacao, 23/10/2026): as
+  // perguntas hoje vivem em cada pagina de exame, sem uma pagina equivalente.
+  "/faq",
 ]);
 
 /** Resolve o destino do 301 para uma URL legada, ou null se não houver. */

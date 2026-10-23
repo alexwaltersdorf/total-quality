@@ -23,6 +23,11 @@ export const EXAM_BLOG_LINKS: Record<string, string[]> = {
     "exames-diagnostico-diabetes",
     "alimentacao-e-exames-laboratoriais",
     "coleta-domiciliar-exames-caraguatatuba",
+    // Auditoria de indexacao (23/10/2026): artigos publicados sem nenhuma
+    // impressao no Search Console e com 1 ou 2 links internos.
+    "exame-de-urina-eas-como-coletar",
+    "resultado-de-exames-online-seguranca",
+    "como-escolher-laboratorio-analises-clinicas",
   ],
   hemograma: [
     "hemograma-completo-o-que-avalia",
