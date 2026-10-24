@@ -6,7 +6,7 @@ import {
   resolveHttpStatus,
 } from "./_core/seo-content";
 import { CONVENIOS as CONVENIOS_CLIENT } from "@/lib/conveniosData";
-import { getAllRoutes, getKnownBlogSlugs } from "./_core/routes-metadata";
+import { getAllRoutes, getKnownBlogSlugs, getRouteMetadata } from "./_core/routes-metadata";
 import { getLegacyRedirect, isGone, LEGACY_REDIRECTS } from "./_core/legacy-redirects";
 import { anosDeAtuacao } from "@shared/const";
 
@@ -974,6 +974,61 @@ describe("GUARD-RAIL: uma URL por intencao — consolidacao do blog (out/2026)",
       for (const origem of Object.keys(CONSOLIDADOS)) {
         expect(html, `${route.canonical} ainda linka ${origem}`).not.toContain(`href="${origem}"`);
       }
+    }
+  });
+});
+
+describe("GUARD-RAIL: paginas de especialidade (24/10/2026)", () => {
+  // Pedido do Alex: endocrinologista, gastroenterologista e medicina do
+  // trabalho. Decisoes: sem nome de medico, gastro so consulta (a clinica nao
+  // faz endoscopia nem colonoscopia), PCMSO incluso, consultas particular e
+  // pelos tres convenios.
+  const SLUGS = ["endocrinologista", "gastroenterologista", "medicina-do-trabalho"];
+
+  it.each(SLUGS)("/especialidades/%s responde 200, entra no sitemap e tem metadados", (slug) => {
+    const path = `/especialidades/${slug}`;
+    expect(resolveHttpStatus(path, getKnownBlogSlugs(), new Set<string>())).toBe(200);
+    const canonicals = getAllRoutes().map((r) => r.canonical);
+    expect(canonicals).toContain(`https://totalquality.med.br${path}`);
+    const meta = getRouteMetadata(path)!;
+    expect(meta.title.length).toBeLessThanOrEqual(60);
+    expect(meta.description.length).toBeLessThanOrEqual(160);
+    expect(meta.title).toMatch(/Caraguatatuba/);
+  });
+
+  it("especialidade inexistente responde 404", () => {
+    expect(resolveHttpStatus("/especialidades/pediatra", getKnownBlogSlugs(), new Set<string>())).toBe(404);
+  });
+
+  it.each(SLUGS)("/especialidades/%s: prerender dentro das regras do CFM e das decisoes do Alex", (slug) => {
+    const html = getSeoContentForPath(`/especialidades/${slug}`)!;
+    expect(html.match(/<h1>/g)).toHaveLength(1);
+    expect(html).toMatch(/Registro\s*970616/);
+    expect(html).toContain("Alex Waltersdorf - 267.339");
+    expect(html).not.toMatch(/\bCRM\b/);
+    expect(html).not.toMatch(/\bDra?\.\s/);
+    // (o rodape de endereco diz "Sábado e domingo fechado": horario, nao oferta)
+    expect(html).not.toMatch(/\bmelhor(es)?\b|garant|R\$|\bpre[çc]o\b|wa\.me|resson[âa]ncia|ecocardiograma|ergom[ée]trico/i);
+    expect(html).not.toMatch(/\b(Unimed|Bradesco|SulAm[ée]rica|Amil|Porto Seguro|NotreDame|Hapvida|Cassi|Geap)\b/);
+    expect(html).toContain("MedicalWebPage");
+  });
+
+  it("gastroenterologia: so consulta, e a pagina diz que nao faz endoscopia nem colonoscopia", () => {
+    const html = getSeoContentForPath("/especialidades/gastroenterologista")!;
+    expect(html).toContain("não realiza endoscopia nem colonoscopia");
+    expect(html).toContain("https://schema.org/Gastroenterologic");
+  });
+
+  it("medicina do trabalho: PCMSO, ASO e link para o exame admissional", () => {
+    const html = getSeoContentForPath("/especialidades/medicina-do-trabalho")!;
+    expect(html).toContain("PCMSO");
+    expect(html).toContain("ASO");
+    expect(html).toContain('href="/exames/exame-admissional"');
+  });
+
+  it("consultas: particular e os tres convenios", () => {
+    for (const slug of ["endocrinologista", "gastroenterologista"]) {
+      expect(getSeoContentForPath(`/especialidades/${slug}`)!).toContain("Cartão de Todos, Solumedi e Leader");
     }
   });
 });

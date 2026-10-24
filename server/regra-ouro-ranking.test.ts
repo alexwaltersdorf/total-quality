@@ -176,10 +176,21 @@ describe("REGRA DE OURO — contexto: uma entidade só, tipada como laboratório
     expect(servicos).toMatch(/Coleta Domiciliar/);
   });
 
-  it("especialidade no schema só se o site oferece (sem pediatria nem gastro sem página)", () => {
+  it("especialidade no schema só se o site tem a página (sem pediatria)", () => {
     // Schema que declara o que a página não mostra é dado estruturado
-    // enganoso para o Google e serviço não prestado para o CFM.
+    // enganoso para o Google e serviço não prestado para o CFM. Endocrinologia
+    // e gastroenterologia entraram com as páginas de 24/10/2026.
     const [n] = negocio;
-    expect(n.medicalSpecialty.join(" ")).not.toMatch(/Pediatric|Gastroenterologic/);
+    const declaradas: string[] = n.medicalSpecialty;
+    expect(declaradas.join(" ")).not.toMatch(/Pediatric/);
+    const PAGINA_DA_ESPECIALIDADE: Record<string, string> = {
+      "https://schema.org/Endocrine": "/especialidades/endocrinologista",
+      "https://schema.org/Gastroenterologic": "/especialidades/gastroenterologista",
+    };
+    for (const [especialidade, pagina] of Object.entries(PAGINA_DA_ESPECIALIDADE)) {
+      if (declaradas.includes(especialidade)) {
+        expect(getSeoContentForPath(pagina), `${especialidade} sem pagina ${pagina}`).toBeTruthy();
+      }
+    }
   });
 });

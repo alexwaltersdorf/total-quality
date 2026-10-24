@@ -78,6 +78,8 @@ export function useFAQSchema(faqs: FAQItem[]) {
 
 // ── MedicalTest Schema (for exam pages) ──
 interface MedicalTestSchemaProps {
+  /** Tipo do schema: MedicalTest (exame) ou MedicalSpecialty (consulta/especialidade). */
+  type?: "MedicalTest" | "MedicalSpecialty";
   name: string;
   description: string;
   url: string;
@@ -88,7 +90,7 @@ export function useMedicalTestSchema(props: MedicalTestSchemaProps) {
   useEffect(() => {
     const schema = {
       "@context": "https://schema.org",
-      "@type": "MedicalTest",
+      "@type": props.type ?? "MedicalTest",
       name: props.name,
       description: props.description,
       url: props.url.startsWith("http") ? props.url : `${SITE_URL}${props.url}`,

@@ -37,6 +37,7 @@ function Router() {
       <Route path={"/laboratorio-caraguatatuba"} component={LaboratorioCaraguatatuba} />
       <Route path={"/exames"} component={ExamesHub} />
       <Route path={"/exames/:slug"} component={ExamePage} />
+      <Route path={"/especialidades/:slug"} component={ExamePage} />
       <Route path={"/ligar"} component={CallRedirect} />
       <Route path={"/obrigado-chamada"} component={ThankYouCall} />
       <Route path={"/formulario-sucesso"} component={FormSubmissionSuccess} />

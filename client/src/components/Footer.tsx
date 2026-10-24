@@ -31,6 +31,9 @@ const examSitelinks = [
   { label: "Eletrocardiograma", href: "/exames/eletrocardiograma" },
   { label: "Eletroencefalograma", href: "/exames/eletroencefalograma" },
   { label: "Exame Toxicológico", href: "/exames/exame-toxicologico" },
+  { label: "Endocrinologista", href: "/especialidades/endocrinologista" },
+  { label: "Gastroenterologista", href: "/especialidades/gastroenterologista" },
+  { label: "Medicina do Trabalho", href: "/especialidades/medicina-do-trabalho" },
 ];
 
 export default function Footer({ laboratory = false }: { laboratory?: boolean }) {

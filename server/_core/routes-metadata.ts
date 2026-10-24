@@ -15,6 +15,7 @@ import {
 } from "@shared/const";
 import blogIndex from "../../client/src/content/blog/index.json";
 import { blogModifiedIso, isPublished, type BlogPostMeta } from "../../client/src/lib/blogMeta";
+import { especialidadesData, ESPECIALIDADES_BASE } from "../../client/src/lib/especialidadesData";
 
 export interface RouteMetadata {
   title: string;
@@ -181,6 +182,24 @@ const examesMetadata: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
 };
+
+// Paginas de especialidade (/especialidades/:slug), 24/10/2026. Title e
+// description sao os mesmos do client/src/lib/especialidadesData.ts.
+const especialidadesMetadata: Record<string, RouteMetadata> = Object.fromEntries(
+  especialidadesData.map((e) => [
+    e.slug,
+    {
+      title: e.metaTitle,
+      description: e.metaDescription,
+      keywords: e.keywords.join(", "),
+      ogTitle: e.metaTitle,
+      ogDescription: e.metaDescription,
+      canonical: `https://totalquality.med.br${ESPECIALIDADES_BASE}/${e.slug}`,
+      priority: 0.8,
+      changefreq: "monthly",
+    } satisfies RouteMetadata,
+  ])
+);
 
 // Dados dos artigos de blog
 /*
@@ -488,6 +507,12 @@ export function getRouteMetadata(pathname: string): RouteMetadata | null {
     }
   }
 
+  // Verificar rotas de especialidade (/especialidades/:slug)
+  const espMatch = path.match(/^\/especialidades\/([a-z0-9\-]+)$/);
+  if (espMatch && especialidadesMetadata[espMatch[1]]) {
+    return especialidadesMetadata[espMatch[1]];
+  }
+
   // Verificar rotas de blog (/blog/:slug)
   const blogMatch = path.match(/^\/blog\/([a-z0-9\-]+)$/);
   if (blogMatch) {
@@ -544,6 +569,9 @@ export function getAllRoutes(): RouteMetadata[] {
 
   // Adicionar rotas de exames
   routes.push(...Object.values(examesMetadata));
+
+  // Adicionar rotas de especialidade
+  routes.push(...Object.values(especialidadesMetadata));
 
   // Adicionar rotas de blog — so as publicadas; rascunho nunca entra no sitemap
   for (const post of blogPostsMeta) {

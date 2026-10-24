@@ -68,6 +68,10 @@ export const EXAM_BLOG_LINKS: Record<string, string[]> = {
     "exames-diagnostico-infarto",
     "check-up-cardiologico-prevencao-infarto",
   ],
+  // Especialidades (/especialidades/:slug, 24/10/2026)
+  endocrinologista: ["siglas-exames-laboratoriais", "exame-tsh-t4-livre-tireoide", "hemoglobina-glicada-exame"],
+  gastroenterologista: ["ultrassom-abdome-total-preparo", "siglas-exames-laboratoriais"],
+  "medicina-do-trabalho": ["aso-exames-ocupacionais", "exame-toxicologico-clt-motorista", "exame-toxicologico-cnh"],
   eletrocardiograma: [
     "eletrocardiograma-o-que-e-como-e-feito",
     "check-up-cardiologico-prevencao-infarto",
