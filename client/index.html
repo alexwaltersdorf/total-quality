@@ -144,15 +144,22 @@
         "closes": "18:00"
       },
       "foundingDate": "2003-07-08",
-      "areaServed": {
-        "@type": "GeoCircle",
-        "geoMidpoint": {
-          "@type": "GeoCoordinates",
-          "latitude": -23.6225,
-          "longitude": -45.4132
+      "areaServed": [
+        {
+          "@type": "GeoCircle",
+          "geoMidpoint": {
+            "@type": "GeoCoordinates",
+            "latitude": -23.6225,
+            "longitude": -45.4132
+          },
+          "geoRadius": "50000"
         },
-        "geoRadius": "50000"
-      },
+        { "@type": "City", "name": "Caraguatatuba" },
+        { "@type": "City", "name": "Ubatuba" },
+        { "@type": "City", "name": "São Sebastião" },
+        { "@type": "City", "name": "Ilhabela" }
+      ],
+      "isAcceptingNewPatients": true,
       "priceRange": "$$",
       "currenciesAccepted": "BRL",
       "paymentAccepted": "Cash, Credit Card, Debit Card, PIX",
@@ -273,6 +280,14 @@
         {
           "@type": "MedicalTest",
           "name": "Exame Toxicológico"
+        },
+        {
+          "@type": "MedicalProcedure",
+          "name": "Exames Ocupacionais (admissional, periódico e demissional)"
+        },
+        {
+          "@type": "MedicalProcedure",
+          "name": "Coleta Domiciliar de Exames Laboratoriais"
         }
       ],
       "image": ["https://totalquality.med.br/images/fachada-1024.webp", "https://totalquality.med.br/images/recepcao-1024.webp", "https://totalquality.med.br/images/laboratorio-1440.webp"],

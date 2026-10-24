@@ -161,4 +161,25 @@ describe("REGRA DE OURO — contexto: uma entidade só, tipada como laboratório
     expect(n["@type"]).toEqual(expect.arrayContaining(["MedicalBusiness", "DiagnosticLab"]));
     expect(n.hasMap).toContain("query_place_id=ChIJl9cmhfhjzZQRANUzZnnRLF8");
   });
+
+  it("bloco MedicalClinic do Alex (24/10/2026) entrou no mesmo nó, sem criar #clinica", () => {
+    // O bloco enviado pelo Alex declarava a clínica com outro @id (#clinica).
+    // Os dados novos foram fundidos aqui: cidades atendidas, aceita pacientes
+    // novos, exames ocupacionais e coleta domiciliar.
+    const [n] = negocio;
+    expect(ler("client/index.html")).not.toContain("#clinica");
+    expect(n.isAcceptingNewPatients).toBe(true);
+    const cidades = n.areaServed.filter((a: { "@type": string }) => a["@type"] === "City").map((a: { name: string }) => a.name);
+    expect(cidades).toEqual(["Caraguatatuba", "Ubatuba", "São Sebastião", "Ilhabela"]);
+    const servicos = n.availableService.map((s: { name: string }) => s.name).join(" | ");
+    expect(servicos).toMatch(/Exames Ocupacionais/);
+    expect(servicos).toMatch(/Coleta Domiciliar/);
+  });
+
+  it("especialidade no schema só se o site oferece (sem pediatria nem gastro sem página)", () => {
+    // Schema que declara o que a página não mostra é dado estruturado
+    // enganoso para o Google e serviço não prestado para o CFM.
+    const [n] = negocio;
+    expect(n.medicalSpecialty.join(" ")).not.toMatch(/Pediatric|Gastroenterologic/);
+  });
 });
