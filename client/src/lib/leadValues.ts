@@ -42,6 +42,9 @@ export const LEAD_VALUES: Record<string, number> = {
   // --- Slugs das paginas de exame (exam_type vem do slug) ---
   "exames-de-sangue": LABORATORIO,
   hemograma: LABORATORIO,
+  // Sexagem fetal (25/10/2026): ticket ainda nao informado pelo Alex; usa o
+  // de laboratorio, que e a categoria do exame, ate ele informar o proprio.
+  "sexagem-fetal": LABORATORIO,
   "exame-toxicologico": TOXICOLOGICO,
   "tomografia-computadorizada": TOMOGRAFIA,
   ultrassonografia: ULTRASSONOGRAFIA,

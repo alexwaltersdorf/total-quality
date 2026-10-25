@@ -810,7 +810,7 @@ describe("GUARD-RAIL: coleta sem agendamento (confirmado pelo Alex em 01/08/2026
   // A coleta laboratorial e por ordem de chegada — argumento de desempate nas
   // buscas locais ("exame de sangue sem agendamento"). As paginas de exames de
   // LABORATORIO devem afirmar isso; exames de imagem seguem com agendamento.
-  it.each(["/", "/laboratorio-caraguatatuba", "/exames/exames-de-sangue", "/exames/hemograma", "/convenios"])(
+  it.each(["/", "/laboratorio-caraguatatuba", "/exames/exames-de-sangue", "/exames/hemograma", "/exames/sexagem-fetal", "/convenios"])(
     "%s afirma o atendimento por ordem de chegada",
     (route) => {
       const html = getSeoContentForPath(route)!;
@@ -975,6 +975,35 @@ describe("GUARD-RAIL: uma URL por intencao — consolidacao do blog (out/2026)",
         expect(html, `${route.canonical} ainda linka ${origem}`).not.toContain(`href="${origem}"`);
       }
     }
+  });
+});
+
+describe("GUARD-RAIL: pagina de sexagem fetal (25/10/2026)", () => {
+  // O Alex confirmou em 25/10/2026 que a clinica faz sexagem fetal. O grupo do
+  // Google Ads ja convertia e mandava para /exames/exames-de-sangue: a pagina
+  // propria e a URL final certa (regra de 05/10). Exame de sangue da gestante:
+  // sem promessa de acerto, sem jejum, com a idade gestacional minima.
+  const html = getSeoContentForPath("/exames/sexagem-fetal")!;
+
+  it("existe, responde 200, entra no sitemap e tem metadados proprios", () => {
+    expect(html).toBeTruthy();
+    expect(resolveHttpStatus("/exames/sexagem-fetal")).toBe(200);
+    expect(getAllRoutes().map((r) => r.canonical)).toContain("https://totalquality.med.br/exames/sexagem-fetal");
+    expect(getRouteMetadata("/exames/sexagem-fetal")?.title).toBe("Sexagem Fetal em Caraguatatuba | Total Quality");
+  });
+
+  it("explica o exame com o que e verdade: 8a semana, sem jejum, nao substitui o pre-natal", () => {
+    expect(html).toMatch(/8ª semana/);
+    expect(html).toMatch(/jejum/i);
+    expect(html).toMatch(/não substitui o pré-natal/i);
+  });
+
+  it("nao promete acerto nem usa superlativo", () => {
+    expect(html).not.toMatch(/\d{2}(,\d+)?\s?%|garant|100% seguro|precis[ãa]o|mais r[áa]pido|melhor/i);
+  });
+
+  it("a landing de analises clinicas linka a pagina", () => {
+    expect(getSeoContentForPath("/laboratorio-caraguatatuba")).toContain('href="/exames/sexagem-fetal"');
   });
 });
 

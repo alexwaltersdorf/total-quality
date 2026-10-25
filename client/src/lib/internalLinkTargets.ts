@@ -21,6 +21,7 @@ export const LINK_TARGETS: LinkTarget[] = [
   { terms: ["laboratório de análises clínicas em Caraguatatuba", "laboratório em Caraguatatuba", "exames laboratoriais", "exame laboratorial"], href: "/laboratorio-caraguatatuba" },
   { terms: ["exames de sangue", "exame de sangue"], href: "/exames/exames-de-sangue" },
   { terms: ["hemograma completo", "hemograma"], href: "/exames/hemograma" },
+  { terms: ["sexagem fetal"], href: "/exames/sexagem-fetal" },
   { terms: ["tomografia computadorizada", "tomografia"], href: "/exames/tomografia-computadorizada" },
   { terms: ["ultrassonografia"], href: "/exames/ultrassonografia" },
   { terms: ["mamografia digital", "mamografia"], href: "/exames/mamografia" },
