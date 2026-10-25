@@ -34,7 +34,7 @@ export interface ExamData {
   heroImage?: string;
   videoUrl?: string;
   backgroundImage?: string;
-  category: "laboratorio" | "imagem" | "cardiologia" | "neurologia" | "outros";
+  category: "laboratorio" | "imagem" | "cardiologia" | "neurologia" | "outros" | "consulta" | "ocupacional";
   keywords: string[];
 }
 

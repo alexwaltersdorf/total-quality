@@ -12,6 +12,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { getExamBySlug, examesData } from "@/lib/examesData";
+import { getEspecialidadeBySlug, especialidadesData, ESPECIALIDADES_BASE } from "@/lib/especialidadesData";
 import { blogPosts } from "@/lib/blogData";
 import { blogLinksFor, examesDeSangueLista } from "@/lib/examBlogLinks";
 import { useBreadcrumbSchema, useFAQSchema, useMedicalTestSchema, useCanonical } from "@/components/SEOHead";
@@ -21,9 +22,13 @@ export default function ExamePage() {
   const openWhatsApp = useWhatsAppRedirect();
   const abrirTelefone = useTelefoneRedirect();
   const params = useParams<{ slug: string }>();
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const exam = getExamBySlug(params.slug || "");
+  // A mesma pagina serve /exames/:slug e /especialidades/:slug (consultas e
+  // medicina do trabalho, 24/10/2026): muda a fonte dos dados e os textos.
+  const isEspecialidade = location.startsWith(`${ESPECIALIDADES_BASE}/`);
+  const base = isEspecialidade ? ESPECIALIDADES_BASE : "/exames";
+  const exam = isEspecialidade ? getEspecialidadeBySlug(params.slug || "") : getExamBySlug(params.slug || "");
 
   useEffect(() => { window.scrollTo(0, 0); }, [params.slug]);
 
@@ -39,9 +44,9 @@ export default function ExamePage() {
   // SEO: Structured Data — BreadcrumbList
   const breadcrumbs = useMemo(() => exam ? [
     { name: "Início", url: "/" },
-    { name: "Exames", url: "/exames" },
-    { name: exam.shortTitle, url: `/exames/${exam.slug}` },
-  ] : [], [exam]);
+    ...(isEspecialidade ? [] : [{ name: "Exames", url: "/exames" }]),
+    { name: exam.shortTitle, url: `${base}/${exam.slug}` },
+  ] : [], [exam, base, isEspecialidade]);
   useBreadcrumbSchema(breadcrumbs);
 
   // SEO: Structured Data — FAQPage
@@ -52,11 +57,12 @@ export default function ExamePage() {
   useMedicalTestSchema({
     name: exam?.title || "",
     description: exam?.metaDescription || "",
-    url: `/exames/${exam?.slug || ""}`,
+    url: `${base}/${exam?.slug || ""}`,
+    type: isEspecialidade ? "MedicalSpecialty" : "MedicalTest",
   });
 
   // SEO: Canonical URL
-  useCanonical(`/exames/${params.slug || ""}`);
+  useCanonical(`${base}/${params.slug || ""}`);
 
   useEffect(() => {
     const root = wrapperRef.current;
@@ -75,8 +81,16 @@ export default function ExamePage() {
     return null;
   }
 
-  const otherExams = examesData.filter((e) => e.slug !== exam.slug).slice(0, 4);
-  const questionPrefix = exam.slug === "exames-de-sangue" ? "O QUE SÃO OS" : `O QUE É ${exam.slug === "ultrassonografia" ? "A" : "O"}`;
+  const otherExams = isEspecialidade
+    ? [...especialidadesData.filter((e) => e.slug !== exam.slug), ...examesData.slice(0, 2)]
+    : examesData.filter((e) => e.slug !== exam.slug).slice(0, 4);
+  const otherHref = (slug: string) =>
+    especialidadesData.some((e) => e.slug === slug) ? `${ESPECIALIDADES_BASE}/${slug}` : `/exames/${slug}`;
+  const questionPrefix = exam.category === "consulta"
+    ? "O QUE FAZ O"
+    : exam.category === "ocupacional"
+      ? "O QUE É A"
+      : exam.slug === "exames-de-sangue" ? "O QUE SÃO OS" : `O QUE É ${exam.slug === "ultrassonografia" ? "A" : "O"}`;
 
   return (
     <div ref={wrapperRef} className="min-h-screen bg-white">
@@ -199,7 +213,7 @@ export default function ExamePage() {
       <section className="py-16 lg:py-24 bg-surface">
         <div className="container">
           <h2 className="reveal heading-display text-4xl lg:text-5xl text-text mb-12">
-            QUANDO <span className="text-brand">REALIZAR?</span>
+            {isEspecialidade ? <>QUANDO <span className="text-brand">PROCURAR?</span></> : <>QUANDO <span className="text-brand">REALIZAR?</span></>}
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {exam.indications.map((indication, i) => (
@@ -222,10 +236,12 @@ export default function ExamePage() {
           <div className="grid lg:grid-cols-12 gap-12">
             <div className="lg:col-span-5">
               <h2 className="reveal heading-display text-4xl lg:text-5xl text-text mb-4">
-                COMO SE <span className="text-brand">PREPARAR</span>
+                {isEspecialidade ? <>O QUE <span className="text-brand">LEVAR</span></> : <>COMO SE <span className="text-brand">PREPARAR</span></>}
               </h2>
               <p className="reveal text-text-muted mt-4" style={{ transitionDelay: "100ms" }}>
-                Siga as orientações abaixo para garantir a qualidade do seu exame.
+                {isEspecialidade
+                  ? "Organize os documentos abaixo antes do atendimento."
+                  : "Siga as orientações abaixo para garantir a qualidade do seu exame."}
               </p>
             </div>
             <div className="lg:col-span-7 space-y-6">
@@ -328,13 +344,13 @@ export default function ExamePage() {
       <section className="py-16 lg:py-24">
         <div className="container">
           <h2 className="reveal heading-display text-4xl lg:text-5xl text-text mb-12">
-            OUTROS <span className="text-brand">EXAMES</span>
+            {isEspecialidade ? <>OUTROS <span className="text-brand">ATENDIMENTOS</span></> : <>OUTROS <span className="text-brand">EXAMES</span></>}
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {otherExams.map((other, i) => (
               <Link
                 key={other.slug}
-                href={`/exames/${other.slug}`}
+                href={otherHref(other.slug)}
                 className="reveal group p-6 bg-surface rounded-xl border border-black/5 hover:border-brand/30 transition-all duration-300"
                 style={{ transitionDelay: `${i * 50}ms` }}
               >
@@ -359,13 +375,19 @@ export default function ExamePage() {
             {exam.category === "laboratorio" ? (
               <>FAÇA {exam.slug === "exames-de-sangue" ? "SEUS" : "SEU"}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}</span> SEM AGENDAMENTO</>
             ) : (
-              <>AGENDE {exam.slug === "ultrassonografia" ? "SUA" : "SEU"}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}</span></>
+              isEspecialidade ? (
+                <>AGENDE COM A <span className="text-brand">TOTAL QUALITY</span></>
+              ) : (
+                <>AGENDE {exam.slug === "ultrassonografia" ? "SUA" : "SEU"}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}</span></>
+              )
             )}
           </h2>
           <p className="reveal text-text-muted text-lg mb-10 max-w-2xl mx-auto" style={{ transitionDelay: "100ms" }}>
             {exam.category === "laboratorio"
               ? "A coleta é por ordem de chegada, sem agendamento: basta trazer o pedido médico e um documento com foto, de segunda a sexta, das 07h30 às 18h."
-              : "Entre em contato conosco para agendar seu exame. Atendemos de segunda a sexta, das 07h30 às 18h."}
+              : isEspecialidade
+                ? "Agende pelo WhatsApp: dias e horários são confirmados no atendimento. A clínica funciona de segunda a sexta, das 07h30 às 18h."
+                : "Entre em contato conosco para agendar seu exame. Atendemos de segunda a sexta, das 07h30 às 18h."}
           </p>
           <div className="reveal flex flex-wrap gap-4 justify-center" style={{ transitionDelay: "200ms" }}>
             <button

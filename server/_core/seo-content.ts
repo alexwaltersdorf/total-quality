@@ -16,6 +16,7 @@ import nodePath from "node:path";
  */
 
 import { examesData, type ExamData } from "../../client/src/lib/examesData";
+import { especialidadesData, ESPECIALIDADES_BASE } from "../../client/src/lib/especialidadesData";
 import { linkifyText } from "../../client/src/lib/internalLinkTargets";
 import { blogLinksFor, examesDeSangueLista } from "../../client/src/lib/examBlogLinks";
 import { CONVENIOS_FAQS } from "../../client/src/lib/conveniosData";
@@ -227,6 +228,11 @@ function internalLinksHtml(currentPath: string): string {
     // Estas duas o Google conhecia mas nunca rastreou (auditoria do Search
     // Console): recebiam pouquissimos links internos.
     ["/exames/eletrocardiograma", "Eletrocardiograma (ECG)"],
+    // Especialidades (24/10/2026): consultas e medicina do trabalho.
+    ["/especialidades/endocrinologista", "Consulta com endocrinologista"],
+    ["/especialidades/gastroenterologista", "Consulta com gastroenterologista"],
+    ["/especialidades/medicina-do-trabalho", "Medicina do trabalho (PCMSO e ASO)"],
+    ["/exames/exame-admissional", "Exame admissional e ASO"],
     ["/blog", "Blog: saúde e diagnóstico"],
   ];
   const items = links
@@ -254,9 +260,16 @@ function examBlogSectionHtml(examSlug: string): string {
   return lista + blog;
 }
 
-function renderExamHtml(exam: ExamData): string {
+/** Especialidade do schema.org por pagina de especialidade (sem enum para medicina do trabalho). */
+const SCHEMA_SPECIALTY: Record<string, string> = {
+  endocrinologista: "https://schema.org/Endocrine",
+  gastroenterologista: "https://schema.org/Gastroenterologic",
+};
+
+function renderExamHtml(exam: ExamData, base = "/exames"): string {
   const h1 = exam.metaTitle.split("|")[0].trim();
-  const canonical = `${SITE}/exames/${exam.slug}`;
+  const canonical = `${SITE}${base}/${exam.slug}`;
+  const isEspecialidade = base === ESPECIALIDADES_BASE;
   const indications = exam.indications
     .map((item) => `<li>${escapeHtml(item)}</li>`)
     .join("");
@@ -275,38 +288,43 @@ function renderExamHtml(exam: ExamData): string {
     name: exam.metaTitle,
     description: exam.metaDescription,
     about: {
-      "@type": "MedicalTest",
+      "@type": isEspecialidade ? "MedicalSpecialty" : "MedicalTest",
       name: exam.shortTitle,
       description: exam.whatIs,
     },
+    ...(SCHEMA_SPECIALTY[exam.slug] && { specialty: SCHEMA_SPECIALTY[exam.slug] }),
     provider: { "@id": BUSINESS_ID },
   };
+  const cta =
+    exam.category === "laboratorio"
+      ? `Faça ${exam.slug === "exames-de-sangue" ? "seus exames de sangue" : `seu exame de ${exam.shortTitle.toLowerCase()}`} sem agendamento: a coleta é por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Dúvidas de preparo e convênio pelo WhatsApp.`
+      : exam.category === "consulta"
+        ? `Agende a consulta com ${exam.shortTitle.toLowerCase()} pelo WhatsApp ou telefone: dias e horários são confirmados no atendimento. Atendimento particular e pelos convênios ${CONVENIOS_TEXTO}.`
+        : exam.category === "ocupacional"
+          ? "Empresas e trabalhadores agendam pelo WhatsApp ou telefone. PCMSO, exames ocupacionais, ASO e exames complementares no mesmo endereço."
+          : `Agende seu exame de ${exam.shortTitle.toLowerCase()} pelo WhatsApp ou telefone e faça em um só lugar todos os seus exames laboratoriais e de imagem.`;
 
   return `
     <h1>${escapeHtml(h1)}</h1>
     <p>${escapeHtml(exam.heroDescription)}</p>
-    <h2>O que é</h2>
+    <h2>${exam.category === "consulta" ? `O que faz o ${exam.shortTitle.toLowerCase()}` : "O que é"}</h2>
     <p>${escapeHtml(exam.whatIs)}</p>
-    <h2>Como funciona</h2>
+    <h2>${exam.category === "consulta" ? "Como é a consulta" : "Como funciona"}</h2>
     <p>${escapeHtml(exam.howItWorks)}</p>
-    <h2>Indicações</h2>
+    <h2>${isEspecialidade ? "Quando procurar" : "Indicações"}</h2>
     <ul>${indications}</ul>
-    <h2>Preparo para o exame</h2>
+    <h2>${isEspecialidade ? "O que levar" : "Preparo para o exame"}</h2>
     <ul>${preparations}</ul>
     ${examBlogSectionHtml(exam.slug)}
     ${faqSectionHtml(exam.faqs)}
-    ${napHtml(
-      exam.category === "laboratorio"
-        ? `Faça ${exam.slug === "exames-de-sangue" ? "seus exames de sangue" : `seu exame de ${exam.shortTitle.toLowerCase()}`} sem agendamento: a coleta é por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Dúvidas de preparo e convênio pelo WhatsApp.`
-        : `Agende seu exame de ${exam.shortTitle.toLowerCase()} pelo WhatsApp ou telefone e faça em um só lugar todos os seus exames laboratoriais e de imagem.`
-    )}
-    ${internalLinksHtml(`/exames/${exam.slug}`)}
+    ${napHtml(cta)}
+    ${internalLinksHtml(`${base}/${exam.slug}`)}
     ${jsonLd([
       pageLd,
       breadcrumbLd([
         ["Início", "/"],
-        ["Exames", "/exames"],
-        [exam.shortTitle, `/exames/${exam.slug}`],
+        ...(isEspecialidade ? [] : ([["Exames", "/exames"]] as Array<[string, string]>)),
+        [exam.shortTitle, `${base}/${exam.slug}`],
       ]),
     ])}`;
 }
@@ -475,7 +493,7 @@ function conveniosHtml(): string {
 
 const homeHtml = `
     <h1>${HOME_H1}</h1>
-    <p>Há mais de ${anosDeAtuacao()} anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>.</p>
+    <p>Há mais de ${anosDeAtuacao()} anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>. Também oferece <a href="/especialidades/medicina-do-trabalho">medicina do trabalho</a> para empresas, com PCMSO e ASO, e consultas com <a href="/especialidades/endocrinologista">endocrinologista</a> e <a href="/especialidades/gastroenterologista">gastroenterologista</a>.</p>
     <ul>
       <li>Resultados online em curto prazo para a maioria dos exames</li>
       <li>Coleta laboratorial sem agendamento, por ordem de chegada — e coleta domiciliar mediante agendamento</li>
@@ -526,6 +544,12 @@ export function getSeoContentForPath(pathname: string): string | null {
   if (examMatch) {
     const exam = examesData.find((e) => e.slug === examMatch[1]);
     if (exam) return wrap(renderExamHtml(exam));
+  }
+
+  const espMatch = path.match(/^\/especialidades\/([a-z0-9\-]+)$/);
+  if (espMatch) {
+    const esp = especialidadesData.find((e) => e.slug === espMatch[1]);
+    if (esp) return wrap(renderExamHtml(esp, ESPECIALIDADES_BASE));
   }
 
   if (path === "/blog") return wrap(blogIndexHtml());
@@ -868,6 +892,7 @@ const CLIENT_ROUTES = new Set([
 ]);
 
 const VALID_EXAM_SLUGS = new Set(examesData.map((exam) => exam.slug));
+const VALID_ESPECIALIDADE_SLUGS = new Set(especialidadesData.map((e) => e.slug));
 
 /**
  * Resolve o status HTTP correto para uma rota de página.
@@ -896,6 +921,9 @@ export function resolveHttpStatus(
 
   const examMatch = path.match(/^\/exames\/([a-z0-9\-]+)$/);
   if (examMatch) return VALID_EXAM_SLUGS.has(examMatch[1]) ? 200 : 404;
+
+  const espMatch = path.match(/^\/especialidades\/([a-z0-9\-]+)$/);
+  if (espMatch) return VALID_ESPECIALIDADE_SLUGS.has(espMatch[1]) ? 200 : 404;
 
   const blogMatch = path.match(/^\/blog\/([a-z0-9\-]+)$/);
   if (blogMatch) return knownBlogSlugs.has(blogMatch[1]) ? 200 : 404;

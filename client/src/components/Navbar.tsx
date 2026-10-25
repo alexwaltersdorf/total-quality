@@ -27,6 +27,10 @@ const ancoras = [
 const extrasExames = [
   { label: "Check-up", href: "/checkup" },
   { label: "Bioimpedância", href: "/bioimpedancia" },
+  // Especialidades (24/10/2026): consultas e medicina do trabalho.
+  { label: "Endocrinologista", href: "/especialidades/endocrinologista" },
+  { label: "Gastroenterologista", href: "/especialidades/gastroenterologista" },
+  { label: "Medicina do Trabalho", href: "/especialidades/medicina-do-trabalho" },
   { label: "Cartão Total Quality", href: "/cartao" },
 ];
 
