@@ -341,6 +341,7 @@ const laboratorioHtml = `
       <li><a href="/blog/vitamina-d-importancia-saude">Vitamina D</a>, vitamina B12 e ferritina</li>
       <li>PSA e marcadores tumorais</li>
       <li>Exames de urina e fezes</li>
+      <li><a href="/exames/sexagem-fetal">Sexagem fetal</a> (exame de sangue que identifica o sexo do bebê)</li>
       <li>Sorologias e <a href="/exames/exame-toxicologico">exames toxicológicos</a></li>
       <li><a href="/exames/exame-admissional">Exames ocupacionais</a> (admissional, periódico, demissional e ASO)</li>
     </ul>

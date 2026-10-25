@@ -160,6 +160,17 @@ const examesMetadata: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
 
+  "sexagem-fetal": {
+    title: "Sexagem Fetal em Caraguatatuba | Total Quality",
+    description: "Sexagem fetal em Caraguatatuba: exame de sangue da gestante que identifica o sexo do bebê a partir da 8ª semana. Sem jejum. Dúvidas e valores pelo WhatsApp.",
+    keywords: "sexagem fetal, exame de sexagem fetal, sexo do bebê, DNA fetal, exame de sangue gravidez, Caraguatatuba",
+    ogTitle: "Sexagem Fetal | Total Quality",
+    ogDescription: "Exame de sangue da gestante que identifica o sexo do bebê a partir da 8ª semana de gestação.",
+    canonical: "https://totalquality.med.br/exames/sexagem-fetal",
+    priority: 0.8,
+    changefreq: "monthly",
+  },
+
   "exame-admissional": {
     title: "Exame Admissional e ASO em Caraguatatuba | Total Quality",
     description: "Exame admissional, periódico, demissional e ASO em Caraguatatuba. Medicina ocupacional completa para empresas do Litoral Norte, com agilidade. Agende.",

@@ -134,6 +134,7 @@ const examData: Record<
       { name: "PSA, Vitamina D e Marcadores Tumorais" },
       { name: "Ureia, Creatinina, TGO, TGP e Ácido Úrico" },
       { name: "Hemoglobina Glicada e Exame de Urina" },
+      { name: "Sexagem Fetal", href: "/exames/sexagem-fetal" },
       { name: "Exame Toxicológico", href: "/exames/exame-toxicologico" },
       { name: "Exame Admissional e ASO", href: "/exames/exame-admissional" },
     ],

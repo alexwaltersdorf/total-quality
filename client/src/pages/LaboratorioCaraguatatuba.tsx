@@ -45,6 +45,7 @@ const examesLaboratoriais: ExamLink[] = [
   { name: "Marcadores tumorais" },
   { name: "Coagulograma" },
   { name: "Exame de urina" },
+  { name: "Sexagem fetal", href: "/exames/sexagem-fetal" },
   { name: "Exame toxicológico", href: "/exames/exame-toxicologico" },
   { name: "Sorologias" },
   { name: "Parasitológico de fezes" },

@@ -72,6 +72,7 @@ export const TOC_MIN_WORDS = 1000;
 export const PAGINA_EXAME_LABEL: Record<string, string> = {
   "/exames/exames-de-sangue": "Exames de sangue",
   "/exames/hemograma": "Hemograma completo",
+  "/exames/sexagem-fetal": "Sexagem fetal",
   "/exames/eletrocardiograma": "Eletrocardiograma",
   "/exames/holter": "Holter 24h",
   "/exames/mapa": "MAPA 24h",
