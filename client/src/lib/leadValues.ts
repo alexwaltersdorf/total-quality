@@ -35,6 +35,8 @@ const ESPIROMETRIA = 165.0;
 const CHECKUP = 399.0;
 const MAMOGRAFIA = 200.0;
 const ADMISSIONAL = 70.0;
+// Sexagem fetal: R$ 250 de preco (custo R$ 120), informado pelo Alex em 25/10/2026.
+const SEXAGEM_FETAL = 250.0;
 const BIOIMPEDANCIA = 100.0;
 const CARTAO = 29.9;
 
@@ -42,9 +44,7 @@ export const LEAD_VALUES: Record<string, number> = {
   // --- Slugs das paginas de exame (exam_type vem do slug) ---
   "exames-de-sangue": LABORATORIO,
   hemograma: LABORATORIO,
-  // Sexagem fetal (25/10/2026): ticket ainda nao informado pelo Alex; usa o
-  // de laboratorio, que e a categoria do exame, ate ele informar o proprio.
-  "sexagem-fetal": LABORATORIO,
+  "sexagem-fetal": SEXAGEM_FETAL,
   "exame-toxicologico": TOXICOLOGICO,
   "tomografia-computadorizada": TOMOGRAFIA,
   ultrassonografia: ULTRASSONOGRAFIA,

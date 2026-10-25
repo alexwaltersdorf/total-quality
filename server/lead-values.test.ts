@@ -103,6 +103,7 @@ describe("GUARD-RAIL: contexto de exame derivado da rota (nao remover)", () => {
     expect(examTypeFromPath("/exames/tomografia-computadorizada")).toBe("tomografia-computadorizada");
     expect(resolveLeadValue("fab", examTypeFromPath("/exames/tomografia-computadorizada"))).toBe(300);
     expect(resolveLeadValue("fab", examTypeFromPath("/exames/raio-x"))).toBe(120);
+    expect(resolveLeadValue("fab", examTypeFromPath("/exames/sexagem-fetal"))).toBe(250);
   });
 
   it("rotas tematicas devolvem a categoria", () => {
