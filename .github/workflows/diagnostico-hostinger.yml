@@ -1,0 +1,100 @@
+name: Diagnostico Hostinger (somente leitura)
+
+# POR QUE ESTE WORKFLOW EXISTE
+#
+# Em 20/10/2026 um arquivo estatico novo em client/public/painel/ entrou na
+# main, o deploy reportou sucesso, e a URL continuou devolvendo 404 por mais de
+# 15 minutos. O passo [4.5] do deploy.yml mostrou a razao provavel: o symlink
+# ../.builds/current — de onde o Passenger realmente serve — estava repontado
+# em 2026-10-19 01:13, ou seja, no build da vespera. O pacote que o runner
+# constroi e envia NAO e servido (isso ja estava documentado); o que serve e o
+# build que a propria Hostinger faz do fonte, e nao ha como saber daqui se ele
+# rodou, se falhou, nem o que tem dentro.
+#
+# Este workflow nao altera NADA no servidor. Ele so lê e imprime: para onde o
+# symlink aponta, quando foi repontado, o que existe em public/painel no
+# diretorio servido e no dist enviado pelo runner, e os ultimos registros de
+# build que a Hostinger deixa no disco. E manual (workflow_dispatch) de
+# proposito — nao roda em push e nao entra no caminho do deploy.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnostico:
+    name: Ler o estado do servidor sem mexer em nada
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspecionar (SSH somente leitura)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          port: ${{ secrets.HOSTINGER_PORT }}
+          command_timeout: 5m
+          script: |
+            set +e
+
+            cd "${{ secrets.HOSTINGER_PATH }}"
+
+            echo "==> Fonte (o que o git reset do deploy deixou aqui)"
+            git log -1 --format='    %h %ci %s'
+            echo "    arquivos em client/public/painel:"
+            ls -la client/public/painel 2>/dev/null | sed 's/^/      /'
+
+            echo
+            echo "==> dist enviado pelo runner (extraido aqui, nao servido)"
+            ls -la dist/public/painel 2>/dev/null | sed 's/^/      /'
+
+            echo
+            echo "==> Symlink de onde o Passenger serve"
+            CURRENT=$(readlink -f ../.builds/current 2>/dev/null)
+            echo "    current -> ${CURRENT:-nao encontrado}"
+            echo "    repontado em: $(stat -c %y ../.builds/current 2>/dev/null | cut -d. -f1)"
+
+            if [ -n "$CURRENT" ] && [ -d "$CURRENT" ]; then
+              echo
+              echo "==> Conteudo do build servido"
+              echo "    raiz:"
+              ls -la "$CURRENT" 2>/dev/null | head -25 | sed 's/^/      /'
+              echo "    .metadata.json:"
+              cat "$CURRENT/.metadata.json" 2>/dev/null | sed 's/^/      /'
+
+              # A raiz do build tem nodejs/ e public_html/: a aplicacao fica um
+              # nivel abaixo do que a primeira versao deste diagnostico olhava.
+              APP="$CURRENT/nodejs"
+              echo
+              echo "    nodejs/ e um link? $(readlink "$APP" 2>/dev/null || echo 'nao, diretorio real')"
+              echo "    nodejs/ (raiz da aplicacao servida):"
+              ls -la "$APP" 2>/dev/null | head -25 | sed 's/^/      /'
+              echo "    nodejs/dist e um link? $(readlink "$APP/dist" 2>/dev/null || echo 'nao, diretorio real')"
+              echo "    nodejs/dist/public/painel:"
+              ls -la "$APP/dist/public/painel" 2>/dev/null | sed 's/^/      /'
+              echo "    bundle servido:"
+              ls -la "$APP"/dist/public/assets/index-*.js 2>/dev/null | sed 's/^/      /'
+              echo "    commit do fonte desse build:"
+              git -C "$APP" log -1 --format='      %h %ci %s' 2>/dev/null \
+                || echo "      (sem repositorio git dentro do build)"
+              echo "    da para escrever em nodejs/dist? $([ -w "$APP/dist" ] && echo sim || echo nao)"
+              echo "    da para escrever na raiz do build? $([ -w "$APP" ] && echo sim || echo nao)"
+            fi
+
+            echo
+            echo "==> Vizinhanca do dominio (onde a Hostinger guarda seus controles)"
+            ls -la .. 2>/dev/null | head -20 | sed 's/^/      /'
+            ls -la ../.builds 2>/dev/null | sed 's/^/      /'
+
+            echo
+            echo "==> Todas as versoes de build que a Hostinger guarda"
+            ls -lat ../.builds/versions 2>/dev/null | head -12 | sed 's/^/      /'
+            ls -lat ../hbuilds/versions 2>/dev/null | head -12 | sed 's/^/      /'
+
+            echo
+            echo "==> Registros de build deixados pela Hostinger (se houver)"
+            find .. -maxdepth 3 \( -name '*build*.log' -o -name 'deploy*.log' \) \
+              -newermt '-3 days' 2>/dev/null | head -10 | sed 's/^/      /'
+
+            echo
+            echo "==> Fim do diagnostico (nada foi alterado)"
+            exit 0

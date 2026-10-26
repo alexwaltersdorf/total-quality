@@ -2,6 +2,7 @@
   "id": "19",
   "slug": "exame-toxicologico-cnh",
   "title": "Exame Toxicológico para CNH: Quem Precisa e Quando Fazer?",
+  "metaTitle": "Exame Toxicológico para CNH: Quem Precisa? | Total Quality",
   "subtitle": "Entenda a janela de detecção, como consultar o prazo e quais documentos levar",
   "excerpt": "Entenda quem precisa fazer exame toxicológico para CNH, quando ele pode ser exigido, como consultar o prazo e quais documentos levar.",
   "category": "Saúde Ocupacional",
@@ -9,7 +10,7 @@
   "authorRole": "Total Quality Medicina Diagnóstica",
   "date": "12 Set 2026",
   "readTime": "9 min",
-  "image": "https://totalquality.med.br/images/laboratorio-1024.webp",
+  "image": "https://totalquality.med.br/images/blog/exame-toxicologico-cnh.webp",
   "tags": [
     "exame toxicológico",
     "CNH",
@@ -43,13 +44,14 @@
     "Um profissional treinado coleta uma pequena quantidade de cabelo ou pêlos conforme o protocolo. O procedimento geralmente é rápido e não envolve agulhas.",
     "Quando não há cabelo suficiente na cabeça, a equipe avalia as alternativas aceitas pelo laboratório responsável. Não raspe o cabelo ou pêlos antes de receber orientação, pois isso pode dificultar a coleta.",
     "O material é identificado e encaminhado a um laboratório credenciado. Para processos de trânsito, é importante confirmar que tanto o laboratório quanto o posto de coleta estão aptos a operar dentro das exigências da Senatran.",
+    "[[cta]]",
     "## Quais documentos levar?",
     "Normalmente é necessário apresentar documento oficial de identificação. CPF e dados da CNH também podem ser utilizados no cadastro, conforme o tipo de processo.",
     "Antes de comparecer, confirme com a unidade:",
     "- Documento aceito.\n- Necessidade de apresentar CNH física ou digital.\n- Dados adicionais exigidos pelo laboratório.\n- Horário e necessidade de agendamento.\n- Orientações sobre medicamentos prescritos.",
     "Não envie documentos pessoais por canais que não tenham sido confirmados como oficiais pela clínica.",
     "## Precisa de jejum?",
-    "O exame realizado com cabelo ou pêlos normalmente não exige jejum. Ainda assim, siga as orientações fornecidas pelo posto de coleta para garantir que o procedimento seja realizado corretamente.",
+    "O exame realizado com cabelo ou pêlos normalmente não exige jejum. Ainda assim, siga as orientações fornecidas pelo posto de coleta para que o procedimento seja feito corretamente.",
     "Também não suspenda medicamentos por conta própria. Informe os medicamentos prescritos e leve os documentos médicos solicitados quando aplicável.",
     "## Medicamentos podem interferir no resultado?",
     "Alguns medicamentos podem conter substâncias ou gerar metabólitos relevantes para a análise. Isso não significa que o paciente deva interromper um tratamento.",
@@ -66,7 +68,7 @@
     "### O exame toxicológico é exigido apenas de motoristas profissionais?",
     "Não se deve considerar apenas a profissão. Categoria da CNH, idade, tipo e data do processo também podem influenciar a exigência. Consulte a Senatran e o Detran do seu estado.",
     "### Qual é a janela de detecção?",
-    "A legislação de trânsito estabelece uma janela mínima de 90 dias para o exame de larga janela. O protocolo da análise deve ser confirmado com o laboratório credenciado.",
+    "A legislação de trânsito estabelece uma janela mínima de 90 dias para o exame de larga janela. Na Total Quality, o exame tem janela de detecção de 180 dias e o resultado sai em 5 dias úteis.",
     "### Cabelo curto impede a coleta?",
     "Não necessariamente. A equipe pode avaliar a possibilidade de utilizar pelos de outra região, conforme o protocolo. Não raspe os pelos antes da orientação.",
     "### Preciso parar de tomar medicamentos?",
@@ -79,5 +81,12 @@
     "A Total Quality realiza a coleta para [exame toxicológico em Caraguatatuba](https://totalquality.med.br/exames/exame-toxicologico) em parceria com laboratório credenciado.",
     "**Entre em contato pelo WhatsApp ou pelo telefone (12) 3887-3535 para confirmar documentos, horários e prazo estimado.**",
     "Este conteúdo é informativo. Regras de trânsito podem mudar — consulte sempre a Senatran e o Detran antes de iniciar o processo."
-  ]
+  ],
+  "examName": "exame toxicológico",
+  "examType": "exame-toxicologico",
+  "examPages": [
+    "/exames/exame-toxicologico"
+  ],
+  "horaMarcada": true,
+  "dateModified": "2026-10-22"
 }

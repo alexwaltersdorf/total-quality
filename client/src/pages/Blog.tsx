@@ -15,6 +15,7 @@ import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { trpc } from "@/lib/trpc";
 import { Loader2 } from "lucide-react";
+import { BLOG_EXTERNO_URL, BLOG_EXTERNO_TEXTO } from "@shared/const";
 
 function BlogCard({ post, featured = false }: { post: BlogPostMeta; featured?: boolean }) {
   if (featured) {
@@ -155,7 +156,7 @@ export default function Blog() {
           <div className="grid lg:grid-cols-2 gap-8 items-end">
             <div>
               <span className="section-label mb-4 block">Saúde &amp; Bem-Estar</span>
-              <h1 className="heading-display text-7xl md:text-8xl lg:text-9xl text-text mt-4">
+              <h1 className="heading-display text-6xl md:text-7xl lg:text-8xl text-text mt-4">
                 BLOG
               </h1>
             </div>
@@ -242,6 +243,19 @@ export default function Blog() {
         </div>
       </section>
 
+      {/* Blog externo (Airticles): antes nenhuma pagina linkava para ele. */}
+      <section className="py-12 border-t border-black/10">
+        <div className="container">
+          <h2 className="heading-display text-3xl md:text-4xl text-text mb-4">Mais artigos de saúde</h2>
+          <p className="text-text-light max-w-2xl mb-4">
+            Outros temas de prevenção e de exames, que não se repetem aqui, estão no blog externo da clínica.
+          </p>
+          <a href={BLOG_EXTERNO_URL} className="text-brand font-semibold hover:underline">
+            {BLOG_EXTERNO_TEXTO}
+          </a>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-16 bg-surface-light border-t border-black/10">
         <div className="container text-center">
@@ -251,7 +265,7 @@ export default function Blog() {
           </h2>
           <p className="text-text-light max-w-lg mx-auto mb-8">
             Na Total Quality em Caraguatatuba, oferecemos exames laboratoriais, diagnóstico por imagem
-            e cardiologia com resultados rápidos e atendimento humanizado.
+            e cardiologia no Centro, com resultados online e atendimento humanizado.
           </p>
           <button
             type="button"

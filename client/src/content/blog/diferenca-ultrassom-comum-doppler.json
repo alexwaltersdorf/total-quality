@@ -2,6 +2,7 @@
   "id": "15",
   "slug": "diferenca-ultrassom-comum-doppler",
   "title": "Ultrassom Comum e Ultrassom com Doppler: Qual a Diferença?",
+  "metaTitle": "Ultrassom Comum e com Doppler: Diferença | Total Quality",
   "subtitle": "Entenda o que o Doppler acrescenta ao exame, quando é utilizado e como se preparar",
   "excerpt": "Descubra a diferença entre ultrassom comum e ultrassom com Doppler, o que cada modalidade avalia e como pode ser o preparo.",
   "category": "Medicina Preventiva",
@@ -32,6 +33,7 @@
     "## Quais são os tipos de ultrassom com Doppler?",
     "O Doppler pode fazer parte de exames de diferentes regiões. Alguns exemplos incluem avaliações vasculares, obstétricas, abdominais e de órgãos específicos.",
     "Os nomes variam conforme a estrutura estudada e o protocolo solicitado. Portanto, antes de agendar, confira no pedido médico qual exame foi indicado e confirme com a clínica se aquela modalidade está disponível.",
+    "[[cta]]",
     "## Ultrassom com Doppler utiliza radiação?",
     "Não. Assim como o ultrassom convencional, o Doppler utiliza ondas sonoras e não radiação ionizante. Isso não significa, porém, que o exame deva ser feito sem indicação. A solicitação deve considerar a necessidade clínica e a região que precisa ser avaliada.",
     "## Como o exame é realizado?",
@@ -61,5 +63,12 @@
     "A Total Quality oferece exames de [ultrassonografia em Caraguatatuba](https://totalquality.med.br/exames/ultrassonografia). Consulte a equipe para confirmar a modalidade solicitada, o preparo correto e os horários disponíveis.",
     "**Agende pelo WhatsApp ou pelo telefone (12) 3887-3535.**",
     "Este conteúdo é informativo. A indicação e a interpretação do exame devem ser feitas por profissionais habilitados."
-  ]
+  ],
+  "examName": "ultrassonografia com Doppler",
+  "examType": "ultrassonografia",
+  "examPages": [
+    "/exames/ultrassonografia"
+  ],
+  "horaMarcada": true,
+  "dateModified": "2026-10-22"
 }

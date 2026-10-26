@@ -57,34 +57,34 @@ export default function CookieConsent() {
   };
 
   return (
+    // Compacto (auditoria de design, 18/10/2026): no celular o aviso cobria um
+    // terco da tela e escondia o botao principal de todas as paginas. Os dois
+    // botoes tem o mesmo peso visual — a LGPD pede escolha livre, entao
+    // "Somente essenciais" nao pode parecer a opcao de segunda classe.
     <div
       role="dialog"
       aria-label="Aviso de cookies"
-      className="fixed bottom-0 inset-x-0 z-[60] bg-white border-t border-black/10 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-4 sm:p-5"
+      className="fixed bottom-0 inset-x-0 z-[60] bg-white border-t border-black/10 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] px-4 py-3 sm:py-4"
     >
-      <div className="container flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        <p className="text-sm text-text-light leading-relaxed flex-1">
-          Usamos cookies para medir o uso do site e melhorar sua experiência.
-          Você pode aceitar ou seguir apenas com os essenciais — nesse caso a
-          medição continua de forma anônima, sem identificar você. Saiba mais na
-          nossa{" "}
+      <div className="container flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6 !px-0 sm:!px-6">
+        <p className="text-[13px] sm:text-sm text-text-light leading-snug flex-1">
+          Usamos cookies para medir o uso do site; nos essenciais, a medição é anônima.{" "}
           <Link href="/privacidade" className="text-brand underline underline-offset-2">
-            Política de Privacidade
+            Privacidade
           </Link>
-          .
         </p>
-        <div className="flex gap-3 shrink-0">
+        <div className="grid grid-cols-2 gap-2 shrink-0 sm:flex">
           <button
             onClick={() => choose(false)}
-            className="px-4 py-2 text-sm rounded-full border border-black/15 text-text hover:bg-black/5 transition-colors"
+            className="min-h-[44px] px-4 text-sm rounded-full border border-black/20 text-text font-semibold hover:bg-black/5 transition-colors"
           >
-            Somente essenciais
+            Só essenciais
           </button>
           <button
             onClick={() => choose(true)}
-            className="px-5 py-2 text-sm rounded-full bg-brand text-white font-semibold hover:opacity-90 transition-opacity"
+            className="min-h-[44px] px-4 text-sm rounded-full border border-black/20 text-text font-semibold hover:bg-black/5 transition-colors"
           >
-            Aceitar cookies
+            Aceitar todos
           </button>
         </div>
       </div>

@@ -26,15 +26,17 @@ import {
 import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
 import { captureUTMParams, getUTMForAPI } from "@/lib/utmTracker";
 import { startPageTracking } from "@/lib/engagementTracker";
+import { HOME_TITLE, homeDescription } from "@shared/const";
 
 export default function Home() {
   const scrollRef = useScrollReveal();
 
   useEffect(() => {
-    document.title = "Laboratório em Caraguatatuba | Total Quality | Ligue Agora";
+    // Titulo e description vem de shared/const.ts — os mesmos do pre-render.
+    document.title = HOME_TITLE;
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", "Laboratório de análises clínicas em Caraguatatuba - SP. Exames de sangue, tomografia, ultrassom e check-up. Agende pelo WhatsApp (12) 3887-3535.");
+      metaDesc.setAttribute("content", homeDescription());
     }
 
     // Capture UTM params and track session

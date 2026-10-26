@@ -2,6 +2,7 @@
   "id": "14",
   "slug": "check-up-medico-quais-exames-fazer",
   "title": "Check-up Médico: Quais Exames Fazer e Com Que Frequência?",
+  "metaTitle": "Check-up Médico: Quais Exames Fazer? | Total Quality",
   "subtitle": "Entenda como o check-up se organiza entre exames laboratoriais, cardiológicos e de imagem",
   "excerpt": "Entenda o que compõe um check-up médico, quais exames laboratoriais, cardiológicos e de imagem podem fazer parte e com que frequência repetir.",
   "category": "Medicina Preventiva",
@@ -9,7 +10,7 @@
   "authorRole": "Total Quality Medicina Diagnóstica",
   "date": "12 Set 2026",
   "readTime": "10 min",
-  "image": "https://totalquality.med.br/images/recepcao-1024.webp",
+  "image": "https://totalquality.med.br/images/blog/check-up-medico-quais-exames-fazer.webp",
   "tags": [
     "check-up médico",
     "check-up preventivo",
@@ -51,6 +52,7 @@
     "Acompanha a atividade elétrica do coração de forma contínua, também geralmente por 24 horas.",
     "### Outros exames conforme indicação médica",
     "Conforme o histórico e os sintomas do paciente, outros exames cardiológicos podem ser incorporados à avaliação, sempre por indicação médica.",
+    "[[cta]]",
     "## Quando exames de imagem podem ser necessários?",
     "Exames de imagem costumam ser incluídos em check-ups mais completos ou direcionados a órgãos e regiões específicas, conforme idade, sexo e histórico do paciente.",
     "### Ultrassonografia",
@@ -75,5 +77,12 @@
     "A **Total Quality** oferece uma estrutura completa de medicina diagnóstica em **Caraguatatuba**, reunindo exames laboratoriais, exames cardiológicos como MAPA, Holter e eletrocardiograma, além de exames de imagem como tomografia, ultrassonografia e mamografia. Toda essa estrutura também está disponível de forma integrada dentro do check-up preventivo da clínica, organizado em pacotes por faixa etária e perfil de paciente.",
     "**Quer colocar seus exames em dia? Conheça a estrutura da Total Quality Medicina Diagnóstica em Caraguatatuba e agende pelo WhatsApp (12) 3887-3535.**",
     "Este conteúdo tem caráter informativo e não substitui a avaliação de um médico. A definição dos exames e da frequência ideal do check-up deve sempre considerar o perfil individual de cada paciente."
-  ]
+  ],
+  "examName": "check-up",
+  "examType": "checkup",
+  "examPages": [
+    "/checkup"
+  ],
+  "horaMarcada": true,
+  "dateModified": "2026-10-22"
 }

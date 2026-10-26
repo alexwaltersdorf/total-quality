@@ -15,6 +15,7 @@
 import type { ReactNode } from "react";
 import { Link } from "wouter";
 import { linkifyText } from "@/lib/internalLinkTargets";
+import { CTA_MARKER, headingId } from "@/lib/blogMeta";
 
 const SITE_ORIGIN = "https://totalquality.med.br";
 
@@ -76,13 +77,23 @@ function parseTableRow(line: string): string[] {
     .map((cell) => cell.trim());
 }
 
-export function renderBlogContent(content: string[], currentPath: string): ReactNode[] {
+/**
+ * `renderCta` desenha o bloco "[[cta]]" do corpo (quadro de contato no meio do
+ * artigo). Sem ele, o marcador some — nunca aparece cru na pagina.
+ */
+export function renderBlogContent(
+  content: string[],
+  currentPath: string,
+  renderCta?: (key: string) => ReactNode
+): ReactNode[] {
   const usedHrefs = new Set<string>();
   let firstParagraphRendered = false;
 
   return content.map((block, i) => {
     const trimmed = block.trimStart();
     const key = `block-${i}`;
+
+    if (trimmed.trim() === CTA_MARKER) return renderCta ? renderCta(key) : null;
 
     if (trimmed.startsWith("### ")) {
       return (
@@ -94,7 +105,7 @@ export function renderBlogContent(content: string[], currentPath: string): React
 
     if (trimmed.startsWith("## ")) {
       return (
-        <h2 key={key} className="heading-display text-3xl text-text mt-10 mb-4">
+        <h2 key={key} id={headingId(trimmed.slice(3))} className="heading-display text-3xl text-text mt-10 mb-4 scroll-mt-28">
           {renderInline(trimmed.slice(3), currentPath, usedHrefs, key)}
         </h2>
       );

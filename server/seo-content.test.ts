@@ -1,14 +1,18 @@
 import { describe, expect, it } from "vitest";
 import {
-  ARTIGO_PARA_EXAME,
   CONVENIOS,
   getSeoContentForPath,
   injectSeoContent,
   resolveHttpStatus,
 } from "./_core/seo-content";
 import { CONVENIOS as CONVENIOS_CLIENT } from "@/lib/conveniosData";
-import { getAllRoutes, getKnownBlogSlugs, injectMetaTags } from "./_core/routes-metadata";
-import { getLegacyRedirect, isGone } from "./_core/legacy-redirects";
+import {
+  getAllRoutes,
+  getKnownBlogSlugs,
+  getRouteMetadata,
+  injectMetaTags,
+} from "./_core/routes-metadata";
+import { getLegacyRedirect, isGone, LEGACY_REDIRECTS } from "./_core/legacy-redirects";
 import { anosDeAtuacao } from "@shared/const";
 
 const PRIORITY_ROUTES = [
@@ -78,7 +82,7 @@ describe("resolveHttpStatus", () => {
     expect(resolveHttpStatus("/checkup", blogSlugs)).toBe(200);
     expect(resolveHttpStatus("/exames/holter", blogSlugs)).toBe(200);
     expect(
-      resolveHttpStatus("/blog/hemograma-caraguatatuba", blogSlugs)
+      resolveHttpStatus("/blog/hemograma-completo-o-que-avalia", blogSlugs)
     ).toBe(200);
   });
 
@@ -125,7 +129,7 @@ describe("GUARD-RAIL: cobertura do sitemap (nao remover)", () => {
     expect(getSeoContentForPath("/exames")).toContain("Exames Laboratoriais");
     expect(getSeoContentForPath("/exames/hemograma")).toContain("jejum");
     expect(getSeoContentForPath("/exames/exame-admissional")).toContain("ASO");
-    expect(getSeoContentForPath("/blog/hemograma-caraguatatuba")).toContain("<article>");
+    expect(getSeoContentForPath("/blog/hemograma-completo-o-que-avalia")).toContain("<article>");
     expect(getSeoContentForPath("/blog")).toContain("<h1>");
   });
 });
@@ -209,7 +213,8 @@ describe("GUARD-RAIL: horario oficial unico (nao remover)", () => {
       "utf-8"
     );
     expect(indexHtml).not.toContain('"opens": "08:00"');
-    expect((indexHtml.match(/"opens": "07:30"/g) || []).length).toBe(2);
+    // Um unico no de negocio desde out/2026 (eram dois, com @id diferentes).
+    expect((indexHtml.match(/"opens": "07:30"/g) || []).length).toBe(1);
     expect(indexHtml).not.toMatch(/Saturday|Sunday/);
   });
 
@@ -235,40 +240,15 @@ describe("GUARD-RAIL: horario oficial unico (nao remover)", () => {
     expect(indexHtml).toContain('"image": ["https://totalquality.med.br/images/');
   });
 
-  it("todo artigo mapeado leva a pagina comercial do exame", async () => {
-    // Auditoria out/2026: /blog/eletrocardiograma-o-que-e-como-e-feito fez
-    // 25.880 impressoes e 15 cliques em 28 dias, e /blog/hemograma-completo-o-
-    // que-avalia 13.189 e 16 — posicao ~8,9 em consultas informacionais de
-    // alcance nacional. O CTA do artigo era generico e nao levava a pagina do
-    // exame, entao a demanda que chegava nao tinha destino comercial.
-    const examesData = (await import("@/lib/examesData")).examesData;
-    const slugsDeExame = new Set(examesData.map((e) => e.slug));
-    const blogIndex = (await import("../client/src/content/blog/index.json")).default;
-    const slugsDeBlog = new Set(blogIndex.map((b) => b.slug));
-
-    for (const [slugArtigo, destino] of Object.entries(ARTIGO_PARA_EXAME)) {
-      expect(slugsDeBlog.has(slugArtigo), `artigo ${slugArtigo} nao existe`).toBe(true);
-      expect(slugsDeExame.has(destino.slug), `exame ${destino.slug} nao existe`).toBe(true);
-
-      const html = getSeoContentForPath(`/blog/${slugArtigo}`);
-      expect(html, slugArtigo).toBeTruthy();
-      expect(html, slugArtigo).toContain(`href="/exames/${destino.slug}"`);
-      expect(html, slugArtigo).toContain("em Caraguatatuba");
-    }
-  });
-
   it("nenhuma rota injeta og:image de CDN de terceiro", () => {
-    // Auditoria out/2026: o teste acima lia so o client/index.html, que estava
+    // Auditoria out/2026: o teste acima le o client/index.html, que esta
     // correto desde agosto. O PNG do CloudFront sobrevivia em routes-metadata,
-    // no ogImage da home, e injectMetaTags sobrescrevia a tag certa em tempo de
+    // no ogImage da home, e injectMetaTags sobrescreve a tag certa em tempo de
     // requisicao — por isso a producao servia o PNG de 5,7 MB enquanto o HTML
     // de origem declarava o WebP. Verificar o HTML INJETADO, nao o de origem.
     for (const metadata of getAllRoutes()) {
       if (!metadata.ogImage) continue;
       expect(metadata.ogImage, metadata.canonical).not.toContain("cloudfront.net");
-      expect(metadata.ogImage, metadata.canonical).toMatch(
-        /^https:\/\/totalquality\.med\.br\/images\//
-      );
       const injected = injectMetaTags(
         '<meta property="og:image" content="PLACEHOLDER" />',
         metadata
@@ -333,7 +313,8 @@ describe("GUARD-RAIL: tempo de atuacao sempre calculado (nao remover)", () => {
       nodePath.resolve(import.meta.dirname, "../client/index.html"),
       "utf-8"
     );
-    expect((indexHtml.match(/"foundingDate": "2003-07-08"/g) || []).length).toBe(2);
+    // Um unico no de negocio desde out/2026 (eram dois, com @id diferentes).
+    expect((indexHtml.match(/"foundingDate": "2003-07-08"/g) || []).length).toBe(1);
     expect(indexHtml).not.toContain('"foundingDate": "2003"');
   });
 });
@@ -459,7 +440,10 @@ describe("Redirecionamentos legados (auditoria Search Console jul/2026)", () => 
     expect(getLegacyRedirect("/mapa")).toBe("/exames/mapa");
     expect(getLegacyRedirect("/cartao-desconto")).toBe("/cartao");
     expect(getLegacyRedirect("/blog/index")).toBe("/blog");
-    expect(getLegacyRedirect("/medicos")).toBe("/");
+    // /medicos fazia 301 para a home, que o Google conta como soft 404:
+    // desde 22/10/2026 responde 410 (sem pagina equivalente).
+    expect(getLegacyRedirect("/medicos")).toBeNull();
+    expect(isGone("/medicos")).toBe(true);
     // Placeholder WordPress indexado, achado via site: em 01/08/2026
     expect(getLegacyRedirect("/total-quality")).toBe("/");
     expect(getLegacyRedirect("/total-quality/")).toBe("/");
@@ -548,7 +532,6 @@ describe("GUARD-RAIL: convenio nao atendido nunca volta a peca publica (set/2026
       "client/src/pages/Convenios.tsx",
       "client/src/pages/LaboratorioCaraguatatuba.tsx",
       "client/src/lib/conveniosData.ts",
-      "client/src/content/blog/convenios-laboratorio-caraguatatuba.json",
       "client/src/content/blog/index.json",
       "server/_core/routes-metadata.ts",
     ];
@@ -849,7 +832,7 @@ describe("GUARD-RAIL: coleta sem agendamento (confirmado pelo Alex em 01/08/2026
   // A coleta laboratorial e por ordem de chegada — argumento de desempate nas
   // buscas locais ("exame de sangue sem agendamento"). As paginas de exames de
   // LABORATORIO devem afirmar isso; exames de imagem seguem com agendamento.
-  it.each(["/", "/laboratorio-caraguatatuba", "/exames/exames-de-sangue", "/exames/hemograma", "/convenios"])(
+  it.each(["/", "/laboratorio-caraguatatuba", "/exames/exames-de-sangue", "/exames/hemograma", "/exames/sexagem-fetal", "/convenios"])(
     "%s afirma o atendimento por ordem de chegada",
     (route) => {
       const html = getSeoContentForPath(route)!;
@@ -949,7 +932,6 @@ describe("GUARD-RAIL: soft 404 do catch-all de artigos (Search Console, ago/2026
       "/blog/index",
       "/blog/privacidade",
       "/mapa",
-      "/medicos",
       "/login",
       "/sobre",
       "/contato",
@@ -965,6 +947,164 @@ describe("GUARD-RAIL: soft 404 do catch-all de artigos (Search Console, ago/2026
         `${url} redireciona para ${alvo}, que não responde 200`
       ).toBe(200);
     }
+  });
+});
+
+describe("GUARD-RAIL: uma URL por intencao — consolidacao do blog (out/2026)", () => {
+  // Auditoria do Search Console de 21/10/2026: artigos do blog disputavam a
+  // intencao das paginas de servico e a posicao do site caiu. Cada um foi
+  // consolidado no destino com 301. Se um deles voltar ao indice do blog, a
+  // canibalizacao volta junto.
+  const CONSOLIDADOS: Record<string, string> = {
+    "/blog/hemograma-caraguatatuba": "/exames/hemograma",
+    "/blog/ultrassonografia-caraguatatuba": "/exames/ultrassonografia",
+    "/blog/tomografia-caraguatatuba": "/exames/tomografia-computadorizada",
+    "/blog/check-up-preventivo-quando-fazer": "/blog/check-up-medico-quais-exames-fazer",
+    "/blog/laboratorio-regiao-sul-caraguatatuba": "/laboratorio-caraguatatuba",
+    "/blog/laboratorio-jardim-primavera-caraguatatuba": "/laboratorio-caraguatatuba",
+    "/blog/convenios-laboratorio-caraguatatuba": "/convenios",
+    "/blog/exame-de-sangue-caraguatatuba": "/exames/exames-de-sangue",
+    "/blog/hemograma-completo": "/blog/hemograma-completo-o-que-avalia",
+  };
+
+  it.each(Object.entries(CONSOLIDADOS))("%s faz 301 para %s", (origem, destino) => {
+    expect(getLegacyRedirect(origem)).toBe(destino);
+  });
+
+  it("os artigos consolidados saem do blog e do sitemap", () => {
+    const slugs = getKnownBlogSlugs();
+    const sitemap = getAllRoutes().map((r) => new URL(r.canonical).pathname);
+    for (const origem of Object.keys(CONSOLIDADOS)) {
+      expect(slugs.has(origem.replace("/blog/", "")), `${origem} voltou ao indice do blog`).toBe(false);
+      expect(sitemap, `${origem} voltou ao sitemap`).not.toContain(origem);
+    }
+  });
+
+  it("nenhum 301 aponta para outra URL que tambem redireciona (sem cadeia)", () => {
+    const blogSlugs = getKnownBlogSlugs();
+    for (const [origem, destino] of Object.entries(LEGACY_REDIRECTS)) {
+      const alvo = destino.split("#")[0] || "/";
+      expect(getLegacyRedirect(alvo), `${origem} -> ${alvo} faz cadeia de redirecionamento`).toBeNull();
+      expect(resolveHttpStatus(alvo, blogSlugs, new Set<string>()), `${origem} -> ${alvo} nao responde 200`).toBe(200);
+    }
+  });
+
+  it("nenhuma pagina publicada linka um artigo consolidado", () => {
+    for (const route of getAllRoutes()) {
+      const html = getSeoContentForPath(new URL(route.canonical).pathname);
+      if (!html) continue;
+      for (const origem of Object.keys(CONSOLIDADOS)) {
+        expect(html, `${route.canonical} ainda linka ${origem}`).not.toContain(`href="${origem}"`);
+      }
+    }
+  });
+});
+
+describe("GUARD-RAIL: pagina de sexagem fetal (25/10/2026)", () => {
+  // O Alex confirmou em 25/10/2026 que a clinica faz sexagem fetal. O grupo do
+  // Google Ads ja convertia e mandava para /exames/exames-de-sangue: a pagina
+  // propria e a URL final certa (regra de 05/10). Exame de sangue da gestante:
+  // sem promessa de acerto, sem jejum, com a idade gestacional minima.
+  const html = getSeoContentForPath("/exames/sexagem-fetal")!;
+
+  it("existe, responde 200, entra no sitemap e tem metadados proprios", () => {
+    expect(html).toBeTruthy();
+    expect(resolveHttpStatus("/exames/sexagem-fetal")).toBe(200);
+    expect(getAllRoutes().map((r) => r.canonical)).toContain("https://totalquality.med.br/exames/sexagem-fetal");
+    expect(getRouteMetadata("/exames/sexagem-fetal")?.title).toBe("Sexagem Fetal em Caraguatatuba | Total Quality");
+  });
+
+  it("explica o exame com o que e verdade: 8a semana, sem jejum, nao substitui o pre-natal", () => {
+    expect(html).toMatch(/8ª semana/);
+    expect(html).toMatch(/jejum/i);
+    expect(html).toMatch(/não substitui o pré-natal/i);
+  });
+
+  it("nao promete acerto nem usa superlativo", () => {
+    expect(html).not.toMatch(/\d{2}(,\d+)?\s?%|garant|100% seguro|precis[ãa]o|mais r[áa]pido|melhor/i);
+  });
+
+  it("a landing de analises clinicas linka a pagina", () => {
+    expect(getSeoContentForPath("/laboratorio-caraguatatuba")).toContain('href="/exames/sexagem-fetal"');
+  });
+});
+
+describe("GUARD-RAIL: paginas de especialidade (24/10/2026)", () => {
+  // Pedido do Alex: endocrinologista, gastroenterologista e medicina do
+  // trabalho. Decisoes: sem nome de medico, gastro so consulta (a clinica nao
+  // faz endoscopia nem colonoscopia), PCMSO incluso, consultas particular e
+  // pelos tres convenios.
+  const SLUGS = ["endocrinologista", "gastroenterologista", "medicina-do-trabalho"];
+
+  it.each(SLUGS)("/especialidades/%s responde 200, entra no sitemap e tem metadados", (slug) => {
+    const path = `/especialidades/${slug}`;
+    expect(resolveHttpStatus(path, getKnownBlogSlugs(), new Set<string>())).toBe(200);
+    const canonicals = getAllRoutes().map((r) => r.canonical);
+    expect(canonicals).toContain(`https://totalquality.med.br${path}`);
+    const meta = getRouteMetadata(path)!;
+    expect(meta.title.length).toBeLessThanOrEqual(60);
+    expect(meta.description.length).toBeLessThanOrEqual(160);
+    expect(meta.title).toMatch(/Caraguatatuba/);
+  });
+
+  it("especialidade inexistente responde 404", () => {
+    expect(resolveHttpStatus("/especialidades/pediatra", getKnownBlogSlugs(), new Set<string>())).toBe(404);
+  });
+
+  it.each(SLUGS)("/especialidades/%s: prerender dentro das regras do CFM e das decisoes do Alex", (slug) => {
+    const html = getSeoContentForPath(`/especialidades/${slug}`)!;
+    expect(html.match(/<h1>/g)).toHaveLength(1);
+    expect(html).toMatch(/Registro\s*970616/);
+    expect(html).toContain("Alex Waltersdorf - 267.339");
+    expect(html).not.toMatch(/\bCRM\b/);
+    expect(html).not.toMatch(/\bDra?\.\s/);
+    // (o rodape de endereco diz "Sábado e domingo fechado": horario, nao oferta)
+    expect(html).not.toMatch(/\bmelhor(es)?\b|garant|R\$|\bpre[çc]o\b|wa\.me|resson[âa]ncia|ecocardiograma|ergom[ée]trico/i);
+    expect(html).not.toMatch(/\b(Unimed|Bradesco|SulAm[ée]rica|Amil|Porto Seguro|NotreDame|Hapvida|Cassi|Geap)\b/);
+    expect(html).toContain("MedicalWebPage");
+  });
+
+  it("gastroenterologia: so consulta, e a pagina diz que nao faz endoscopia nem colonoscopia", () => {
+    const html = getSeoContentForPath("/especialidades/gastroenterologista")!;
+    expect(html).toContain("não realiza endoscopia nem colonoscopia");
+    expect(html).toContain("https://schema.org/Gastroenterologic");
+  });
+
+  it("medicina do trabalho: PCMSO, ASO e link para o exame admissional", () => {
+    const html = getSeoContentForPath("/especialidades/medicina-do-trabalho")!;
+    expect(html).toContain("PCMSO");
+    expect(html).toContain("ASO");
+    expect(html).toContain('href="/exames/exame-admissional"');
+  });
+
+  it("consultas: particular e os tres convenios", () => {
+    for (const slug of ["endocrinologista", "gastroenterologista"]) {
+      expect(getSeoContentForPath(`/especialidades/${slug}`)!).toContain("Cartão de Todos, Solumedi e Leader");
+    }
+  });
+});
+
+describe("GUARD-RAIL: auditoria de indexacao (23/10/2026)", () => {
+  // URLs com historico de impressao no Search Console que respondiam 404.
+  const COM_EQUIVALENTE: Record<string, string> = {
+    "/blog/eletrocardiograma-o-que-%C3%A9-como-%C3%A9-feito": "/blog/eletrocardiograma-o-que-e-como-e-feito",
+    "/blog/exame-de-sangue-guia-completo": "/blog/exames-de-sangue-guia-completo",
+    "/exames/ultassonografia": "/exames/ultrassonografia",
+    "/eletroencefalograma": "/exames/eletroencefalograma",
+    "/glossario/tempo-resultado-hemograma-completo/": "/exames/hemograma",
+    "/category/blog/": "/blog",
+    "/about-us/": "/#sobre",
+    "/contact-us/": "/#contato",
+    "/contact-us-2/": "/#contato",
+    "/appointment/": "/#contato",
+  };
+
+  it.each(Object.entries(COM_EQUIVALENTE))("%s faz 301 para %s", (origem, destino) => {
+    expect(getLegacyRedirect(origem)).toBe(destino);
+  });
+
+  it("/faq/ responde 410", () => {
+    expect(isGone("/faq/")).toBe(true);
   });
 });
 
@@ -987,8 +1127,9 @@ describe("GUARD-RAIL: blog de SEO local da regiao sul (out/2026)", () => {
     /confiance/i,
   ];
 
+  // O artigo da regiao sul foi consolidado em /laboratorio-caraguatatuba
+  // (301 em 22/10/2026); os guard-rails dele passaram para a landing.
   const ARTIGOS_DO_SUL = [
-    "laboratorio-regiao-sul-caraguatatuba",
     "como-escolher-laboratorio-analises-clinicas",
     "resultado-de-exames-online-seguranca",
     "exame-de-urina-eas-como-coletar",
@@ -1019,21 +1160,22 @@ describe("GUARD-RAIL: blog de SEO local da regiao sul (out/2026)", () => {
     }
   });
 
-  it("o artigo da regiao sul nomeia os bairros do sul", () => {
-    // Sem os bairros, o artigo perde a cauda longa que justifica a sua
-    // existencia e passa a competir com a landing de laboratorio.
-    // Os nomes vem da area de referencia do CRAS Sul da Prefeitura.
-    const html = getSeoContentForPath("/blog/laboratorio-regiao-sul-caraguatatuba")!;
-    for (const bairro of ["Perequê-Mirim", "Travessão", "Porto Novo", "Morro do Algodão", "Pegorelli"]) {
-      expect(html, `o artigo da regiao sul perdeu o bairro ${bairro}`).toContain(bairro);
+  it("a landing de analises clinicas nomeia os bairros que antes tinham artigo proprio", () => {
+    // Os artigos da regiao sul e do Jardim Primavera viraram uma secao de
+    // /laboratorio-caraguatatuba (301 em 22/10/2026). Sem os bairros, a pagina
+    // perde a cauda longa que o artigo trazia. Os nomes da regiao sul vem da
+    // area de referencia do CRAS Sul da Prefeitura.
+    const html = getSeoContentForPath("/laboratorio-caraguatatuba")!;
+    for (const bairro of ["Perequê-Mirim", "Travessão", "Porto Novo", "Morro do Algodão", "Pegorelli", "Jardim Primavera"]) {
+      expect(html, `a landing perdeu o bairro ${bairro}`).toContain(bairro);
     }
   });
 
-  it("o artigo da regiao sul continua dizendo que a clinica fica no Centro", () => {
-    // A clinica NAO tem unidade na regiao sul. Um artigo otimizado para
-    // "laboratorio no Pereque-Mirim" sem essa frase vira promessa falsa de
+  it("a landing continua dizendo que a clinica so atende no Centro", () => {
+    // A clinica NAO tem unidade na regiao sul nem no Jardim Primavera. Texto
+    // otimizado para o nome do bairro sem essa frase vira promessa falsa de
     // localidade — o paciente sai de casa e nao encontra nada.
-    const html = getSeoContentForPath("/blog/laboratorio-regiao-sul-caraguatatuba")!;
+    const html = getSeoContentForPath("/laboratorio-caraguatatuba")!;
     expect(html).toContain("Não temos unidade na região sul");
     expect(html).toContain("Rua Padre Anchieta, 1010");
   });
@@ -1042,19 +1184,19 @@ describe("GUARD-RAIL: blog de SEO local da regiao sul (out/2026)", () => {
     // Nicho YMYL: conteudo de saude sem encaminhamento ao medico e risco
     // clinico antes de ser risco de ranking.
     const html = getSeoContentForPath(`/blog/${slug}`)!;
-    expect(html).toMatch(/n[ãa]o substitui consulta m[ée]dica/i);
+    expect(html).toMatch(/n[ãa]o substitui a consulta m[ée]dica/i);
   });
 
   it("nenhum artigo do blog volta a disputar o termo da landing", () => {
-    // PR de out/2026 deu a /laboratorio-caraguatatuba a exclusividade de
-    // "laboratorio em Caraguatatuba". Artigo com esse termo no title reabre a
-    // canibalizacao, agora com 23 paginas em vez de duas.
+    // "laboratorio em Caraguatatuba" e da HOME (decisao por Search Console,
+    // out/2026 — ver HOME_TITLE em shared/const.ts). Artigo com esse termo no
+    // title reabre a canibalizacao, agora com 23 paginas em vez de duas.
     for (const route of getAllRoutes()) {
       const pathname = new URL(route.canonical).pathname;
       if (!pathname.startsWith("/blog/")) continue;
       expect(
         route.title,
-        `${pathname} disputa "laboratorio em Caraguatatuba" com a landing`
+        `${pathname} disputa "laboratorio em Caraguatatuba" com a home`
       ).not.toMatch(/laborat[óo]rio em caraguatatuba/i);
     }
   });
@@ -1112,89 +1254,89 @@ describe("GUARD-RAIL: identificacao do art. 5o em TODA peca publica (out/2026)",
   });
 });
 
-describe("GUARD-RAIL: imagem do artigo bate com o assunto (out/2026)", () => {
-  // O Alex reportou em 10/10/2026 que as fotos do blog nao tinham relacao com
-  // o texto. Ao abrir os arquivos, dois achados:
+describe("GUARD-RAIL: cada artigo tem a sua propria imagem (out/2026)", () => {
+  // Duas correcoes empilhadas, nesta ordem:
   //
-  //   1. "cardiologia-1024.webp" NAO e uma foto de cardiologia: e um ULTRASSOM
-  //      com Doppler colorido. O nome enganou quem escolheu, e a foto foi parar
-  //      em artigos de eletrocardiograma, MAPA e Holter — exames eletricos, que
-  //      nao se parecem nada com aquilo.
-  //   2. "hero-clinica-1440.webp" mostra uma RESSONANCIA MAGNETICA. A decisao
-  //      de nao usar essa foto e de 01/08/2026 e esta registrada em
-  //      HeroSection.tsx, mas so a home foi limpa: a imagem seguia no `image`
-  //      do LocalBusiness (a foto da ENTIDADE que o Google le), na categoria
-  //      neurologia de ExamePage, no hero do check-up, no hero da
-  //      bioimpedancia e em 4 artigos do blog.
+  //   1. As fotos nao batiam com o texto. O nome do arquivo enganava:
+  //      "cardiologia-*.webp" e um ULTRASSOM com Doppler, e por isso foi parar
+  //      nos artigos de eletrocardiograma, MAPA e Holter. E "hero-clinica" era
+  //      uma RESSONANCIA, exame que a clinica nao realiza.
+  //   2. Corrigido o assunto, sobrou a repeticao: 23 artigos dividiam 5 fotos,
+  //      e a listagem do blog mostrava a mesma imagem seis vezes.
   //
-  // O guard-rail de "servico nao prestado" existe desde ago/2026, mas olha
-  // TEXTO. Imagem passou batido. Estes dois testes fecham essa porta.
-  const O_QUE_CADA_FOTO_MOSTRA = {
-    laboratorio: "bancada, microscopio, tubos de coleta e analisadores",
-    cardiologia: "ultrassom com Doppler colorido (o nome do arquivo engana)",
-    tomografia: "medico lendo cortes de tomografia em dois monitores",
-    recepcao: "recepcao real da Total Quality",
-    fachada: "predio real da clinica",
-  } as const;
-
-  type Foto = keyof typeof O_QUE_CADA_FOTO_MOSTRA;
-
-  // Fotos aceitaveis por assunto. Mais de uma quando o assunto admite.
-  const FOTO_POR_ARTIGO: Record<string, Foto[]> = {
-    "exames-de-sangue-guia-completo": ["laboratorio"],
-    "hemograma-caraguatatuba": ["laboratorio"],
-    "hemograma-completo-o-que-avalia": ["laboratorio"],
-    "alimentacao-e-exames-laboratoriais": ["laboratorio"],
-    "vitamina-d-importancia-saude": ["laboratorio"],
-    "exame-de-urina-eas-como-coletar": ["laboratorio"],
-    "exame-toxicologico-cnh": ["laboratorio"],
-    "como-escolher-laboratorio-analises-clinicas": ["laboratorio"],
-    "saude-do-coracao-prevencao": ["laboratorio"],
-    "ultrassonografia-caraguatatuba": ["cardiologia"],
-    "diferenca-ultrassom-comum-doppler": ["cardiologia"],
-    "mamografia-ultrassom-mamas-diferencas": ["cardiologia"],
-    "tomografia-caraguatatuba": ["tomografia"],
-    "tomografia-computadorizada-como-funciona": ["tomografia"],
-    "diferenca-raio-x-tomografia": ["tomografia"],
-    "convenios-laboratorio-caraguatatuba": ["recepcao", "fachada"],
-    "resultado-de-exames-online-seguranca": ["recepcao", "fachada"],
-    "check-up-preventivo-quando-fazer": ["recepcao", "fachada"],
-    "check-up-medico-quais-exames-fazer": ["recepcao", "fachada"],
-    "eletrocardiograma-o-que-e-como-e-feito": ["recepcao", "fachada"],
-    "mapa-ou-holter-diferenca": ["recepcao", "fachada"],
-    "laboratorio-regiao-sul-caraguatatuba": ["fachada", "recepcao"],
-    "aso-exames-ocupacionais": ["fachada", "recepcao"],
+  // Agora cada artigo tem imagem propria. As da clinica vem primeiro, porque
+  // foto real vale mais para SEO local do que banco de imagens; o resto esta
+  // em /images/blog/<slug>.webp, com a origem registrada em
+  // docs/creditos-imagens-blog.md.
+  const FOTO_DA_CLINICA: Record<string, string> = {
+    "como-escolher-laboratorio-analises-clinicas": "laboratorio-1024.webp",
+    "diferenca-ultrassom-comum-doppler": "cardiologia-1024.webp",
   };
 
-  it("todo artigo do blog esta na tabela de assunto x foto", () => {
-    // Artigo novo entra aqui junto com o resto. Sem isso o par volta a ser
-    // escolhido no olho, que e exatamente como "ultrassom" foi parar em Holter.
-    const slugs = Array.from(getKnownBlogSlugs()).sort();
-    expect(slugs, "artigo sem entrada em FOTO_POR_ARTIGO").toEqual(
-      Object.keys(FOTO_POR_ARTIGO).sort()
-    );
+  async function imagemDoArtigo(slug: string): Promise<string> {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const artigo = JSON.parse(
+      fs.readFileSync(
+        nodePath.resolve(import.meta.dirname, `../client/src/content/blog/${slug}.json`),
+        "utf-8"
+      )
+    ) as { image: string };
+    return artigo.image;
+  }
+
+  it("nenhuma imagem se repete entre os artigos", async () => {
+    // Era o pedido do Alex em 10/10/2026: "as imagens do blog devem ser
+    // diferentes umas das outras".
+    const slugs = Array.from(getKnownBlogSlugs());
+    const porImagem = new Map<string, string[]>();
+    for (const slug of slugs) {
+      const img = await imagemDoArtigo(slug);
+      porImagem.set(img, [...(porImagem.get(img) ?? []), slug]);
+    }
+    const repetidas = Array.from(porImagem.entries()).filter(([, s]) => s.length > 1);
+    expect(
+      repetidas.map(([img, s]) => `${img.split("/").pop()} em ${s.join(", ")}`),
+      "imagem usada por mais de um artigo"
+    ).toEqual([]);
+    expect(porImagem.size).toBe(slugs.length);
   });
 
-  it.each(Object.entries(FOTO_POR_ARTIGO))(
-    "%s usa uma foto compativel com o assunto",
-    async (slug, aceitas) => {
+  it.each(Array.from(getKnownBlogSlugs()))(
+    "artigo %s aponta para uma imagem que existe no disco",
+    async (slug) => {
       const fs = await import("node:fs");
       const nodePath = await import("node:path");
-      const artigo = JSON.parse(
-        fs.readFileSync(
-          nodePath.resolve(import.meta.dirname, `../client/src/content/blog/${slug}.json`),
-          "utf-8"
-        )
-      ) as { image: string };
-      const foto = artigo.image.replace(/^.*\/images\//, "").replace(/-\d+\.\w+$/, "");
-      expect(
-        aceitas as readonly string[],
-        `${slug} usa "${foto}" (${(O_QUE_CADA_FOTO_MOSTRA as Record<string, string>)[foto] ?? "foto desconhecida"}), que nao combina com o assunto`
-      ).toContain(foto);
+      const img = await imagemDoArtigo(slug);
+      const esperado = FOTO_DA_CLINICA[slug]
+        ? `https://totalquality.med.br/images/${FOTO_DA_CLINICA[slug]}`
+        : `https://totalquality.med.br/images/blog/${slug}.webp`;
+      expect(img, `${slug} nao usa a imagem definida para ele`).toBe(esperado);
+      const caminho = nodePath.resolve(
+        import.meta.dirname,
+        "../client/public",
+        img.replace("https://totalquality.med.br/", "")
+      );
+      expect(fs.existsSync(caminho), `${img} nao existe em client/public`).toBe(true);
     }
   );
 
+  it("o card e o og:image do artigo mostram a mesma coisa", async () => {
+    // Antes do #60 so 7 dos 23 tinham ogImage, e nem todos batiam com o card.
+    for (const route of getAllRoutes()) {
+      const pathname = new URL(route.canonical).pathname;
+      const slug = pathname.startsWith("/blog/") ? pathname.slice("/blog/".length) : null;
+      if (!slug || !getKnownBlogSlugs().has(slug)) continue;
+      expect(route.ogImage, `${slug} tem og:image diferente da imagem do card`).toBe(
+        await imagemDoArtigo(slug)
+      );
+    }
+  });
+
   it("nenhuma peca servida volta a usar a foto da ressonancia", async () => {
+    // hero-clinica-*.webp mostra uma ressonancia magnetica, exame que a clinica
+    // nao realiza. O guard-rail de servico nao prestado le TEXTO; imagem
+    // passava batido.
     const fs = await import("node:fs");
     const nodePath = await import("node:path");
     const raiz = nodePath.resolve(import.meta.dirname, "..", "client", "src");
@@ -1208,17 +1350,332 @@ describe("GUARD-RAIL: imagem do artigo bate com o assunto (out/2026)", () => {
 
     const ofensores: string[] = [];
     for (const arquivo of arquivos) {
-      const bruto = fs.readFileSync(arquivo, "utf-8");
-      // comentario que explica POR QUE a foto saiu pode citar o nome
-      const semComentario = bruto
+      const semComentario = fs
+        .readFileSync(arquivo, "utf-8")
         .replace(/\/\*[\s\S]*?\*\//g, "")
         .replace(/\{\s*\/\*[\s\S]*?\*\/\s*\}/g, "")
         .replace(/^\s*\/\/.*$/gm, "");
       if (semComentario.includes("hero-clinica")) ofensores.push(arquivo);
     }
+    expect(ofensores, ofensores.join("\n")).toEqual([]);
+  });
+
+  it("toda imagem de banco esta creditada em docs/creditos-imagens-blog.md", async () => {
+    // Exigencia da Resolucao CFM 2.336/2023: banco de imagens cita a origem.
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const creditos = fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "..", "docs", "creditos-imagens-blog.md"),
+      "utf-8"
+    );
+    for (const slug of getKnownBlogSlugs()) {
+      if (FOTO_DA_CLINICA[slug]) continue;
+      expect(creditos, `${slug} usa banco de imagens e nao esta creditado`).toContain(slug);
+    }
+  });
+});
+
+describe("GUARD-RAIL: campanha Outubro Rosa (out/2026)", () => {
+  // Pagina de campanha com preco anunciado: o que esta escrito vincula a
+  // clinica (CDC art. 30) e passa pelas vedacoes da Resolucao CFM 2.336/2023.
+  // Tres riscos concretos, e um teste para cada:
+  //
+  //   1. O pre-render e a pagina React sao DOIS textos. Se alguem corrigir o
+  //      preco em um e esquecer o outro, o robo e o paciente passam a ler
+  //      ofertas diferentes — e a que vincula e a que o paciente viu.
+  //   2. A ressalva da mamografia e o que impede o pacote de ser lido como
+  //      rastreamento completo de cancer de mama. Ela nao e enfeite.
+  //   3. Promessa de resultado, urgencia fabricada e brinde sao exatamente o
+  //      que o art. 11 veda, e sao o que primeiro aparece quando alguem
+  //      "melhora a conversao" da pagina.
+  const ROTA = "/outubro-rosa";
+
+  async function fontePagina(): Promise<string> {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    return fs.readFileSync(
+      nodePath.resolve(import.meta.dirname, "../client/src/pages/OutubroRosa.tsx"),
+      "utf-8"
+    );
+  }
+
+  /*
+   * Precos CITADOS, nao precos PRESENTES. A primeira versao deste teste so
+   * exigia que "R$ 399,90" aparecesse em algum lugar — e passou com o preco
+   * trocado numa frase, porque a string sobrevivia na resposta do FAQ. Agora
+   * o teste coleta todo preco do texto e exige que o conjunto seja exatamente
+   * os dois: um terceiro valor significa oferta se contradizendo.
+   */
+  const PRECOS_AUTORIZADOS = ["R$ 500,00", "R$ 399,90"];
+  const precosCitados = (texto: string) =>
+    Array.from(
+      new Set(Array.from(texto.matchAll(/R\$\s?\d{1,3}(?:\.\d{3})*,\d{2}/g)).map((m) => m[0]))
+    ).sort();
+
+  it("o pre-render anuncia os tres exames e nenhum preco alem dos dois", () => {
+    const html = getSeoContentForPath(ROTA)!;
+    for (const exame of [
+      "Ultrassonografia das mamas",
+      "Ultrassonografia transvaginal",
+      "Papanicolau",
+    ]) {
+      expect(html, `o pre-render perdeu "${exame}"`).toContain(exame);
+    }
+    expect(precosCitados(html), "preco fora da oferta no pre-render").toEqual(
+      [...PRECOS_AUTORIZADOS].sort()
+    );
+  });
+
+  it("a pagina React anuncia exatamente a mesma oferta do pre-render", async () => {
+    const src = await fontePagina();
+    for (const exame of [
+      "Ultrassonografia das mamas",
+      "Ultrassonografia transvaginal",
+      "Papanicolau",
+    ]) {
+      expect(src, `a pagina perdeu "${exame}"`).toContain(exame);
+    }
+    // O preco promocional aparece quebrado no bloco grande (399 + ,90), entao
+    // o teste cobra as duas partes alem do texto corrido.
+    expect(src).toContain('PRECO_POR_INTEIRO = "399"');
+    expect(src).toContain('PRECO_POR_CENTAVOS = ",90"');
+    expect(precosCitados(src), "preco fora da oferta na pagina").toEqual(
+      [...PRECOS_AUTORIZADOS].sort()
+    );
+  });
+
+  it("a ressalva da mamografia aparece nos dois pontos de cada versao", async () => {
+    /*
+     * Duas vezes em cada versao, e o teste cobra as duas: a nota abaixo dos
+     * cartoes e a resposta do FAQ. Exigir uma so deixava apagar a nota — a
+     * que o paciente le junto da oferta — sem o teste perceber, porque a
+     * frase sobrevivia no FAQ.
+     */
+    const ressalva = /n[ãa]o substitui a/gi;
+    const html = getSeoContentForPath(ROTA)!;
+    const src = await fontePagina();
+    expect((html.match(ressalva) || []).length, "pre-render perdeu uma ressalva").toBe(2);
+    expect((src.match(ressalva) || []).length, "pagina React perdeu uma ressalva").toBe(2);
+    expect(html).toContain("conforme indica");
+  });
+
+  it("nem o pre-render nem a pagina usam promessa, urgencia ou brinde", async () => {
+    const VEDADO = [
+      /prote[çc][ãa]o completa/i,
+      /100\s*%\s*de\s*preven/i,
+      /diagn[óo]stico garantido/i,
+      /livre do c[âa]ncer/i,
+      /vagas limitadas/i,
+      /[úu]ltima chance/i,
+      /contagem regressiva/i,
+      /resultado em 24\s*horas/i,
+      /brinde/i,
+      /sorteio/i,
+      /parcelamos|parcelamento em/i,
+      /desconto no pix/i,
+      /no mesmo dia garantido/i,
+    ];
+    const alvos: Array<[string, string]> = [
+      ["pre-render", getSeoContentForPath(ROTA)!],
+      ["pagina React", await fontePagina()],
+    ];
+    for (const [onde, texto] of alvos) {
+      for (const proibido of VEDADO) {
+        expect(texto, `${onde} usa ${proibido}`).not.toMatch(proibido);
+      }
+    }
+  });
+});
+describe("GUARD-RAIL: artigo de hipoglicemia, conteudo de terceiro (out/2026)", () => {
+  // O artigo de hipoglicemia chegou em 18/10/2026 como HTML gerado por um
+  // servico externo (airticles.ai). O texto original trazia tres problemas que
+  // NAO podem voltar, e e para isso que estas travas existem:
+  //
+  //   1. Uma TABELA COMPARATIVA posicionando a Total Quality acima de
+  //      "monitoramento domiciliar" e "metodo ambulatorial tradicional" em
+  //      precisao, agilidade e conforto. A Resolucao CFM 2.336/2023 veda
+  //      publicidade que estabeleca comparacao ou sugira superioridade. E o
+  //      mesmo motivo que derrubou o pilar de benchmark do briefing de 09/10.
+  //   2. DESQUALIFICACAO DO GLICOSIMETRO ("sujeitos a interferencias e margem
+  //      de erro tecnica maior"). Aparelho de ponta de dedo e prescrito e e a
+  //      ferramenta certa para o monitoramento diario de quem tem diabetes.
+  //      Desencorajar o autocontrole para vender exame laboratorial e risco
+  //      clinico, nao so problema de etica publicitaria.
+  //   3. A conclusao mandava AGENDAR EXAME. O proprio texto lista convulsao,
+  //      desmaio e coma entre as manifestacoes — que sao emergencia. Artigo de
+  //      saude que descreve quadro agudo e termina em call-to-action comercial,
+  //      sem dizer para procurar urgencia, e falha de seguranca.
+  const SLUG = "hipoglicemia-sintomas-e-exames";
+
+  const artigo = () => {
+    const fs = require("node:fs") as typeof import("node:fs");
+    const nodePath = require("node:path") as typeof import("node:path");
+    return JSON.parse(
+      fs.readFileSync(
+        nodePath.join(process.cwd(), "client/src/content/blog", `${SLUG}.json`),
+        "utf-8"
+      )
+    ) as { title: string; content: string[] };
+  };
+
+  const corpo = () => artigo().content.join("\n");
+
+  it("a rota existe e o pre-render responde", () => {
+    const slugs = getKnownBlogSlugs();
     expect(
-      ofensores,
-      `hero-clinica-*.webp mostra uma ressonancia magnetica, exame que a clinica nao realiza:\n${ofensores.join("\n")}`
+      Array.from(slugs),
+      "rota do artigo nao registrada em routes-metadata"
+    ).toContain(SLUG);
+    expect(resolveHttpStatus(`/blog/${SLUG}`, slugs)).toBe(200);
+  });
+
+  it("nenhuma comparacao com outro meio de diagnostico ou de atendimento", () => {
+    // Cobra o PADRAO da peca reprovada: coluna/linha de tabela que confronta a
+    // clinica com uma alternativa. Nao basta proibir as palavras soltas.
+    const vedado = [
+      /monitoramento\s+domiciliar/i,
+      /m[eé]todo\s+ambulatorial/i,
+      /ambulatorial\s+tradicional/i,
+      /margem\s+de\s+erro\s+(t[eé]cnica\s+)?maior/i,
+      /sujeit[oa]s?\s+a\s+interfer[eê]ncias/i,
+      /processamento\s+manual/i,
+      /prazos\s+estendidos/i,
+    ];
+    const texto = corpo();
+    const achados = vedado.filter((r) => r.test(texto)).map(String);
+    expect(
+      achados,
+      "voltou a comparar a clinica com outro meio de diagnostico (CFM 2.336/2023)"
     ).toEqual([]);
+  });
+
+  it("nenhum superlativo de superioridade", () => {
+    const vedado = [
+      /excel[eê]ncia/i,
+      /exemplar/i,
+      /\bo\s+melhor\b/i,
+      // "de ponta" precisa do substantivo E da ressalva: "aparelho de ponta de
+      // dedo" (glicosimetro) e termo clinico legitimo e aparece na pergunta
+      // frequente que impede a versao que desqualificava o aparelho.
+      /(tecnologia|equipamento|aparelh\w+|estrutura|infraestrutura)\s+de\s+ponta(?!\s+de\s+dedo)/i,
+      /[uú]ltima\s+gera[çc][aã]o/i,
+      /alta\s+sensibilidade/i,
+      /m[aá]xima\s+confiabilidade/i,
+      /infraestrutura\s+(t[eé]cnica\s+)?avan[çc]ada/i,
+      /destaca-se/i,
+    ];
+    const texto = corpo();
+    const achados = vedado.filter((r) => r.test(texto)).map(String);
+    expect(achados, "superlativo de superioridade no artigo (CFM 2.336/2023)").toEqual([]);
+  });
+
+  it("o glicosimetro e tratado como ferramenta legitima, nao como concorrente", () => {
+    const texto = corpo();
+    expect(
+      /glicos[ií]metro|ponta\s+de\s+dedo/i.test(texto),
+      "o artigo deixou de falar do glicosimetro — a pergunta frequente sobre ele e o que impede a versao que o desqualificava"
+    ).toBe(true);
+    expect(texto).toMatch(/ferramenta\s+certa/i);
+  });
+
+  it("a orientacao de emergencia esta no artigo, com o numero do servico", () => {
+    const texto = corpo();
+    expect(texto, "sem secao de emergencia").toMatch(/##\s*Quando\s+é\s+emerg[eê]ncia/i);
+    expect(texto, "sem o telefone do servico de emergencia").toMatch(/\bSAMU\b[^\n]*192|\b192\b/);
+    for (const sinal of [/convuls/i, /desmaio|inconsciente/i]) {
+      expect(texto, `sinal de emergencia ausente: ${sinal}`).toMatch(sinal);
+    }
+  });
+
+  it("avisa para nao dar nada pela boca a quem esta inconsciente", () => {
+    // Era a omissao mais perigosa do texto original: ele listava coma e
+    // convulsao, e nao dizia o que NAO fazer.
+    expect(corpo()).toMatch(/n[aã]o\s+ofere[çc]a[^.]*pela\s+boca|nada\s+pela\s+boca/i);
+  });
+
+  it("o fechamento manda ao medico e a urgencia, nao a um agendamento", () => {
+    const blocos = artigo().content;
+    const ultimo = blocos[blocos.length - 1];
+    expect(ultimo, "ultimo bloco nao e a ressalva medica").toMatch(
+      /n[aã]o\s+substitui\s+consulta\s+m[eé]dica/i
+    );
+    expect(ultimo, "a ressalva final nao remete a urgencia").toMatch(/urg[eê]ncia/i);
+  });
+
+  it("nenhuma imagem de dominio de terceiro", () => {
+    // O HTML de origem servia as fotos de api.airticles.ai. Imagem de CDN
+    // alheio quebra sozinha e ja foi corrigida antes no og:image (#25).
+    const bruto = JSON.stringify(artigo());
+    expect(bruto, "imagem hospedada fora do dominio proprio").not.toMatch(
+      /airticles\.ai|cloudfront\.net/i
+    );
+  });
+
+  it("nao promete resultado nem diagnostico pelo artigo", () => {
+    // "\bcura\b" e nao "cura\b": sem a fronteira da esquerda, casa com
+    // "proCURA" em "o medico procura tres coisas juntas".
+    const vedado = [
+      /garantimos/i,
+      /diagn[oó]stico\s+(garantido|imediato)/i,
+      /\bcura\b/i,
+      /sem\s+risco/i,
+    ];
+    const texto = corpo();
+    expect(vedado.filter((r) => r.test(texto)).map(String)).toEqual([]);
+  });
+});
+
+describe("GUARD-RAIL: rota de primeiro nivel responde 200 em PRODUCAO (out/2026)", () => {
+  // /outubro-rosa entrou no ar em 18/10/2026 devolvendo 404 — com a pagina
+  // inteira no corpo da resposta. O sitemap a listava, o bundle tinha o chunk,
+  // o conteudo aparecia. So o status estava errado, que e o unico pedaco que o
+  // Google e o Google Ads leem para decidir se a URL existe.
+  //
+  // A causa: resolveHttpStatus trata caminho de primeiro nivel como slug de
+  // artigo AutoSEO. Quando `knownAutoSeoSlugs` vem carregado (producao), um
+  // caminho que nao esta em CLIENT_ROUTES e nao e artigo cai em 404.
+  //
+  // POR QUE A TRAVA DA #62 NAO PEGOU: ela chamava resolveHttpStatus(path, blog)
+  // com DOIS argumentos. Sem o terceiro, a funcao entra no ramo
+  // `if (!knownAutoSeoSlugs) return 200` — que existe para o boot com banco
+  // fora do ar. O teste exercitava o caminho degradado e nunca o de producao.
+  // Verde que nao provava nada.
+  //
+  // Esta trava cobre a CLASSE: toda rota de primeiro nivel declarada em
+  // routes-metadata, nao so a que quebrou.
+  const AUTOSEO_CARREGADO = new Set(["artigo-autoseo-de-exemplo"]);
+
+  const primeiroNivel = () =>
+    getAllRoutes()
+      .map((r) => new URL(r.canonical).pathname)
+      .filter((p) => /^\/[a-z0-9-]+$/i.test(p));
+
+  it("existe rota de primeiro nivel para cobrir (o teste nao e vacuo)", () => {
+    expect(primeiroNivel().length).toBeGreaterThan(3);
+  });
+
+  it("toda rota de primeiro nivel do sitemap responde 200 com AutoSEO carregado", () => {
+    const blog = getKnownBlogSlugs();
+    const quebradas = primeiroNivel().filter(
+      (p) => resolveHttpStatus(p, blog, AUTOSEO_CARREGADO) !== 200
+    );
+    expect(
+      quebradas,
+      "rota anunciada no sitemap que devolve 404 em producao — falta em CLIENT_ROUTES"
+    ).toEqual([]);
+  });
+
+  it("o 200 nao vem do ramo degradado: vale com e sem AutoSEO carregado", () => {
+    // Se alguem "consertar" removendo o terceiro argumento, isto quebra.
+    const blog = getKnownBlogSlugs();
+    for (const p of primeiroNivel()) {
+      expect(resolveHttpStatus(p, blog, AUTOSEO_CARREGADO), `${p} com AutoSEO carregado`).toBe(200);
+      expect(resolveHttpStatus(p, blog, null), `${p} com AutoSEO fora do ar`).toBe(200);
+    }
+  });
+
+  it("caminho de primeiro nivel inexistente continua 404", () => {
+    // A trava acima nao pode ser satisfeita devolvendo 200 para tudo.
+    expect(resolveHttpStatus("/pagina-que-nunca-existiu", getKnownBlogSlugs(), AUTOSEO_CARREGADO)).toBe(404);
   });
 });

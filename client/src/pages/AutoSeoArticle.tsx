@@ -252,7 +252,7 @@ export default function AutoSeoArticle() {
           <div className="mt-12 p-8 bg-surface-light border border-black/5 text-center">
             <h2 className="heading-display text-3xl text-text mb-3">AGENDE SEUS EXAMES</h2>
             <p className="text-text-light text-sm mb-6 max-w-md mx-auto">
-              Na Total Quality em Caraguatatuba, cuidamos da sua saúde com tecnologia de ponta e atendimento humanizado.
+              Na Total Quality, no Centro de Caraguatatuba: coleta laboratorial sem agendamento e exames de imagem com hora marcada.
             </p>
             <button
               type="button"

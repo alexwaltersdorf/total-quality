@@ -6,6 +6,7 @@ import { Phone, MessageCircle, Instagram, MapPin, ArrowUpRight } from "lucide-re
 import { Link } from "wouter";
 import { trackScheduleExam, trackWhatsAppClick, trackExternalLink } from "@/lib/tracking";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import { BLOG_EXTERNO_URL } from "@shared/const";
 
 const footerLinks = [
   { label: "Início", href: "#inicio" },
@@ -13,6 +14,7 @@ const footerLinks = [
   { label: "Sobre", href: "#sobre" },
   { label: "Contato", href: "#contato" },
   { label: "Blog", href: "/blog", isRoute: true },
+  { label: "Mais artigos de saúde", href: BLOG_EXTERNO_URL, external: true },
   { label: "Check-Up Preventivo", href: "/checkup", isRoute: true },
   { label: "Bioimpedância", href: "/bioimpedancia", isRoute: true },
 ];
@@ -29,6 +31,9 @@ const examSitelinks = [
   { label: "Eletrocardiograma", href: "/exames/eletrocardiograma" },
   { label: "Eletroencefalograma", href: "/exames/eletroencefalograma" },
   { label: "Exame Toxicológico", href: "/exames/exame-toxicologico" },
+  { label: "Endocrinologista", href: "/especialidades/endocrinologista" },
+  { label: "Gastroenterologista", href: "/especialidades/gastroenterologista" },
+  { label: "Medicina do Trabalho", href: "/especialidades/medicina-do-trabalho" },
 ];
 
 export default function Footer({ laboratory = false }: { laboratory?: boolean }) {
@@ -66,7 +71,7 @@ export default function Footer({ laboratory = false }: { laboratory?: boolean })
           <div className="lg:col-span-1">
             <span className="heading-display text-3xl text-text block mb-4">TOTAL QUALITY</span>
             <p className="text-text-muted text-sm leading-relaxed">
-              Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba - SP. Desde 2003, tecnologia de última geração para cuidar da sua saúde.
+              Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba - SP. Desde 2003 no Centro de Caraguatatuba.
             </p>
           </div>
 
@@ -76,7 +81,11 @@ export default function Footer({ laboratory = false }: { laboratory?: boolean })
             <ul className="space-y-3">
               {footerLinks.map((link) => (
                 <li key={link.href}>
-                  {"isRoute" in link && link.isRoute ? (
+                  {"external" in link && link.external ? (
+                    <a href={link.href} className="text-text-light hover:text-brand text-sm transition-colors">
+                      {link.label}
+                    </a>
+                  ) : "isRoute" in link && link.isRoute ? (
                     <Link
                       href={link.href}
                       className="text-text-light hover:text-brand text-sm transition-colors"

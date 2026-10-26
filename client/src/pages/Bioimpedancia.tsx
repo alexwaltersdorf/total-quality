@@ -301,7 +301,7 @@ export default function Bioimpedancia() {
                 CONHEÇA SEU{" "}<br /><span className="text-white/80">CORPO POR DENTRO</span>
               </h2>
               <p className="text-white/70 text-lg leading-relaxed max-w-md mb-8">
-                Agende seu exame de bioimpedância e tenha dados precisos para tomar as melhores decisões sobre sua saúde, nutrição e treino.
+                Agende sua bioimpedância e leve os dados de composição corporal para a conversa com seu médico, nutricionista ou educador físico.
               </p>
               <div className="flex flex-wrap gap-4">
                 <button

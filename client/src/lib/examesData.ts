@@ -4,6 +4,7 @@ import {
   FileText, AlertTriangle, Thermometer, Eye, Bone, Scale
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { CONVENIOS_TEXTO } from "@shared/const";
 
 export interface ExamFAQ {
   q: string;
@@ -33,7 +34,7 @@ export interface ExamData {
   heroImage?: string;
   videoUrl?: string;
   backgroundImage?: string;
-  category: "laboratorio" | "imagem" | "cardiologia" | "neurologia" | "outros";
+  category: "laboratorio" | "imagem" | "cardiologia" | "neurologia" | "outros" | "consulta" | "ocupacional";
   keywords: string[];
 }
 
@@ -43,12 +44,12 @@ export const examesData: ExamData[] = [
     title: "EXAMES DE SANGUE",
     shortTitle: "Exames de Sangue",
     subtitle: "Laboratório de Análises Clínicas",
-    description: "Mais de 3.000 tipos de exames laboratoriais com tecnologia de última geração.",
+    description: "Mais de 3.000 tipos de exames laboratoriais.",
     metaTitle: "Exames de Sangue em Caraguatatuba | Total Quality",
     metaDescription: "Exames de sangue em Caraguatatuba na Total Quality. Coleta por ordem de chegada, sem agendamento. Consulte preparo, prazos, convênios e orçamento pelo WhatsApp.",
-    heroDescription: "Realizamos mais de 3.000 tipos de exames de sangue e análises clínicas com equipamentos de última geração e equipe especializada. Hemograma, glicemia, colesterol, hormônios, marcadores tumorais, sorologias e muito mais.",
-    whatIs: "Os exames de sangue são análises laboratoriais realizadas a partir de uma amostra de sangue coletada por punção venosa. São fundamentais para avaliar o funcionamento dos órgãos, detectar doenças, monitorar tratamentos e realizar check-ups preventivos. Na Total Quality, utilizamos equipamentos automatizados de alta precisão para garantir resultados confiáveis.",
-    howItWorks: "A coleta é realizada por profissionais treinados em ambiente confortável e seguro. O sangue é processado em nosso laboratório com equipamentos automatizados que garantem precisão e rapidez. Os resultados ficam disponíveis online em até 24 horas para a maioria dos exames.",
+    heroDescription: "Realizamos mais de 3.000 tipos de exames de sangue e análises clínicas com equipamentos automatizados e equipe especializada. Hemograma, glicemia, colesterol, hormônios, marcadores tumorais, sorologias e muito mais.",
+    whatIs: "Os exames de sangue são análises laboratoriais realizadas a partir de uma amostra de sangue coletada por punção venosa. São fundamentais para avaliar o funcionamento dos órgãos, detectar doenças, monitorar tratamentos e realizar check-ups preventivos. Na Total Quality, as amostras são processadas em equipamentos automatizados, e o laudo traz os valores de referência do método usado.",
+    howItWorks: "A coleta é realizada por profissionais treinados em ambiente confortável e seguro. O sangue é processado em nosso laboratório com equipamentos automatizados. Os resultados ficam disponíveis online, em curto prazo para a maioria dos exames.",
     indications: [
       "Check-up preventivo anual",
       "Acompanhamento de doenças crônicas (diabetes, colesterol alto, tireoide)",
@@ -66,12 +67,12 @@ export const examesData: ExamData[] = [
     ],
     faqs: [
       { q: "Preciso estar em jejum para todos os exames de sangue?", a: "Não. Apenas alguns exames como glicemia de jejum e perfil lipídico exigem jejum de 8 a 12 horas. Muitos exames como hemograma, hormônios e sorologias não necessitam de jejum." },
-      { q: "Quanto tempo demora para sair o resultado?", a: "A maioria dos exames fica pronta em 24 horas. Alguns exames específicos podem levar até 7 dias úteis. Os resultados ficam disponíveis online." },
+      { q: "Quanto tempo demora para sair o resultado?", a: "A maioria dos exames tem resultado em curto prazo. Alguns exames específicos podem levar até 7 dias úteis. Os resultados ficam disponíveis online." },
       { q: "Posso tomar água durante o jejum?", a: "Sim! A ingestão de água é permitida e até recomendada durante o período de jejum. Evite apenas sucos, café e outras bebidas." },
       { q: "Quais exames de sangue vocês realizam?", a: "Realizamos mais de 3.000 tipos, incluindo hemograma, glicemia, colesterol, triglicerídeos, TSH, T4 livre, PSA, vitamina D, ácido úrico, ureia, creatinina, TGO, TGP, hormônios, marcadores tumorais e muito mais." },
       { q: "Preciso agendar horário para fazer exame de sangue?", a: "Não. A coleta é feita sem agendamento, por ordem de chegada: basta comparecer com o pedido médico e documento com foto, de segunda a sexta, das 7h30 às 18h. Se preferir, chame no WhatsApp (12) 3887-3535 para tirar dúvidas e já receber as orientações de preparo." },
       { q: "Quanto custa um exame de sangue?", a: "O valor varia conforme o exame solicitado. Envie o seu pedido médico pelo WhatsApp (12) 3887-3535 e retornamos com o orçamento. Atendemos particular com pagamento em dinheiro, cartão, débito ou PIX, e o Cartão Total Quality oferece até 70% de desconto em exames laboratoriais." },
-      { q: "Meu convênio cobre exames de sangue?", a: "Aceitamos os principais convênios e planos de saúde da região, e os exames laboratoriais de rotina fazem parte do Rol de Procedimentos da ANS. Confirme a aceitação do seu plano pelo WhatsApp (12) 3887-3535." },
+      { q: "Meu convênio cobre exames de sangue?", a: `Atendemos ${CONVENIOS_TEXTO}. Fora desses três, o atendimento é particular, com tabela própria. Tire dúvidas pelo WhatsApp (12) 3887-3535.` },
       { q: "Vocês fazem coleta domiciliar?", a: "Sim. Realizamos coleta domiciliar de exames laboratoriais em Caraguatatuba. Agende pelo WhatsApp (12) 3887-3535 para confirmar disponibilidade, horários e valores." },
     ],
     whatsappMessage: "Olá! Gostaria de consultar preparo e orçamento de exames de sangue.",
@@ -100,6 +101,7 @@ export const examesData: ExamData[] = [
     ],
     preparations: [
       { icon: Clock, text: "Jejum de 4 horas para exames com contraste" },
+      { icon: CheckCircle, text: "Contraste na veia (EV) ou bebido (VO), conforme o pedido médico" },
       { icon: AlertTriangle, text: "Informe alergias, especialmente a iodo ou contraste" },
       { icon: FileText, text: "Traga exames anteriores para comparação" },
       { icon: Shield, text: "Informe se está grávida ou com suspeita de gravidez" },
@@ -109,6 +111,9 @@ export const examesData: ExamData[] = [
       { q: "Quanto tempo dura o exame?", a: "O exame em si dura entre 10 e 30 minutos, dependendo da região examinada e da necessidade de contraste." },
       { q: "Preciso de contraste?", a: "Depende da indicação médica. O contraste é usado para melhorar a visualização de vasos sanguíneos e certos órgãos. Seu médico indicará se é necessário." },
       { q: "Posso fazer tomografia com prótese metálica?", a: "Sim. A tomografia pode ser realizada em pacientes com próteses metálicas, marcapassos e implantes." },
+      // Migradas de /blog/tomografia-caraguatatuba antes do 301 (22/10/2026).
+      { q: "Quem tem problema nos rins pode fazer tomografia com contraste?", a: "Avise antes do exame. O contraste é eliminado pelos rins, e o médico avalia se o exame com contraste é adequado no seu caso. Informe também alergias, especialmente a iodo ou a contraste, e os medicamentos em uso." },
+      { q: "Gestante pode fazer tomografia?", a: "A tomografia usa raios-X e, na gestação, costuma ser evitada, salvo quando o médico avalia que o benefício supera o risco. Informe a gravidez ou a suspeita de gravidez antes do exame." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar uma tomografia computadorizada.",
     heroImage: "/images/tomografia-1440.webp",
@@ -123,7 +128,7 @@ export const examesData: ExamData[] = [
     description: "Radiografia digital com alta resolução para diagnóstico rápido e preciso.",
     metaTitle: "Raio-X em Caraguatatuba | Total Quality",
     metaDescription: "Raio-X digital em Caraguatatuba na Total Quality. Faça exame de tórax, coluna, membros e seios da face com alta resolução. Agende o seu atendimento online.",
-    heroDescription: "O Raio-X é um dos exames de imagem mais utilizados na medicina, essencial para diagnóstico de fraturas, doenças pulmonares e diversas condições. Na Total Quality, utilizamos equipamento digital de última geração para imagens de alta resolução.",
+    heroDescription: "O Raio-X é um dos exames de imagem mais utilizados na medicina, essencial para diagnóstico de fraturas, doenças pulmonares e diversas condições. Na Total Quality, utilizamos equipamento digital para imagens de alta resolução.",
     whatIs: "O Raio-X (radiografia) é um exame de diagnóstico por imagem que utiliza radiação ionizante em doses baixas para produzir imagens do interior do corpo. É especialmente eficaz para visualizar ossos, pulmões e certas condições dos tecidos moles. A tecnologia digital permite imagens de alta qualidade com menor exposição à radiação.",
     howItWorks: "O paciente é posicionado entre o emissor de raios-X e o detector digital. A radiação atravessa o corpo e é captada pelo detector, gerando uma imagem digital instantânea. O exame é rápido, durando apenas alguns segundos por incidência.",
     indications: [
@@ -159,7 +164,7 @@ export const examesData: ExamData[] = [
     description: "Exame de imagem por ultrassom para avaliação de órgãos e tecidos.",
     metaTitle: "Ultrassonografia em Caraguatatuba | Total Quality",
     metaDescription: "Ultrassonografia em Caraguatatuba - SP na Total Quality: abdominal, pélvica, obstétrica, tireoide, mama e Doppler. Radiologistas experientes. Agende.",
-    heroDescription: "A ultrassonografia é um exame seguro e indolor que utiliza ondas sonoras para produzir imagens em tempo real dos órgãos internos. Na Total Quality, contamos com equipamentos de última geração para diagnósticos precisos.",
+    heroDescription: "A ultrassonografia é um exame seguro e indolor que utiliza ondas sonoras para produzir imagens em tempo real dos órgãos internos. Na Total Quality, contamos com equipamentos digitais e médicos especialistas que assinam os laudos.",
     whatIs: "A Ultrassonografia (ecografia) é um exame de diagnóstico por imagem que utiliza ondas sonoras de alta frequência para criar imagens dos órgãos e estruturas internas do corpo. É um método seguro, indolor, não invasivo e que não utiliza radiação ionizante, sendo seguro inclusive para gestantes.",
     howItWorks: "Um transdutor (sonda) é colocado sobre a pele com gel condutor. O transdutor emite ondas sonoras que penetram no corpo e retornam ao encontrar diferentes tecidos, criando imagens em tempo real no monitor. O médico analisa as imagens durante o exame.",
     indications: [
@@ -173,7 +178,7 @@ export const examesData: ExamData[] = [
     ],
     preparations: [
       { icon: Droplets, text: "Ultrassom pélvico: bexiga cheia (beber 4 copos de água 1h antes)" },
-      { icon: Clock, text: "Ultrassom abdominal: jejum de 6 a 8 horas" },
+      { icon: Clock, text: "Ultrassom de abdome total: jejum de 6 a 8 horas e bexiga cheia" },
       { icon: CheckCircle, text: "Ultrassom de tireoide e mama: sem preparo especial" },
       { icon: FileText, text: "Traga exames anteriores para comparação" },
     ],
@@ -182,6 +187,9 @@ export const examesData: ExamData[] = [
       { q: "É seguro para gestantes?", a: "Sim! A ultrassonografia não utiliza radiação e é o principal exame para acompanhamento da gravidez, sendo totalmente seguro para mãe e bebê." },
       { q: "Preciso de preparo?", a: "Depende do tipo de ultrassom. Abdominal requer jejum de 6-8h. Pélvico requer bexiga cheia. Tireoide e mama não necessitam preparo." },
       { q: "Quanto tempo dura o exame?", a: "Em média, 20 a 30 minutos, dependendo da região examinada e da complexidade do caso." },
+      // Migradas de /blog/ultrassonografia-caraguatatuba antes do 301 (22/10/2026).
+      { q: "Para que serve o ultrassom com Doppler?", a: "O Doppler avalia o fluxo de sangue em artérias e veias. É pedido, por exemplo, na investigação de varizes, de trombose venosa e de estreitamento das artérias carótidas. O médico define no pedido a região a ser examinada." },
+      { q: "O que evitar antes do ultrassom abdominal?", a: "Além do jejum de 6 a 8 horas, evite nas 24 horas anteriores alimentos que formam gases, como feijão, refrigerante e leite. Os gases atrapalham a visualização dos órgãos." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar uma ultrassonografia.",
     category: "imagem",
@@ -195,7 +203,7 @@ export const examesData: ExamData[] = [
     description: "Mamografia digital de alta resolução para detecção precoce do câncer de mama.",
     metaTitle: "Mamografia Digital em Caraguatatuba | Total Quality",
     metaDescription: "Mamografia digital em Caraguatatuba - SP na Total Quality. Detecção precoce do câncer de mama com alta resolução e conforto. Laudo rápido. Agende.",
-    heroDescription: "A mamografia digital é o principal exame para o rastreamento e a detecção precoce do câncer de mama. Na Total Quality, contamos com mamógrafo digital de última geração, que oferece imagens nítidas com menor dose de radiação e mais conforto durante o exame.",
+    heroDescription: "A mamografia digital é o principal exame para o rastreamento e a detecção precoce do câncer de mama. Na Total Quality, contamos com mamógrafo digital, que oferece imagens nítidas com menor dose de radiação e mais conforto durante o exame.",
     whatIs: "A Mamografia é um exame de diagnóstico por imagem que utiliza raios-X em baixa dose para avaliar o tecido mamário. É a ferramenta mais eficaz para identificar nódulos, microcalcificações e outras alterações ainda não palpáveis, permitindo o diagnóstico precoce do câncer de mama, quando as chances de cura são maiores. A versão digital gera imagens de alta resolução com mais conforto e menor exposição à radiação.",
     howItWorks: "A mama é posicionada e levemente comprimida entre duas placas do mamógrafo por alguns segundos, o tempo necessário para capturar as imagens. A compressão é fundamental para obter imagens nítidas e reduzir a dose de radiação. São feitas, em geral, duas incidências de cada mama. O exame é rápido, durando cerca de 10 a 15 minutos.",
     indications: [
@@ -407,11 +415,11 @@ export const examesData: ExamData[] = [
     title: "EXAME TOXICOLÓGICO",
     shortTitle: "Exame Toxicológico",
     subtitle: "Análise Toxicológica",
-    description: "Exame toxicológico para detecção de substâncias com janela de até 180 dias.",
+    description: "Exame toxicológico para detecção de substâncias com janela de 180 dias.",
     metaTitle: "Exame Toxicológico em Caraguatatuba | Total Quality",
-    metaDescription: "Realize seu exame toxicológico em Caraguatatuba com praticidade e segurança no Total Quality. Consulte informações para CNH categorias C, D e E e agende atendimento! ",
-    heroDescription: "O exame toxicológico é obrigatório para motoristas profissionais (categorias C, D e E) e pode ser solicitado em processos admissionais e demissionais. Na Total Quality, realizamos o exame com laboratório credenciado e resultados rápidos.",
-    whatIs: "O Exame Toxicológico é uma análise laboratorial que detecta o uso de substâncias psicoativas (drogas) através de amostras de cabelo, pelo ou unha. Possui janela de detecção de até 90 a 180 dias, sendo muito mais abrangente que o exame de urina. É obrigatório por lei para motoristas profissionais das categorias C, D e E.",
+    metaDescription: "Exame toxicológico em Caraguatatuba para CNH C, D e E e motorista profissional: coleta de cabelo ou pelo, laboratório credenciado. Dúvidas no WhatsApp.",
+    heroDescription: "O exame toxicológico para CNH é obrigatório para o motorista profissional das categorias C, D e E, na obtenção e na renovação da habilitação, e pode ser pedido em processos admissionais e demissionais. Na Total Quality, a coleta é feita na unidade e a amostra segue para laboratório credenciado.",
+    whatIs: "O Exame Toxicológico é uma análise laboratorial que detecta o uso de substâncias psicoativas (drogas) através de amostras de cabelo, pelo ou unha. Na Total Quality, o exame tem janela de detecção de 180 dias (a lei exige no mínimo 90), maior que a do exame de urina. É obrigatório por lei para motoristas profissionais das categorias C, D e E.",
     howItWorks: "Uma pequena amostra de cabelo (ou pelo corporal) é coletada e enviada ao laboratório credenciado. A análise identifica metabólitos de substâncias como maconha, cocaína, anfetaminas, metanfetaminas, opiáceos e outras drogas. O resultado é emitido em formato padronizado e aceito pelo DETRAN.",
     indications: [
       "Renovação ou obtenção de CNH categorias C, D e E",
@@ -429,26 +437,27 @@ export const examesData: ExamData[] = [
       { icon: Shield, text: "Não raspe os cabelos ou pelos antes do exame" },
     ],
     faqs: [
-      { q: "Qual a janela de detecção do exame?", a: "O exame toxicológico de cabelo detecta o uso de substâncias nos últimos 90 a 180 dias, dependendo do comprimento do cabelo ou pelo coletado." },
+      { q: "Qual a janela de detecção do exame?", a: "Na Total Quality, o exame tem janela de detecção de 180 dias: ele detecta o uso de substâncias nos últimos 180 dias. A lei exige janela mínima de 90 dias." },
       { q: "É obrigatório para qual categoria de CNH?", a: "É obrigatório para motoristas das categorias C, D e E, tanto para obtenção quanto para renovação da CNH, conforme Lei 13.103/2015." },
       { q: "E se eu tiver cabelo muito curto?", a: "Se o cabelo da cabeça for muito curto, pode ser coletado pelo de outras regiões do corpo (braço, perna, tórax). O importante é ter no mínimo 3cm." },
-      { q: "Quanto tempo demora o resultado?", a: "O resultado fica pronto em média 5 a 10 dias úteis. É emitido em formato padronizado aceito pelo DETRAN." },
+      { q: "Exames toxicológicos para CNH e para empresa são iguais?", a: "A coleta é a mesma: amostra de cabelo ou pelo. O que muda é a finalidade. O toxicológico da CNH segue o padrão exigido pelo DETRAN para o motorista profissional das categorias C, D e E; o admissional, demissional ou periódico segue o pedido da empresa. Informe a finalidade na coleta." },
+      { q: "Quanto tempo demora o resultado?", a: "O resultado sai em 5 dias úteis. É emitido em formato padronizado aceito pelo DETRAN." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar um exame toxicológico.",
     category: "outros",
-    keywords: ["exame toxicológico", "toxicológico CNH", "exame de drogas", "toxicológico admissional", "DETRAN", "Caraguatatuba"],
+    keywords: ["exame toxicológico", "exames toxicológicos", "toxicológico CNH", "toxicológico motorista profissional", "exame de drogas", "toxicológico admissional", "DETRAN", "Caraguatatuba"],
   },
 {
     slug: "hemograma",
     title: "HEMOGRAMA COMPLETO",
     shortTitle: "Hemograma",
     subtitle: "Análises Clínicas",
-    description: "O exame de sangue mais solicitado do Brasil, com resultado em até 24 horas.",
+    description: "O exame de sangue mais solicitado do Brasil, com resultado em curto prazo.",
     metaTitle: "Hemograma Completo em Caraguatatuba | Total Quality",
-    metaDescription: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Resultado em até 24h.",
-    heroDescription: "O hemograma completo é o exame de sangue mais solicitado na prática médica: avalia glóbulos vermelhos, glóbulos brancos e plaquetas em uma única coleta. Na Total Quality, a coleta leva minutos e o resultado sai em até 24 horas, disponível online.",
+    metaDescription: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Resultado em curto prazo.",
+    heroDescription: "O hemograma completo é o exame de sangue mais solicitado na prática médica: avalia glóbulos vermelhos, glóbulos brancos e plaquetas em uma única coleta. Na Total Quality, a coleta leva minutos e o resultado sai em curto prazo, disponível online.",
     whatIs: "O hemograma completo é uma análise quantitativa e qualitativa das células do sangue, dividida em três partes: o eritrograma (glóbulos vermelhos, hemoglobina e hematócrito, usados para investigar anemias), o leucograma (glóbulos brancos, que indicam infecções, inflamações e alterações imunológicas) e a contagem de plaquetas (relacionada à coagulação). É um exame de triagem fundamental em check-ups, no pré-operatório, no pré-natal e na investigação de sintomas como cansaço, febre prolongada e sangramentos.",
-    howItWorks: "A coleta é feita por punção venosa no braço e leva poucos minutos. Não é necessário jejum para o hemograma isolado — apenas evite atividade física intensa imediatamente antes. A amostra é processada em analisador hematológico automatizado e revisada pela equipe do laboratório. O resultado fica disponível online em até 24 horas; os valores de referência vêm impressos no laudo e devem sempre ser interpretados pelo seu médico, junto ao seu histórico clínico.",
+    howItWorks: "A coleta é feita por punção venosa no braço e leva poucos minutos. Não é necessário jejum para o hemograma isolado — apenas evite atividade física intensa imediatamente antes. A amostra é processada em analisador hematológico automatizado e revisada pela equipe do laboratório. O resultado fica disponível online em curto prazo; os valores de referência vêm impressos no laudo e devem sempre ser interpretados pelo seu médico, junto ao seu histórico clínico.",
     indications: [
       "Check-up de rotina e avaliação geral de saúde",
       "Investigação de anemia (cansaço, palidez, fraqueza)",
@@ -467,13 +476,49 @@ export const examesData: ExamData[] = [
     faqs: [
       { q: "Hemograma precisa de jejum?", a: "Não. O hemograma isolado não exige jejum. Se o seu pedido incluir também glicemia de jejum ou perfil lipídico, siga a orientação de jejum desses exames (8 a 12 horas) e faça tudo na mesma coleta." },
       { q: "O que o hemograma completo detecta?", a: "Ele avalia glóbulos vermelhos (anemias), glóbulos brancos (infecções, inflamações e alterações da imunidade) e plaquetas (coagulação). É um exame de triagem: alterações devem sempre ser interpretadas pelo médico junto ao quadro clínico." },
-      { q: "Em quanto tempo sai o resultado do hemograma?", a: "Na Total Quality, o resultado do hemograma fica pronto em até 24 horas e pode ser acessado online, sem precisar voltar ao laboratório." },
-      { q: "Quanto custa um hemograma completo?", a: "O valor particular é acessível e o exame é coberto pelos principais convênios que atendemos. Consulte o valor atualizado e a cobertura do seu plano pelo WhatsApp (12) 3887-3535." },
+      { q: "Em quanto tempo sai o resultado do hemograma?", a: "Na Total Quality, o resultado do hemograma fica pronto em curto prazo e pode ser acessado online, sem precisar voltar ao laboratório." },
+      { q: "Quanto custa um hemograma completo?", a: `Consulte o valor particular atualizado pelo WhatsApp (12) 3887-3535. Nos convênios atendidos (${CONVENIOS_TEXTO}), a equipe confirma a cobertura antes do exame.` },
       { q: "Preciso agendar para fazer o hemograma?", a: "Não é necessário agendamento: basta comparecer com o pedido médico e um documento com foto. A coleta funciona de segunda a sexta a partir das 7h30." },
     ],
     whatsappMessage: "Olá! Gostaria de fazer um hemograma completo.",
     category: "laboratorio",
     keywords: ["hemograma", "hemograma completo", "hemograma precisa de jejum", "exame de sangue", "análises clínicas", "Caraguatatuba"],
+  },
+  {
+    slug: "sexagem-fetal",
+    title: "SEXAGEM FETAL",
+    shortTitle: "Sexagem Fetal",
+    subtitle: "Exame de Sangue na Gestação",
+    description: "Exame de sangue da gestante que identifica o sexo do bebê a partir da 8ª semana de gestação.",
+    metaTitle: "Sexagem Fetal em Caraguatatuba | Total Quality",
+    metaDescription: "Sexagem fetal em Caraguatatuba: exame de sangue da gestante que identifica o sexo do bebê a partir da 8ª semana. Sem jejum. Dúvidas e valores pelo WhatsApp.",
+    heroDescription: "A sexagem fetal é um exame de sangue feito na gestante que identifica o sexo do bebê a partir da 8ª semana de gestação. A coleta é feita no braço da gestante, leva poucos minutos e não exige jejum.",
+    whatIs: "Durante a gravidez, fragmentos do DNA do bebê circulam no sangue da mãe. A sexagem fetal analisa esse DNA fetal livre em busca de sequências do cromossomo Y, que só existem no sexo masculino. Se o cromossomo Y é detectado, o resultado é masculino; se não é detectado, o resultado é feminino. O exame identifica apenas o sexo do bebê: não é um exame de diagnóstico de doenças e não substitui o pré-natal nem os exames de ultrassom pedidos pelo médico.",
+    howItWorks: "É uma coleta de sangue comum, feita no braço da gestante, que leva poucos minutos. Não é preciso jejum, mas é importante informar a data da última menstruação ou a idade gestacional, porque a quantidade de DNA fetal no sangue aumenta com o avanço da gravidez. Por isso o exame é feito a partir da 8ª semana de gestação. A coleta pode ser feita sem agendamento, por ordem de chegada, ou com horário marcado pelo WhatsApp. O prazo do resultado é informado no atendimento, e o laudo fica disponível online.",
+    indications: [
+      "Gestantes a partir da 8ª semana que desejam saber o sexo do bebê",
+      "Planejamento do enxoval e da chegada do bebê",
+      "Quem quer saber o sexo antes de ele ser visível no ultrassom",
+    ],
+    preparations: [
+      { icon: CheckCircle, text: "Não é necessário jejum" },
+      { icon: Clock, text: "Faça o exame a partir da 8ª semana de gestação" },
+      { icon: FileText, text: "Informe a data da última menstruação ou a idade gestacional" },
+      { icon: AlertTriangle, text: "Informe se a gestação é de gêmeos ou se houve transfusão de sangue ou transplante" },
+    ],
+    faqs: [
+      { q: "A partir de quantas semanas posso fazer a sexagem fetal?", a: "A partir da 8ª semana de gestação, contada pela data da última menstruação. Antes disso, a quantidade de DNA do bebê no sangue da mãe pode ser pequena demais para a análise." },
+      { q: "Precisa de jejum?", a: "Não é necessário jejum. Traga um documento com foto e informe a idade gestacional. Se tiver dúvida sobre pedido médico, fale com a equipe pelo WhatsApp (12) 3887-3535." },
+      { q: "Como é feita a coleta?", a: "É uma coleta de sangue comum, feita no braço da gestante, sem nenhum contato com o bebê. Leva poucos minutos." },
+      { q: "E se for gravidez de gêmeos?", a: "Em gestação de gêmeos, o exame mostra se existe ao menos um bebê do sexo masculino, mas não diz o sexo de cada um. Se o cromossomo Y não for detectado, os bebês são do sexo feminino. Informe a gestação gemelar no atendimento." },
+      { q: "A sexagem fetal substitui o ultrassom?", a: "Não. Ela identifica apenas o sexo do bebê. O acompanhamento da gestação continua com o pré-natal e os exames de ultrassom pedidos pelo seu médico." },
+      { q: "Preciso agendar?", a: "Não é obrigatório. A coleta pode ser feita sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h, ou com horário marcado pelo WhatsApp (12) 3887-3535." },
+      { q: "Quanto custa e em quanto tempo sai o resultado?", a: "Consulte o valor atualizado e o prazo do resultado pelo WhatsApp (12) 3887-3535. O laudo fica disponível online." },
+      { q: "Onde fazer sexagem fetal em Caraguatatuba?", a: "Na Total Quality Medicina Diagnóstica, na Rua Padre Anchieta, 1010, no Centro de Caraguatatuba. Atendemos gestantes de Caraguatatuba, Ubatuba, São Sebastião e Ilhabela. Dúvidas pelo WhatsApp (12) 3887-3535." },
+    ],
+    whatsappMessage: "Olá! Gostaria de informações sobre o exame de sexagem fetal.",
+    category: "laboratorio",
+    keywords: ["sexagem fetal", "exame de sexagem fetal", "exame para saber o sexo do bebê", "DNA fetal", "exame de sangue gravidez", "Caraguatatuba"],
   },
   {
     slug: "exame-admissional",
@@ -485,7 +530,7 @@ export const examesData: ExamData[] = [
     metaDescription: "Exame admissional, periódico, demissional e ASO em Caraguatatuba. Medicina ocupacional completa para empresas do Litoral Norte, com agilidade.",
     heroDescription: "A Total Quality realiza todos os exames de medicina ocupacional exigidos por lei — admissional, periódico, demissional, retorno ao trabalho e mudança de função — com emissão do ASO e exames complementares no mesmo local. Atendemos empresas de Caraguatatuba, Ubatuba, São Sebastião e Ilhabela.",
     whatIs: "Os exames ocupacionais são avaliações médicas obrigatórias previstas na CLT e nas Normas Regulamentadoras (NR-7/PCMSO). O exame admissional é realizado antes da contratação; o periódico acompanha a saúde do trabalhador ao longo do contrato; o demissional encerra o vínculo; e há ainda os exames de retorno ao trabalho e de mudança de riscos ocupacionais. Ao final de cada avaliação é emitido o ASO (Atestado de Saúde Ocupacional).",
-    howItWorks: "A empresa ou o candidato agenda pelo WhatsApp ou telefone. A avaliação inclui exame clínico com médico do trabalho e, conforme o risco da função, exames complementares como audiometria, espirometria, acuidade visual, eletrocardiograma, raio-X e exames laboratoriais — todos realizados aqui mesmo, em uma única visita. O ASO é emitido na hora e a documentação atende ao eSocial.",
+    howItWorks: "A empresa ou o candidato agenda pelo WhatsApp ou telefone. A avaliação inclui exame clínico com médico do trabalho e, conforme o risco da função, exames complementares como audiometria, espirometria, acuidade visual, eletrocardiograma, raio-X e exames laboratoriais — todos realizados aqui mesmo, em uma única visita. Para motorista profissional, o exame toxicológico também pode entrar no admissional, com resultado à parte em 5 dias úteis. O ASO é emitido na hora e a documentação atende ao eSocial.",
     indications: [
       "Contratação de novos funcionários (admissional)",
       "Exames periódicos anuais ou conforme PCMSO",

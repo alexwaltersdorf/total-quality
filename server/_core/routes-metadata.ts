@@ -4,7 +4,18 @@
  * Evita duplicação de conteúdo e garante indexação correta pelo Google
  */
 
-import { anosDeAtuacao } from "@shared/const";
+import {
+  anosDeAtuacao,
+  HOME_TITLE,
+  homeDescription,
+  ANALISES_TITLE,
+  ANALISES_DESCRIPTION,
+  CHECKUP_TITLE,
+  CHECKUP_DESCRIPTION,
+} from "@shared/const";
+import blogIndex from "../../client/src/content/blog/index.json";
+import { blogModifiedIso, isPublished, type BlogPostMeta } from "../../client/src/lib/blogMeta";
+import { especialidadesData, ESPECIALIDADES_BASE } from "../../client/src/lib/especialidadesData";
 
 export interface RouteMetadata {
   title: string;
@@ -16,6 +27,12 @@ export interface RouteMetadata {
   canonical: string;
   priority?: number; // Para sitemap.xml (0.0 a 1.0)
   changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
+  /** AAAA-MM-DD da ultima alteracao real. Sem ele, o sitemap omite o lastmod. */
+  lastmod?: string;
+  /** og:type da pagina (padrao do index.html: "website"). */
+  ogType?: "website" | "article";
+  /** true = <meta name="robots" content="noindex, nofollow"> e fora do sitemap. */
+  noindex?: boolean;
 }
 
 // Dados dos exames para reutilização
@@ -25,7 +42,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     description: "Exames de sangue em Caraguatatuba na Total Quality. Coleta por ordem de chegada, sem agendamento. Consulte preparo, prazos, convênios e orçamento pelo WhatsApp.",
     keywords: "exames de sangue, hemograma, glicemia, colesterol, hormônios, vitamina D, PSA, laboratório, análises clínicas, Caraguatatuba",
     ogTitle: "Exames de Sangue | Total Quality Medicina Diagnóstica",
-    ogDescription: "Mais de 3.000 tipos de exames de sangue com tecnologia de última geração. Hemograma, glicemia, colesterol, hormônios e muito mais.",
+    ogDescription: "Mais de 3.000 tipos de exames de sangue. Hemograma, glicemia, colesterol, hormônios e muito mais.",
     ogImage: "https://totalquality.med.br/images/laboratorio-1440.webp",
     canonical: "https://totalquality.med.br/exames/exames-de-sangue",
     priority: 0.9,
@@ -57,7 +74,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
 
   "ultrassonografia": {
     title: "Ultrassonografia em Caraguatatuba | Total Quality",
-    description: "Ultrassonografia em Caraguatatuba - SP. Exame de imagem com equipamento de última geração. Ultrassom geral, doppler e especializado.",
+    description: "Ultrassonografia em Caraguatatuba - SP. Exame de imagem sem radiação. Ultrassom geral, doppler e especializado.",
     keywords: "ultrassonografia, ultrassom, doppler, diagnóstico por imagem, Caraguatatuba",
     ogTitle: "Ultrassonografia | Total Quality",
     ogDescription: "Exame de ultrassom com equipamento de alta resolução.",
@@ -93,7 +110,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
     description: "Espirometria em Caraguatatuba - SP. Teste de função pulmonar para diagnóstico de doenças respiratórias. Agende seu exame.",
     keywords: "espirometria, função pulmonar, teste respiratório, DPOC, asma, Caraguatatuba",
     ogTitle: "Espirometria | Total Quality",
-    ogDescription: "Teste de função pulmonar com equipamento de última geração.",
+    ogDescription: "Teste de função pulmonar com laudo médico.",
     canonical: "https://totalquality.med.br/exames/espirometria",
     priority: 0.8,
     changefreq: "monthly",
@@ -123,10 +140,10 @@ const examesMetadata: Record<string, RouteMetadata> = {
 
   "exame-toxicologico": {
     title: "Exame Toxicológico em Caraguatatuba | Total Quality",
-    description: "Exame toxicológico em Caraguatatuba - SP. Teste de drogas. Resultado rápido e confiável. Agende seu exame.",
-    keywords: "exame toxicológico, teste de drogas, toxicologia, Caraguatatuba",
-    ogTitle: "Exame Toxicológico | Total Quality",
-    ogDescription: "Teste toxicológico com resultado rápido e confiável.",
+    description: "Exame toxicológico em Caraguatatuba para CNH C, D e E e motorista profissional: coleta de cabelo ou pelo, laboratório credenciado. Dúvidas no WhatsApp.",
+    keywords: "exame toxicológico, exames toxicológicos, toxicológico CNH, toxicológico motorista profissional, teste de drogas, Caraguatatuba",
+    ogTitle: "Exame Toxicológico para CNH | Total Quality",
+    ogDescription: "Toxicológico para CNH C, D e E e motorista profissional, com coleta na unidade e laboratório credenciado.",
     canonical: "https://totalquality.med.br/exames/exame-toxicologico",
     priority: 0.8,
     changefreq: "monthly",
@@ -134,12 +151,23 @@ const examesMetadata: Record<string, RouteMetadata> = {
 
   "hemograma": {
     title: "Hemograma Completo em Caraguatatuba | Total Quality",
-    description: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Faça na Total Quality, resultado em até 24h.",
+    description: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Faça na Total Quality, resultado em curto prazo.",
     keywords: "hemograma, hemograma completo, hemograma precisa de jejum, exame de sangue, análises clínicas, Caraguatatuba",
     ogTitle: "Hemograma Completo | Total Quality",
-    ogDescription: "Tudo sobre o hemograma completo: o que avalia, preparo e resultado em até 24h.",
+    ogDescription: "Tudo sobre o hemograma completo: o que avalia, preparo e resultado em curto prazo.",
     canonical: "https://totalquality.med.br/exames/hemograma",
     priority: 0.9,
+    changefreq: "monthly",
+  },
+
+  "sexagem-fetal": {
+    title: "Sexagem Fetal em Caraguatatuba | Total Quality",
+    description: "Sexagem fetal em Caraguatatuba: exame de sangue da gestante que identifica o sexo do bebê a partir da 8ª semana. Sem jejum. Dúvidas e valores pelo WhatsApp.",
+    keywords: "sexagem fetal, exame de sexagem fetal, sexo do bebê, DNA fetal, exame de sangue gravidez, Caraguatatuba",
+    ogTitle: "Sexagem Fetal | Total Quality",
+    ogDescription: "Exame de sangue da gestante que identifica o sexo do bebê a partir da 8ª semana de gestação.",
+    canonical: "https://totalquality.med.br/exames/sexagem-fetal",
+    priority: 0.8,
     changefreq: "monthly",
   },
 
@@ -156,7 +184,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
 
   "mamografia": {
     title: "Mamografia Digital em Caraguatatuba | Total Quality",
-    description: "Mamografia digital em Caraguatatuba - SP. Diagnóstico de câncer de mama. Tecnologia de última geração. Agende seu exame.",
+    description: "Mamografia digital em Caraguatatuba - SP. Rastreamento do câncer de mama com mamógrafo digital. Agende seu exame.",
     keywords: "mamografia, mamografia digital, câncer de mama, diagnóstico, Caraguatatuba",
     ogTitle: "Mamografia Digital | Total Quality",
     ogDescription: "Exame de mamografia com tecnologia digital de alta resolução.",
@@ -166,127 +194,40 @@ const examesMetadata: Record<string, RouteMetadata> = {
   },
 };
 
+// Paginas de especialidade (/especialidades/:slug), 24/10/2026. Title e
+// description sao os mesmos do client/src/lib/especialidadesData.ts.
+const especialidadesMetadata: Record<string, RouteMetadata> = Object.fromEntries(
+  especialidadesData.map((e) => [
+    e.slug,
+    {
+      title: e.metaTitle,
+      description: e.metaDescription,
+      keywords: e.keywords.join(", "),
+      ogTitle: e.metaTitle,
+      ogDescription: e.metaDescription,
+      canonical: `https://totalquality.med.br${ESPECIALIDADES_BASE}/${e.slug}`,
+      priority: 0.8,
+      changefreq: "monthly",
+    } satisfies RouteMetadata,
+  ])
+);
+
 // Dados dos artigos de blog
+/*
+ * Metadados escritos a mao dos artigos antigos. Artigo novo NAO precisa entrar
+ * aqui: blogRoute() deriva title (metaTitle), description (excerpt), og e
+ * lastmod do client/src/content/blog/index.json. Uma entrada daqui so
+ * sobrescreve os textos — lastmod, og:type e noindex vem sempre do indice.
+ */
 const blogMetadata: Record<string, RouteMetadata> = {
-  "check-up-preventivo-quando-fazer": {
-    title: "Check-up Preventivo: Quando Fazer | Total Quality",
-    description: "Guia completo sobre check-up preventivo: quando fazer, quais exames incluir e como manter a saúde. Dicas de especialistas.",
-    keywords: "check-up preventivo, exames preventivos, saúde preventiva, quando fazer check-up",
-    ogTitle: "Check-up Preventivo: Quando Fazer",
-    ogDescription: "Saiba quando fazer seu check-up preventivo e quais exames são essenciais para manter a saúde.",
-    ogImage: "https://totalquality.med.br/images/recepcao-1024.webp",
-    canonical: "https://totalquality.med.br/blog/check-up-preventivo-quando-fazer",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
-  "hemograma-caraguatatuba": {
-    title: "Hemograma em Caraguatatuba | Total Quality",
-    description: "Hemograma em Caraguatatuba: entenda o que é, para que serve e como é realizado. Resultados rápidos na Total Quality.",
-    keywords: "hemograma, hemograma completo, análise de sangue, laboratório, Caraguatatuba",
-    ogTitle: "Hemograma em Caraguatatuba",
-    ogDescription: "Tudo sobre hemograma: o que é, para que serve e como é realizado.",
-    ogImage: "https://totalquality.med.br/images/laboratorio-1024.webp",
-    canonical: "https://totalquality.med.br/blog/hemograma-caraguatatuba",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
-  "ultrassonografia-caraguatatuba": {
-    title: "Guia de Ultrassonografia em Caraguatatuba | Total Quality",
-    description: "Ultrassonografia em Caraguatatuba: tipos, indicações, preparo e como é realizado. Diagnóstico rápido e preciso.",
-    keywords: "ultrassonografia, ultrassom, diagnóstico por imagem, Caraguatatuba",
-    ogTitle: "Ultrassonografia em Caraguatatuba",
-    ogDescription: "Guia completo sobre ultrassonografia: tipos, indicações e como é realizado.",
-    ogImage: "https://totalquality.med.br/images/cardiologia-1024.webp",
-    canonical: "https://totalquality.med.br/blog/ultrassonografia-caraguatatuba",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
-  "tomografia-caraguatatuba": {
-    title: "Tomografia em Caraguatatuba: O que Saber | Total Quality",
-    description: "Tomografia em Caraguatatuba: indicações, preparo, como funciona e segurança. Diagnóstico preciso com tecnologia de ponta.",
-    keywords: "tomografia, tomografia computadorizada, diagnóstico por imagem, Caraguatatuba",
-    ogTitle: "Tomografia em Caraguatatuba",
-    ogDescription: "Guia completo sobre tomografia: indicações, preparo e como funciona.",
-    ogImage: "https://totalquality.med.br/images/tomografia-1024.webp",
-    canonical: "https://totalquality.med.br/blog/tomografia-caraguatatuba",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
-  "alimentacao-e-exames-laboratoriais": {
-    title: "Como a Alimentação Influencia Seus Exames | Total Quality",
-    description: "Saiba como a alimentação afeta seus exames de sangue. Guia completo sobre jejum, alimentos que interferem e preparo correto para exames precisos.",
-    keywords: "alimentação, exames laboratoriais, jejum, nutrição, preparo para exames",
-    ogTitle: "Alimentação e Exames Laboratoriais",
-    ogDescription: "Entenda como sua dieta influencia os resultados dos seus exames de sangue.",
-    ogImage: "https://totalquality.med.br/images/laboratorio-1024.webp",
-    canonical: "https://totalquality.med.br/blog/alimentacao-e-exames-laboratoriais",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
-  "vitamina-d-importancia-saude": {
-    title: "Vitamina D: Deficiência é Comum? | Total Quality",
-    description: "60% dos brasileiros têm deficiência de vitamina D. Saiba por que, os riscos e como manter seus níveis adequados. Dicas de especialistas.",
-    keywords: "vitamina D, deficiência, saúde óssea, imunidade, bem-estar",
-    ogTitle: "Vitamina D: Deficiência e Importância",
-    ogDescription: "Descubra por que a deficiência de vitamina D é tão comum e como resolver.",
-    ogImage: "https://totalquality.med.br/images/laboratorio-1024.webp",
-    canonical: "https://totalquality.med.br/blog/vitamina-d-importancia-saude",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
-  "saude-do-coracao-prevencao": {
-    title: "Saúde do Coração: 7 Hábitos Essenciais | Total Quality",
-    description: "Doenças cardiovasculares são a principal causa de morte no Brasil. Conheça os 7 hábitos comprovados que protegem seu coração.",
-    keywords: "cardiologia, saúde do coração, prevenção, eletrocardiograma",
-    ogTitle: "Saúde do Coração: 7 Hábitos",
-    ogDescription: "Descubra os 7 hábitos que podem salvar sua vida e proteger seu coração.",
-    ogImage: "https://totalquality.med.br/images/laboratorio-1024.webp",
-    canonical: "https://totalquality.med.br/blog/saude-do-coracao-prevencao",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
-  "exames-de-sangue-guia-completo": {
-    title: "Exames de Sangue: Guia de Resultados | Total Quality",
-    description: "Hemograma, glicemia, colesterol e mais — o que cada exame revela sobre sua saúde. Guia completo para entender seus resultados.",
-    keywords: "exames de sangue, hemograma, glicemia, colesterol, laboratório",
-    ogTitle: "Exames de Sangue: Guia Completo",
-    ogDescription: "Entenda o que cada exame de sangue revela sobre sua saúde.",
-    ogImage: "https://totalquality.med.br/images/laboratorio-1024.webp",
-    canonical: "https://totalquality.med.br/blog/exames-de-sangue-guia-completo",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
-  "convenios-laboratorio-caraguatatuba": {
-    title: "Convênios Aceitos em Caraguatatuba | Total Quality",
-    description: "Veja os convênios aceitos no laboratório Total Quality em Caraguatatuba - SP: Cartão de Todos, Solumedi e Leader. Nos demais casos, atendimento particular.",
-    keywords: "convênios, laboratório Caraguatatuba, Cartão de Todos, Solumedi, Leader",
-    ogTitle: "Convênios Aceitos | Total Quality",
-    ogDescription: "Confira a lista completa de convênios aceitos no laboratório.",
-    ogImage: "https://totalquality.med.br/images/recepcao-1024.webp",
-    canonical: "https://totalquality.med.br/blog/convenios-laboratorio-caraguatatuba",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
-
-  "hemograma-completo-o-que-avalia": {
-    title: "Hemograma Completo: O Que Avalia e Onde Fazer em Caraguatatuba",
-    description: "O que o hemograma completo avalia, quais células são analisadas e se precisa de jejum. Faça o seu em Caraguatatuba, com resultado online em até 24 horas.",
-    keywords: "hemograma completo, hemograma, exame de sangue, hemácias, leucócitos, plaquetas, Caraguatatuba",
-    ogTitle: "Hemograma Completo: O Que Avalia e Onde Fazer em Caraguatatuba",
-    ogDescription: "Entenda quais células e parâmetros são analisados no hemograma completo.",
-    ogImage: "https://totalquality.med.br/images/laboratorio-1024.webp",
-    canonical: "https://totalquality.med.br/blog/hemograma-completo-o-que-avalia",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
   "tomografia-computadorizada-como-funciona": {
     title: "Tomografia Computadorizada: Como Funciona? | Total Quality",
@@ -294,7 +235,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
     keywords: "tomografia computadorizada, tomografia, como funciona a tomografia, contraste, diagnóstico por imagem, Caraguatatuba",
     ogTitle: "Tomografia Computadorizada: Como Funciona?",
     ogDescription: "Entenda como é feito o exame, se dói, quanto tempo dura e quando o contraste é necessário.",
-    ogImage: "https://totalquality.med.br/images/tomografia-1024.webp",
+    ogImage: "https://totalquality.med.br/images/blog/tomografia-computadorizada-como-funciona.webp",
     canonical: "https://totalquality.med.br/blog/tomografia-computadorizada-como-funciona",
     priority: 0.7,
     changefreq: "monthly",
@@ -306,7 +247,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
     keywords: "MAPA, Holter, monitorização ambulatorial da pressão arterial, exame cardiológico, arritmia, Caraguatatuba",
     ogTitle: "MAPA ou Holter: Qual a Diferença?",
     ogDescription: "Entenda o que cada exame monitora, para que serve e como se preparar.",
-    ogImage: "https://totalquality.med.br/images/recepcao-1024.webp",
+    ogImage: "https://totalquality.med.br/images/blog/mapa-ou-holter-diferenca.webp",
     canonical: "https://totalquality.med.br/blog/mapa-ou-holter-diferenca",
     priority: 0.7,
     changefreq: "monthly",
@@ -318,7 +259,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
     keywords: "check-up médico, check-up preventivo, quais exames fazer, exames laboratoriais, medicina preventiva, Caraguatatuba",
     ogTitle: "Check-up Médico: Quais Exames Fazer?",
     ogDescription: "Entenda como o check-up se organiza entre exames laboratoriais, cardiológicos e de imagem.",
-    ogImage: "https://totalquality.med.br/images/recepcao-1024.webp",
+    ogImage: "https://totalquality.med.br/images/blog/check-up-medico-quais-exames-fazer.webp",
     canonical: "https://totalquality.med.br/blog/check-up-medico-quais-exames-fazer",
     priority: 0.7,
     changefreq: "monthly",
@@ -342,7 +283,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
     keywords: "diferença entre mamografia e ultrassom da mama, mamografia, ultrassom das mamas, saúde da mulher, Caraguatatuba",
     ogTitle: "Mamografia e Ultrassom das Mamas: Diferenças",
     ogDescription: "Por que um exame não substitui automaticamente o outro.",
-    ogImage: "https://totalquality.med.br/images/cardiologia-1024.webp",
+    ogImage: "https://totalquality.med.br/images/blog/mamografia-ultrassom-mamas-diferencas.webp",
     canonical: "https://totalquality.med.br/blog/mamografia-ultrassom-mamas-diferencas",
     priority: 0.7,
     changefreq: "monthly",
@@ -354,7 +295,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
     keywords: "diferença entre raio-X e tomografia, raio-x, tomografia computadorizada, diagnóstico por imagem, Caraguatatuba",
     ogTitle: "Raio-X e Tomografia: Quais as Diferenças?",
     ogDescription: "Entenda quando o contraste é usado, quem tem mais detalhe e como se preparar.",
-    ogImage: "https://totalquality.med.br/images/tomografia-1024.webp",
+    ogImage: "https://totalquality.med.br/images/blog/diferenca-raio-x-tomografia.webp",
     canonical: "https://totalquality.med.br/blog/diferenca-raio-x-tomografia",
     priority: 0.7,
     changefreq: "monthly",
@@ -366,7 +307,7 @@ const blogMetadata: Record<string, RouteMetadata> = {
     keywords: "o que é ASO, exame ocupacional, PCMSO, NR-7, atestado de saúde ocupacional, Caraguatatuba",
     ogTitle: "ASO: O Que É e Quando Deve Ser Emitido",
     ogDescription: "Entenda a diferença entre o exame ocupacional e o documento, e o que a NR-7 exige.",
-    ogImage: "https://totalquality.med.br/images/fachada-1024.webp",
+    ogImage: "https://totalquality.med.br/images/blog/aso-exames-ocupacionais.webp",
     canonical: "https://totalquality.med.br/blog/aso-exames-ocupacionais",
     priority: 0.6,
     changefreq: "monthly",
@@ -378,39 +319,17 @@ const blogMetadata: Record<string, RouteMetadata> = {
     keywords: "exame toxicológico para CNH, exame toxicológico, Senatran, Detran, CNH, Caraguatatuba",
     ogTitle: "Exame Toxicológico para CNH: Quem Precisa Fazer?",
     ogDescription: "Entenda a janela de detecção, como consultar o prazo e quais documentos levar.",
-    ogImage: "https://totalquality.med.br/images/laboratorio-1024.webp",
+    ogImage: "https://totalquality.med.br/images/blog/exame-toxicologico-cnh.webp",
     canonical: "https://totalquality.med.br/blog/exame-toxicologico-cnh",
     priority: 0.6,
     changefreq: "monthly",
   },
 
-  "eletrocardiograma-o-que-e-como-e-feito": {
-    title: "Eletrocardiograma (ECG): O Que É e Onde Fazer em Caraguatatuba",
-    description: "O que é o eletrocardiograma, como funciona, se dói e quanto tempo dura. Faça o seu em Caraguatatuba na Total Quality: rápido, indolor e agendado pelo WhatsApp.",
-    keywords: "eletrocardiograma, ECG, o que é eletrocardiograma, exame cardiológico, saúde do coração, Caraguatatuba",
-    ogTitle: "Eletrocardiograma (ECG): O Que É e Onde Fazer em Caraguatatuba",
-    ogDescription: "Entenda como funciona o exame, se dói, quanto tempo dura e quando costuma ser solicitado.",
-    ogImage: "https://totalquality.med.br/images/recepcao-1024.webp",
-    canonical: "https://totalquality.med.br/blog/eletrocardiograma-o-que-e-como-e-feito",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 
   // SEO local da regiao sul (out/2026). O termo "laboratorio em Caraguatatuba"
   // pertence a /laboratorio-caraguatatuba; estes artigos atacam a cauda longa
   // dos bairros do sul (Pereque-Mirim, Travessao, Porto Novo, Morro do
   // Algodao), que nenhuma pagina do site disputava.
-  "laboratorio-regiao-sul-caraguatatuba": {
-    title: "Laboratório na Região Sul de Caraguatatuba | Total Quality",
-    description: "Perequê-Mirim, Travessão, Porto Novo ou Morro do Algodão: como escolher laboratório na região sul de Caraguatatuba e o que conferir antes.",
-    keywords: "laboratório região sul Caraguatatuba, laboratório Perequê-Mirim, laboratório Travessão, exame de sangue Porto Novo, análises clínicas Morro do Algodão, coleta domiciliar Caraguatatuba",
-    ogTitle: "Laboratório na Região Sul de Caraguatatuba",
-    ogDescription: "Quais bairros formam o sul da cidade, o que a distância muda no preparo do exame e seis pontos para conferir antes de escolher.",
-    ogImage: "https://totalquality.med.br/images/fachada-1024.webp",
-    canonical: "https://totalquality.med.br/blog/laboratorio-regiao-sul-caraguatatuba",
-    priority: 0.8,
-    changefreq: "monthly",
-  },
 
   "como-escolher-laboratorio-analises-clinicas": {
     title: "Como Escolher um Laboratório: 8 Critérios Técnicos",
@@ -424,36 +343,39 @@ const blogMetadata: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
 
+  "hipoglicemia-sintomas-e-exames": {
+    title: "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer",
+    description: "Hipoglicemia é a glicose abaixo de 70 mg/dL. Sinais de alerta, quando procurar emergência e quais exames investigam a causa.",
+    keywords: "hipoglicemia, glicose baixa, glicemia de jejum, curva glicêmica, hemoglobina glicada, insulina e peptídeo C, Caraguatatuba",
+    ogTitle: "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer",
+    ogDescription: "Quando a glicose cai abaixo de 70 mg/dL, o que fazer na hora e quais exames investigam a causa.",
+    ogImage: "https://totalquality.med.br/images/blog/hipoglicemia-sintomas-e-exames.webp",
+    canonical: "https://totalquality.med.br/blog/hipoglicemia-sintomas-e-exames",
+    priority: 0.7,
+    changefreq: "monthly",
+  },
+
   "resultado-de-exames-online-seguranca": {
     title: "Resultado de Exames Online: Acesso Seguro e LGPD",
     description: "Como acessar seu resultado de exames online com segurança, quem pode recebê-lo e o que a LGPD garante sobre o seu dado sensível de saúde.",
     keywords: "resultado de exames online, resultado de exames Caraguatatuba, LGPD saúde, dado sensível de saúde, sigilo de resultado de exame",
     ogTitle: "Resultado de Exames Online: Como Acessar com Segurança",
     ogDescription: "Quem pode receber, o que a LGPD garante e por que o laudo nunca vai para um grupo de mensagens.",
-    ogImage: "https://totalquality.med.br/images/recepcao-1024.webp",
+    ogImage: "https://totalquality.med.br/images/blog/resultado-de-exames-online-seguranca.webp",
     canonical: "https://totalquality.med.br/blog/resultado-de-exames-online-seguranca",
     priority: 0.7,
     changefreq: "monthly",
   },
 
-  "exame-de-urina-eas-como-coletar": {
-    title: "Exame de Urina (EAS): Como Coletar Corretamente",
-    description: "Para que serve o EAS, como coletar o jato médio da primeira urina da manhã e os cinco erros que fazem repetir o exame. Guia prático de preparo.",
-    keywords: "exame de urina, EAS, urina tipo 1, como coletar urina, jato médio, urocultura, urina de 24 horas, preparo exame de urina",
-    ogTitle: "Exame de Urina (EAS): Para Que Serve e Como Coletar",
-    ogDescription: "O passo a passo correto da coleta e os cinco erros que mais fazem repetir o exame.",
-    ogImage: "https://totalquality.med.br/images/laboratorio-1024.webp",
-    canonical: "https://totalquality.med.br/blog/exame-de-urina-eas-como-coletar",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 };
 
 // Rotas estáticas principais
 const staticRoutes: Record<string, RouteMetadata> = {
+  // A home e a DONA de "laboratorio" (ver HOME_TITLE em shared/const.ts):
+  // decisao por Search Console, nao por opiniao. Nao entregar o termo a outra pagina.
   "/": {
-    title: "Laboratório em Caraguatatuba | Total Quality | Ligue Agora",
-    description: `Laboratório em Caraguatatuba com resultados em até 24h. Há ${anosDeAtuacao()} anos no Litoral Norte: exames de sangue, tomografia, ultrassom e check-up. Nota 4,5 no Google.`,
+    title: HOME_TITLE,
+    description: homeDescription(),
     keywords: "laboratório Caraguatatuba, exames de sangue, tomografia, ultrassom, check-up",
     ogTitle: "Total Quality Medicina Diagnóstica e Laboratorial | Exames de Sangue em Caraguatatuba - SP",
     ogDescription: "Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba - SP. Exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia e mais de 3.000 tipos de exames. Agende pelo WhatsApp.",
@@ -464,9 +386,9 @@ const staticRoutes: Record<string, RouteMetadata> = {
   },
 
   "/checkup": {
-    title: "Check-up Preventivo: Planos e Preços | Total Quality",
-    description: "Check-up preventivo em Caraguatatuba: planos básico, select e premium. Exames completos com resultados rápidos. Agende agora.",
-    keywords: "check-up, check-up preventivo, exames preventivos, Caraguatatuba",
+    title: CHECKUP_TITLE,
+    description: CHECKUP_DESCRIPTION,
+    keywords: "check-up completo Caraguatatuba, check-up, check-up preventivo, exames preventivos, Caraguatatuba",
     ogTitle: "Check-up Preventivo | Total Quality",
     ogDescription: "Planos de check-up preventivo com exames completos para sua saúde.",
     canonical: "https://totalquality.med.br/checkup",
@@ -529,14 +451,35 @@ const staticRoutes: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
 
+  /*
+   * Campanha Check-up Outubro Rosa. Rota sazonal: quando a campanha encerrar,
+   * tirar esta entrada (sai do sitemap), tirar a rota do App.tsx e o bloco do
+   * seo-content.ts. O passo a passo esta em docs/campanha-outubro-rosa.md.
+   *
+   * priority abaixo da landing de laboratorio de proposito: campanha nao
+   * disputa a pagina permanente que sustenta o termo o ano inteiro.
+   */
+  "/outubro-rosa": {
+    title: "Check-up Outubro Rosa em Caraguatatuba | Total Quality",
+    description: "Check-up Outubro Rosa na Total Quality: ultrassonografia das mamas, transvaginal e Papanicolau por R$ 399,90. Agende em Caraguatatuba.",
+    keywords: "check-up outubro rosa Caraguatatuba, ultrassonografia das mamas, ultrassonografia transvaginal, papanicolau Caraguatatuba, preventivo",
+    ogTitle: "Check-up Outubro Rosa | Total Quality",
+    ogDescription: "Ultrassonografia das mamas, transvaginal e Papanicolau por R$ 399,90, em Caraguatatuba. Fale com a equipe pelo WhatsApp.",
+    ogImage: "https://totalquality.med.br/images/outubro-rosa-og.webp",
+    canonical: "https://totalquality.med.br/outubro-rosa",
+    priority: 0.7,
+    changefreq: "weekly",
+  },
+
   "/laboratorio-caraguatatuba": {
-    // Intencao distinta da home para evitar canibalizacao: home = "laboratório em
-    // caraguatatuba" (transacional); esta pagina = "laboratório de análises clínicas".
-    title: "Laboratório de Análises Clínicas | Total Quality",
-    description: "Laboratório de análises clínicas em Caraguatatuba: hemograma, exames de sangue, hormônios e mais de 3.000 exames. Resultados em até 24h. Agende.",
-    keywords: "laboratório Caraguatatuba, análises clínicas, exames de sangue, diagnóstico",
-    ogTitle: "Laboratório de Análises Clínicas em Caraguatatuba | Total Quality",
-    ogDescription: "Laboratório de análises clínicas com mais de 3.000 tipos de exames e resultados em até 24h.",
+    // Esta pagina e de "analises clinicas"; "laboratorio" e da home. A versao
+    // anterior separava so no title do servidor e o React reescrevia o titulo
+    // para "Laboratorio em Caraguatatuba" — o mesmo termo da home.
+    title: ANALISES_TITLE,
+    description: ANALISES_DESCRIPTION,
+    keywords: "análises clínicas Caraguatatuba, exames laboratoriais, hemograma, exames de sangue",
+    ogTitle: ANALISES_TITLE,
+    ogDescription: ANALISES_DESCRIPTION,
     canonical: "https://totalquality.med.br/laboratorio-caraguatatuba",
     priority: 0.8,
     changefreq: "monthly",
@@ -575,13 +518,17 @@ export function getRouteMetadata(pathname: string): RouteMetadata | null {
     }
   }
 
+  // Verificar rotas de especialidade (/especialidades/:slug)
+  const espMatch = path.match(/^\/especialidades\/([a-z0-9\-]+)$/);
+  if (espMatch && especialidadesMetadata[espMatch[1]]) {
+    return especialidadesMetadata[espMatch[1]];
+  }
+
   // Verificar rotas de blog (/blog/:slug)
   const blogMatch = path.match(/^\/blog\/([a-z0-9\-]+)$/);
   if (blogMatch) {
-    const slug = blogMatch[1];
-    if (blogMetadata[slug]) {
-      return blogMetadata[slug];
-    }
+    const route = blogRoute(blogMatch[1]);
+    if (route) return route;
   }
 
   // Rota não encontrada
@@ -592,7 +539,34 @@ export function getRouteMetadata(pathname: string): RouteMetadata | null {
  * Slugs de blog com metadata conhecida (usado na resolução de 404)
  */
 export function getKnownBlogSlugs(): Set<string> {
-  return new Set(Object.keys(blogMetadata));
+  // Rascunho incluso: a URL responde 200 (com noindex) para revisao.
+  return new Set(blogPostsMeta.map((p) => p.slug));
+}
+
+const blogPostsMeta = blogIndex as BlogPostMeta[];
+
+/** Metadados da rota de um artigo, a partir do indice do blog. */
+function blogRoute(slug: string): RouteMetadata | null {
+  const post = blogPostsMeta.find((p) => p.slug === slug);
+  if (!post) return null;
+  const canonical = `https://totalquality.med.br/blog/${slug}`;
+  const base: RouteMetadata = blogMetadata[slug] ?? {
+    title: post.metaTitle ?? post.title,
+    description: post.excerpt,
+    keywords: post.tags.join(", "),
+    ogTitle: post.title,
+    ogDescription: post.excerpt,
+    ogImage: post.image,
+    canonical,
+    priority: 0.7,
+    changefreq: "monthly",
+  };
+  return {
+    ...base,
+    ogType: "article",
+    lastmod: blogModifiedIso(post),
+    ...(isPublished(post) ? {} : { noindex: true }),
+  };
 }
 
 /**
@@ -607,8 +581,14 @@ export function getAllRoutes(): RouteMetadata[] {
   // Adicionar rotas de exames
   routes.push(...Object.values(examesMetadata));
 
-  // Adicionar rotas de blog
-  routes.push(...Object.values(blogMetadata));
+  // Adicionar rotas de especialidade
+  routes.push(...Object.values(especialidadesMetadata));
+
+  // Adicionar rotas de blog — so as publicadas; rascunho nunca entra no sitemap
+  for (const post of blogPostsMeta) {
+    const route = blogRoute(post.slug);
+    if (route && !route.noindex) routes.push(route);
+  }
 
   return routes;
 }
@@ -654,6 +634,21 @@ export function injectMetaTags(html: string, metadata: RouteMetadata): string {
     /<meta property="og:url" content="[^"]*"/,
     `<meta property="og:url" content="${escapeHtml(metadata.canonical)}"`
   );
+
+  if (metadata.ogType) {
+    result = result.replace(
+      /<meta property="og:type" content="[^"]*"/,
+      `<meta property="og:type" content="${metadata.ogType}"`
+    );
+  }
+
+  // Rascunho do blog: acessivel para revisao, mas fora do indice do Google
+  if (metadata.noindex) {
+    result = result.replace(
+      /<meta name="robots" content="[^"]*"/,
+      `<meta name="robots" content="noindex, nofollow"`
+    );
+  }
 
   // Injetar og:image se fornecido
   if (metadata.ogImage) {
