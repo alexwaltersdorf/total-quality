@@ -67,6 +67,7 @@ original.
 | `exames-diagnostico-avc` | `photo-1691935052741-c8ce0a1ef543` | médico de jaleco diante de aparelho de ultrassom |
 | `exames-diagnostico-hipertensao` | `photo-1615486511484-92e172cc4fe0` | medidor digital de pressão com braçadeira no braço |
 | `exames-diagnostico-diabetes` | `photo-1576169210859-6796c4b93c32` | mãos enluvadas com seringa e estojo de glicosímetro |
+| `aplicativo-total-quality-health-cashback` | `photo-1483478550801-ceba5fe50e8e` | mão segurando celular com a tela iluminada, fundo de luzes desfocadas (sem marca nem rosto) |
 
 ## O que foi descartado, e por quê
 

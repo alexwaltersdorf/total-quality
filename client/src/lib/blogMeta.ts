@@ -84,6 +84,7 @@ export const PAGINA_EXAME_LABEL: Record<string, string> = {
   "/exames/exame-toxicologico": "Exame toxicológico",
   "/checkup": "Check-up",
   "/laboratorio-caraguatatuba": "Análises clínicas",
+  "/cartao": "Cartão Total Quality Care",
 };
 
 /** Titulo do quadro: a ligacao local ("em Caraguatatuba") fica aqui, nao no title do artigo. */
