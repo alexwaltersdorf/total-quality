@@ -1657,3 +1657,21 @@ describe("GUARD-RAIL: rota de primeiro nivel responde 200 em PRODUCAO (out/2026)
     expect(resolveHttpStatus("/pagina-que-nunca-existiu", getKnownBlogSlugs(), AUTOSEO_CARREGADO)).toBe(404);
   });
 });
+
+describe("GUARD-RAIL: cartao sem premio condicionado a contratacao (Alex, 27/10/2026)", () => {
+  // O /cartao oferecia "check-up anual gratuito para os 100 primeiros
+  // adquirentes". Premio condicionado a contratacao e vedado pela Resolucao
+  // CFM 2.336/2023 (art. 9o, VIII), e o Alex mandou retirar em 27/10/2026.
+  it("nem a pagina nem os dados dos planos oferecem brinde ou check-up gratuito", async () => {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const raiz = nodePath.resolve(import.meta.dirname, "..", "client", "src");
+    const vedado = [/check-?up[^"\n]{0,40}gratuit/i, /gratuit[^"\n]{0,40}check-?up/i, /\d+\s+primeiros\s+(adquirentes|assinantes|contratos)/i, /Gratuito\*/];
+    const ofensores: string[] = [];
+    for (const arquivo of ["lib/cartaoPlanos.ts", "pages/CartaoPage.tsx", "content/blog/aplicativo-total-quality-health-cashback.json"]) {
+      const texto = fs.readFileSync(nodePath.join(raiz, arquivo), "utf-8");
+      for (const r of vedado) if (r.test(texto)) ofensores.push(`${arquivo}: ${r}`);
+    }
+    expect(ofensores).toEqual([]);
+  });
+});

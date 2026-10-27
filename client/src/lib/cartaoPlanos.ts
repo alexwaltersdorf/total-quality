@@ -61,7 +61,6 @@ export const cartaoPlanos: Plan[] = [
       "5 Teleconsultas com Clínico Geral/mês",
       "Uber Voucher R$ 15/mês",
       "APP com Cashback em PIX",
-      "1 Check-up anual gratuito*",
       "Descontos até 30% em exames",
       "Descontos até 10% em imagem",
     ],
@@ -72,7 +71,6 @@ export const cartaoPlanos: Plan[] = [
       "Acesso ao aplicativo Total Quality Health com cashback em PIX e benefícios em milhares de marcas parceiras",
     ],
     familyBenefits: [
-      "1 check-up anual no valor de R$ 499,00, gratuito para os 100 primeiros adquirentes",
       "Descontos de até 30% em exames laboratoriais",
       "Descontos de até 10% em exames de imagem",
     ],
@@ -91,7 +89,6 @@ export const cartaoPlanos: Plan[] = [
       "1 Teleconsulta com Especialista/mês",
       "Uber Voucher R$ 25/mês",
       "Acesso LecuponFit (academias)",
-      "1 Check-up anual gratuito*",
       "Descontos até 70% em exames",
     ],
     exclusiveBenefits: [
@@ -102,7 +99,6 @@ export const cartaoPlanos: Plan[] = [
       "Acesso ao aplicativo Total Quality Health com cashback em PIX e benefícios em milhares de marcas parceiras",
     ],
     familyBenefits: [
-      "1 check-up anual no valor de R$ 499,00, gratuito para os 100 primeiros adquirentes",
       "Descontos de até 70% em exames laboratoriais",
       "Descontos de até 20% em exames de imagem",
     ],
@@ -120,11 +116,6 @@ export const mainBenefitsData = [
     icon: "smartphone",
     title: "Cashback em PIX",
     description: "Ganhe cashback em compras com milhares de marcas parceiras",
-  },
-  {
-    icon: "heart",
-    title: "Check-up Anual",
-    description: "Avaliação completa da saúde (nos planos Select e Premium)",
   },
   {
     icon: "dumbbell",
@@ -147,7 +138,7 @@ export const faqs = [
   {
     question: "Qual a diferença entre os planos?",
     answer:
-      "O Quality Plus oferece telemedicina básica e descontos moderados. O Quality Select adiciona check-up anual e Uber Voucher. O Premium inclui acesso a academias e maiores descontos em exames.",
+      "O Quality Plus oferece telemedicina básica e descontos moderados. O Quality Select adiciona Uber Voucher e descontos maiores em exames laboratoriais. O Premium inclui acesso a academias e maiores descontos em exames.",
   },
   {
     question: "Posso incluir dependentes?",
@@ -158,11 +149,6 @@ export const faqs = [
     question: "Como funciona a telemedicina?",
     answer:
       "Você acessa o aplicativo Total Quality Health, agenda uma consulta com clínico geral ou especialista e realiza a consulta por vídeo chamada.",
-  },
-  {
-    question: "O check-up anual é realmente gratuito?",
-    answer:
-      "Sim! Para os 100 primeiros adquirentes dos planos Select e Premium, o check-up anual de R$ 499,00 é gratuito.",
   },
   {
     question: "Como funciona o cashback em PIX?",
