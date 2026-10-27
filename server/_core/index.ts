@@ -14,6 +14,7 @@ import { weeklyMonitoringHandler } from "./monitoring-handler";
 import { generateSitemap } from "./sitemap-handler";
 import { registerTagGateway } from "./tag-gateway";
 import { getLegacyRedirect, isGone } from "./legacy-redirects";
+import { ehHostDoBlogAntigo, resolverBlogSubdominio } from "./blog-subdominio";
 import { refreshAutoSeoSlugs } from "./autoseo-slugs";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -125,6 +126,15 @@ async function startServer() {
       res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
     }
     next();
+  });
+  // blog.totalquality.med.br (antigo blog da Airticles) -> /blog do dominio
+  // principal. Vale assim que o DNS do subdominio apontar para este servidor;
+  // ate la, nenhum pedido chega aqui com esse host. Ver blog-subdominio.ts.
+  app.use((req, res, next) => {
+    if (!ehHostDoBlogAntigo(req.headers.host)) return next();
+    const resposta = resolverBlogSubdominio(req.path);
+    if (resposta.status === 410) return res.status(410).type("text/plain").send("Gone");
+    return res.redirect(301, resposta.location);
   });
   app.use((req, res, next) => {
     // Skip in development so localhost previews keep working

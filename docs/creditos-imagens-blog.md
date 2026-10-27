@@ -68,6 +68,18 @@ original.
 | `exames-diagnostico-hipertensao` | `photo-1615486511484-92e172cc4fe0` | medidor digital de pressão com braçadeira no braço |
 | `exames-diagnostico-diabetes` | `photo-1576169210859-6796c4b93c32` | mãos enluvadas com seringa e estojo de glicosímetro |
 
+## Imagens geradas por IA — Airticles
+
+Vieram com os artigos migrados do blog.totalquality.med.br em 27/10/2026 (unificação dos blogs). Foram
+geradas pela Airticles, a ferramenta que escreveu o texto original, e baixadas para o domínio próprio. As
+pessoas da cena **não existem** e o consultório não é a Total Quality, por isso o `alt` não afirma que a
+cena aconteceu na clínica. Na revisão médica, o Alex pode trocar por foto própria ou de banco.
+
+| Artigo | Arquivo de origem (api.airticles.ai/uploads/) | O que mostra |
+|---|---|---|
+| `ultrassom-de-tireoide` | `1de94013-1303-4ef4-a6bf-928d0742b692.webp` | transdutor apoiado no pescoço de paciente deitada, com o monitor ao fundo |
+| `tirzepatida-exames-e-falsificacao` | `83542217-d4a0-4a90-b028-f53d555a961d.webp` | médico mostrando folhas de resultado a um paciente no consultório |
+
 ## O que foi descartado, e por quê
 
 Não é purismo: cada uma destas foi baixada, aberta e recusada por um motivo

@@ -52,8 +52,6 @@ import {
   ANALISES_DESCRIPTION,
   CONVENIOS_TEXTO,
   whatsappUrl,
-  BLOG_EXTERNO_URL,
-  BLOG_EXTERNO_TEXTO,
 } from "@shared/const";
 
 type BlogPost = BlogPostFull;
@@ -676,8 +674,6 @@ function blogIndexHtml(): string {
     <h1>Blog Total Quality — Saúde e Diagnóstico</h1>
     <p>Artigos escritos pela equipe da Total Quality Medicina Diagnóstica sobre exames, prevenção e saúde no Litoral Norte.</p>
     <ul>${items}</ul>
-    <h2>Mais artigos de saúde</h2>
-    <p>Outros temas de prevenção e de exames, que não se repetem aqui, estão no blog externo da clínica: <a href="${BLOG_EXTERNO_URL}">${BLOG_EXTERNO_TEXTO}</a>.</p>
     ${identificacaoHtml()}
     ${internalLinksHtml("/blog")}`;
 }
