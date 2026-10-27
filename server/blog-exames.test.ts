@@ -35,6 +35,7 @@ import {
 } from "./_core/routes-metadata";
 import { generateSitemap } from "./_core/sitemap-handler";
 import { getLegacyRedirect } from "./_core/legacy-redirects";
+import { ehHostDoBlogAntigo, POSTS_MIGRADOS, resolverBlogSubdominio } from "./_core/blog-subdominio";
 
 const DIR = nodePath.resolve(import.meta.dirname, "../client/src/content/blog");
 const index = blogIndex as BlogPostMeta[];
@@ -506,10 +507,82 @@ describe("GUARD-RAIL: uma URL por intencao — titulo do artigo (system prompt d
   });
 });
 
-describe("GUARD-RAIL: blog externo nao fica orfao (system prompt do blog, fase 6)", () => {
-  it("o indice /blog linka o blog externo da clinica", () => {
-    const html = getSeoContentForPath("/blog")!;
-    expect(html).toContain('href="https://blog.totalquality.med.br/"');
+describe("GUARD-RAIL: um blog so, o /blog (decisao do Alex, 27/10/2026)", () => {
+  // Ate 27/10/2026 o /blog linkava o blog hospedado da Airticles para ele nao
+  // ficar orfao. O Alex decidiu unificar no /blog: o subdominio vira 301 e o
+  // site deixa de mandar visita e autoridade para ele.
+  const BLOG_ANTIGO = /blog\.totalquality\.med\.br/;
+
+  it("nenhuma pagina do site linka o blog antigo", () => {
+    const paginas = ["/", "/blog", ...index.filter((p) => !p.draft).map((p) => `/blog/${p.slug}`)];
+    const ofensores = paginas.filter((pagina) => BLOG_ANTIGO.test(getSeoContentForPath(pagina) ?? ""));
+    expect(ofensores).toEqual([]);
+  });
+
+  it("nem o codigo do client linka o blog antigo", () => {
+    const raiz = nodePath.resolve(process.cwd(), "client/src");
+    const ofensores: string[] = [];
+    const varrer = (dir: string) => {
+      for (const nome of fs.readdirSync(dir)) {
+        const arquivo = nodePath.join(dir, nome);
+        if (fs.statSync(arquivo).isDirectory()) varrer(arquivo);
+        else if (/\.(tsx?|json)$/.test(nome) && BLOG_ANTIGO.test(fs.readFileSync(arquivo, "utf-8"))) {
+          ofensores.push(nodePath.relative(raiz, arquivo));
+        }
+      }
+    };
+    varrer(raiz);
+    expect(ofensores).toEqual([]);
+  });
+
+  it("o host antigo e reconhecido, com ou sem porta, e so ele", () => {
+    expect(ehHostDoBlogAntigo("blog.totalquality.med.br")).toBe(true);
+    expect(ehHostDoBlogAntigo("BLOG.totalquality.med.br:443")).toBe(true);
+    expect(ehHostDoBlogAntigo("totalquality.med.br")).toBe(false);
+    expect(ehHostDoBlogAntigo(undefined)).toBe(false);
+  });
+
+  it("todo artigo migrado aponta para um slug que existe no /blog", () => {
+    const slugs = new Set(index.map((p) => p.slug));
+    for (const [antigo, novo] of Object.entries(POSTS_MIGRADOS)) {
+      expect(slugs.has(novo), `${antigo} -> ${novo} nao existe no index.json`).toBe(true);
+    }
+  });
+
+  it("artigo publicado recebe o 301 para ele mesmo", () => {
+    expect(resolverBlogSubdominio("/posts/hemograma-completo-o-que-ele-pode-revelar")).toEqual({
+      status: 301,
+      location: "https://totalquality.med.br/blog/hemograma-completo-o-que-avalia",
+    });
+  });
+
+  it("artigo em rascunho manda para a pagina do exame, nunca para a URL noindex", () => {
+    const rascunho = [{ slug: "ultrassom-de-tireoide", draft: true, examPages: ["/exames/ultrassonografia"] }];
+    expect(resolverBlogSubdominio("/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito", rascunho)).toEqual({
+      status: 301,
+      location: "https://totalquality.med.br/exames/ultrassonografia",
+    });
+    const publicado = [{ ...rascunho[0], draft: false }];
+    expect(resolverBlogSubdominio("/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito/", publicado)).toEqual({
+      status: 301,
+      location: "https://totalquality.med.br/blog/ultrassom-de-tireoide",
+    });
+  });
+
+  it("os dois migrados respeitam o estado real do index.json", () => {
+    for (const [antigo, novo] of Object.entries(POSTS_MIGRADOS)) {
+      const post = index.find((p) => p.slug === novo)!;
+      const { location } = resolverBlogSubdominio(`/posts/${antigo}`) as { location: string };
+      if (post.draft) expect(location).not.toContain(`/blog/${novo}`);
+      else expect(location).toBe(`https://totalquality.med.br/blog/${novo}`);
+    }
+  });
+
+  it("tema retirado responde 410 e o resto vai para o /blog", () => {
+    expect(resolverBlogSubdominio("/posts/hormonios-do-amor-o-que-sao-e-como-agem")).toEqual({ status: 410 });
+    for (const caminho of ["/", "/category/exames-de-imagem", "/posts/artigo-que-nunca-existiu", "/sitemap.xml"]) {
+      expect(resolverBlogSubdominio(caminho)).toEqual({ status: 301, location: "https://totalquality.med.br/blog" });
+    }
   });
 });
 

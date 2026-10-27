@@ -1224,5 +1224,79 @@
       "aso-exames-ocupacionais",
       "resultado-de-exames-online-seguranca"
     ]
+  },
+  {
+    "id": "48",
+    "slug": "ultrassom-de-tireoide",
+    "title": "Ultrassom de tireoide: para que serve, preparo e como é feito",
+    "metaTitle": "Ultrassom de Tireoide: Para Que Serve e Preparo | Total Quality",
+    "subtitle": "Quando o médico pede, por que não precisa de jejum, o que o Doppler acrescenta e como o laudo classifica os nódulos",
+    "excerpt": "Ultrassom de tireoide: para que serve, quando é pedido, preparo sem jejum, o que o Doppler mostra e como a classificação ACR TI-RADS orienta a conduta.",
+    "category": "Exames de Imagem",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "27 Out 2026",
+    "readTime": "7 min",
+    "image": "https://totalquality.med.br/images/blog/ultrassom-de-tireoide.webp",
+    "imageAlt": "Exame de ultrassom de tireoide: o transdutor com gel é apoiado no pescoço da paciente deitada, com a imagem no monitor ao fundo",
+    "tags": [
+      "ultrassom de tireoide",
+      "ultrassonografia",
+      "nódulo de tireoide",
+      "ACR TI-RADS",
+      "Doppler",
+      "TSH e T4 livre"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-27",
+    "examName": "ultrassom de tireoide",
+    "examType": "ultrassonografia",
+    "examPages": [
+      "/exames/ultrassonografia"
+    ],
+    "horaMarcada": true,
+    "related": [
+      "diferenca-ultrassom-comum-doppler",
+      "siglas-exames-laboratoriais",
+      "exames-de-sangue-guia-completo"
+    ]
+  },
+  {
+    "id": "49",
+    "slug": "tirzepatida-exames-e-falsificacao",
+    "title": "Tirzepatida: exames de acompanhamento e o alerta da Anvisa sobre falsificação",
+    "metaTitle": "Tirzepatida: Exames e Alerta da Anvisa | Total Quality",
+    "subtitle": "O que é o medicamento, como reconhecer um produto irregular, quais exames o médico pode pedir e os sinais de alerta",
+    "excerpt": "Tirzepatida (Mounjaro): quais exames o médico pode pedir no acompanhamento, os sinais de alerta e o que a Anvisa orienta sobre o lote falsificado.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "27 Out 2026",
+    "readTime": "7 min",
+    "image": "https://totalquality.med.br/images/blog/tirzepatida-exames-e-falsificacao.webp",
+    "imageAlt": "Médico mostra resultados de exames laboratoriais a um paciente no consultório — acompanhamento do tratamento com tirzepatida",
+    "tags": [
+      "tirzepatida",
+      "Mounjaro",
+      "Anvisa",
+      "hemoglobina glicada",
+      "exames de sangue",
+      "medicamento falsificado"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-27",
+    "examName": "exames de sangue",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue",
+      "/exames/hemograma"
+    ],
+    "related": [
+      "siglas-exames-laboratoriais",
+      "exames-de-sangue-guia-completo",
+      "hemograma-completo-o-que-avalia"
+    ]
   }
 ]
