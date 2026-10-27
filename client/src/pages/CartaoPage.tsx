@@ -156,7 +156,7 @@ export default function CartaoPage() {
               <span className="text-brand block">PLANO</span>
             </h2>
             <p className="text-lg text-text-light max-w-2xl mx-auto">
-              Todos os planos incluem acesso ao aplicativo Total Quality Care com cashback em PIX e benefícios em milhares de marcas parceiras.
+              Todos os planos incluem acesso ao aplicativo Total Quality Health com cashback em PIX e benefícios em milhares de marcas parceiras.
             </p>
           </div>
 
