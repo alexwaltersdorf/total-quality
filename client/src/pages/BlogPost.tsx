@@ -98,7 +98,7 @@ export default function BlogPost() {
   useBreadcrumbSchema(breadcrumbs);
 
   // SEO: BlogPosting schema — o mesmo objeto do prerender (blogPostingLd).
-  useBlogArticleSchema(meta);
+  useBlogArticleSchema(meta, post?.content);
 
   // SEO: FAQPage schema — extraido da secao "## Perguntas frequentes" do
   // corpo, quando o artigo tiver uma (mesmo padrao de ExamePage.tsx).

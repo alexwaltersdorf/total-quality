@@ -14,7 +14,7 @@ import {
   CHECKUP_DESCRIPTION,
 } from "@shared/const";
 import blogIndex from "../../client/src/content/blog/index.json";
-import { blogModifiedIso, isPublished, type BlogPostMeta } from "../../client/src/lib/blogMeta";
+import { blogDateIso, blogModifiedIso, isPublished, type BlogPostMeta } from "../../client/src/lib/blogMeta";
 import { especialidadesData, ESPECIALIDADES_BASE } from "../../client/src/lib/especialidadesData";
 
 export interface RouteMetadata {
@@ -33,6 +33,11 @@ export interface RouteMetadata {
   ogType?: "website" | "article";
   /** true = <meta name="robots" content="noindex, nofollow"> e fora do sitemap. */
   noindex?: boolean;
+  /** Artigo do blog: datas em ISO para article:published_time / modified_time. */
+  publishedTime?: string;
+  modifiedTime?: string;
+  /** Texto alternativo da imagem de compartilhamento (padrao do index.html: a fachada). */
+  ogImageAlt?: string;
 }
 
 // Dados dos exames para reutilização
@@ -565,6 +570,9 @@ function blogRoute(slug: string): RouteMetadata | null {
     ...base,
     ogType: "article",
     lastmod: blogModifiedIso(post),
+    publishedTime: blogDateIso(post.date),
+    modifiedTime: blogModifiedIso(post),
+    ogImageAlt: post.title,
     ...(isPublished(post) ? {} : { noindex: true }),
   };
 }
@@ -640,6 +648,34 @@ export function injectMetaTags(html: string, metadata: RouteMetadata): string {
       /<meta property="og:type" content="[^"]*"/,
       `<meta property="og:type" content="${metadata.ogType}"`
     );
+  }
+
+  // Twitter/X: ate 27/10/2026 o title, a description e a imagem do cartao
+  // ficavam com o texto da home em TODAS as paginas, porque so as tags og eram
+  // trocadas. Passam a seguir as mesmas da pagina (system prompt do blog, 27/10).
+  const ogTitle = escapeHtml(metadata.ogTitle || metadata.title);
+  const ogDesc = escapeHtml(metadata.ogDescription || metadata.description);
+  result = result
+    .replace(/<meta name="twitter:title" content="[^"]*"/, `<meta name="twitter:title" content="${ogTitle}"`)
+    .replace(/<meta name="twitter:description" content="[^"]*"/, `<meta name="twitter:description" content="${ogDesc}"`);
+  if (metadata.ogImage) {
+    result = result.replace(
+      /<meta name="twitter:image" content="[^"]*"/,
+      `<meta name="twitter:image" content="${escapeHtml(metadata.ogImage)}"`
+    );
+  }
+  if (metadata.ogImageAlt) {
+    result = result.replace(
+      /<meta property="og:image:alt" content="[^"]*"/,
+      `<meta property="og:image:alt" content="${escapeHtml(metadata.ogImageAlt)}"`
+    );
+  }
+  // Datas do artigo, logo depois do og:type
+  if (metadata.ogType === "article" && metadata.publishedTime) {
+    const datas =
+      `<meta property="article:published_time" content="${escapeHtml(metadata.publishedTime)}" />` +
+      (metadata.modifiedTime ? `\n    <meta property="article:modified_time" content="${escapeHtml(metadata.modifiedTime)}" />` : "");
+    result = result.replace(/(<meta property="og:type" content="article"\s*\/?>)/, `$1\n    ${datas}`);
   }
 
   // Rascunho do blog: acessivel para revisao, mas fora do indice do Google
