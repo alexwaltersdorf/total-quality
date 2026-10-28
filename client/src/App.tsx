@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { usePageViewTracking } from "@/hooks/usePageViewTracking";
+import { useInteractionTracking } from "@/hooks/useInteractionTracking";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { ContatoLeadProvider } from "./contexts/ContatoLeadContext";
 import Home from "./pages/Home";
@@ -88,6 +89,7 @@ function DeferredToaster() {
 function App() {
   // Fonte unica de page_view do site (ver docs/analytics.md).
   usePageViewTracking();
+  useInteractionTracking();
 
   return (
     <ErrorBoundary>

@@ -223,13 +223,18 @@ export const appRouter = router({
         fbp: z.string().max(255).optional(),
         consentMarketing: z.boolean().optional(),
         consentAnalytics: z.boolean().optional(),
+        // Identificadores de clique do Google Ads: vao so para a planilha,
+        // para a conversao offline "Exame agendado" (pericia de 28/10/2026).
+        gclid: z.string().max(255).optional(),
+        gbraid: z.string().max(255).optional(),
+        wbraid: z.string().max(255).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
         // O banco nao tem colunas para os campos de despacho; eles existem so
         // para a viagem ate as plataformas.
         const {
           eventId, examType, value, leadChannel, clientId, fbc, fbp,
-          consentMarketing, consentAnalytics, ...leadInput
+          consentMarketing, consentAnalytics, gclid, gbraid, wbraid, ...leadInput
         } = input;
         const userAgent = ctx.req.headers["user-agent"] ?? null;
         const ipAddress =
@@ -257,7 +262,9 @@ export const appRouter = router({
           console.warn("[Notification] Falha ao notificar novo lead:", e);
         }
         // Sincroniza o lead com a planilha Google Sheets (não bloqueia nem falha o lead)
-        await syncLeadToSheet(leadInput);
+        // Exame, valor e event_id permitem cruzar a linha com a conversao
+        // do Ads, do Meta e do GA4; os ids de clique, subir o agendamento.
+        await syncLeadToSheet({ ...leadInput, gclid, gbraid, wbraid, examType, eventId, value });
 
         // Conversao pelo servidor: Meta CAPI e GA4 Measurement Protocol.
         // So acontece com eventId — sem ele nao ha como deduplicar contra o

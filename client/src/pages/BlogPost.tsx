@@ -274,7 +274,7 @@ export default function BlogPost() {
             <button
               type="button"
               onClick={() => {
-                trackWhatsAppConversion("artigo_cta", "blog");
+                trackWhatsAppConversion("artigo_cta", "blog", meta?.examType);
                 openWhatsApp("artigo_cta", `Olá! Li o artigo sobre ${post.title} e tenho uma dúvida.`);
               }}
               className="btn-pill-brand inline-flex items-center gap-2"

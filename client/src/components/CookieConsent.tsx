@@ -12,6 +12,7 @@
  */
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
+import { trackConsentGranted } from "@/lib/tracking";
 
 const STORAGE_KEY = "tq-consent";
 
@@ -34,6 +35,7 @@ function updateConsent(granted: boolean) {
     ad_user_data: value,
     ad_personalization: value,
   });
+  if (granted) trackConsentGranted();
 }
 
 export default function CookieConsent() {

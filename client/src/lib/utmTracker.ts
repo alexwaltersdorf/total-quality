@@ -47,11 +47,18 @@ const UTM_STORAGE_KEY = "tq_utm_params";
 export function detectChannel(
   utmSource: string | null,
   utmMedium: string | null,
-  referrer: string
+  referrer: string,
+  temCliqueGoogleAds = false
 ): string {
   const src = (utmSource || "").toLowerCase();
   const med = (utmMedium || "").toLowerCase();
   const ref = referrer.toLowerCase();
+
+  // gclid/gbraid/wbraid so existem em clique de anuncio do Google. Sem esta
+  // checagem, o anuncio sem UTM caia em "Google Organico" pelo referrer, ou
+  // em "Acesso Direto" no app do Google, que nao manda referrer (pericia de
+  // 28/10/2026: 54% dos leads da planilha como "Acesso Direto").
+  if (temCliqueGoogleAds) return "Google Ads";
 
   // Facebook / Meta
   if (src.includes("facebook") || src.includes("fb") || src.includes("meta")) {
@@ -136,6 +143,10 @@ export function detectChannel(
     return "Social (Outros)";
   }
 
+  // utm_source preenchido mas desconhecido (QR code, panfleto, parceiro):
+  // e campanha nossa, nao e acesso direto nem referencia.
+  if (src) return "Outras Campanhas (UTM)";
+
   // Referral
   if (ref && ref !== "" && !ref.includes(window.location.hostname)) {
     return "Referência";
@@ -179,7 +190,8 @@ export function captureUTMParams(): UTMParams {
   const utmContent = params.get("utm_content");
 
   // Detectar canal automaticamente
-  const channel = detectChannel(utmSource, utmMedium, referrer);
+  const temCliqueGoogleAds = ["gclid", "gbraid", "wbraid"].some((p) => (params.get(p) || "") !== "");
+  const channel = detectChannel(utmSource, utmMedium, referrer, temCliqueGoogleAds);
 
   const utmData: UTMParams = {
     utmSource,
@@ -215,10 +227,9 @@ export function captureUTMParams(): UTMParams {
 /**
  * Identificadores do clique pago, para o beacon do ADS-01.
  *
- * Fica separado de getUTMForAPI de proposito: aquele alimenta o formulario de
- * lead, cujo schema no servidor nao aceita estes campos. Misturar os dois faria
- * o lead ser rejeitado com HTTP 400 — ou seja, medicao quebrada derrubando
- * atendimento, que e exatamente o que nao pode acontecer.
+ * Fica separado de getUTMForAPI de proposito: aquele alimenta tambem a sessao
+ * e a conversao, cujos schemas no servidor nao conhecem estes campos. O lead
+ * recebe so os tres identificadores de clique, por getLeadClickIdsForAPI().
  */
 export function getAdClickIds(): Record<string, string | null> {
   const utm = getStoredUTMParams();
@@ -270,5 +281,21 @@ export function getUTMForAPI(): Record<string, string | undefined> {
     utmContent: utm.utmContent || undefined,
     channel: utm.channel || undefined,
     referrer: utm.referrer || undefined,
+  };
+}
+
+/**
+ * gclid/gbraid/wbraid para o lead.create, que os repassa a planilha (colunas
+ * GCLID, GBRAID e WBRAID). E o que permite subir a conversao "Exame agendado"
+ * de volta ao Google Ads quando a recepcao marca o agendamento — sem isso a
+ * acao offline segue zerada (pericia de 28/10/2026).
+ */
+export function getLeadClickIdsForAPI(): Record<string, string | undefined> {
+  const utm = getStoredUTMParams();
+  if (!utm) return {};
+  return {
+    gclid: utm.gclid || undefined,
+    gbraid: utm.gbraid || undefined,
+    wbraid: utm.wbraid || undefined,
   };
 }

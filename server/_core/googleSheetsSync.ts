@@ -18,6 +18,12 @@ type LeadForSheet = {
   utmContent?: string;
   channel?: string;
   sessionId?: string;
+  gclid?: string;
+  gbraid?: string;
+  wbraid?: string;
+  examType?: string;
+  eventId?: string;
+  value?: number;
 };
 
 /**

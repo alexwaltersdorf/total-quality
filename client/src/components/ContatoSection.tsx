@@ -24,7 +24,10 @@ const toast = {
   error: (msg: string) => import("sonner").then((m) => m.toast.error(msg)),
 };
 import { trpc } from "@/lib/trpc";
-import { trackFormStart, trackFormSubmit, trackWhatsAppClick, trackExternalLink, trackMapInteraction } from "@/lib/tracking";
+import { trackFormStart, trackFormSubmit, trackWhatsAppClick, trackExternalLink, trackMapInteraction, trackLeadQualificado } from "@/lib/tracking";
+import { consentState, readFbCookies, readGaClientId } from "@/lib/conversionContext";
+import { examTypeAtual } from "@/lib/pageContext";
+import { resolveLeadValue } from "@/lib/leadValues";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 import { storeLeadHandoff } from "@/lib/leadHandoff";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
@@ -84,12 +87,48 @@ export default function ContatoSection() {
       message: formData.mensagem,
     });
 
-    // Rastrear como lead com UTM params
-    trackLeadDirect("form_contato", {
-      name: formData.nome,
-      phone: formData.telefone || undefined,
-      email: formData.email,
-    });
+    // Lead qualificado, como no formulario do WhatsApp: o evento do navegador
+    // devolve o event_id e o servidor recebe o MESMO id, para o Meta e o GA4
+    // deduplicarem. Ate 29/10/2026 este formulario gravava o lead sem id —
+    // sem conversao pelo servidor — e a conversao do Ads so saia depois, na
+    // tela de sucesso, quando o WhatsApp abria sozinho.
+    void (async () => {
+      const examType = examTypeAtual();
+      let eventId: string | undefined;
+      try {
+        eventId = await trackLeadQualificado(
+          "form_contato",
+          examType,
+          { email: formData.email, telefone: formData.telefone || undefined },
+          "whatsapp"
+        );
+      } catch {
+        eventId = undefined;
+      }
+      const consent = consentState();
+      const { fbc, fbp } = readFbCookies();
+      void trackLeadDirect(
+        "form_contato",
+        {
+          name: formData.nome,
+          phone: formData.telefone || undefined,
+          email: formData.email,
+        },
+        eventId
+          ? {
+              eventId,
+              examType,
+              value: resolveLeadValue("form_contato", examType),
+              leadChannel: "whatsapp",
+              clientId: readGaClientId(),
+              fbc,
+              fbp,
+              consentMarketing: consent.marketing,
+              consentAnalytics: consent.analytics,
+            }
+          : undefined
+      );
+    })();
   };
 
   const handleFormFocus = () => {
