@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 /*
@@ -136,5 +136,51 @@ describe("canal do lead com clique de anuncio", () => {
     vi.resetModules();
     const t = await import("../client/src/lib/utmTracker");
     expect(t.captureUTMParams().channel).toBe("Outras Campanhas (UTM)");
+  });
+});
+
+describe("GUARD-RAIL: regra do pixel nos artigos do blog (Alex, 29/10/2026)", () => {
+  const dir = new URL("../client/src/content/blog/", import.meta.url);
+  const artigos = readdirSync(dir)
+    .filter((f) => f.endsWith(".json") && f !== "index.json")
+    .map((f) => ({ arquivo: f, dados: JSON.parse(readFileSync(new URL(f, dir), "utf8")) }));
+
+  it("encontra os artigos", () => {
+    expect(artigos.length).toBeGreaterThan(10);
+  });
+
+  /*
+   * Link de contato no corpo do artigo pula o formulario de qualificacao: sem
+   * whatsapp_click, sem event_id, sem linha na planilha e sem conversao no Ads.
+   * O contato do artigo e o ExamCTA, que ja mede tudo.
+   */
+  it("nenhum artigo tem link de contato, mapa, script ou pixel no corpo", () => {
+    const proibidos = [
+      /api\.whatsapp\.com/i, /wa\.me\//i, /whatsapp\.com\/send/i, /\btel:/i,
+      /google\.[a-z.]+\/maps/i, /maps\.app\.goo\.gl/i, /goo\.gl\/maps/i,
+      /<script/i, /\bon[a-z]+\s*=/i, /<iframe/i, /fbq\(|gtag\(|dataLayer/i,
+    ];
+    const achados: string[] = [];
+    for (const { arquivo, dados } of artigos) {
+      const corpo = JSON.stringify(dados.content ?? "");
+      for (const re of proibidos) if (re.test(corpo)) achados.push(`${arquivo}: ${re}`);
+    }
+    expect(achados).toEqual([]);
+  });
+
+  it("todo artigo informa o exame (examType), e o publicado tambem a pagina do exame", () => {
+    // Rascunho pode nascer sem examPages; publicar exige o botao para a pagina.
+    const sem = artigos
+      .filter(({ dados }) => !dados.examType ||
+        (dados.draft !== true && (!Array.isArray(dados.examPages) || dados.examPages.length === 0)))
+      .map(({ arquivo }) => arquivo);
+    expect(sem).toEqual([]);
+  });
+
+  it("o contato do artigo e o ExamCTA, pelo formulario de qualificacao", () => {
+    const cta = source("client/src/components/ExamCTA.tsx");
+    expect(cta).toContain("useWhatsAppRedirect");
+    expect(cta).toMatch(/trackWhatsAppConversion\(label, "blog", examType\)/);
+    expect(source("client/src/pages/BlogPost.tsx")).toContain("ExamCTA");
   });
 });
