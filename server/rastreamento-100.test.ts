@@ -151,4 +151,8 @@ describe("GUARD-RAIL: o Meta nao recebe evento restrito (29/10/2026)", () => {
     expect(conv).toContain('META_EVENTO_LEAD = "lead_qualificado"');
     expect(conv).not.toMatch(/event_name:\s*"(Lead|Contact|InitiateCheckout)"/);
   });
+
+  it("faq_index e limpo depois do faq_open, para nao ir nos eventos seguintes", () => {
+    expect(source("client/src/lib/tracking.ts")).toMatch(/window\.dataLayer\.push\(\{ faq_index: undefined \}\)/);
+  });
 });
