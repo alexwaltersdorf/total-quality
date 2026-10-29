@@ -10,7 +10,7 @@
  * que vai para o canal da propria clinica.
  */
 import { useEffect, useRef, useState } from "react";
-import { trackWhatsAppConversionWithLead } from "@/lib/tracking";
+import { trackWhatsAppRedirectRequested } from "@/lib/tracking";
 import { consumeLeadHandoff, type LeadHandoff } from "@/lib/leadHandoff";
 import { CheckCircle, ArrowUpRight, Phone } from "lucide-react";
 import { useLocation } from "wouter";
@@ -41,12 +41,11 @@ export default function FormSubmissionSuccess() {
   const openWhatsApp = () => {
     const lead = leadRef.current;
     const msg = buildWhatsAppMessage(lead);
-    // Conversão identificada: o hash do contato entra nas conversões
-    // aprimoradas do Ads quando há consentimento de marketing.
-    void trackWhatsAppConversionWithLead("form_success_cta", "form_success", "geral", {
-      email: lead?.email,
-      telefone: lead?.telefone,
-    });
+    // A conversao ja saiu no envio do formulario de contato (lead qualificado
+    // com event_id). Aqui so registra que o WhatsApp abriu: contar de novo
+    // dobraria o lead, e a contagem dependia de o navegador nao bloquear a
+    // janela aberta sozinha pelo cronometro (pericia de 28/10/2026).
+    trackWhatsAppRedirectRequested("form_success", "");
     window.open(whatsappUrl(msg), "_blank", "noopener,noreferrer");
   };
 

@@ -54,7 +54,15 @@ var MAPA_CABECALHOS = {
   'Endereço': 'address',
   'Endereco': 'address',
   'Referrer': 'referrer',
-  'Session ID': 'sessionId'
+  'Session ID': 'sessionId',
+  // Desde 29/10/2026 (pericia de rastreamento). Nomes proprios, para nao
+  // colidir com "Exame agendado" e "Valor", que a recepcao preenche a mao.
+  'GCLID': 'gclid',
+  'GBRAID': 'gbraid',
+  'WBRAID': 'wbraid',
+  'Exame (site)': 'examType',
+  'Event ID': 'eventId',
+  'Valor estimado (site)': 'value'
 };
 
 /** Cabecalhos preenchidos por regra, nao pelo payload. */

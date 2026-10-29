@@ -28,6 +28,7 @@
  *    com botão flutuante.
  */
 import { useEffect } from "react";
+import { trackWhatsAppClick } from "@/lib/tracking";
 import { Link } from "wouter";
 import { ArrowUpRight, Check, MapPin, MessageCircle, Phone } from "lucide-react";
 import Navbar from "@/components/Navbar";
@@ -131,7 +132,11 @@ function BotaoWhatsApp({
   return (
     <button
       type="button"
-      onClick={() => abrirWhatsApp(origem, MENSAGEM)}
+      onClick={() => {
+        // Ate 29/10/2026 estes botoes abriam o formulario sem whatsapp_click.
+        trackWhatsAppClick(origem);
+        abrirWhatsApp(origem, MENSAGEM);
+      }}
       className={`btn-pill-brand inline-flex min-h-[48px] items-center justify-center gap-2 text-center ${className}`}
     >
       {children}

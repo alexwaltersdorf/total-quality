@@ -73,6 +73,13 @@ function pushToDataLayer(event: string, params: Record<string, unknown> = {}) {
    * Removido. Nao reintroduzir: quem precisa desses numeros e o GA4.
    */
   window.dataLayer.push(payload);
+  /*
+   * O user_data (e-mail e telefone com hash) serve so ao evento que o trouxe.
+   * Sem limpar, ele fica no modelo de dados do GTM e acompanha todos os
+   * eventos seguintes da visita (page_view, cliques) ate o GA4 — o que a
+   * politica do GA4 nao permite. Pericia de rastreamento, 28/10/2026.
+   */
+  if (params.user_data) window.dataLayer.push({ user_data: undefined });
 }
 
 // ============================================================
@@ -307,6 +314,34 @@ export async function trackFormSubmit(formData: {
 // ============================================================
 // CLIQUES EM TELEFONE E WHATSAPP
 // ============================================================
+
+/**
+ * Pergunta frequente aberta. So o numero da pergunta na pagina: o texto pode
+ * citar exame, e o page_path ja diz onde ela estava.
+ */
+export function trackFaqOpen(faqIndex: number) {
+  pushToDataLayer("faq_open", {
+    event_category: "engagement",
+    faq_index: faqIndex,
+  });
+}
+
+/** Clique em "Como chegar" / "Ver no Google Maps": intencao de ir a unidade. */
+export function trackDirectionsClick() {
+  pushToDataLayer("directions_click", {
+    event_category: "engagement",
+    event_label: "como_chegar",
+  });
+}
+
+/**
+ * Visitante aceitou os cookies no banner. O page_view da pagina de entrada
+ * saiu antes, ainda sem consentimento, e o pixel do Meta nao o reenvia: o GTM
+ * usa este evento para mandar o PageView que faltou.
+ */
+export function trackConsentGranted() {
+  pushToDataLayer("consent_granted", { event_category: "consent" });
+}
 
 /** Rastreia clique no telefone */
 export function trackPhoneClick(source: string) {
