@@ -324,6 +324,9 @@ export function trackFaqOpen(faqIndex: number) {
     event_category: "engagement",
     faq_index: faqIndex,
   });
+  // O GTM guarda o ultimo valor de cada chave: sem limpar, faq_index ia junto
+  // em todo evento seguinte do GA4 (teste em producao de 29/10/2026).
+  if (typeof window !== "undefined") window.dataLayer.push({ faq_index: undefined });
 }
 
 /** Clique em "Como chegar" / "Ver no Google Maps": intencao de ir a unidade. */

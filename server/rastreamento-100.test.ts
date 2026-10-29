@@ -138,3 +138,21 @@ describe("canal do lead com clique de anuncio", () => {
     expect(t.captureUTMParams().channel).toBe("Outras Campanhas (UTM)");
   });
 });
+
+describe("GUARD-RAIL: o Meta nao recebe evento restrito (29/10/2026)", () => {
+  /*
+   * A config do pixel 1868545660691533 traz restrictedEventNames: Contact,
+   * InitiateCheckout e Lead. Evento com esses nomes e descartado pelo Meta
+   * ("You are attempting to send a restricted event"). O lead vai como evento
+   * proprio, com o mesmo nome no navegador e na API de Conversoes.
+   */
+  it("a API de Conversoes manda lead_qualificado, nunca Lead/Contact", () => {
+    const conv = source("server/_core/conversions.ts");
+    expect(conv).toContain('META_EVENTO_LEAD = "lead_qualificado"');
+    expect(conv).not.toMatch(/event_name:\s*"(Lead|Contact|InitiateCheckout)"/);
+  });
+
+  it("faq_index e limpo depois do faq_open, para nao ir nos eventos seguintes", () => {
+    expect(source("client/src/lib/tracking.ts")).toMatch(/window\.dataLayer\.push\(\{ faq_index: undefined \}\)/);
+  });
+});
