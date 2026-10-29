@@ -240,6 +240,33 @@ export function extractFaqs(content: string[]): { q: string; a: string }[] {
   return faqs;
 }
 
+/**
+ * Referencias do artigo: secao "## Referências" no corpo, um item por fonte no
+ * formato "- [Titulo](https://...) — Instituicao". System prompt do blog de
+ * 27/10/2026 (SYSTEM-PROMPT-ORQUESTRADOR-BLOG.md, repo de SEO): toda afirmacao
+ * clinica relevante precisa ser verificavel, e a referencia vira `citation` no
+ * schema. Fonte entra so depois de aberta e conferida — nunca inventada.
+ */
+export type Referencia = { name: string; url: string; publisher?: string };
+
+export function extractReferences(content: string[]): Referencia[] {
+  const refs: Referencia[] = [];
+  let dentro = false;
+  for (const block of content) {
+    const trimmed = block.trimStart();
+    if (trimmed.startsWith("## ")) {
+      dentro = /^refer[êe]ncias\b/i.test(trimmed.slice(3).trim());
+      continue;
+    }
+    if (!dentro) continue;
+    for (const linha of block.split("\n")) {
+      const m = linha.match(/^\s*[-*]\s*\[([^\]]+)\]\((https:\/\/[^)\s]+)\)\s*(?:[—–-]\s*(.+))?$/);
+      if (m) refs.push({ name: m[1].trim(), url: m[2], ...(m[3] ? { publisher: m[3].trim().replace(/\.$/, "") } : {}) });
+    }
+  }
+  return refs;
+}
+
 /** Tira **negrito** e [texto](url) — o schema leva texto puro. */
 export function stripInlineMarkdown(text: string): string {
   return text.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/\*\*([^*]+)\*\*/g, "$1");
@@ -307,10 +334,11 @@ const BUSINESS_ID = `${SITE}/#medicalbusiness`;
  * um exame; reviewedBy (o responsavel tecnico) e lastReviewed so em artigo
  * publicado — rascunho ainda nao passou pela revisao medica.
  */
-export function blogPostingLd(post: BlogPostMeta): object {
+export function blogPostingLd(post: BlogPostMeta, content: string[] = []): object {
   const url = `${SITE}/blog/${post.slug}`;
   const published = blogDateIso(post.date);
   const revisado = isPublished(post);
+  const refs = extractReferences(content);
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -327,6 +355,14 @@ export function blogPostingLd(post: BlogPostMeta): object {
     author: { "@id": BUSINESS_ID },
     publisher: { "@id": BUSINESS_ID },
     image: { "@type": "ImageObject", url: post.image },
+    ...(refs.length > 0 && {
+      citation: refs.map((r) => ({
+        "@type": "CreativeWork",
+        name: r.name,
+        url: r.url,
+        ...(r.publisher && { publisher: { "@type": "Organization", name: r.publisher } }),
+      })),
+    }),
     mainEntityOfPage: {
       "@type": "MedicalWebPage",
       "@id": `${url}#webpage`,

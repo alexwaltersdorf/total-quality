@@ -24,6 +24,7 @@ import { BAIRROS_TITULO, BAIRROS_INTRO, BAIRROS_GRUPOS, BAIRROS_PARAGRAFOS } fro
 import blogIndex from "../../client/src/content/blog/index.json";
 import {
   AVISO_INFORMATIVO,
+  blogDateIso,
   blogModifiedIso,
   blogPostingLd,
   linhaRevisao,
@@ -807,7 +808,7 @@ function blogFooterHtml(post: BlogPost): string {
     <footer>
       <p><strong>${AVISO_INFORMATIVO}</strong></p>
       <p>${IDENTIFICACAO.join("<br>")}</p>
-      <p>Última atualização: ${isoToBr(blogModifiedIso(post))}</p>
+      <p>Publicado em ${isoToBr(blogDateIso(post.date))} · Última atualização: ${isoToBr(blogModifiedIso(post))}</p>
       ${revisao}
     </footer>`;
 }
@@ -830,6 +831,7 @@ function renderBlogHtml(post: BlogPost): string {
     : "";
   const faqs = extractFaqs(post.content);
   return `
+    <nav aria-label="Trilha de navegação"><a href="/">Início</a> › <a href="/blog">Blog</a> › ${escapeHtml(post.title)}</nav>
     <article>
       <h1>${escapeHtml(post.title)}</h1>
       <p><em>${escapeHtml(post.subtitle)}</em></p>
@@ -844,7 +846,7 @@ function renderBlogHtml(post: BlogPost): string {
     ${napHtml("Coleta laboratorial sem agendamento, por ordem de chegada, e resultados online. Dúvidas de preparo e convênio pelo WhatsApp.")}
     ${internalLinksHtml("/blog/" + post.slug)}
     ${jsonLd([
-      blogPostingLd(post),
+      blogPostingLd(post, post.content),
       breadcrumbLd([
         ["Início", "/"],
         ["Blog", "/blog"],

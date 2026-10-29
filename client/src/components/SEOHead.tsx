@@ -176,19 +176,19 @@ export function useBlogPostingSchema(props: BlogPostingSchemaProps) {
 // ── Artigo do blog (JSON em content/blog) ──
 // Mesmo objeto que o prerender emite (blogPostingLd): datas em ISO e
 // publisher apontando para a entidade unica #medicalbusiness.
-export function useBlogArticleSchema(post: BlogPostMeta | undefined) {
+export function useBlogArticleSchema(post: BlogPostMeta | undefined, content?: string[]) {
   useEffect(() => {
     if (!post) return;
     const script = document.createElement("script");
     script.type = "application/ld+json";
     script.id = "schema-blogposting";
-    script.textContent = JSON.stringify(blogPostingLd(post));
+    script.textContent = JSON.stringify(blogPostingLd(post, content));
 
     document.getElementById("schema-blogposting")?.remove();
     document.head.appendChild(script);
 
     return () => { document.getElementById("schema-blogposting")?.remove(); };
-  }, [post]);
+  }, [post, content]);
 }
 
 // ── Canonical URL helper ──

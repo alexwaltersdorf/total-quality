@@ -18,8 +18,10 @@ import { describe, expect, it } from "vitest";
 import blogIndex from "../client/src/content/blog/index.json";
 import {
   blogDateIso,
+  blogPostingLd,
   CTA_MARKER,
   extractFaqs,
+  extractReferences,
   isPublished,
   type BlogPost,
   type BlogPostMeta,
@@ -525,5 +527,59 @@ describe("GUARD-RAIL: prazo de resultado (decisao do Alex, 22/10/2026)", () => {
   it("componentes da home nao voltam a dizer 24H", () => {
     const fonte = fs.readFileSync(nodePath.resolve(import.meta.dirname, "../client/src/components/ExamesSection.tsx"), "utf-8");
     expect(fonte).not.toMatch(/em até 24 horas|"24H"/);
+  });
+});
+
+describe("GUARD-RAIL: padrao editorial do orquestrador de SEO (27/10/2026)", () => {
+  // SYSTEM-PROMPT-ORQUESTRADOR-BLOG.md (repo de SEO), enviado pelo Alex em
+  // 27/10/2026: toda afirmacao clinica relevante tem de ser verificavel, com
+  // referencias medicas no artigo, e a pagina precisa de autoria, datas,
+  // breadcrumb e dados estruturados coerentes. As fontes de cada artigo foram
+  // abertas e conferidas uma a uma; nunca inventar titulo, autor ou URL.
+  const publicados = index.filter((p) => isPublished(p));
+  const BLOQUEADAS = /wikipedia\.org|totalquality\.med\.br|gpnotebook|airticles/i;
+
+  it.each(publicados.map((p) => p.slug))("%s tem secao de referencias com pelo menos 2 fontes", (slug) => {
+    const refs = extractReferences(load(slug).content);
+    expect(refs.length, "faltam referencias").toBeGreaterThanOrEqual(2);
+    for (const r of refs) {
+      expect(r.url).toMatch(/^https:\/\//);
+      expect(r.url, "fonte proibida").not.toMatch(BLOQUEADAS);
+      expect(r.publisher, `${r.url} sem instituicao`).toBeTruthy();
+    }
+  });
+
+  it("as referencias viram citation no BlogPosting", () => {
+    for (const p of publicados) {
+      const post = load(p.slug);
+      const ld = blogPostingLd(p, post.content) as { citation?: { url: string }[] };
+      expect(ld.citation?.map((c) => c.url), p.slug).toEqual(extractReferences(post.content).map((r) => r.url));
+    }
+  });
+
+  it.each(publicados.map((p) => p.slug))("%s com FAQ termina a duvida local em 'Onde fazer ... em Caraguatatuba?'", (slug) => {
+    const faqs = extractFaqs(load(slug).content);
+    if (faqs.length === 0) return;
+    expect(faqs.some((f) => /^Onde fazer .+ em Caraguatatuba\?$/.test(f.q)), "falta a pergunta local do modelo de fechamento").toBe(true);
+  });
+
+  it("artigo publicado tem breadcrumb visivel e data de publicacao no HTML pre-renderizado", () => {
+    for (const p of publicados) {
+      const html = getSeoContentForPath(`/blog/${p.slug}`)!;
+      expect(html, p.slug).toContain('<nav aria-label="Trilha de navegação"><a href="/">Início</a> › <a href="/blog">Blog</a>');
+      expect(html, p.slug).toMatch(/Publicado em \d{2}\/\d{2}\/\d{4}/);
+    }
+  });
+
+  it("twitter e datas do artigo seguem a pagina, nao a home (o index.html real)", () => {
+    const base = fs.readFileSync(nodePath.resolve(import.meta.dirname, "../client/index.html"), "utf8");
+    const p = publicados[0];
+    const meta = getRouteMetadata(`/blog/${p.slug}`)!;
+    const html = injectMetaTags(base, meta);
+    const og = html.match(/<meta property="og:title" content="([^"]*)"/)![1];
+    expect(html).toContain(`<meta name="twitter:title" content="${og}"`);
+    expect(html).toContain(`<meta property="article:published_time" content="${blogDateIso(p.date)}"`);
+    expect(html).toMatch(/<meta property="article:modified_time" content="\d{4}-\d{2}-\d{2}"/);
+    expect(html).not.toContain('twitter:title" content="Total Quality | Exames de Sangue e Laboratório');
   });
 });
