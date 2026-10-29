@@ -503,3 +503,13 @@ por testes em `server/seo-content.test.ts`:
     rascunho). Link de WhatsApp só por `whatsappUrl()` (api.whatsapp.com, fixo
     (12) 3887-3535) — nunca `wa.me`. Relatório: `docs/seo-blog-2026-10-22.md`. Travas em
     `server/blog-exames.test.ts` e `server/seo-content.test.ts`.
+
+25. **Regra do pixel em toda atualização, a começar pelo blog** (decisão do Alex,
+    29/10/2026, depois da perícia de rastreamento de 28/10): toda página nova ou
+    alterada mantém a medição completa — CTA por `tracking.ts`, conversão no
+    envio do formulário com `event_id`, evento novo também no regex do GTM,
+    consentimento negado por padrão. **No blog:** contato só pelo `ExamCTA`;
+    nenhum link de WhatsApp, `tel:`, `wa.me` ou mapa no corpo do artigo; todo
+    artigo com `examType`, e o publicado também com `examPages`; nada de script ou pixel no JSON.
+    Detalhe nos itens 8 a 13 da seção "Rastreamento" do `CLAUDE.md`. Travas em
+    `server/rastreamento-100.test.ts`.
