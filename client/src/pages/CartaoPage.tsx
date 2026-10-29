@@ -156,7 +156,7 @@ export default function CartaoPage() {
               <span className="text-brand block">PLANO</span>
             </h2>
             <p className="text-lg text-text-light max-w-2xl mx-auto">
-              Todos os planos incluem acesso ao aplicativo Total Quality Care com cashback em PIX e benefícios em milhares de marcas parceiras.
+              Todos os planos incluem acesso ao aplicativo Total Quality Health com cashback em PIX e benefícios em milhares de marcas parceiras.
             </p>
           </div>
 
@@ -168,13 +168,6 @@ export default function CartaoPage() {
                 onSelect={handleSelectPlan}
               />
             ))}
-          </div>
-
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-            <p className="text-sm text-text-light">
-              * Check-up anual gratuito para os 100 primeiros adquirentes dos planos Select e Premium.
-              Consulte os termos e condições.
-            </p>
           </div>
         </div>
       </section>
@@ -646,14 +639,6 @@ export default function CartaoPage() {
                   <td className="px-6 py-4 text-center">-</td>
                   <td className="px-6 py-4 text-center">R$ 15</td>
                   <td className="px-6 py-4 text-center">R$ 25</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="px-6 py-4 font-semibold text-text-light">
-                    Check-up Anual
-                  </td>
-                  <td className="px-6 py-4 text-center">-</td>
-                  <td className="px-6 py-4 text-center">Gratuito*</td>
-                  <td className="px-6 py-4 text-center">Gratuito*</td>
                 </tr>
                 <tr className="border-b">
                   <td className="px-6 py-4 font-semibold text-text-light">

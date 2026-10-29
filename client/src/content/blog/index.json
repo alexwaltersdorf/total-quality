@@ -1224,5 +1224,42 @@
       "aso-exames-ocupacionais",
       "resultado-de-exames-online-seguranca"
     ]
+  },
+  {
+    "id": "50",
+    "slug": "aplicativo-total-quality-health-cashback",
+    "title": "Total Quality Health: o aplicativo da clínica com cashback em Pix e descontos em exames",
+    "metaTitle": "App Total Quality Health: Cashback e Descontos | Total Quality",
+    "subtitle": "Como funciona o aplicativo gratuito, o que cada plano do Cartão Total Quality Care inclui e como ativar os descontos",
+    "excerpt": "O aplicativo gratuito da Total Quality reúne cashback em Pix em lojas parceiras e dá acesso aos planos com teleconsulta e descontos em exames. Veja como funciona.",
+    "category": "Medicina Preventiva",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "27 Out 2026",
+    "readTime": "5 min",
+    "image": "https://totalquality.med.br/images/blog/aplicativo-total-quality-health-cashback.webp",
+    "imageAlt": "Mão segurando um celular com a tela iluminada, sobre fundo de luzes desfocadas — aplicativo de benefícios",
+    "tags": [
+      "Total Quality Health",
+      "aplicativo de saúde",
+      "cashback em Pix",
+      "Cartão Total Quality Care",
+      "desconto em exames",
+      "teleconsulta"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-27",
+    "examName": "exames com o Cartão Total Quality Care",
+    "examType": "cartao",
+    "examPages": [
+      "/cartao",
+      "/exames/exames-de-sangue"
+    ],
+    "related": [
+      "check-up-medico-quais-exames-fazer",
+      "exames-de-sangue-guia-completo",
+      "resultado-de-exames-online-seguranca"
+    ]
   }
 ]
