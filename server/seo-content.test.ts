@@ -6,7 +6,12 @@ import {
   resolveHttpStatus,
 } from "./_core/seo-content";
 import { CONVENIOS as CONVENIOS_CLIENT } from "@/lib/conveniosData";
-import { getAllRoutes, getKnownBlogSlugs, getRouteMetadata } from "./_core/routes-metadata";
+import {
+  getAllRoutes,
+  getKnownBlogSlugs,
+  getRouteMetadata,
+  injectMetaTags,
+} from "./_core/routes-metadata";
 import { getLegacyRedirect, isGone, LEGACY_REDIRECTS } from "./_core/legacy-redirects";
 import { anosDeAtuacao } from "@shared/const";
 
@@ -233,6 +238,23 @@ describe("GUARD-RAIL: horario oficial unico (nao remover)", () => {
     expect(indexHtml).not.toContain("trysoro");
     expect(indexHtml).toContain('og:image" content="https://totalquality.med.br/images/');
     expect(indexHtml).toContain('"image": ["https://totalquality.med.br/images/');
+  });
+
+  it("nenhuma rota injeta og:image de CDN de terceiro", () => {
+    // Auditoria out/2026: o teste acima le o client/index.html, que esta
+    // correto desde agosto. O PNG do CloudFront sobrevivia em routes-metadata,
+    // no ogImage da home, e injectMetaTags sobrescreve a tag certa em tempo de
+    // requisicao — por isso a producao servia o PNG de 5,7 MB enquanto o HTML
+    // de origem declarava o WebP. Verificar o HTML INJETADO, nao o de origem.
+    for (const metadata of getAllRoutes()) {
+      if (!metadata.ogImage) continue;
+      expect(metadata.ogImage, metadata.canonical).not.toContain("cloudfront.net");
+      const injected = injectMetaTags(
+        '<meta property="og:image" content="PLACEHOLDER" />',
+        metadata
+      );
+      expect(injected, metadata.canonical).not.toContain("cloudfront.net");
+    }
   });
 });
 

@@ -124,8 +124,8 @@
   --color-text-light: oklch(0.48 0 0);
   --color-text-muted: oklch(0.52 0 0);
 
-  --font-display: 'Bebas Neue', sans-serif;
-  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Bebas Neue', 'Bebas Neue Fallback', sans-serif;
+  --font-sans: 'DM Sans', 'DM Sans Fallback', system-ui, -apple-system, sans-serif;
 }
 
 :root {
@@ -171,7 +171,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    font-family: 'DM Sans', 'DM Sans Fallback', system-ui, -apple-system, sans-serif;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -221,7 +221,7 @@
 
   /* Optik-style display heading */
   .heading-display {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Bebas Neue', 'Bebas Neue Fallback', sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.02em;
     line-height: 0.9;
@@ -302,7 +302,7 @@
 
   /* Optik-style outline number */
   .number-outline {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Bebas Neue', 'Bebas Neue Fallback', sans-serif;
     font-size: 5rem;
     line-height: 1;
     color: transparent;
