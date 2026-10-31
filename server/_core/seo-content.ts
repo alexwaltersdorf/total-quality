@@ -349,7 +349,6 @@ const laboratorioHtml = `
     <ul>
       <li><a href="/exames/tomografia-computadorizada">Tomografia computadorizada multislice</a></li>
       <li><a href="/exames/ultrassonografia">Ultrassonografia geral e com Doppler</a></li>
-      <li><a href="/exames/mamografia">Mamografia digital</a></li>
       <li><a href="/exames/raio-x">Raio-X digital</a></li>
       <li><a href="/exames/eletrocardiograma">Eletrocardiograma</a>, <a href="/exames/holter">Holter 24h</a> e <a href="/exames/mapa">MAPA 24h</a></li>
       <li><a href="/exames/eletroencefalograma">Eletroencefalograma</a></li>
@@ -476,7 +475,7 @@ function conveniosHtml(): string {
   const lista = CONVENIOS.map((c) => `<li>${escapeHtml(c)}</li>`).join("");
   return `
     <h1>Convênios Aceitos no Laboratório em Caraguatatuba</h1>
-    <p>A Total Quality Medicina Diagnóstica atende Cartão de Todos, Solumedi e Leader em Caraguatatuba – SP, para <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/laboratorio-caraguatatuba">exames laboratoriais</a>, <a href="/exames/tomografia-computadorizada">tomografia</a>, <a href="/exames/ultrassonografia">ultrassonografia</a>, <a href="/exames/mamografia">mamografia</a> e <a href="/checkup">check-up</a>.</p>
+    <p>A Total Quality Medicina Diagnóstica atende Cartão de Todos, Solumedi e Leader em Caraguatatuba – SP, para <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/laboratorio-caraguatatuba">exames laboratoriais</a>, <a href="/exames/tomografia-computadorizada">tomografia</a>, <a href="/exames/ultrassonografia">ultrassonografia</a> e <a href="/checkup">check-up</a>.</p>
     <h2>Convênios e cartões atendidos</h2>
     <ul>${lista}</ul>
     <p>Não trabalhamos com outros convênios ou planos de saúde: fora dessa lista, o atendimento é particular. Confirme condições e valores pelo WhatsApp <a href="${NAP.whatsappHref}">(12) 3887-3535</a> antes de vir.</p>
@@ -494,7 +493,7 @@ function conveniosHtml(): string {
 
 const homeHtml = `
     <h1>${HOME_H1}</h1>
-    <p>Há mais de ${anosDeAtuacao()} anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>. Também oferece <a href="/especialidades/medicina-do-trabalho">medicina do trabalho</a> para empresas, com PCMSO e ASO, e consultas com <a href="/especialidades/endocrinologista">endocrinologista</a> e <a href="/especialidades/gastroenterologista">gastroenterologista</a>.</p>
+    <p>Há mais de ${anosDeAtuacao()} anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>. Também oferece <a href="/especialidades/medicina-do-trabalho">medicina do trabalho</a> para empresas, com PCMSO e ASO, e consultas com <a href="/especialidades/endocrinologista">endocrinologista</a> e <a href="/especialidades/gastroenterologista">gastroenterologista</a>.</p>
     <ul>
       <li>Resultados online em curto prazo para a maioria dos exames</li>
       <li>Coleta laboratorial sem agendamento, por ordem de chegada — e coleta domiciliar mediante agendamento</li>
@@ -507,7 +506,7 @@ const homeHtml = `
     ${faqSectionHtml([
       {
         q: "Quais exames são realizados no laboratório em Caraguatatuba?",
-        a: "A Total Quality realiza mais de 3.000 tipos de exames em Caraguatatuba - SP, incluindo exames de sangue (hemograma, glicemia, colesterol, hormônios), tomografia computadorizada, ultrassonografia, mamografia digital, raio-X, eletrocardiograma, holter 24h, MAPA, bioimpedância e check-up preventivo.",
+        a: "A Total Quality realiza mais de 3.000 tipos de exames em Caraguatatuba - SP, incluindo exames de sangue (hemograma, glicemia, colesterol, hormônios), tomografia computadorizada, ultrassonografia, raio-X, eletrocardiograma, holter 24h, MAPA, bioimpedância e check-up preventivo.",
       },
       {
         q: "Qual o endereço do laboratório em Caraguatatuba?",
@@ -571,6 +570,10 @@ export function getSeoContentForPath(pathname: string): string | null {
  * mesmo que a pagina: os tres exames, os dois precos e a ressalva da
  * mamografia. Nada de "a partir de" nem de prazo que nao foi confirmado.
  *
+ * Desde 31/10/2026 a clinica nao realiza mamografia: a ressalva fica (ela e
+ * o que impede o pacote de parecer rastreamento completo), mas sem link para
+ * /exames/mamografia e com a frase de que o exame nao e feito aqui.
+ *
  * Sazonal: sai junto com a rota quando a campanha encerrar.
  */
 const outubroRosaHtml = `
@@ -583,14 +586,14 @@ const outubroRosaHtml = `
       <li><strong>Preventivo — Papanicolau</strong> — exame que avalia células do colo do útero para identificar alterações que possam precisar de acompanhamento.</li>
     </ul>
     <p>De R$ 500,00 por <strong>R$ 399,90</strong>. Valor do conjunto dos três exames. Exames conforme indicação médica.</p>
-    <p>A ultrassonografia das mamas não substitui a <a href="/exames/mamografia">mamografia</a> quando indicada. A escolha dos exames deve considerar a avaliação individual.</p>
+    <p>A ultrassonografia das mamas não substitui a mamografia quando indicada. No momento, a Total Quality não realiza mamografia. A escolha dos exames deve considerar a avaliação individual.</p>
     <h2>Como agendar</h2>
     <p>O agendamento começa por uma conversa: fale com a equipe pelo WhatsApp para verificar disponibilidade, documentos e preparo. A confirmação de data e horário é feita pela equipe.</p>
     <h2>Perguntas frequentes</h2>
     <h3>O que está incluído no valor de R$ 399,90?</h3>
     <p>O valor anunciado corresponde ao conjunto de ultrassonografia das mamas, ultrassonografia transvaginal e preventivo — Papanicolau.</p>
     <h3>A mamografia está incluída?</h3>
-    <p>Não. A oferta apresentada contempla os três exames listados. A ultrassonografia das mamas não substitui a mamografia quando ela é indicada.</p>
+    <p>Não. A oferta apresentada contempla os três exames listados, e no momento a Total Quality não realiza mamografia. A ultrassonografia das mamas não substitui a mamografia quando ela é indicada.</p>
     <h3>Esse pacote é indicado para qualquer pessoa?</h3>
     <p>A necessidade de cada exame depende da avaliação individual. Converse com o profissional que acompanha sua saúde e esclareça as orientações com nossa equipe.</p>
     <h3>Posso fazer os três exames no mesmo dia?</h3>

@@ -13,7 +13,7 @@ const values = [
   {
     icon: Target,
     title: "Missão",
-    description: "Oferecer diagnósticos precisos em exames de sangue, análises clínicas, tomografia, ultrassonografia, mamografia e cardiologia com atendimento humanizado em Caraguatatuba - SP.",
+    description: "Oferecer diagnósticos precisos em exames de sangue, análises clínicas, tomografia, ultrassonografia e cardiologia com atendimento humanizado em Caraguatatuba - SP.",
   },
   {
     icon: Eye,
@@ -29,7 +29,7 @@ const values = [
 
 const timeline = [
   { year: "2003", title: "Fundação", description: "Início das atividades de medicina diagnóstica em Caraguatatuba com foco em exames de qualidade", icon: ShieldCheck },
-  { year: "2015", title: "Expansão", description: "Ampliação da estrutura com tomografia multislice, mamografia digital e novos equipamentos de cardiologia", icon: GraduationCap },
+  { year: "2015", title: "Expansão", description: "Ampliação da estrutura com tomografia multislice e novos equipamentos de cardiologia", icon: GraduationCap },
   { year: "2020", title: "Sustentabilidade", description: "Implementação do sistema de energia solar sustentável", icon: Leaf },
 ];
 
@@ -75,10 +75,6 @@ export default function SobreSection() {
               ,{" "}
               <Link href="/exames/ultrassonografia" className="text-brand hover:underline">
                 ultrassonografia
-              </Link>
-              ,{" "}
-              <Link href="/exames/mamografia" className="text-brand hover:underline">
-                mamografia
               </Link>
               ,{" "}
               <Link href="/laboratorio-caraguatatuba" className="text-brand hover:underline">

@@ -57,7 +57,6 @@ export const EXAM_BLOG_LINKS: Record<string, string[]> = {
     "diferenca-ultrassom-comum-doppler",
     "mamografia-ultrassom-mamas-diferencas",
   ],
-  mamografia: ["mamografia-ultrassom-mamas-diferencas"],
   mapa: [
     "exames-diagnostico-hipertensao",
     "mapa-ou-holter-diferenca",

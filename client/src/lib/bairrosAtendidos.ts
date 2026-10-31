@@ -35,7 +35,7 @@ export const BAIRROS_GRUPOS: { titulo: string; bairros: string }[] = [
 
 export const BAIRROS_PARAGRAFOS: string[] = [
   "Se o pedido tem exame com jejum, as horas contam a partir da última refeição em casa: o trajeto até o Centro entra dentro do jejum. Como a coleta laboratorial é sem agendamento, por ordem de chegada, chegar cedo resolve, sem depender de vaga em agenda.",
-  "Ultrassonografia, tomografia, mamografia, raio-X, eletrocardiograma, MAPA e Holter são feitos com hora marcada pelo WhatsApp (12) 3887-3535. Se o pedido junta exames de laboratório e de imagem, pergunte se dá para fazer tudo no mesmo dia: uma ida ao Centro pode resolver o pedido inteiro.",
+  "Ultrassonografia, tomografia, raio-X, eletrocardiograma, MAPA e Holter são feitos com hora marcada pelo WhatsApp (12) 3887-3535. Se o pedido junta exames de laboratório e de imagem, pergunte se dá para fazer tudo no mesmo dia: uma ida ao Centro pode resolver o pedido inteiro.",
   "Para quem tem dificuldade de se deslocar, existe coleta domiciliar de exames laboratoriais. Área atendida, horário e valor são confirmados pelo WhatsApp. Exames de imagem dependem dos aparelhos da clínica e são feitos só no endereço do Centro.",
   "Laboratório não é serviço de urgência. Febre alta que não cede, falta de ar ou dor forte pedem a UPA; em situação grave, como dor no peito, desmaio ou fraqueza de um lado do corpo, ligue para o SAMU 192.",
 ];

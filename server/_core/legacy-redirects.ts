@@ -87,6 +87,16 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   "/contact-us": "/#contato",
   "/contact-us-2": "/#contato",
   "/appointment": "/#contato",
+
+  // Servico que a clinica deixou de oferecer (31/10/2026): "No momento nao
+  // realizamos Mamografia" (decisao do Alex). A pagina tinha historico no
+  // Search Console e links externos; 404 jogaria esse sinal fora. O destino e
+  // a ultrassonografia porque ela cobre o ultrassom das mamas, o exame de
+  // imagem das mamas que a clinica faz — nao porque um substitua o outro
+  // (a pagina de destino nao diz isso, e nada no site pode dizer). Se a
+  // clinica voltar a realizar mamografia, tirar esta linha ANTES de
+  // republicar a pagina em examesData.ts.
+  "/exames/mamografia": "/exames/ultrassonografia",
 };
 
 /**

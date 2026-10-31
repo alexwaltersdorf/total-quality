@@ -77,7 +77,6 @@ export const PAGINA_EXAME_LABEL: Record<string, string> = {
   "/exames/holter": "Holter 24h",
   "/exames/mapa": "MAPA 24h",
   "/exames/ultrassonografia": "Ultrassonografia",
-  "/exames/mamografia": "Mamografia",
   "/exames/raio-x": "Raio-X",
   "/exames/tomografia-computadorizada": "Tomografia computadorizada",
   "/exames/exame-admissional": "Exames ocupacionais",

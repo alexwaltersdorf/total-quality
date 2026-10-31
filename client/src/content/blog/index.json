@@ -190,7 +190,7 @@
       "/exames/tomografia-computadorizada"
     ],
     "horaMarcada": true,
-    "dateModified": "2026-10-22"
+    "dateModified": "2026-10-31"
   },
   {
     "id": "13",
@@ -248,7 +248,7 @@
       "/checkup"
     ],
     "horaMarcada": true,
-    "dateModified": "2026-10-22"
+    "dateModified": "2026-10-31"
   },
   {
     "id": "15",
@@ -298,14 +298,13 @@
       "diagnóstico por imagem",
       "Caraguatatuba"
     ],
-    "examName": "mamografia e ultrassom das mamas",
-    "examType": "mamografia",
+    "examName": "ultrassom das mamas",
+    "examType": "ultrassonografia",
     "examPages": [
-      "/exames/mamografia",
       "/exames/ultrassonografia"
     ],
     "horaMarcada": true,
-    "dateModified": "2026-10-22"
+    "dateModified": "2026-10-31"
   },
   {
     "id": "17",

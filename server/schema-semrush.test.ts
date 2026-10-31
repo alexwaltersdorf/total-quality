@@ -24,7 +24,7 @@ describe("GUARD-RAIL: achados do Semrush 06/09 (nao remover)", () => {
   it("cada especialidade declarada tem exame correspondente no availableService", () => {
     const html = ler("client/index.html");
     const parear: Array<[string, RegExp]> = [
-      ["Radiography", /Raio-X|Tomografia|Mamografia|Ultrassonografia/],
+      ["Radiography", /Raio-X|Tomografia|Ultrassonografia/],
       ["LaboratoryScience", /Exames Laboratoriais|Hemograma/],
       ["Cardiovascular", /Eletrocardiograma|Holter|MAPA/],
       ["Pulmonary", /Espirometria/],
