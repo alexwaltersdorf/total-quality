@@ -1260,5 +1260,42 @@
       "exames-de-sangue-guia-completo",
       "resultado-de-exames-online-seguranca"
     ]
+  },
+  {
+    "id": "50",
+    "slug": "exame-tipo-sanguineo",
+    "title": "Exame para saber o tipo de sangue: sistema ABO, fator Rh e preparo",
+    "metaTitle": "Exame Para Saber o Tipo de Sangue: ABO e Fator Rh | Total Quality",
+    "subtitle": "Como a tipagem sanguínea é feita, o que significam os oito grupos, por que ela importa na gestação e se precisa de jejum",
+    "excerpt": "Exame para saber o tipo de sangue: como a tipagem ABO e Rh é feita, o que significa cada grupo, por que é pedida no pré-natal e o preparo, sem jejum obrigatório.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "31 Out 2026",
+    "readTime": "6 min",
+    "image": "https://totalquality.med.br/images/blog/exame-tipo-sanguineo.webp",
+    "imageAlt": "Mãos com luvas pingam amostras de sangue numa lâmina de tipagem, com tubos de coleta em estante ao lado",
+    "tags": [
+      "tipo sanguíneo",
+      "tipagem sanguínea",
+      "fator Rh",
+      "sistema ABO",
+      "pré-natal",
+      "exames de sangue"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-31",
+    "examName": "tipagem sanguínea",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue"
+    ],
+    "horaMarcada": false,
+    "related": [
+      "exames-de-sangue-guia-completo",
+      "siglas-exames-laboratoriais",
+      "exames-laboratoriais-tipos-e-preparo"
+    ]
   }
 ]

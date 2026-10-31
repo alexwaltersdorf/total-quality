@@ -69,6 +69,17 @@ original.
 | `exames-diagnostico-diabetes` | `photo-1576169210859-6796c4b93c32` | mãos enluvadas com seringa e estojo de glicosímetro |
 | `aplicativo-total-quality-health-cashback` | `photo-1483478550801-ceba5fe50e8e` | mão segurando celular com a tela iluminada, fundo de luzes desfocadas (sem marca nem rosto) |
 
+## Imagens geradas por IA — Airticles
+
+Vieram com os artigos que a Airticles escreveu e que entraram no /blog como rascunho (fluxo de 27/10/2026).
+Foram geradas pela Airticles e baixadas para o domínio próprio. As pessoas da cena **não existem** e o
+consultório não é a Total Quality, por isso o `alt` não afirma que a cena aconteceu na clínica. Na revisão
+médica, o Alex pode trocar por foto própria ou de banco.
+
+| Artigo | Arquivo de origem (api.airticles.ai/uploads/) | O que mostra |
+|---|---|---|
+| `exame-tipo-sanguineo` | `606c276e-1a20-4422-84f1-5ee1605b0fa4.webp` | mãos com luvas pingando amostras de sangue numa lâmina de tipagem, com tubos ao lado |
+
 ## O que foi descartado, e por quê
 
 Não é purismo: cada uma destas foi baixada, aberta e recusada por um motivo
