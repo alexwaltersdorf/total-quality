@@ -79,6 +79,7 @@ cena aconteceu na clínica. Na revisão médica, o Alex pode trocar por foto pr�
 |---|---|---|
 | `ultrassom-de-tireoide` | `1de94013-1303-4ef4-a6bf-928d0742b692.webp` | transdutor apoiado no pescoço de paciente deitada, com o monitor ao fundo |
 | `tirzepatida-exames-e-falsificacao` | `83542217-d4a0-4a90-b028-f53d555a961d.webp` | médico mostrando folhas de resultado a um paciente no consultório |
+| `exame-tipo-sanguineo` | `606c276e-1a20-4422-84f1-5ee1605b0fa4.webp` | mãos com luvas pingando amostras de sangue numa lâmina de tipagem, com tubos ao lado |
 
 ## O que foi descartado, e por quê
 
