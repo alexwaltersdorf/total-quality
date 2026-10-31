@@ -163,6 +163,47 @@ function jsonLd(objects: object[]): string {
     .join("\n");
 }
 
+/**
+ * Data da ultima atualizacao do conteudo, em ISO (AAAA-MM-DD).
+ *
+ * DERIVADA, nunca cravada. Data fixa no codigo envelhece do mesmo jeito que a
+ * nota autodeclarada de 4,5 que saiu daqui: alguem escreve "2026-10-09", o
+ * conteudo muda tres vezes e o dateModified continua mentindo. O deploy da
+ * Hostinger faz `git reset --hard origin/main`, o que carimba o mtime do
+ * arquivo com a hora do deploy — entao o mtime deste modulo E a data em que
+ * este conteudo foi ao ar pela ultima vez.
+ *
+ * Calculado uma vez no boot. Se a leitura falhar (bundle em memoria, FS
+ * somente leitura), devolve null e o dateModified simplesmente nao e emitido —
+ * melhor ausente do que errado.
+ */
+const CONTEUDO_ATUALIZADO_EM: string | null = (() => {
+  try {
+    const url = new URL(import.meta.url);
+    return fs.statSync(url.pathname).mtime.toISOString().slice(0, 10);
+  } catch {
+    return null;
+  }
+})();
+
+/**
+ * JSON-LD de WebPage com a data de atualizacao do conteudo.
+ *
+ * Entra em toda rota pre-renderizada: sem dateModified, tanto o Google quanto
+ * os robos de IA tratam a pagina como de idade desconhecida e tendem a
+ * preferir uma fonte datada.
+ */
+function webPageLd(): object | null {
+  if (!CONTEUDO_ATUALIZADO_EM) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    dateModified: CONTEUDO_ATUALIZADO_EM,
+    isPartOf: { "@type": "WebSite", "@id": `${SITE}/#website` },
+    publisher: { "@id": BUSINESS_ID },
+  };
+}
+
 type Faq = { q: string; a: string };
 
 function faqPageLd(faqs: Faq[]) {
@@ -537,6 +578,7 @@ export function getSeoContentForPath(pathname: string): string | null {
 
   if (path === "/privacidade") return wrap(privacidadeHtml);
   if (path === "/checkup") return wrap(checkupHtml);
+  if (path === "/quem-somos") return wrap(quemSomosHtml);
   if (path === "/convenios") return wrap(conveniosHtml());
   if (path === "/outubro-rosa") return wrap(outubroRosaHtml);
   if (path === "/exames") return wrap(examesHubHtml());
@@ -854,9 +896,64 @@ function renderBlogHtml(post: BlogPost): string {
     ])}`;
 }
 
+const quemSomosHtml = `
+    <h1>Quem somos — Total Quality Medicina Diagnóstica</h1>
+    <p>A Total Quality é uma clínica de medicina diagnóstica e laboratório de análises clínicas em Caraguatatuba – SP, em atividade há mais de ${anosDeAtuacao()} anos no Litoral Norte. Reunimos em um único endereço, no Centro da cidade, o <a href="/laboratorio-caraguatatuba">laboratório de análises clínicas</a> e o setor de diagnóstico por imagem e cardiologia.</p>
+
+    <h2>Responsável técnico e registro</h2>
+    <p>A direção técnica responde pelos procedimentos realizados na clínica e pela qualidade dos laudos emitidos, conforme a Resolução CFM nº 2.336/2023.</p>
+    <ul>
+      <li><strong>Total Quality Medicina Diagnóstica</strong> — Registro 970616</li>
+      <li><strong>Responsável Técnico:</strong> Alex Waltersdorf - 267.339</li>
+      <li><strong>Endereço:</strong> Rua Padre Anchieta, 1010 - Centro, Caraguatatuba - SP</li>
+    </ul>
+
+    <h2>O que realizamos</h2>
+    <p>São mais de 3.000 tipos de exames, divididos entre:</p>
+    <ul>
+      <li><strong>Análises clínicas:</strong> <a href="/exames/hemograma">hemograma</a>, <a href="/exames/exames-de-sangue">exames de sangue</a>, hormônios, sorologias, urina e fezes</li>
+      <li><strong>Diagnóstico por imagem:</strong> <a href="/exames/tomografia-computadorizada">tomografia computadorizada multislice</a>, <a href="/exames/ultrassonografia">ultrassonografia geral e com Doppler</a>, <a href="/exames/mamografia">mamografia digital</a> e <a href="/exames/raio-x">raio-X digital</a></li>
+      <li><strong>Cardiologia e pneumologia:</strong> <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/mapa">MAPA 24h</a> e <a href="/exames/espirometria">espirometria</a></li>
+      <li><strong>Medicina ocupacional:</strong> <a href="/exames/exame-admissional">exames admissionais, periódicos e demissionais</a> e <a href="/exames/exame-toxicologico">exame toxicológico</a></li>
+      <li><strong>Prevenção:</strong> <a href="/checkup">check-up preventivo</a> e <a href="/bioimpedancia">bioimpedância</a></li>
+    </ul>
+
+    <h2>Como trabalhamos</h2>
+    <ul>
+      <li>Coleta laboratorial por ordem de chegada, sem agendamento; coleta domiciliar mediante agendamento</li>
+      <li>Resultados disponíveis online em até 24 horas para a maioria dos exames laboratoriais</li>
+      <li>Laudos assinados por profissionais habilitados nas respectivas especialidades</li>
+      <li>Atendimento particular, por <a href="/convenios">convênios</a> e para empresas</li>
+    </ul>
+
+    <p>Atendemos moradores de todo o Litoral Norte — Caraguatatuba, Ubatuba, São Sebastião e Ilhabela — e, dentro da cidade, recebemos com frequência pacientes do Indaiá, do Porto Novo, do Martim de Sá, do Sumaré e do Massaguaçu.</p>
+
+    ${faqSectionHtml([
+      {
+        q: "Quem é o responsável técnico da Total Quality?",
+        a: "O Responsável Técnico é Alex Waltersdorf - 267.339. O estabelecimento está registrado sob o número 970616, conforme exige a Resolução CFM nº 2.336/2023 para peças de identificação de clínicas e laboratórios.",
+      },
+      {
+        q: "Há quanto tempo a clínica funciona?",
+        a: `A Total Quality atua há mais de ${anosDeAtuacao()} anos no Litoral Norte, com unidade própria no Centro de Caraguatatuba.`,
+      },
+      {
+        q: "A clínica atende pacientes de outras cidades?",
+        a: "Sim. Além de Caraguatatuba, recebemos pacientes de Ubatuba, São Sebastião e Ilhabela. Exames laboratoriais são atendidos por ordem de chegada; exames de imagem podem ser agendados pelo WhatsApp ou telefone (12) 3887-3535.",
+      },
+      {
+        q: "Quem assina os laudos dos exames?",
+        a: "Os laudos são assinados por profissionais habilitados na especialidade correspondente a cada exame, sob a direção técnica do responsável técnico da clínica.",
+      },
+    ])}
+    ${napHtml("Fale com a equipe pelo WhatsApp (12) 3887-3535 ou visite-nos no Centro, na Rua Padre Anchieta, 1010.")}
+    ${internalLinksHtml("/quem-somos")}`;
+
 function wrap(inner: string): string {
   // Markup semântico simples; o React substitui este bloco ao montar.
-  return `<main class="seo-prerender">${inner}</main>`;
+  const pagina = webPageLd();
+  const data = pagina ? jsonLd([pagina]) : "";
+  return `<main class="seo-prerender">${inner}</main>${data}`;
 }
 
 /**
@@ -890,6 +987,7 @@ const CLIENT_ROUTES = new Set([
   // marcada como inexistente. Foi o que aconteceu com /outubro-rosa entre
   // 18 e 19/10/2026, numa pagina de campanha com preco anunciado.
   "/outubro-rosa",
+  "/quem-somos",
 ]);
 
 const VALID_EXAM_SLUGS = new Set(examesData.map((exam) => exam.slug));

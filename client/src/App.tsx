@@ -24,6 +24,7 @@ const CartaoPage = lazy(() => import("./pages/CartaoPage"));
 const Privacidade = lazy(() => import("./pages/Privacidade"));
 const Convenios = lazy(() => import("./pages/Convenios"));
 const OutubroRosa = lazy(() => import("./pages/OutubroRosa"));
+const QuemSomos = lazy(() => import("./pages/QuemSomos"));
 const AutoSeoArticle = lazy(() => import("./pages/AutoSeoArticle"));
 
 function Router() {
@@ -46,6 +47,7 @@ function Router() {
       <Route path={"/privacidade"} component={Privacidade} />
       <Route path={"/convenios"} component={Convenios} />
       <Route path={"/outubro-rosa"} component={OutubroRosa} />
+      <Route path={"/quem-somos"} component={QuemSomos} />
       {/* Catch-all de artigos AutoSEO: DEVE ficar por ultimo, depois das rotas estaticas,
           para nao interceptar /laboratorio-caraguatatuba, /cartao, /dashboard, etc. */}
       <Route path={"/:slug"} component={AutoSeoArticle} />
