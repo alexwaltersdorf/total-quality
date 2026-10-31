@@ -48,10 +48,7 @@ export default function CartaoSection() {
               <Link href="/exames/ultrassonografia" className="text-brand hover:underline">
                 ultrassonografia
               </Link>
-              ,{" "}
-              <Link href="/exames/mamografia" className="text-brand hover:underline">
-                mamografia
-              </Link>{" "}
+{" "}
               e{" "}
               <Link href="/laboratorio-caraguatatuba" className="text-brand hover:underline">
                 análises laboratoriais
@@ -70,7 +67,7 @@ export default function CartaoSection() {
           {/* Benefits */}
           <div className="reveal grid grid-cols-1 gap-0" style={{ transitionDelay: "200ms" }}>
             {[
-              { icon: Percent, title: "Descontos Exclusivos em Exames de Sangue e Diagnósticos", description: "Preços especiais em exames de sangue, hemograma, glicemia, colesterol, tomografia, ultrassonografia, mamografia e check-up" },
+              { icon: Percent, title: "Descontos Exclusivos em Exames de Sangue e Diagnósticos", description: "Preços especiais em exames de sangue, hemograma, glicemia, colesterol, tomografia, ultrassonografia e check-up" },
               { icon: Users, title: "Benefícios Familiares", description: "Extensível para toda a família sem custo adicional" },
               { icon: CreditCard, title: "Fácil e Prático", description: "Cadastro simples e rápido, sem burocracia" },
             ].map((item, i) => (

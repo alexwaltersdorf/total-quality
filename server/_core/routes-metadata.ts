@@ -182,16 +182,8 @@ const examesMetadata: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
 
-  "mamografia": {
-    title: "Mamografia Digital em Caraguatatuba | Total Quality",
-    description: "Mamografia digital em Caraguatatuba - SP. Rastreamento do câncer de mama com mamógrafo digital. Agende seu exame.",
-    keywords: "mamografia, mamografia digital, câncer de mama, diagnóstico, Caraguatatuba",
-    ogTitle: "Mamografia Digital | Total Quality",
-    ogDescription: "Exame de mamografia com tecnologia digital de alta resolução.",
-    canonical: "https://totalquality.med.br/exames/mamografia",
-    priority: 0.9,
-    changefreq: "monthly",
-  },
+  // "mamografia" saiu em 31/10/2026 (fora do sitemap): a clinica nao realiza
+  // no momento. A URL faz 301 para /exames/ultrassonografia.
 };
 
 // Paginas de especialidade (/especialidades/:slug), 24/10/2026. Title e
@@ -378,7 +370,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
     description: homeDescription(),
     keywords: "laboratório Caraguatatuba, exames de sangue, tomografia, ultrassom, check-up",
     ogTitle: "Total Quality Medicina Diagnóstica e Laboratorial | Exames de Sangue em Caraguatatuba - SP",
-    ogDescription: "Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba - SP. Exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia e mais de 3.000 tipos de exames. Agende pelo WhatsApp.",
+    ogDescription: "Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba - SP. Exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia e mais de 3.000 tipos de exames. Agende pelo WhatsApp.",
     ogImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png",
     canonical: "https://totalquality.med.br/",
     priority: 1.0,

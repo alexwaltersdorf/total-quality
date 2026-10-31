@@ -24,7 +24,8 @@ export const LINK_TARGETS: LinkTarget[] = [
   { terms: ["sexagem fetal"], href: "/exames/sexagem-fetal" },
   { terms: ["tomografia computadorizada", "tomografia"], href: "/exames/tomografia-computadorizada" },
   { terms: ["ultrassonografia"], href: "/exames/ultrassonografia" },
-  { terms: ["mamografia digital", "mamografia"], href: "/exames/mamografia" },
+  // Sem alvo para "mamografia" desde 31/10/2026: a clinica nao realiza no
+  // momento, e a palavra no artigo nao pode virar link de servico.
   { terms: ["raio-x"], href: "/exames/raio-x" },
   { terms: ["eletrocardiograma"], href: "/exames/eletrocardiograma" },
   // So expressoes compostas: "mapa" sozinho casaria com "mapa do site".
