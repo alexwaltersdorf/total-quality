@@ -12,6 +12,7 @@ import {
   ANALISES_DESCRIPTION,
   CHECKUP_TITLE,
   CHECKUP_DESCRIPTION,
+  HEMOGRAMA_DESCRIPTION,
 } from "@shared/const";
 import blogIndex from "../../client/src/content/blog/index.json";
 import { blogModifiedIso, isPublished, type BlogPostMeta } from "../../client/src/lib/blogMeta";
@@ -151,10 +152,10 @@ const examesMetadata: Record<string, RouteMetadata> = {
 
   "hemograma": {
     title: "Hemograma Completo em Caraguatatuba | Total Quality",
-    description: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Faça na Total Quality, resultado em curto prazo.",
+    description: HEMOGRAMA_DESCRIPTION,
     keywords: "hemograma, hemograma completo, hemograma precisa de jejum, exame de sangue, análises clínicas, Caraguatatuba",
     ogTitle: "Hemograma Completo | Total Quality",
-    ogDescription: "Tudo sobre o hemograma completo: o que avalia, preparo e resultado em curto prazo.",
+    ogDescription: HEMOGRAMA_DESCRIPTION,
     canonical: "https://totalquality.med.br/exames/hemograma",
     priority: 0.9,
     changefreq: "monthly",

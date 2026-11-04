@@ -61,6 +61,10 @@ export const ANALISES_H1 = "Análises clínicas em Caraguatatuba";
 export const ANALISES_DESCRIPTION =
   "Análises clínicas em Caraguatatuba: hemograma, glicemia, colesterol, hormônios, urina e fezes. Coleta sem agendamento, por ordem de chegada, e resultado online.";
 
+/** Serviço local de hemograma: mesma descrição no React e no HTML do servidor. */
+export const HEMOGRAMA_DESCRIPTION =
+  "Hemograma em Caraguatatuba na Total Quality. Coleta sem agendamento, preparo conforme o pedido e resultado online. Consulte valores e prazo pelo WhatsApp.";
+
 /** Os únicos convênios atendidos (decisão de 05/09/2026). Fora deles, particular. */
 export const CONVENIOS_TEXTO = "Cartão de Todos, Solumedi e Leader";
 

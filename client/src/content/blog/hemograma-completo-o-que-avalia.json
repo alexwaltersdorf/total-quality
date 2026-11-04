@@ -18,7 +18,7 @@
     "exames laboratoriais",
     "Caraguatatuba"
   ],
-  "dateModified": "2026-10-22",
+  "dateModified": "2026-11-03",
   "examName": "hemograma completo",
   "examType": "hemograma",
   "content": [
@@ -71,15 +71,18 @@
     "### O que o hemograma completo avalia?",
     "Avalia a quantidade e as características das células do sangue, o que ajuda o médico a investigar anemias, infecções, inflamações e alterações das plaquetas. Sozinho, o resultado não fecha diagnóstico.",
     "### Hemograma completo precisa de jejum?",
-    "Na maioria dos casos, não. Se o pedido tiver exames que exigem jejum, como glicemia ou colesterol, siga a orientação para o conjunto; na dúvida, confirme pelo WhatsApp (12) 3887-3535.",
+    "Na maioria dos casos, não. Se o pedido incluir glicemia de jejum ou outro exame com preparo específico, confirme a orientação para o conjunto; na dúvida, confirme pelo WhatsApp (12) 3887-3535.",
     "### Quanto tempo o hemograma fica pronto?",
     "Costuma ser um exame rápido, porque o processamento é automatizado. O prazo exato depende do pedido completo e é informado no momento do atendimento.",
     "### O que são série vermelha, série branca e plaquetas?",
     "São as três partes do hemograma. A série vermelha mostra as hemácias e a hemoglobina, ligadas ao transporte de oxigênio; a série branca mostra os leucócitos, ligados à defesa do organismo; e as plaquetas estão ligadas à coagulação do sangue.",
     "### Preciso marcar horário para fazer o hemograma?",
-    "Não. Na Total Quality, a coleta de exames laboratoriais é sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Leve o pedido médico e um documento com foto."
+    "Não. Na Total Quality, a coleta de exames laboratoriais é sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Leve o pedido médico e um documento com foto.",
+    "## Fontes consultadas",
+    "[MedlinePlus: hemograma completo, componentes e preparo](https://medlineplus.gov/lab-tests/complete-blood-count-cbc/). O conteúdo explica o exame; a interpretação individual depende da avaliação clínica."
   ],
   "examPages": [
     "/exames/hemograma"
-  ]
+  ],
+  "lastReviewed": "2026-10-22"
 }
