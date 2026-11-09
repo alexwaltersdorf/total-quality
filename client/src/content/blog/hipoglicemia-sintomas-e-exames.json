@@ -44,13 +44,15 @@
     "Hipoglicemia grave ou repetida não se resolve marcando exame: é atendimento primeiro, investigação depois.",
     "## Hipoglicemia reativa e de jejum",
     "O momento em que a queda acontece é a principal pista da causa.",
-    "| | Reativa | De jejum |\n| --- | --- | --- |\n| Quando ocorre | 2 a 4 horas depois de comer | Após longos períodos sem comer, ou de manhã |\n| Gatilho comum | Refeição rica em carboidrato de absorção rápida | Falta de ingestão, uso de medicação, condição de base |\n| O que se investiga | Resposta exagerada de insulina à refeição | Produção inadequada de glicose pelo fígado, alterações hormonais, tumores produtores de insulina |\n| Exame que ajuda | Curva glicêmica com coletas seriadas | Glicemia colhida durante o sintoma, insulina e peptídeo C |",
+    "| | Reativa | De jejum |\n| --- | --- | --- |\n| Quando ocorre | 2 a 4 horas depois de comer | Após longos períodos sem comer, ou de manhã |\n| Gatilho comum | Refeição rica em carboidrato de absorção rápida | Falta de ingestão, uso de medicação, condição de base |\n| O que se investiga | Resposta exagerada de insulina à refeição | Produção inadequada de glicose pelo fígado, alterações hormonais, tumores produtores de insulina |\n| Avaliação | Documentação da glicose durante o episódio e avaliação médica; teste supervisionado apenas quando indicado | Documentação da glicose durante o episódio e exames dirigidos pela suspeita clínica |",
     "Separar as duas não é detalhe acadêmico: a conduta é diferente em cada caso.",
     "## Quais exames investigam a causa",
     "A escolha é do médico que acompanha o caso, conforme a suspeita. Os mais usados:",
-    "- **Glicemia de jejum** — mede a glicose depois de um período sem comer. É o ponto de partida\n- **Curva glicêmica (TOTG)** — acompanha a glicose em coletas seriadas após uma sobrecarga padronizada. Mostra quedas que acontecem depois da refeição\n- **Hemoglobina glicada (HbA1c)** — reflete a média dos últimos três meses. Útil no acompanhamento, não para pegar o episódio agudo\n- **Insulina e peptídeo C** — colhidos junto com a glicemia, ajudam a distinguir produção própria de insulina de insulina aplicada\n- **Cortisol e outros hormônios** — avaliam se a defesa hormonal do corpo está funcionando",
-    "Há um detalhe técnico que muda o resultado: a amostra para glicemia é colhida em tubo com **fluoreto de sódio**, que impede as células do próprio sangue de consumirem a glicose dentro do tubo. Sem isso, o valor cai artificialmente e pode sugerir uma hipoglicemia que não existe.",
-    "Na Total Quality, em Caraguatatuba, esses exames fazem parte do painel de [exames de sangue](/exames/exames-de-sangue) e também podem entrar num [check-up](/checkup). Se quiser entender o preparo de cada tipo de coleta antes de vir, o [guia de exames de sangue](/blog/exames-de-sangue-guia-completo) reúne os principais.",
+    "A investigação procura documentar glicose baixa junto dos sintomas e sua melhora após a correção, sobretudo em pessoas sem diabetes. Conforme a suspeita, o médico pode solicitar glicose plasmática e outros exames na mesma amostra durante um episódio. Não provoque sintomas nem faça jejum prolongado por conta própria.",
+    "A [diretriz da Endocrine Society](https://academic.oup.com/jcem/article/94/3/709/2596247) desaconselha o teste oral de tolerância à glicose (TOTG) para investigar suspeita de hipoglicemia pós-prandial. Quando necessário, a investigação pode envolver teste supervisionado de refeição mista ou de jejum, escolhido e acompanhado pela equipe médica; isso não é uma orientação para realizar esses testes em casa ou nesta unidade.",
+    "A hemoglobina glicada descreve a exposição média à glicose e não confirma um episódio agudo de hipoglicemia. Insulina, peptídeo C e outros exames têm indicação e interpretação dependentes do contexto clínico.",
+    "A coleta, o transporte e o processamento da amostra devem seguir o protocolo técnico do laboratório: o consumo de glicose pelas células após a coleta pode alterar o resultado. O tipo de tubo, o tempo e o processamento precisam ser considerados em conjunto; um único aditivo não garante a estabilidade da amostra.",
+    "Para dúvidas sobre exames já solicitados pelo médico, consulte os [exames de sangue](/exames/exames-de-sangue) da Total Quality. A investigação de hipoglicemia não deve ser confundida com um pacote de check-up. Se quiser entender o preparo de cada tipo de coleta antes de vir, o [guia de exames de sangue](/blog/exames-de-sangue-guia-completo) reúne os principais.",
     "## Perguntas frequentes",
     "### A partir de que valor é hipoglicemia?",
     "O limite de referência é 70 mg/dL. Em pessoas com diabetes, a Sociedade Brasileira de Diabetes considera hipoglicemia qualquer valor abaixo disso. Em quem não tem diabetes, o diagnóstico exige que o sintoma, o valor baixo e a melhora após corrigir a glicose apareçam juntos.",
@@ -61,7 +63,7 @@
     "### Meu glicosímetro mostrou valor baixo. Isso fecha o diagnóstico?",
     "O aparelho de ponta de dedo é a ferramenta certa para o monitoramento do dia a dia, e um valor baixo nele deve ser tratado na hora, conforme o plano do seu médico. Para o diagnóstico da causa, o médico costuma confirmar com dosagem laboratorial, que permite medir insulina e peptídeo C na mesma coleta. Uma coisa não substitui a outra.",
     "### Quanto tempo leva o resultado?",
-    "O prazo de cada exame laboratorial é informado no atendimento. A curva glicêmica exige permanência na unidade durante as coletas seriadas, e o tempo é informado na recepção no dia do exame.",
+    "O prazo depende do exame solicitado e é confirmado no atendimento. Exames supervisionados para investigação de hipoglicemia precisam de indicação médica e de confirmação prévia sobre o local adequado para sua realização.",
     "Este artigo é informativo e não substitui consulta médica. A indicação dos exames e a interpretação de qualquer resultado são do seu médico. Em caso de sintoma grave, procure atendimento de urgência."
   ],
   "metaTitle": "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer",
@@ -70,5 +72,6 @@
   "examPages": [
     "/exames/exames-de-sangue"
   ],
-  "dateModified": "2026-10-22"
+  "dateModified": "2026-11-03",
+  "lastReviewed": "2026-10-22"
 }

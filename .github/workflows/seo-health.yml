@@ -1,0 +1,32 @@
+name: SEO laboratory health
+
+on:
+  schedule:
+    - cron: '23 11 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: seo-laboratory-health
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check public pages
+        run: node scripts/audit-seo.mjs --output "$RUNNER_TEMP/seo-audit.json"
+      - name: Save diagnostic report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-laboratory-health
+          path: ${{ runner.temp }}/seo-audit.json
+          retention-days: 30

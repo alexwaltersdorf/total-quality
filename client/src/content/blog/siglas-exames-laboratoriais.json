@@ -22,7 +22,7 @@
  ],
  "draft": false,
  "reviewStatus": "aprovado",
- "dateModified": "2026-10-22",
+ "dateModified": "2026-11-03",
  "examName": "exames laboratoriais",
  "examType": "exames-de-sangue",
  "examPages": [
@@ -38,6 +38,9 @@
  "content": [
   "As **siglas de exames laboratoriais** são abreviações que o médico usa para pedir, em poucas letras, cada análise de sangue ou de urina. HMG é o hemograma, TGO e TGP avaliam o fígado, TSH e T4L avaliam a tireoide, HbA1c é a hemoglobina glicada e EAS é o exame de urina tipo 1. Cada sigla corresponde a um exame diferente, com finalidade e preparo próprios.",
   "Abaixo, as siglas mais comuns do pedido de exame de sangue e de urina, organizadas por grupo, com o nome completo e a finalidade de cada exame. Não há valores de referência aqui: eles dependem do método e vêm no laudo. Como o preparo varia, confirme o preparo do seu pedido antes da coleta.",
+  "## Consulta rápida: sigla e nome do exame",
+  "| Sigla ou abreviação | Nome do exame |\n| --- | --- |\n| GJ, Glic | Glicemia de jejum |\n| HMG | [Hemograma completo](/exames/hemograma) |\n| HbA1c | Hemoglobina glicada |\n| TGO / AST | Aspartato aminotransferase |\n| TGP / ALT | Alanina aminotransferase |\n| EAS | [Urina tipo 1](/blog/exame-de-urina-eas-como-coletar) |",
+  "As abreviações podem variar entre serviços. Se o pedido estiver ilegível ou usar outra sigla, confirme com a equipe; não substitua um exame por suposição.",
   "## Por que o pedido de exame de sangue vem cheio de siglas",
   "As siglas economizam espaço num pedido com vários exames. Algumas vêm do português, como VHS e TGO; outras, do inglês, como TSH, PSA e HbA1c.",
   "Por isso, o mesmo exame pode aparecer com nomes diferentes: TGO e AST são a mesma enzima, assim como TGP e ALT. Se a letra do pedido estiver difícil de ler, não tente adivinhar: envie uma foto pelo WhatsApp e a equipe confere cada item e o preparo.",
@@ -95,6 +98,8 @@
   "## Conclusão",
   "As siglas do pedido médico identificam exames laboratoriais diferentes: o hemograma avalia as células do sangue, a glicemia e a HbA1c acompanham a glicose, o lipidograma avalia as gorduras, e TGO, TGP, ureia, creatinina, TSH e EAS olham para fígado, rins, tireoide e urina. Muitas vezes, esses exames são pedidos juntos, num check-up ou numa investigação, e o resultado deve ser sempre interpretado pelo médico, junto com a história clínica.",
   "Se você tem pedido médico para exames laboratoriais, como hemograma, glicemia, colesterol ou exame de urina, a coleta é sem agendamento, por ordem de chegada, na Total Quality, de segunda a sexta, das 7h30 às 18h, na Rua Padre Anchieta, 1010 – Centro, Caraguatatuba-SP. Conheça a página de [exames de sangue e análises clínicas](/exames/exames-de-sangue). Dúvidas de preparo pelo WhatsApp (12) 3887-3535.",
+  "## Qual é a abreviação de glicemia?",
+  "GJ pode indicar glicemia de jejum, e Glic pode aparecer como abreviação de glicemia. Confirme o nome completo no pedido: glicemia de jejum, hemoglobina glicada e curva glicêmica são exames diferentes.",
   "## Perguntas frequentes",
   "### O que significa HMG no pedido médico?",
   "HMG é a abreviação de hemograma completo, o exame que avalia glóbulos vermelhos, glóbulos brancos e plaquetas. Ele costuma não exigir jejum quando feito sozinho. Saiba mais na página do [hemograma](/exames/hemograma).",

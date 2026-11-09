@@ -18,7 +18,7 @@
     "preparo de exame",
     "urocultura"
   ],
-  "dateModified": "2026-10-22",
+  "dateModified": "2026-11-03",
   "examName": "exame de urina (EAS)",
   "examType": "exames-de-sangue",
   "content": [
@@ -35,12 +35,13 @@
     "Não. O EAS não exige jejum, e você pode beber água normalmente, sem exagerar na quantidade logo antes da coleta para a amostra não ficar diluída. O que faz diferença é a amostra: de preferência a primeira urina da manhã, com o jato médio e frasco estéril.",
     "Se o pedido tiver exames de sangue junto, siga o jejum indicado para eles. Para entender por que o preparo muda de um exame para outro, veja [como a alimentação influencia os exames laboratoriais](/blog/alimentacao-e-exames-laboratoriais).",
     "## Exame de urina EAS: como coletar",
+    "Antes de coletar, peça as instruções do laboratório que receberá a amostra. As orientações abaixo são gerais; recipiente, prazo de entrega e conservação devem seguir o protocolo informado pela equipe.",
     "### A amostra certa é a primeira urina da manhã",
-    "A urina que ficou na bexiga durante a noite está mais concentrada, e isso torna visível o que uma amostra diluída esconde. Se não for possível, vale uma amostra com pelo menos 2 horas de retenção.",
+    "A urina que ficou na bexiga durante a noite está mais concentrada, e isso torna visível o que uma amostra diluída esconde. Se não for possível, confirme com o laboratório o intervalo de retenção adequado ao exame e ao protocolo de coleta.",
     "### O passo a passo",
     "- Lave bem as mãos\n- Faça a higiene da região genital com água e sabonete, e seque\n- Despreze o **primeiro jato** no vaso sanitário\n- Colete o **jato do meio** direto no frasco, sem tocar a borda interna\n- Despreze o jato final\n- Feche o frasco, identifique com nome e horário e leve ao laboratório",
     "### O prazo entre coletar e entregar",
-    "A amostra deve chegar ao laboratório em até 2 horas em temperatura ambiente. Se o intervalo for maior, mantenha refrigerada — nunca no congelador.",
+    "A amostra deve chegar ao laboratório em até 2 horas em temperatura ambiente. Se não conseguir entregar nesse intervalo, confirme com o laboratório o prazo de aceitação e as condições de refrigeração antes de coletar; não congele a amostra.",
     "Urina parada em temperatura ambiente multiplica bactérias e muda o resultado. Um erro frequente de quem mora longe do Centro é coletar às 6h e entregar às 11h.",
     "## Cinco erros que fazem repetir o exame",
     "- Coletar o primeiro jato, que carrega células e bactérias da própria uretra\n- Usar frasco de casa, não estéril, ou reaproveitado\n- Coletar durante a menstruação sem avisar o laboratório\n- Deixar a amostra horas no carro ou na bolsa\n- Encher o frasco até a borda — o volume indicado é suficiente",
@@ -71,5 +72,6 @@
   ],
   "examPages": [
     "/exames/exames-de-sangue"
-  ]
+  ],
+  "lastReviewed": "2026-10-22"
 }

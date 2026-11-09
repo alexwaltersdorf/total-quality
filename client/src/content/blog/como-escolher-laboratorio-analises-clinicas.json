@@ -25,26 +25,26 @@
     "Um exame de sangue não é uma leitura única. É uma cadeia: coleta, identificação da amostra, transporte, temperatura, equipamento, calibração, conferência e liberação do laudo.",
     "Erro em qualquer elo muda o número. É por isso que os critérios abaixo falam mais de processo do que de aparelho.",
     "## 1. Licença sanitária e regra da Anvisa",
-    "Laboratório clínico no Brasil funciona sob a RDC nº 302/2005 da Anvisa, que define requisitos de estrutura, pessoal, processos e registros.",
+    "Consulte a [Anvisa sobre a RDC nº 978/2025](https://www.gov.br/anvisa/pt-br/assuntos/noticias-anvisa/2025/anvisa-esclarece-duvidas-sobre-servicos-que-realizam-exames-de-analises-clinicas-eac), norma de funcionamento dos serviços de exames de análises clínicas, e suas alterações vigentes. A licença sanitária e o escopo autorizado do serviço devem ser conferidos, além da referência normativa.",
     "Pergunte se a licença sanitária está vigente. É informação pública e deve estar disponível no estabelecimento.",
     "## 2. Responsável técnico com nome e registro visíveis",
-    "Toda peça publicitária e todo estabelecimento devem identificar o responsável técnico com o número de registro no conselho — art. 5º da Resolução CFM nº 2.336/2023.",
+    "Confira a identificação do responsável técnico, sua habilitação e o registro no conselho profissional correspondente. As exigências de identificação e publicidade dependem da atividade e das normas aplicáveis ao profissional e ao estabelecimento.",
     "Se o site, o anúncio ou a recepção não dizem quem responde tecnicamente pelos laudos, isso é um sinal. Quem assume responsabilidade a assina.",
     "## 3. Controle externo de qualidade",
     "Controle interno todo laboratório faz. O que diferencia é o controle **externo**: amostras enviadas por um programa independente, processadas às cegas e comparadas com centenas de outros laboratórios.",
-    "No Brasil, os dois mais conhecidos são o PNCQ (Programa Nacional de Controle de Qualidade, da SBAC) e o PELM (Programa de Excelência para Laboratórios Médicos, da SBPC/ML, operado pela ControlLab). Participar é decisão voluntária e verificável — vale perguntar.",
+    "No Brasil, os dois mais conhecidos são o PNCQ (Programa Nacional de Controle de Qualidade, da SBAC) e o PELM (Programa de Excelência para Laboratórios Médicos, da SBPC/ML, operado pela ControlLab). Pergunte qual programa de controle externo atende aos exames realizados, qual é o escopo e como a participação é comprovada. Controle de qualidade e acreditação não são a mesma coisa; não deduza uma certificação apenas pela menção ao programa.",
     "## 4. Quem assina o laudo",
     "Exame laboratorial é liberado sob responsabilidade de profissional habilitado. Exame de imagem e exame cardiológico precisam de laudo de profissional da especialidade correspondente.",
     "Confira se o laudo traz assinatura identificável e a especialidade de quem assinou. É essa informação que permite ao seu médico usar o resultado com segurança na conduta.",
     "[[cta]]",
     "## 5. Estrutura própria ou laboratório de apoio",
-    "Nenhum laboratório faz todos os mais de 3.000 exames existentes na própria bancada. Enviar exames raros para um laboratório de apoio é prática normal e regulamentada.",
+    "Alguns exames podem ser encaminhados a um laboratório de apoio. Pergunte quais análises são processadas na unidade e quais são encaminhadas, como é feito o transporte e qual prazo se aplica ao seu pedido.",
     "O que importa é transparência: pergunte quais exames do seu pedido saem na casa e quais vão para apoio, porque isso muda o prazo do laudo.",
     "## 6. Prazo informado por exame, não por média",
     "\"Resultado rápido\" não é informação. Prazo por exame é.",
     "| Tipo de exame | O que perguntar |\n| --- | --- |\n| Rotina laboratorial (hemograma, glicemia, lipídeos) | Sai hoje ou amanhã? |\n| Hormônios e sorologias | Roda todo dia ou em dias fixos? |\n| Exames enviados para apoio | Quantos dias, contando o transporte? |\n| Imagem e cardiologia | Qual o prazo do laudo, não do exame |",
     "## 7. Preparo entregue por escrito",
-    "Jejum, suspensão de medicamento, bexiga cheia, abstinência, coleta da primeira urina da manhã: cada exame tem o seu preparo.",
+    "Jejum, bexiga cheia, abstinência e coleta de urina podem variar conforme o exame. Medicamentos não devem ser suspensos por conta própria: confirme a orientação com o profissional que acompanha o caso.",
     "Preparo passado só de boca se perde no caminho. Peça por escrito — e, se o pedido tem exames com preparos diferentes, peça a orientação combinada para o conjunto.",
     "## 8. Como o resultado é entregue",
     "Resultado de exame é dado pessoal sensível de saúde, protegido pela LGPD e pelo sigilo profissional. Deve ser entregue ao paciente, ao representante legal ou ao médico solicitante, com identificação.",
@@ -60,7 +60,7 @@
     "### O que é valor de referência?",
     "É a faixa considerada normal para aquele exame, naquele método, naquela população. Por isso o valor de referência vem impresso no laudo, ao lado do seu resultado: ele pertence ao exame, não é universal.",
     "### Preciso de pedido médico para fazer exame?",
-    "Para exames laboratoriais, sim: o pedido orienta o que será feito e permite a interpretação correta. Pacotes de check-up preventivo são uma exceção prevista, com orientação da equipe sobre o perfil mais adequado.",
+    "O pedido identifica os exames solicitados e ajuda a organizar o atendimento. Confirme com o laboratório os documentos e requisitos do exame e da modalidade de atendimento. A indicação de exames e a interpretação dos resultados exigem avaliação profissional; não há uma regra única de pedido aplicável a todas as situações.",
     "Este artigo é informativo e não substitui consulta médica. A indicação dos exames e a interpretação dos resultados são sempre do seu médico."
   ],
   "examName": "exames laboratoriais",
@@ -68,5 +68,6 @@
   "examPages": [
     "/laboratorio-caraguatatuba"
   ],
-  "dateModified": "2026-10-22"
+  "dateModified": "2026-11-03",
+  "lastReviewed": "2026-10-22"
 }

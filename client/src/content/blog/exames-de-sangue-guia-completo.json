@@ -22,6 +22,9 @@
   "content": [
     "Pedido médico na mão, uma lista de siglas e, dias depois, um laudo cheio de números. É assim que muita gente encontra os **exames de sangue**. Eles estão entre os exames mais pedidos na medicina porque, com uma única coleta, mostram como estão as células do sangue, o metabolismo, alguns órgãos e os hormônios.",
     "Neste guia você vê os principais tipos de exame de sangue, o que cada um avalia, como se preparar e como ler o resultado sem tirar conclusões apressadas. A interpretação final é sempre do médico que pediu o exame, porque só ele conhece o seu histórico.",
+    "## Existe uma lista de exames de sangue completa para todos?",
+    "Não existe uma lista universal de exames adequada a todas as pessoas. O pedido depende da avaliação clínica, dos sintomas e do acompanhamento necessário. O hemograma é um exame específico: não inclui automaticamente glicemia, colesterol, vitaminas ou hormônios. A tabela abaixo organiza exemplos por finalidade, sem recomendar que todos sejam feitos.",
+    "Para localizar abreviações do seu pedido, consulte o [guia de siglas de exames laboratoriais](/blog/siglas-exames-laboratoriais). Para coleta, preparo e orçamento na unidade, veja a página de [exames de sangue](/exames/exames-de-sangue).",
     "## Tipos de exame de sangue mais pedidos",
     "Os exames de sangue costumam ser agrupados pelo que avaliam. A tabela resume os grupos que mais aparecem nos pedidos de rotina:",
     "| Grupo | Exemplos no pedido | O que avalia |\n| --- | --- | --- |\n| Células do sangue | Hemograma completo | Hemácias, leucócitos e plaquetas |\n| Glicose | Glicemia de jejum, hemoglobina glicada (HbA1c) | Como o corpo lida com o açúcar |\n| Gorduras | Lipidograma: colesterol total, HDL, LDL e triglicerídeos | Parte do risco cardiovascular |\n| Rins | Ureia e creatinina | Como os rins filtram o sangue |\n| Fígado | TGO (AST), TGP (ALT), gama-GT, bilirrubinas | Sinais de agressão ou sobrecarga do fígado |\n| Tireoide | TSH e T4 livre | Funcionamento da glândula tireoide |\n| Vitaminas e minerais | Vitamina D, vitamina B12, ferro e ferritina | Reservas e possíveis carências |\n| Inflamação e infecção | Proteína C reativa (PCR) e sorologias | Processos inflamatórios e contato com vírus e bactérias |\n| Hormônios | Estradiol, progesterona, testosterona, prolactina, beta-HCG | Funções reprodutivas e gravidez |\n| Coagulação | Coagulograma (TP/INR e TTPA) | Como o sangue coagula |",
@@ -73,5 +76,6 @@
   "examPages": [
     "/exames/exames-de-sangue"
   ],
-  "dateModified": "2026-10-22"
+  "dateModified": "2026-11-03",
+  "lastReviewed": "2026-10-22"
 }
