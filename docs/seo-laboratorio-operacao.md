@@ -82,3 +82,28 @@ node scripts/audit-seo.mjs --origin http://localhost:3000 --output /tmp/seo-audi
 
 SEO/GEO: conteúdo rastreável, respostas claras, fontes e entidade consistente.
 Não prometer ranking, citação em IA, rich result ou indexação garantidos.
+
+## Verificação de 09/11/2026
+
+- PR #101 continua aberto em rascunho; main ainda é 72bb06f. Não abrir PR duplicado.
+- Auditoria HTTP de produção: 10 páginas e 33 destinos internos; nenhuma falha
+  técnica detectada pelo script. As páginas responderam 200, e a rota inexistente
+  respondeu 404. Canonical, H1, title, description, indexabilidade pública,
+  sintaxe JSON-LD e presença no sitemap passaram nas verificações implementadas.
+- O conteúdo de produção ainda contém as regras universais de jejum nas páginas
+  de sangue/hemograma, a indicação de curva glicêmica pós-prandial no artigo de
+  hipoglicemia e a RDC 302/2005 no artigo de escolha de laboratório. As correções
+  desses achados já estão neste PR, aguardando revisão competente; não são
+  novos problemas nem prova de falha do deploy, pois o PR não foi mergeado.
+- O workflow SEO laboratory health ainda não existe na main; não há resultado
+  diário desse workflow a interpretar como saúde ou falha de produção.
+- Search Console sem acesso utilizável nesta execução. Não foi possível comparar
+  dois períodos completos de 28 dias por consulta, URL, país e dispositivo.
+  Nenhuma posição de Maps ou métrica de desempenho foi inferida.
+- PRs #93 (padrão editorial), #94 (unificação do blog) e #99 (oferta de mamografia)
+  seguem abertos. Esta verificação não replica esses escopos nem altera oferta.
+
+- Revalidação do branch em 09/11: 1.045 testes aprovados, 34 ignorados nas
+  condições previstas da suíte, e build Vite/esbuild concluído. O CI do commit
+  anterior do PR também foi conferido e estava aprovado. Sem novo defeito
+  técnico reproduzível, esta rodada apenas acrescenta evidências ao mesmo PR.
