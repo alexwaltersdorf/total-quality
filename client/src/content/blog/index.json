@@ -1335,5 +1335,79 @@
       "siglas-exames-laboratoriais",
       "exames-laboratoriais-tipos-e-preparo"
     ]
+  },
+  {
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "13 Nov 2026",
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-11-13",
+    "id": "51",
+    "slug": "exame-ferritina",
+    "title": "Exame de ferritina: o que mostra, ferritina baixa e alta",
+    "metaTitle": "Exame de Ferritina: O Que Mostra e Como Interpretar | Total Quality",
+    "subtitle": "O que é a ferritina, por que ela pode subir sem excesso de ferro, quando o médico pede o perfil de ferro completo e como é o preparo",
+    "excerpt": "Exame de ferritina: o que ele mostra sobre as reservas de ferro, causas de ferritina baixa e alta, a relação com inflamação e o preparo para a coleta.",
+    "readTime": "6 min",
+    "image": "https://totalquality.med.br/images/blog/exame-ferritina.webp",
+    "imageAlt": "Mão com luva segura um tubo de coleta com amostra de sangue, com analisador de laboratório ao fundo",
+    "tags": [
+      "ferritina",
+      "exame de ferritina",
+      "ferro sérico",
+      "anemia",
+      "exames de sangue"
+    ],
+    "examName": "ferritina",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue",
+      "/exames/hemograma"
+    ],
+    "horaMarcada": false,
+    "related": [
+      "exames-de-sangue-guia-completo",
+      "siglas-exames-laboratoriais",
+      "exame-tipo-sanguineo"
+    ]
+  },
+  {
+    "category": "Medicina Preventiva",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "13 Nov 2026",
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-11-13",
+    "id": "52",
+    "slug": "espirometria-preparo",
+    "title": "Espirometria: para que serve, como é feita e como se preparar",
+    "metaTitle": "Espirometria: Para Que Serve e Como Se Preparar | Total Quality",
+    "subtitle": "O que o teste do sopro mede, quando entra o broncodilatador, o que significam CVF e VEF1 e os cuidados antes do exame",
+    "excerpt": "Espirometria: para que serve o teste do sopro, quando é feita a prova com broncodilatador, o que significam CVF e VEF1 e como se preparar.",
+    "readTime": "6 min",
+    "image": "https://totalquality.med.br/images/blog/espirometria-preparo.webp",
+    "imageAlt": "Homem sopra no bocal de um espirômetro enquanto uma profissional de saúde acompanha, com as curvas do exame no monitor",
+    "tags": [
+      "espirometria",
+      "teste do sopro",
+      "prova de função pulmonar",
+      "asma",
+      "DPOC",
+      "medicina do trabalho"
+    ],
+    "examName": "espirometria",
+    "examType": "espirometria",
+    "examPages": [
+      "/exames/espirometria"
+    ],
+    "horaMarcada": true,
+    "related": [
+      "aso-exames-ocupacionais",
+      "check-up-medico-quais-exames-fazer",
+      "diferenca-raio-x-tomografia"
+    ]
   }
 ]
