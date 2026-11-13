@@ -79,6 +79,8 @@ médica, o Alex pode trocar por foto própria ou de banco.
 | Artigo | Arquivo de origem (api.airticles.ai/uploads/) | O que mostra |
 |---|---|---|
 | `exame-tipo-sanguineo` | `606c276e-1a20-4422-84f1-5ee1605b0fa4.webp` | mãos com luvas pingando amostras de sangue numa lâmina de tipagem, com tubos ao lado |
+| `exame-ferritina` | `f8dddcf6-720a-48d6-8099-009848aef458.webp` | mão com luva segurando tubo de coleta com sangue, analisador ao fundo |
+| `espirometria-preparo` | `ee771e60-5b9f-4662-aa3c-f5829ea84d02.webp` | homem soprando no bocal do espirômetro, profissional ao lado e curvas no monitor |
 
 ## O que foi descartado, e por quê
 
