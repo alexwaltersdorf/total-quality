@@ -169,10 +169,7 @@ export default function ContatoSection() {
             <Link href="/exames/ultrassonografia" className="text-brand hover:underline">
               ultrassonografia
             </Link>
-            ,{" "}
-            <Link href="/exames/mamografia" className="text-brand hover:underline">
-              mamografia
-            </Link>{" "}
+{" "}
             e{" "}
             <Link href="/checkup" className="text-brand hover:underline">
               check-up

@@ -63,10 +63,7 @@ export default function Convenios() {
               <Link href="/exames/ultrassonografia" className="text-primary underline">
                 ultrassonografia
               </Link>
-              ,{" "}
-              <Link href="/exames/mamografia" className="text-primary underline">
-                mamografia
-              </Link>{" "}
+{" "}
               e{" "}
               <Link href="/checkup" className="text-primary underline">
                 check-up

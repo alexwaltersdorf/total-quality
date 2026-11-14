@@ -28,7 +28,7 @@ export const CONVENIOS_FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Preciso de liberação prévia?",
-    a: "Alguns exames de maior complexidade, como tomografia e mamografia, podem exigir procedimento próprio de liberação do convênio. A equipe orienta sobre o seu caso ao marcar o exame pelo WhatsApp.",
+    a: "Alguns exames de maior complexidade, como a tomografia, podem exigir procedimento próprio de liberação do convênio. A equipe orienta sobre o seu caso ao marcar o exame pelo WhatsApp.",
   },
   {
     q: "Meu convênio não está na lista. Posso fazer os exames?",

@@ -39,7 +39,8 @@ const examSitelinks = [
   { label: "Tomografia Computadorizada", href: "/exames/tomografia-computadorizada" },
   { label: "Raio-X", href: "/exames/raio-x" },
   { label: "Ultrassonografia", href: "/exames/ultrassonografia" },
-  { label: "Mamografia Digital", href: "/exames/mamografia" },
+  // Mamografia saiu daqui em 31/10/2026: a clinica NAO realiza no momento
+  // (decisao do Alex). /exames/mamografia faz 301 para /exames/ultrassonografia.
   { label: "MAPA", href: "/exames/mapa" },
   { label: "Holter", href: "/exames/holter" },
   { label: "Espirometria", href: "/exames/espirometria" },

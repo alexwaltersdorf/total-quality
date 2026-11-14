@@ -111,10 +111,6 @@ export default function PorQueEscolherSection() {
                 ultrassonografia geral e Doppler
               </Link>
               ,{" "}
-              <Link href="/exames/mamografia" className="text-brand hover:underline">
-                mamografia digital
-              </Link>
-              ,{" "}
               <Link href="/exames/raio-x" className="text-brand hover:underline">
                 raio-X digital
               </Link>

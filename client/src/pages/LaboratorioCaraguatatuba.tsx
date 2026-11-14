@@ -6,7 +6,7 @@
 import ResponsiveImage from "@/components/ResponsiveImage";
 import { useEffect } from "react";
 import { Link } from "wouter";
-import { ArrowUpRight, MapPin, Phone, Clock, CheckCircle, Stethoscope, Microscope, Heart, Brain, Shield } from "lucide-react";
+import { ArrowUpRight, MapPin, Phone, Clock, CheckCircle, Stethoscope, Microscope, Heart, Brain } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
@@ -54,8 +54,10 @@ const examesLaboratoriais: ExamLink[] = [
 const examesImagem: Array<ExamLink & { icon: typeof Microscope }> = [
   { icon: Microscope, name: "Tomografia Computadorizada Multislice", href: "/exames/tomografia-computadorizada" },
   { icon: Stethoscope, name: "Ultrassonografia Geral e Doppler", href: "/exames/ultrassonografia" },
-  { icon: Shield, name: "Mamografia Digital", href: "/exames/mamografia" },
   { icon: Microscope, name: "Raio-X Digital", href: "/exames/raio-x" },
+  // Mamografia saiu daqui em 31/10/2026, pelo mesmo motivo: a clinica NAO
+  // realiza no momento ("No momento nao realizamos Mamografia", Alex).
+  // /exames/mamografia faz 301 para /exames/ultrassonografia.
   // Ecocardiograma saiu daqui em 01/08/2026: a clinica NAO realiza no momento
   // (informado pelo Alex), embora pretenda oferecer no futuro. Nao reintroduzir
   // sem confirmacao — anunciar servico nao prestado viola as diretrizes do

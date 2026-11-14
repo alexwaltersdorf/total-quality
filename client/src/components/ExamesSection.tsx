@@ -54,10 +54,7 @@ const examData: Record<
         <Link href="/exames/ultrassonografia" className="text-brand hover:underline">
           ultrassonografia geral e Doppler
         </Link>
-        ,{" "}
-        <Link href="/exames/mamografia" className="text-brand hover:underline">
-          mamografia digital
-        </Link>{" "}
+{" "}
         e{" "}
         <Link href="/exames/raio-x" className="text-brand hover:underline">
           raio-X digital
@@ -68,7 +65,7 @@ const examData: Record<
     exams: [
       { name: "Tomografia Computadorizada Multislice", href: "/exames/tomografia-computadorizada" },
       { name: "Ultrassonografia Geral e Doppler", href: "/exames/ultrassonografia" },
-      { name: "Mamografia Digital", href: "/exames/mamografia" },
+      // Mamografia saiu em 31/10/2026: a clinica nao realiza no momento.
       { name: "Raio-X Digital", href: "/exames/raio-x" },
     ],
   },

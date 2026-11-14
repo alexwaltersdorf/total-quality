@@ -16,7 +16,6 @@
 - [Tomografia Computadorizada](https://totalquality.med.br/exames/tomografia-computadorizada)
 - [Raio-X](https://totalquality.med.br/exames/raio-x)
 - [Ultrassonografia](https://totalquality.med.br/exames/ultrassonografia)
-- [Mamografia Digital](https://totalquality.med.br/exames/mamografia)
 - [MAPA](https://totalquality.med.br/exames/mapa)
 - [Holter](https://totalquality.med.br/exames/holter)
 - [Espirometria](https://totalquality.med.br/exames/espirometria)

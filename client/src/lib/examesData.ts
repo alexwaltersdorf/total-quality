@@ -195,41 +195,13 @@ export const examesData: ExamData[] = [
     category: "imagem",
     keywords: ["ultrassonografia", "ecografia", "ultrassom", "ultrassom abdominal", "ultrassom obstétrico", "diagnóstico por imagem", "Caraguatatuba"],
   },
-  {
-    slug: "mamografia",
-    title: "MAMOGRAFIA DIGITAL",
-    shortTitle: "Mamografia",
-    subtitle: "Diagnóstico por Imagem",
-    description: "Mamografia digital de alta resolução para detecção precoce do câncer de mama.",
-    metaTitle: "Mamografia Digital em Caraguatatuba | Total Quality",
-    metaDescription: "Mamografia digital em Caraguatatuba - SP na Total Quality. Detecção precoce do câncer de mama com alta resolução e conforto. Laudo rápido. Agende.",
-    heroDescription: "A mamografia digital é o principal exame para o rastreamento e a detecção precoce do câncer de mama. Na Total Quality, contamos com mamógrafo digital, que oferece imagens nítidas com menor dose de radiação e mais conforto durante o exame.",
-    whatIs: "A Mamografia é um exame de diagnóstico por imagem que utiliza raios-X em baixa dose para avaliar o tecido mamário. É a ferramenta mais eficaz para identificar nódulos, microcalcificações e outras alterações ainda não palpáveis, permitindo o diagnóstico precoce do câncer de mama, quando as chances de cura são maiores. A versão digital gera imagens de alta resolução com mais conforto e menor exposição à radiação.",
-    howItWorks: "A mama é posicionada e levemente comprimida entre duas placas do mamógrafo por alguns segundos, o tempo necessário para capturar as imagens. A compressão é fundamental para obter imagens nítidas e reduzir a dose de radiação. São feitas, em geral, duas incidências de cada mama. O exame é rápido, durando cerca de 10 a 15 minutos.",
-    indications: [
-      "Rastreamento anual em mulheres a partir dos 40 anos",
-      "Acompanhamento de mulheres com histórico familiar de câncer de mama",
-      "Investigação de nódulos ou alterações palpáveis",
-      "Avaliação de secreção ou alterações no mamilo",
-      "Controle de mama operada ou em tratamento",
-      "Complemento da ultrassonografia mamária",
-    ],
-    preparations: [
-      { icon: CheckCircle, text: "Não use desodorante, talco ou cremes nas mamas e axilas no dia do exame" },
-      { icon: Clock, text: "De preferência, agende para a semana após a menstruação (mamas menos sensíveis)" },
-      { icon: AlertTriangle, text: "Informe se está grávida, amamentando ou com prótese de silicone" },
-      { icon: FileText, text: "Traga exames anteriores e o pedido médico para comparação" },
-    ],
-    faqs: [
-      { q: "A mamografia dói?", a: "O exame pode causar um leve desconforto durante a compressão da mama, que dura apenas alguns segundos. A compressão é necessária para garantir imagens nítidas e reduzir a radiação." },
-      { q: "A partir de que idade devo fazer mamografia?", a: "O rastreamento de rotina costuma ser indicado a partir dos 40 anos, anualmente. Mulheres com histórico familiar podem precisar começar antes — siga sempre a orientação do seu médico." },
-      { q: "Quanto tempo dura o exame?", a: "A mamografia é rápida, durando em média de 10 a 15 minutos, incluindo o posicionamento e a captura das imagens." },
-      { q: "Posso fazer mamografia com prótese de silicone?", a: "Sim. A mamografia pode ser realizada em mulheres com prótese de silicone, com técnicas específicas de posicionamento. Informe a equipe antes do exame." },
-    ],
-    whatsappMessage: "Olá! Gostaria de agendar uma mamografia digital.",
-    category: "imagem",
-    keywords: ["mamografia", "mamografia digital", "câncer de mama", "rastreamento mamário", "detecção precoce", "diagnóstico por imagem", "Caraguatatuba"],
-  },
+  // Mamografia saiu em 31/10/2026: a clinica NAO realiza no momento ("No
+  // momento nao realizamos Mamografia", decisao do Alex). A pagina vendia o
+  // exame com "contamos com mamografo digital" e mensagem de agendamento.
+  // /exames/mamografia faz 301 para /exames/ultrassonografia (que cobre o
+  // ultrassom das mamas) em server/_core/legacy-redirects.ts. Nao reintroduzir
+  // sem confirmacao — anunciar servico nao prestado viola as diretrizes do
+  // Google e as normas do CFM, mesma regra do ecocardiograma (01/08/2026).
   {
     slug: "mapa",
     title: "MAPA",

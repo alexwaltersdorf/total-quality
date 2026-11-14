@@ -33,7 +33,6 @@ const ELETROCARDIOGRAMA = 100.0;
 const ELETROENCEFALOGRAMA = 200.0;
 const ESPIROMETRIA = 165.0;
 const CHECKUP = 399.0;
-const MAMOGRAFIA = 200.0;
 const ADMISSIONAL = 70.0;
 // Sexagem fetal: R$ 250 de preco (custo R$ 120), informado pelo Alex em 25/10/2026.
 const SEXAGEM_FETAL = 250.0;
@@ -54,7 +53,7 @@ export const LEAD_VALUES: Record<string, number> = {
   eletrocardiograma: ELETROCARDIOGRAMA,
   eletroencefalograma: ELETROENCEFALOGRAMA,
   espirometria: ESPIROMETRIA,
-  mamografia: MAMOGRAFIA,
+  // mamografia (200) saiu em 31/10/2026: a clinica nao realiza no momento.
   "exame-admissional": ADMISSIONAL,
 
   // --- Categorias de origem (lead_source) ---
@@ -76,7 +75,8 @@ export const LEAD_VALUES: Record<string, number> = {
  *
  * Em 06/09/2026 o Alex informou os quatro que faltavam — mamografia (200),
  * exame admissional (70), bioimpedancia (100) e cartao (29,90) — e todos
- * passaram a ter valor proprio.
+ * passaram a ter valor proprio. Em 31/10/2026 a mamografia saiu da tabela:
+ * a clinica nao realiza o exame no momento, e nao existe mais lead dele.
  *
  * Cai aqui hoje apenas o que nao E um servico: "geral", "blog" e "convenios",
  * origens informacionais de intencao fria. Para essas, o ticket de laboratorio

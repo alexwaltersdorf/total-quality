@@ -84,7 +84,7 @@ const PERGUNTAS = [
   },
   {
     q: "A mamografia está incluída?",
-    a: "Não. A oferta apresentada contempla os três exames listados. A ultrassonografia das mamas não substitui a mamografia quando ela é indicada.",
+    a: "Não. A oferta apresentada contempla os três exames listados, e no momento a Total Quality não realiza mamografia. A ultrassonografia das mamas não substitui a mamografia quando ela é indicada.",
   },
   {
     q: "Esse pacote é indicado para qualquer pessoa?",
@@ -264,11 +264,11 @@ export default function OutubroRosa() {
             </div>
 
             <p className="mt-6 max-w-3xl rounded-xl border-l-4 border-[oklch(0.72_0.14_18)] bg-surface-light p-4 text-sm leading-relaxed text-text-light">
-              A ultrassonografia das mamas não substitui a{" "}
-              <Link href="/exames/mamografia" className="underline">
-                mamografia
-              </Link>{" "}
-              quando indicada. A escolha dos exames deve considerar a avaliação individual.
+              {/* Sem link para /exames/mamografia desde 31/10/2026: a clinica nao
+                  realiza o exame no momento (decisao do Alex). */}
+              A ultrassonografia das mamas não substitui a mamografia quando indicada. No
+              momento, a Total Quality não realiza mamografia. A escolha dos exames deve
+              considerar a avaliação individual.
             </p>
           </div>
         </section>

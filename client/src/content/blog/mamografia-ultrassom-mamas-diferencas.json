@@ -28,7 +28,6 @@
     "Na mamografia, cada mama é posicionada no equipamento e comprimida por alguns segundos para distribuir o tecido e produzir imagens adequadas. Essa compressão ajuda a reduzir sobreposições e a quantidade de radiação necessária, além de melhorar a qualidade da imagem.",
     "Algumas pessoas sentem pressão ou desconforto durante o posicionamento. A intensidade varia e a etapa costuma ser breve. Caso exista sensibilidade importante, informe o profissional responsável.",
     "A mamografia pode ser solicitada em contextos de rastreamento ou de investigação diagnóstica. Esses contextos não são iguais: rastreamento se refere à avaliação de pessoas sem sinais ou sintomas, enquanto a investigação diagnóstica ocorre quando existe uma alteração que precisa ser estudada.",
-    "Conheça o serviço de [mamografia da Total Quality](https://totalquality.med.br/exames/mamografia).",
     "## Como funciona o ultrassom das mamas?",
     "No ultrassom, um gel é aplicado sobre a pele e o médico movimenta um transdutor pela região. O equipamento usa ondas sonoras para formar imagens em tempo real, sem empregar radiação ionizante.",
     "A ultrassonografia pode contribuir para a avaliação de nódulos, áreas palpáveis e achados observados em outros exames. Sua utilidade depende do contexto clínico e da pergunta que precisa ser respondida.",
@@ -62,16 +61,15 @@
     "### Preciso levar os exames antigos?",
     "É recomendável levar imagens e laudos anteriores. A comparação pode ser importante para avaliar mudanças ao longo do tempo.",
     "## Onde realizar exames das mamas em Caraguatatuba?",
-    "A Total Quality realiza [mamografia](https://totalquality.med.br/exames/mamografia) e [ultrassonografia](https://totalquality.med.br/exames/ultrassonografia) em Caraguatatuba. Entre em contato para confirmar pedido, preparo e agendamento.",
+    "A Total Quality realiza [ultrassonografia das mamas](https://totalquality.med.br/exames/ultrassonografia) em Caraguatatuba. No momento, a clínica não realiza mamografia. Para o ultrassom, entre em contato para confirmar pedido, preparo e agendamento.",
     "**Fale com a equipe pelo WhatsApp ou pelo telefone (12) 3887-3535.**",
     "Este conteúdo é informativo e não substitui avaliação médica. Recomendações de rastreamento devem ser individualizadas."
   ],
-  "examName": "mamografia e ultrassom das mamas",
-  "examType": "mamografia",
+  "examName": "ultrassom das mamas",
+  "examType": "ultrassonografia",
   "examPages": [
-    "/exames/mamografia",
     "/exames/ultrassonografia"
   ],
   "horaMarcada": true,
-  "dateModified": "2026-10-22"
+  "dateModified": "2026-10-31"
 }

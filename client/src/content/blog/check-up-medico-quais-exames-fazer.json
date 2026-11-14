@@ -60,7 +60,7 @@
     "### Tomografia",
     "Indicada em avaliações mais detalhadas de determinadas regiões do corpo, geralmente por indicação médica específica.",
     "### Mamografia",
-    "Recomendada dentro do acompanhamento preventivo da saúde da mama, conforme faixa etária e orientação médica.",
+    "Recomendada dentro do acompanhamento preventivo da saúde da mama, conforme faixa etária e orientação médica. No momento, a Total Quality não realiza mamografia.",
     "### Raio-X",
     "Pode ser utilizado na avaliação de estruturas ósseas e de determinadas regiões do corpo, conforme o quadro clínico.",
     "## Com que frequência fazer um check-up?",
@@ -74,7 +74,7 @@
     "## Por que centralizar seus exames em uma estrutura de medicina diagnóstica?",
     "Centralizar os exames em uma única estrutura de medicina diagnóstica facilita o acompanhamento contínuo da saúde, já que os resultados ficam organizados em um só histórico, e reduz a necessidade de deslocamento entre diferentes clínicas para completar um check-up. Essa centralização também tende a agilizar a comunicação entre as diferentes áreas envolvidas, como laboratório, cardiologia e diagnóstico por imagem, algo especialmente útil quando um exame aponta a necessidade de investigação complementar.",
     "## Como a Total Quality reúne exames laboratoriais, cardiológicos e de imagem em Caraguatatuba?",
-    "A **Total Quality** oferece uma estrutura completa de medicina diagnóstica em **Caraguatatuba**, reunindo exames laboratoriais, exames cardiológicos como MAPA, Holter e eletrocardiograma, além de exames de imagem como tomografia, ultrassonografia e mamografia. Toda essa estrutura também está disponível de forma integrada dentro do check-up preventivo da clínica, organizado em pacotes por faixa etária e perfil de paciente.",
+    "A **Total Quality** oferece uma estrutura completa de medicina diagnóstica em **Caraguatatuba**, reunindo exames laboratoriais, exames cardiológicos como MAPA, Holter e eletrocardiograma, além de exames de imagem como tomografia, ultrassonografia e raio-X. Toda essa estrutura também está disponível de forma integrada dentro do check-up preventivo da clínica, organizado em pacotes por faixa etária e perfil de paciente.",
     "**Quer colocar seus exames em dia? Conheça a estrutura da Total Quality Medicina Diagnóstica em Caraguatatuba e agende pelo WhatsApp (12) 3887-3535.**",
     "Este conteúdo tem caráter informativo e não substitui a avaliação de um médico. A definição dos exames e da frequência ideal do check-up deve sempre considerar o perfil individual de cada paciente."
   ],
@@ -84,5 +84,5 @@
     "/checkup"
   ],
   "horaMarcada": true,
-  "dateModified": "2026-10-22"
+  "dateModified": "2026-10-31"
 }

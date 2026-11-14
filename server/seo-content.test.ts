@@ -172,6 +172,100 @@ describe("GUARD-RAIL: nunca anunciar servico nao prestado (nao remover)", () => 
   });
 });
 
+describe("GUARD-RAIL: mamografia nao realizada (decisao do Alex, 31/10/2026)", () => {
+  // "No momento nao realizamos Mamografia." Ate esta data o site vendia o exame
+  // em pagina propria ("contamos com mamografo digital"), no menu, no rodape,
+  // no JSON-LD, no sitemap, no valor de lead e na mensagem de WhatsApp. Mesma
+  // regra do ecocardiograma (01/08/2026): servico nao prestado nao aparece em
+  // peca publica. Diferente dele, a palavra pode continuar no blog como
+  // EDUCACAO (diferenca entre mamografia e ultrassom, rastreamento) — por isso
+  // a trava e sobre OFERTA, nao sobre a palavra. Ao voltar a realizar, tirar
+  // daqui PRIMEIRO, depois o 301 de legacy-redirects.ts.
+  const OFERTA = [
+    /href="\/exames\/mamografia"/,
+    /totalquality\.med\.br\/exames\/mamografia/,
+    /\bagend\w*\s+(?:a\s+|sua\s+|seu\s+|uma\s+)?mamografia/i,
+    /(?<!n[ãa]o\s)\brealiza(?:mos)?\s+(?:a\s+)?(?:\[)?mamografia/i,
+    /mam[óo]grafo/i,
+    /mamografia digital/i,
+  ];
+
+  async function lerCliente(): Promise<Array<[string, string]>> {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const raiz = nodePath.resolve(import.meta.dirname, "../client");
+    const arquivos = fs
+      .readdirSync(nodePath.join(raiz, "src"), { recursive: true })
+      .filter((f) => /\.(tsx?|json)$/.test(String(f)))
+      .map((f) => nodePath.join(raiz, "src", String(f)));
+    arquivos.push(nodePath.join(raiz, "index.html"), nodePath.join(raiz, "public/llms.txt"));
+    return arquivos.map((a) => [a, fs.readFileSync(a, "utf-8")]);
+  }
+
+  it("/exames/mamografia nao e pagina: sai do sitemap e responde 301", () => {
+    const sitemap = getAllRoutes().map((r) => new URL(r.canonical).pathname);
+    expect(sitemap).not.toContain("/exames/mamografia");
+    expect(getRouteMetadata("/exames/mamografia")?.canonical ?? "").not.toContain("/exames/mamografia");
+    expect(getLegacyRedirect("/exames/mamografia")).toBe("/exames/ultrassonografia");
+    expect(getLegacyRedirect("/exames/mamografia/")).toBe("/exames/ultrassonografia");
+    // Destino precisa existir e cobrir o exame de imagem das mamas que a
+    // clinica faz; senao o 301 vira soft 404.
+    expect(resolveHttpStatus("/exames/ultrassonografia", getKnownBlogSlugs())).toBe(200);
+    expect(getSeoContentForPath("/exames/ultrassonografia")).toMatch(/mama/i);
+  });
+
+  it("examesData nao tem pagina de mamografia e nenhum exame agenda mamografia", async () => {
+    const { examesData } = await import("@/lib/examesData");
+    expect(examesData.map((e) => e.slug)).not.toContain("mamografia");
+    for (const exame of examesData) {
+      expect(exame.whatsappMessage, `${exame.slug} agenda mamografia`).not.toMatch(/mamografia/i);
+      expect(exame.heroDescription, `${exame.slug} anuncia mamografia`).not.toMatch(/mamografia|mam[óo]grafo/i);
+    }
+  });
+
+  it("mamografia nao tem valor de lead nem pagina no quadro do blog", async () => {
+    const { LEAD_VALUES } = await import("@/lib/leadValues");
+    const { PAGINA_EXAME_LABEL } = await import("@/lib/blogMeta");
+    expect(Object.keys(LEAD_VALUES)).not.toContain("mamografia");
+    expect(Object.keys(PAGINA_EXAME_LABEL)).not.toContain("/exames/mamografia");
+  });
+
+  it.each(getAllRoutes().map((r) => new URL(r.canonical).pathname))(
+    "%s nao oferece mamografia no pre-render",
+    (pathname) => {
+      const html = getSeoContentForPath(pathname);
+      if (!html) return;
+      for (const termo of OFERTA) {
+        expect(html, `${pathname} oferece mamografia (${termo})`).not.toMatch(termo);
+      }
+    }
+  );
+
+  it("nenhum arquivo do cliente, nem o JSON-LD global, oferece mamografia", async () => {
+    for (const [arquivo, conteudo] of await lerCliente()) {
+      // O comentario que registra a remocao cita a frase antiga entre aspas.
+      const semComentario = conteudo.replace(/^\s*(\/\/|\*).*$/gm, "");
+      for (const termo of OFERTA) {
+        expect(semComentario, `${arquivo} oferece mamografia (${termo})`).not.toMatch(termo);
+      }
+    }
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const indexHtml = fs.readFileSync(nodePath.resolve(import.meta.dirname, "../client/index.html"), "utf-8");
+    const jsonLd = Array.from(indexHtml.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g))
+      .map((m) => m[1])
+      .join("\n");
+    expect(jsonLd).not.toMatch(/mamografia/i);
+  });
+
+  it("artigo educativo e Outubro Rosa dizem que a clinica nao realiza mamografia", () => {
+    for (const rota of ["/blog/mamografia-ultrassom-mamas-diferencas", "/outubro-rosa"]) {
+      const html = getSeoContentForPath(rota)!;
+      expect(html, `${rota} perdeu a frase neutra`).toMatch(/n[ãa]o realiza mamografia/);
+    }
+  });
+});
+
 describe("GUARD-RAIL: horario oficial unico (nao remover)", () => {
   // Decisao do Alex em 02/08/2026: segunda a sexta, 07h30 as 18h; sabado e
   // domingo FECHADOS. O perfil do Google ja esta assim. Antes desta correcao o
@@ -350,7 +444,6 @@ describe("GUARD-RAIL: links internos em todas as rotas (nao remover)", () => {
       "/exames/exames-de-sangue",
       "/exames/tomografia-computadorizada",
       "/exames/ultrassonografia",
-      "/exames/mamografia",
       "/exames/raio-x",
       "/exames/holter",
       "/exames/mapa",
@@ -381,7 +474,6 @@ describe("GUARD-RAIL: links internos da landing de laboratorio (nao remover)", (
     "/exames/exame-admissional",
     "/exames/tomografia-computadorizada",
     "/exames/ultrassonografia",
-    "/exames/mamografia",
     "/exames/raio-x",
     "/exames/eletrocardiograma",
     "/exames/holter",
