@@ -10,7 +10,7 @@ vi.mock("./db", () => ({
   getContacts: vi.fn().mockResolvedValue([]),
   getContactsCount: vi.fn().mockResolvedValue(0),
   updateContactStatus: vi.fn().mockResolvedValue(true),
-  createLead: vi.fn().mockResolvedValue({ id: 1 }),
+  createLead: vi.fn().mockResolvedValue({ success: true }),
   getLeads: vi.fn().mockResolvedValue([]),
   getLeadsCount: vi.fn().mockResolvedValue(0),
   getLeadsBySource: vi.fn().mockResolvedValue([]),
@@ -142,7 +142,7 @@ describe("Lead API", () => {
       channel: "Google Ads",
       sessionId: "sess_123",
     });
-    expect(result).toEqual({ id: 1 });
+    expect(result).toEqual({ success: true });
   });
 
   it("creates a lead with contact info", async () => {
@@ -156,7 +156,7 @@ describe("Lead API", () => {
       city: "Caraguatatuba",
       state: "SP",
     });
-    expect(result).toEqual({ id: 1 });
+    expect(result).toEqual({ success: true });
   });
 
   it("lists leads (protected)", async () => {
