@@ -72,6 +72,17 @@ export const CONVENIOS_TEXTO = "Cartão de Todos, Solumedi e Leader";
  */
 export const CHECKUP_TITLE = "Check-up Completo em Caraguatatuba | Total Quality";
 export const CHECKUP_DESCRIPTION = "Check-up em Caraguatatuba com planos Básico, Select e Premium: exames de sangue, cardiológicos e de imagem por faixa etária. Dúvidas pelo WhatsApp.";
+/** H1 de /checkup, igual no servidor e no React (era o do pre-render). */
+export const CHECKUP_H1 = "Check-up Preventivo em Caraguatatuba";
+
+/*
+ * /bioimpedancia — fonte unica (SEO nov/2026, Fase 1). O servidor dizia uma
+ * description e o React reescrevia outra depois de montar. Ficou a que o
+ * Google indexava.
+ */
+export const BIOIMPEDANCIA_TITLE = "Bioimpedância em Caraguatatuba | Total Quality";
+export const BIOIMPEDANCIA_H1 = "Bioimpedância em Caraguatatuba";
+export const BIOIMPEDANCIA_DESCRIPTION = "Bioimpedância em Caraguatatuba - SP. Análise de composição corporal (gordura, músculo, água). Agende seu exame.";
 
 /**
  * Link de WhatsApp da clinica — formato unico do site (system prompt do blog,

@@ -25,7 +25,7 @@ export const ESPECIALIDADES_BASE = "/especialidades";
 export const especialidadesData: ExamData[] = [
   {
     slug: "endocrinologista",
-    title: "ENDOCRINOLOGIA",
+    title: "Endocrinologista",
     shortTitle: "Endocrinologista",
     subtitle: "Consulta com especialista",
     description: "Consulta com médico endocrinologista para diabetes, tireoide, obesidade e alterações hormonais.",
@@ -63,7 +63,7 @@ export const especialidadesData: ExamData[] = [
   },
   {
     slug: "gastroenterologista",
-    title: "GASTROENTEROLOGIA",
+    title: "Gastroenterologista",
     shortTitle: "Gastroenterologista",
     subtitle: "Consulta com especialista",
     description: "Consulta com médico gastroenterologista para refluxo, gastrite, dor abdominal e alterações do intestino e do fígado.",
@@ -100,7 +100,7 @@ export const especialidadesData: ExamData[] = [
   },
   {
     slug: "medicina-do-trabalho",
-    title: "MEDICINA DO TRABALHO",
+    title: "Medicina do Trabalho",
     shortTitle: "Medicina do Trabalho",
     subtitle: "PCMSO e ASO para empresas",
     description: "Medicina do trabalho para empresas do Litoral Norte: PCMSO, exames ocupacionais e ASO.",

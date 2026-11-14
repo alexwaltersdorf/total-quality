@@ -317,32 +317,28 @@
   /* Animate on scroll */
   /* Entrada curta (0,35 s, 8 px): com 0,8 s e 30 px o conteudo ainda estava
      a meio caminho 700 ms depois da rolagem e parecia "carregando". */
-  .reveal {
+  /* So esconde com a classe reveal-on no <html> (hooks/useScrollReveal.ts):
+     sem JavaScript o conteudo renderizado no servidor fica visivel. */
+  .reveal-on .reveal:not(.visible) {
     opacity: 0;
     transform: translateY(8px);
+  }
+  .reveal {
     transition: opacity 0.35s ease-out, transform 0.35s ease-out;
   }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .reveal-left {
+  .reveal-on .reveal-left:not(.visible) {
     opacity: 0;
     transform: translateX(-8px);
+  }
+  .reveal-left {
     transition: opacity 0.35s ease-out, transform 0.35s ease-out;
   }
-  .reveal-left.visible {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  .reveal-right {
+  .reveal-on .reveal-right:not(.visible) {
     opacity: 0;
     transform: translateX(8px);
-    transition: opacity 0.35s ease-out, transform 0.35s ease-out;
   }
-  .reveal-right.visible {
-    opacity: 1;
-    transform: translateX(0);
+  .reveal-right {
+    transition: opacity 0.35s ease-out, transform 0.35s ease-out;
   }
 
   /* Marquee animation */

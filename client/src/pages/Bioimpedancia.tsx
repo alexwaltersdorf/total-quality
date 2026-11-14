@@ -3,14 +3,19 @@
  * Theme: White background, dark gray #5A5A5A text
  * Page: Bioimpedância
  */
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { trackScheduleBioimpedancia } from "@/lib/tracking";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 import { ArrowUpRight, ArrowLeft, Zap, TrendingUp, Droplets, Bone, Flame, Scale, Target, Users, BarChart3 } from "lucide-react";
 import { Link } from "wouter";
 import Navbar from "@/components/Navbar";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
-import { useCanonical, useMetaDescription, useFAQSchema, useMedicalTestSchema } from "@/components/SEOHead";
+import Footer from "@/components/Footer";
+import OndeFazer from "@/components/OndeFazer";
+import { useCanonical, useMetaDescription } from "@/components/SEOHead";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { BIO_FAQS } from "@/lib/paginasServico";
+import { BIOIMPEDANCIA_TITLE, BIOIMPEDANCIA_DESCRIPTION } from "@shared/const";
 
 const HERO_IMG = "/images/recepcao-1024.webp";
 const DETAIL_IMG = "/images/laboratorio-1024.webp";
@@ -27,51 +32,29 @@ const metrics = [
 const whoNeeds = [
   { icon: TrendingUp, title: "Atletas e Esportistas", desc: "Otimize sua composição corporal para melhor desempenho e recuperação." },
   { icon: Target, title: "Emagrecimento", desc: "Monitore se está perdendo gordura ou massa muscular durante a dieta." },
-  { icon: Users, title: "Acompanhamento Nutricional", desc: "Dados precisos para nutricionistas ajustarem planos alimentares." },
+  { icon: Users, title: "Acompanhamento Nutricional", desc: "Dados de composição corporal para nutricionistas ajustarem planos alimentares." },
   { icon: Flame, title: "Saúde Metabólica", desc: "Avalie riscos metabólicos como resistência à insulina e síndrome metabólica." },
 ];
 
-const faqs = [
-  { q: "O exame de bioimpedância dói?", a: "Não. O exame é completamente indolor e não invasivo. Uma corrente elétrica de baixíssima intensidade percorre o corpo, imperceptível ao paciente." },
-  { q: "Quanto tempo dura o exame?", a: "O exame leva aproximadamente 5 a 10 minutos. Os resultados são gerados instantaneamente após a medição." },
-  { q: "Preciso de algum preparo?", a: "Sim. Recomendamos jejum de 4 horas, não praticar exercícios 12 horas antes, não consumir álcool 24 horas antes e estar bem hidratado." },
-  { q: "Com que frequência devo repetir?", a: "Para acompanhamento, recomendamos a cada 3 meses. Para atletas ou programas de emagrecimento, pode ser mensal." },
-  { q: "Gestantes podem fazer?", a: "Não é recomendado para gestantes e portadores de marcapasso cardíaco. Consulte seu médico antes de realizar o exame." },
-];
+// FAQ: lib/paginasServico.ts (BIO_FAQS), a mesma lista do FAQPage do servidor.
+const faqs = BIO_FAQS;
 
 export default function Bioimpedancia() {
   const openWhatsApp = useWhatsAppRedirect();
   const abrirTelefone = useTelefoneRedirect();
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useScrollReveal();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "Bioimpedância em Caraguatatuba | Total Quality";
+    document.title = BIOIMPEDANCIA_TITLE;
   }, []);
 
-  // SEO: Meta description e canonical
-  useMetaDescription("Faça sua bioimpedância em Caraguatatuba no Total Quality e avalie a composição corporal, gordura visceral e taxa metabólica basal. Consulte informações e agende atendimento.");
+  // SEO: title e description da mesma fonte do servidor (shared/const.ts).
+  useMetaDescription(BIOIMPEDANCIA_DESCRIPTION);
   useCanonical("/bioimpedancia");
 
-  // SEO: Structured Data — FAQPage + MedicalTest
-  useFAQSchema(faqs);
-  useMedicalTestSchema({
-    name: "Bioimpedância",
-    description: "Exame de bioimpedância em Caraguatatuba - SP. Análise da composição corporal: gordura, músculo, água, gordura visceral e taxa metabólica basal.",
-    url: "/bioimpedancia",
-  });
-
-  useEffect(() => {
-    const root = wrapperRef.current;
-    if (!root) return;
-    const els = root.querySelectorAll(".reveal, .reveal-left, .reveal-right");
-    const obs = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
-    );
-    els.forEach((el) => obs.observe(el));
-    return () => obs.disconnect();
-  }, []);
+  // FAQPage, MedicalWebPage e BreadcrumbList: emitidos pelo servidor no
+  // <head>, dos mesmos dados (seo-content.ts) — SEO nov/2026, Fase 1.
 
   return (
     <div ref={wrapperRef} className="min-h-screen bg-white">
@@ -85,16 +68,15 @@ export default function Bioimpedancia() {
               <div className="reveal">
                 <span className="section-label mb-6 block">Composição Corporal</span>
               </div>
-              <h1 className="reveal heading-display text-[clamp(3rem,8vw,6.5rem)] text-text leading-[0.85] mb-6" style={{ transitionDelay: "100ms" }}>
-                BIO
-                <br />
-                <span className="text-brand">IMPEDÂNCIA</span>{" "}
-                <span className="block text-base lg:text-lg text-text-light font-light tracking-wide mt-4 normal-case">
-                  Bioimpedância em Caraguatatuba - SP | Total Quality Medicina Diagnóstica
+              {/* H1 = BIOIMPEDANCIA_H1 ("Bioimpedância em Caraguatatuba"). */}
+              <h1 className="reveal heading-display text-text leading-[0.85] mb-6" style={{ transitionDelay: "100ms" }}>
+                <span className="block text-[clamp(3rem,6vw,5.5rem)] text-brand">Bioimpedância</span>{" "}
+                <span className="block font-sans text-base lg:text-lg text-text-light font-light tracking-wide mt-4 normal-case leading-normal">
+                  em Caraguatatuba
                 </span>
               </h1>
               <p className="reveal text-lg text-text-light leading-relaxed max-w-md mb-8" style={{ transitionDelay: "200ms" }}>
-                Conheça seu corpo por dentro. A bioimpedância é o exame mais preciso e acessível para analisar sua composição corporal completa: gordura, músculo, água e muito mais.
+                Conheça seu corpo por dentro. A bioimpedância é um exame rápido e não invasivo que analisa a composição corporal: percentual de gordura, massa muscular, água corporal e taxa metabólica.
               </p>
               <div className="reveal flex flex-wrap gap-4 mb-12" style={{ transitionDelay: "300ms" }}>
                 <button
@@ -145,22 +127,22 @@ export default function Bioimpedancia() {
             <div className="reveal">
               <span className="section-label mb-6 block">O Exame</span>
               <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-6">
-                O QUE É A{" "}<br /><span className="text-brand">BIOIMPEDÂNCIA?</span>
+                O que é a{" "}<br /><span className="text-brand">bioimpedância?</span>
               </h2>
               <div className="space-y-4 text-text-light leading-relaxed">
                 <p>
                   A bioimpedância elétrica (BIA) é um método de avaliação da composição corporal que utiliza uma corrente elétrica de baixa intensidade para medir a resistência dos diferentes tecidos do corpo.
                 </p>
                 <p>
-                  Como a água conduz eletricidade e os tecidos magros contêm mais água que o tecido adiposo, o exame consegue diferenciar com precisão a quantidade de gordura, músculo, água e massa óssea do seu corpo.
+                  Como a água conduz eletricidade e os tecidos magros contêm mais água que o tecido adiposo, o exame consegue diferenciar a quantidade de gordura, músculo, água e massa óssea do seu corpo.
                 </p>
                 <p>
-                  Na Total Quality, utilizamos equipamentos de bioimpedância multifrequencial, que oferecem resultados segmentados por região do corpo (braços, pernas, tronco), proporcionando uma análise muito mais detalhada e precisa.
+                  Na Total Quality, utilizamos equipamentos de bioimpedância multifrequencial, que oferecem resultados segmentados por região do corpo (braços, pernas, tronco).
                 </p>
               </div>
             </div>
             <div className="reveal-right">
-              <img src={DETAIL_IMG} alt="Relatório de composição corporal do exame de bioimpedância - Total Quality Caraguatatuba" className="w-full h-auto object-cover" />
+              <img src={DETAIL_IMG} alt="Relatório de composição corporal do exame de bioimpedância - Total Quality Caraguatatuba" className="w-full h-auto object-cover" loading="lazy" />
             </div>
           </div>
         </div>
@@ -172,7 +154,7 @@ export default function Bioimpedancia() {
           <div className="reveal text-center mb-16">
             <span className="section-label mb-6 inline-block">Métricas Analisadas</span>
             <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-4">
-              O QUE O EXAME <span className="text-brand">REVELA</span>
+              O que o exame <span className="text-brand">revela</span>
             </h2>
             <p className="text-text-light text-lg max-w-2xl mx-auto">
               Cada métrica oferece informações valiosas sobre sua saúde e composição corporal.
@@ -206,7 +188,7 @@ export default function Bioimpedancia() {
               <div className="reveal lg:sticky lg:top-28">
                 <span className="section-label mb-6 block">Indicações</span>
                 <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-6">
-                  PARA QUEM É{" "}<br /><span className="text-brand">INDICADO?</span>
+                  Para quem é{" "}<br /><span className="text-brand">indicado?</span>
                 </h2>
                 <p className="text-text-light text-lg leading-relaxed">
                   A bioimpedância é uma ferramenta versátil, útil tanto para atletas de alto rendimento quanto para quem busca melhorar a saúde e a forma física.
@@ -238,7 +220,7 @@ export default function Bioimpedancia() {
           <div className="reveal text-center mb-16">
             <span className="section-label mb-6 inline-block">Preparo</span>
             <h2 className="heading-display text-[clamp(2.5rem,5vw,4.5rem)] text-text leading-[0.9] mb-4">
-              COMO SE <span className="text-brand">PREPARAR</span>
+              Como se <span className="text-brand">preparar</span>
             </h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -266,7 +248,7 @@ export default function Bioimpedancia() {
               <div className="reveal lg:sticky lg:top-28">
                 <span className="section-label mb-6 block">Dúvidas</span>
                 <h2 className="heading-display text-[clamp(2.5rem,5vw,4rem)] text-text leading-[0.9] mb-6">
-                  PERGUNTAS{" "}<br /><span className="text-brand">FREQUENTES</span>
+                  Perguntas{" "}<br /><span className="text-brand">frequentes</span>
                 </h2>
                 <p className="text-text-light leading-relaxed">
                   Tire suas dúvidas sobre o exame de bioimpedância. Se precisar de mais informações, entre em contato conosco.
@@ -279,7 +261,7 @@ export default function Bioimpedancia() {
                   <details key={i} className="reveal group border-b border-black/10" style={{ transitionDelay: `${i * 80}ms` }}>
                     <summary className="flex items-center justify-between py-6 cursor-pointer list-none">
                       <h3 className="heading-display text-xl text-text group-hover:text-brand transition-colors pr-4">{faq.q}</h3>
-                      <span className="heading-display text-2xl text-brand flex-shrink-0 transition-transform group-open:rotate-45">+</span>
+                      <span aria-hidden="true" className="heading-display text-2xl text-brand flex-shrink-0 transition-transform group-open:rotate-45">+</span>
                     </summary>
                     <div className="pb-6 pr-12">
                       <p className="text-sm text-text-muted leading-relaxed">{faq.a}</p>
@@ -298,7 +280,7 @@ export default function Bioimpedancia() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="reveal">
               <h2 className="heading-display text-[clamp(2.5rem,5vw,5rem)] leading-[0.85] mb-6">
-                CONHEÇA SEU{" "}<br /><span className="text-white/80">CORPO POR DENTRO</span>
+                Conheça seu{" "}<br /><span className="text-white/80">corpo por dentro</span>
               </h2>
               <p className="text-white/70 text-lg leading-relaxed max-w-md mb-8">
                 Agende sua bioimpedância e leve os dados de composição corporal para a conversa com seu médico, nutricionista ou educador físico.
@@ -318,14 +300,16 @@ export default function Bioimpedancia() {
             </div>
             <div className="reveal-right">
               <div className="bg-white/10 border border-white/20 p-8 lg:p-10">
-                <h3 className="heading-display text-2xl mb-6">INFORMAÇÕES DO EXAME</h3>
+                <h3 className="heading-display text-2xl mb-6">Informações do exame</h3>
                 <div className="space-y-4">
                   {[
                     { label: "Duração", value: "5 a 10 minutos" },
                     { label: "Preparo", value: "Jejum de 4h, sem exercícios 12h antes" },
                     { label: "Resultado", value: "Imediato, entregue na hora" },
-                    { label: "Contraindicação", value: "Gestantes e portadores de marcapasso" },
-                    { label: "Frequência", value: "Recomendado a cada 3 meses" },
+                    // Mesmo texto do FAQ (BIO_FAQS). A linha "Frequência:
+                    // recomendado a cada 3 meses" saiu: quem define o intervalo
+                    // é o profissional que acompanha o paciente.
+                    { label: "Contraindicação", value: "Marca-passo, desfibrilador ou outro dispositivo eletrônico implantado; gestantes, consultar o médico" },
                   ].map((info) => (
                     <div key={info.label} className="flex justify-between items-start py-3 border-b border-white/20">
                       <span className="text-xs uppercase tracking-[0.15em] font-semibold text-white/50">{info.label}</span>
@@ -338,6 +322,8 @@ export default function Bioimpedancia() {
           </div>
         </div>
       </section>
+
+      <OndeFazer mensagem="Agende sua bioimpedância pelo WhatsApp e acompanhe sua composição corporal." />
 
       {/* Back to Home */}
       <section className="py-12 border-t border-black/10 bg-white">
@@ -353,6 +339,7 @@ export default function Bioimpedancia() {
         </div>
       </section>
 
+      <Footer />
       <WhatsAppFAB />
     </div>
   );

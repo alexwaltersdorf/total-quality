@@ -18,10 +18,17 @@ export interface ExamPrep {
 
 export interface ExamData {
   slug: string;
+  /**
+   * Nome da pagina em caixa normal ("Hemograma Completo"). O H1 e
+   * `${title} em Caraguatatuba` (examH1). A caixa alta do layout vem SO do CSS
+   * (.heading-display) — texto maiusculo no dado fazia o Google e o leitor de
+   * tela lerem "HEMOGRAMA COMPLETO" (SEO nov/2026, Fase 1).
+   */
   title: string;
   shortTitle: string;
   subtitle: string;
   description: string;
+  /** Fonte unica do <title> e da description: o servidor (routes-metadata.ts) le daqui. */
   metaTitle: string;
   metaDescription: string;
   heroDescription: string;
@@ -41,7 +48,7 @@ export interface ExamData {
 export const examesData: ExamData[] = [
   {
     slug: "exames-de-sangue",
-    title: "EXAMES DE SANGUE",
+    title: "Exames de Sangue",
     shortTitle: "Exames de Sangue",
     subtitle: "Laboratório de Análises Clínicas",
     description: "Mais de 3.000 tipos de exames laboratoriais.",
@@ -81,7 +88,7 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "tomografia-computadorizada",
-    title: "TOMOGRAFIA COMPUTADORIZADA",
+    title: "Tomografia Computadorizada",
     shortTitle: "Tomografia",
     subtitle: "Diagnóstico por Imagem",
     description: "Imagens detalhadas do corpo com tecnologia de tomografia multislice.",
@@ -122,11 +129,11 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "raio-x",
-    title: "RAIO-X",
+    title: "Raio-X",
     shortTitle: "Raio-X",
     subtitle: "Diagnóstico por Imagem",
     description: "Radiografia digital com alta resolução para diagnóstico rápido e preciso.",
-    metaTitle: "Raio-X em Caraguatatuba | Total Quality",
+    metaTitle: "Raio-X em Caraguatatuba | Clínica Total Quality",
     metaDescription: "Raio-X digital em Caraguatatuba na Total Quality. Faça exame de tórax, coluna, membros e seios da face com alta resolução. Agende o seu atendimento online.",
     heroDescription: "O Raio-X é um dos exames de imagem mais utilizados na medicina, essencial para diagnóstico de fraturas, doenças pulmonares e diversas condições. Na Total Quality, utilizamos equipamento digital para imagens de alta resolução.",
     whatIs: "O Raio-X (radiografia) é um exame de diagnóstico por imagem que utiliza radiação ionizante em doses baixas para produzir imagens do interior do corpo. É especialmente eficaz para visualizar ossos, pulmões e certas condições dos tecidos moles. A tecnologia digital permite imagens de alta qualidade com menor exposição à radiação.",
@@ -158,12 +165,12 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "ultrassonografia",
-    title: "ULTRASSONOGRAFIA",
+    title: "Ultrassonografia",
     shortTitle: "Ultrassonografia",
     subtitle: "Diagnóstico por Imagem",
     description: "Exame de imagem por ultrassom para avaliação de órgãos e tecidos.",
     metaTitle: "Ultrassonografia em Caraguatatuba | Total Quality",
-    metaDescription: "Ultrassonografia em Caraguatatuba - SP na Total Quality: abdominal, pélvica, obstétrica, tireoide, mama e Doppler. Radiologistas experientes. Agende.",
+    metaDescription: "Ultrassonografia em Caraguatatuba - SP. Exame de imagem sem radiação. Ultrassom geral, doppler e especializado.",
     heroDescription: "A ultrassonografia é um exame seguro e indolor que utiliza ondas sonoras para produzir imagens em tempo real dos órgãos internos. Na Total Quality, contamos com equipamentos digitais e médicos especialistas que assinam os laudos.",
     whatIs: "A Ultrassonografia (ecografia) é um exame de diagnóstico por imagem que utiliza ondas sonoras de alta frequência para criar imagens dos órgãos e estruturas internas do corpo. É um método seguro, indolor, não invasivo e que não utiliza radiação ionizante, sendo seguro inclusive para gestantes.",
     howItWorks: "Um transdutor (sonda) é colocado sobre a pele com gel condutor. O transdutor emite ondas sonoras que penetram no corpo e retornam ao encontrar diferentes tecidos, criando imagens em tempo real no monitor. O médico analisa as imagens durante o exame.",
@@ -204,12 +211,12 @@ export const examesData: ExamData[] = [
   // Google e as normas do CFM, mesma regra do ecocardiograma (01/08/2026).
   {
     slug: "mapa",
-    title: "MAPA",
+    title: "MAPA 24h",
     shortTitle: "MAPA",
     subtitle: "Monitorização Ambulatorial da Pressão Arterial",
     description: "Monitoramento contínuo da pressão arterial por 24 horas.",
     metaTitle: "MAPA 24h em Caraguatatuba | Total Quality",
-    metaDescription: "MAPA 24h em Caraguatatuba - SP na Total Quality. Monitorização da pressão arterial para diagnóstico preciso de hipertensão. Agende pelo WhatsApp.",
+    metaDescription: "MAPA em Caraguatatuba - SP. Monitoramento de pressão arterial por 24 horas. Diagnóstico de hipertensão. Agende seu exame.",
     heroDescription: "O MAPA é um exame que monitora a pressão arterial continuamente durante 24 horas, registrando medições automáticas durante as atividades do dia a dia e durante o sono. É o exame mais preciso para diagnóstico e acompanhamento da hipertensão arterial.",
     whatIs: "O MAPA (Monitorização Ambulatorial da Pressão Arterial) é um exame que registra a pressão arterial automaticamente a cada 15-20 minutos durante o dia e a cada 30 minutos durante a noite, ao longo de 24 horas. Permite avaliar o comportamento da pressão arterial em condições reais do cotidiano do paciente.",
     howItWorks: "Um aparelho portátil com manguito é instalado no braço do paciente. O equipamento realiza medições automáticas programadas ao longo de 24 horas. O paciente mantém suas atividades normais e registra em um diário os horários de sono, refeições e atividades. Após 24 horas, o aparelho é retirado e os dados são analisados por software especializado.",
@@ -240,12 +247,12 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "holter",
-    title: "HOLTER",
+    title: "Holter 24h",
     shortTitle: "Holter",
     subtitle: "Monitorização Cardíaca 24 Horas",
     description: "Monitoramento contínuo do ritmo cardíaco por 24 horas.",
     metaTitle: "Holter 24h em Caraguatatuba | Total Quality",
-    metaDescription: "Faça o exame Holter em Caraguatatuba no Total Quality. O monitoramento registra a atividade cardíaca por período prolongado para avaliação médica.",
+    metaDescription: "Holter 24h em Caraguatatuba - SP. Monitoramento contínuo do coração. Diagnóstico de arritmias. Agende seu exame.",
     heroDescription: "O Holter é um exame que registra continuamente a atividade elétrica do coração durante 24 horas, permitindo detectar arritmias e alterações que podem não aparecer em um eletrocardiograma convencional.",
     whatIs: "O Holter é um exame de monitorização eletrocardiográfica contínua por 24 horas. Um pequeno gravador portátil registra todos os batimentos cardíacos durante as atividades diárias e o sono, permitindo identificar arritmias, isquemias e outras alterações do ritmo cardíaco que podem ser intermitentes.",
     howItWorks: "Eletrodos adesivos são colocados no tórax do paciente e conectados a um pequeno gravador digital portátil. O aparelho registra continuamente o eletrocardiograma durante 24 horas. O paciente mantém suas atividades normais e registra sintomas em um diário. Após 24 horas, o aparelho é retirado e os dados são analisados.",
@@ -276,12 +283,12 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "espirometria",
-    title: "ESPIROMETRIA",
+    title: "Espirometria",
     shortTitle: "Espirometria",
     subtitle: "Prova de Função Pulmonar",
     description: "Avaliação completa da capacidade respiratória e função pulmonar.",
-    metaTitle: "Espirometria em Caraguatatuba | Total Quality",
-    metaDescription: "Faça espirometria em Caraguatatuba no Total Quality. O exame avalia a função pulmonar, DPOC, bronquite e auxilia no acompanhamento respiratório. Avaliação pré-operatória",
+    metaTitle: "Espirometria em Caraguatatuba | Teste de Função Pulmonar",
+    metaDescription: "Espirometria em Caraguatatuba - SP. Teste de função pulmonar para diagnóstico de doenças respiratórias. Agende seu exame.",
     heroDescription: "A espirometria é o exame padrão-ouro para avaliação da função pulmonar. Mede volumes e fluxos de ar nos pulmões, sendo essencial para diagnóstico e acompanhamento de doenças respiratórias como asma e DPOC.",
     whatIs: "A Espirometria (prova de função pulmonar) é um exame que mede a quantidade e a velocidade do ar que entra e sai dos pulmões. Avalia a capacidade pulmonar e detecta obstruções ou restrições nas vias aéreas. É fundamental para diagnóstico de asma, DPOC, fibrose pulmonar e outras doenças respiratórias.",
     howItWorks: "O paciente sopra com força máxima em um bocal conectado ao espirômetro. O aparelho mede o volume de ar expirado e a velocidade do fluxo. São realizadas várias manobras para garantir resultados confiáveis. O exame pode incluir teste com broncodilatador para avaliar a reversibilidade de obstruções.",
@@ -312,12 +319,12 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "eletrocardiograma",
-    title: "ELETROCARDIOGRAMA",
+    title: "Eletrocardiograma (ECG)",
     shortTitle: "Eletrocardiograma",
     subtitle: "ECG - Avaliação Cardíaca",
     description: "Registro da atividade elétrica do coração para diagnóstico cardíaco.",
     metaTitle: "Eletrocardiograma (ECG) em Caraguatatuba | Total Quality",
-    metaDescription: "Eletrocardiograma (ECG) em Caraguatatuba - SP na Total Quality. Avaliação cardíaca rápida e indolor para arritmias e doenças do coração. Agende.",
+    metaDescription: "Eletrocardiograma em Caraguatatuba - SP. Diagnóstico de problemas cardíacos. Exame rápido e não invasivo. Agende.",
     heroDescription: "O Eletrocardiograma (ECG) é um exame rápido, indolor e fundamental para avaliação da saúde do coração. Registra a atividade elétrica cardíaca e permite diagnosticar arritmias, isquemias e outras condições cardíacas.",
     whatIs: "O Eletrocardiograma (ECG) é um exame que registra a atividade elétrica do coração através de eletrodos colocados na pele. Produz um traçado gráfico que mostra o ritmo cardíaco, a frequência dos batimentos e possíveis alterações na condução elétrica do coração. É um dos exames mais realizados na cardiologia.",
     howItWorks: "Eletrodos adesivos são colocados no tórax, braços e pernas do paciente. Esses eletrodos captam os sinais elétricos do coração e os transmitem ao aparelho, que produz um traçado em papel ou digital. O exame é rápido, durando apenas 5 a 10 minutos, e é completamente indolor.",
@@ -348,12 +355,12 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "eletroencefalograma",
-    title: "ELETROENCEFALOGRAMA",
+    title: "Eletroencefalograma (EEG)",
     shortTitle: "Eletroencefalograma",
     subtitle: "EEG - Avaliação Neurológica",
     description: "Registro da atividade elétrica cerebral para diagnóstico neurológico.",
-    metaTitle: "Eletroencefalograma em Caraguatatuba | Total Quality",
-    metaDescription: "Faça eletroencefalograma em Caraguatatuba no Total Quality. O EEG registra a atividade elétrica cerebral e auxilia na avaliação neurológica.",
+    metaTitle: "Eletroencefalograma (EEG) em Caraguatatuba | Total Quality",
+    metaDescription: "Eletroencefalograma em Caraguatatuba - SP. Diagnóstico de problemas neurológicos. Exame não invasivo. Agende seu EEG.",
     heroDescription: "O Eletroencefalograma (EEG) é um exame que registra a atividade elétrica do cérebro, sendo fundamental para diagnóstico de epilepsia, convulsões e outros distúrbios neurológicos. Na Total Quality, realizamos o exame com equipamento digital de alta sensibilidade.",
     whatIs: "O Eletroencefalograma (EEG) é um exame neurofisiológico que registra a atividade elétrica do cérebro através de eletrodos colocados no couro cabeludo. Produz um traçado que mostra padrões de ondas cerebrais, permitindo identificar alterações associadas a epilepsia, distúrbios do sono, encefalopatias e outras condições neurológicas.",
     howItWorks: "Eletrodos são posicionados no couro cabeludo com pasta condutora. O paciente permanece deitado ou sentado confortavelmente enquanto o aparelho registra a atividade elétrica cerebral. Durante o exame, podem ser realizadas estimulações como hiperventilação e fotoestimulação para provocar respostas cerebrais específicas.",
@@ -384,7 +391,7 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "exame-toxicologico",
-    title: "EXAME TOXICOLÓGICO",
+    title: "Exame Toxicológico",
     shortTitle: "Exame Toxicológico",
     subtitle: "Análise Toxicológica",
     description: "Exame toxicológico para detecção de substâncias com janela de 180 dias.",
@@ -421,12 +428,12 @@ export const examesData: ExamData[] = [
   },
 {
     slug: "hemograma",
-    title: "HEMOGRAMA COMPLETO",
+    title: "Hemograma Completo",
     shortTitle: "Hemograma",
     subtitle: "Análises Clínicas",
     description: "O exame de sangue mais solicitado do Brasil, com resultado em curto prazo.",
     metaTitle: "Hemograma Completo em Caraguatatuba | Total Quality",
-    metaDescription: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Resultado em curto prazo.",
+    metaDescription: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Faça na Total Quality, resultado em curto prazo.",
     heroDescription: "O hemograma completo é o exame de sangue mais solicitado na prática médica: avalia glóbulos vermelhos, glóbulos brancos e plaquetas em uma única coleta. Na Total Quality, a coleta leva minutos e o resultado sai em curto prazo, disponível online.",
     whatIs: "O hemograma completo é uma análise quantitativa e qualitativa das células do sangue, dividida em três partes: o eritrograma (glóbulos vermelhos, hemoglobina e hematócrito, usados para investigar anemias), o leucograma (glóbulos brancos, que indicam infecções, inflamações e alterações imunológicas) e a contagem de plaquetas (relacionada à coagulação). É um exame de triagem fundamental em check-ups, no pré-operatório, no pré-natal e na investigação de sintomas como cansaço, febre prolongada e sangramentos.",
     howItWorks: "A coleta é feita por punção venosa no braço e leva poucos minutos. Não é necessário jejum para o hemograma isolado — apenas evite atividade física intensa imediatamente antes. A amostra é processada em analisador hematológico automatizado e revisada pela equipe do laboratório. O resultado fica disponível online em curto prazo; os valores de referência vêm impressos no laudo e devem sempre ser interpretados pelo seu médico, junto ao seu histórico clínico.",
@@ -458,7 +465,7 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "sexagem-fetal",
-    title: "SEXAGEM FETAL",
+    title: "Sexagem Fetal",
     shortTitle: "Sexagem Fetal",
     subtitle: "Exame de Sangue na Gestação",
     description: "Exame de sangue da gestante que identifica o sexo do bebê a partir da 8ª semana de gestação.",
@@ -494,12 +501,12 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "exame-admissional",
-    title: "EXAMES OCUPACIONAIS",
+    title: "Exame Admissional e ASO",
     shortTitle: "Exame Admissional",
     subtitle: "Medicina Ocupacional",
     description: "Admissional, periódico, demissional, mudança de função e ASO para empresas do Litoral Norte.",
-    metaTitle: "Exame Admissional em Caraguatatuba | Total Quality",
-    metaDescription: "Exame admissional, periódico, demissional e ASO em Caraguatatuba. Medicina ocupacional completa para empresas do Litoral Norte, com agilidade.",
+    metaTitle: "Exame Admissional e ASO em Caraguatatuba | Total Quality",
+    metaDescription: "Exame admissional, periódico, demissional e ASO em Caraguatatuba. Medicina ocupacional completa para empresas do Litoral Norte, com agilidade. Agende.",
     heroDescription: "A Total Quality realiza todos os exames de medicina ocupacional exigidos por lei — admissional, periódico, demissional, retorno ao trabalho e mudança de função — com emissão do ASO e exames complementares no mesmo local. Atendemos empresas de Caraguatatuba, Ubatuba, São Sebastião e Ilhabela.",
     whatIs: "Os exames ocupacionais são avaliações médicas obrigatórias previstas na CLT e nas Normas Regulamentadoras (NR-7/PCMSO). O exame admissional é realizado antes da contratação; o periódico acompanha a saúde do trabalhador ao longo do contrato; o demissional encerra o vínculo; e há ainda os exames de retorno ao trabalho e de mudança de riscos ocupacionais. Ao final de cada avaliação é emitido o ASO (Atestado de Saúde Ocupacional).",
     howItWorks: "A empresa ou o candidato agenda pelo WhatsApp ou telefone. A avaliação inclui exame clínico com médico do trabalho e, conforme o risco da função, exames complementares como audiometria, espirometria, acuidade visual, eletrocardiograma, raio-X e exames laboratoriais — todos realizados aqui mesmo, em uma única visita. Para motorista profissional, o exame toxicológico também pode entrar no admissional, com resultado à parte em 5 dias úteis. O ASO é emitido na hora e a documentação atende ao eSocial.",
@@ -528,6 +535,11 @@ export const examesData: ExamData[] = [
     keywords: ["exame admissional", "ASO", "exame ocupacional", "exame demissional", "exame periódico", "medicina do trabalho", "Caraguatatuba"],
   },
 ];
+
+/** H1 da pagina de exame/especialidade: o mesmo no servidor e no navegador. */
+export function examH1(exam: Pick<ExamData, "title">): string {
+  return `${exam.title} em Caraguatatuba`;
+}
 
 export function getExamBySlug(slug: string): ExamData | undefined {
   return examesData.find((e) => e.slug === slug);

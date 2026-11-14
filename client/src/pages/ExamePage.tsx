@@ -3,7 +3,7 @@
  * Theme: White background, dark gray #5A5A5A text
  * Page: Dynamic Exam Page (reusable for all exams)
  */
-import { useEffect, useRef, useMemo, lazy, Suspense } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { trackScheduleExam } from "@/lib/tracking";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 import { ArrowUpRight, ChevronRight, CheckCircle } from "lucide-react";
@@ -11,19 +11,42 @@ import { useParams, useLocation, Link } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
-import { getExamBySlug, examesData } from "@/lib/examesData";
+import { getExamBySlug, examesData, type ExamData } from "@/lib/examesData";
 import { getEspecialidadeBySlug, especialidadesData, ESPECIALIDADES_BASE } from "@/lib/especialidadesData";
-import { blogPosts } from "@/lib/blogData";
+import { blogPosts } from "@/lib/blogPublicados";
 import { blogLinksFor, examesDeSangueLista } from "@/lib/examBlogLinks";
-import { useBreadcrumbSchema, useFAQSchema, useMedicalTestSchema, useCanonical } from "@/components/SEOHead";
+import { useCanonical } from "@/components/SEOHead";
+import OndeFazer from "@/components/OndeFazer";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { CONVENIOS_TEXTO } from "@shared/const";
 const ScrollVideo = lazy(() => import("@/components/ScrollVideo"));
+
+/** Frase do bloco "Onde fazer" por tipo de pagina (texto do antigo pre-render). */
+function mensagemOndeFazer(exam: ExamData): string {
+  // "MAPA" fica em caixa alta; "Raio-X" vira "raio-x"; "Exame Toxicológico" nao
+  // vira "exame de exame toxicológico".
+  const nome = exam.shortTitle
+    .split(" ")
+    .map((p) => (p === p.toUpperCase() ? p : p.toLowerCase()))
+    .join(" ");
+  const exame = nome.startsWith("exame") ? nome : `exame de ${nome}`;
+  if (exam.category === "laboratorio") {
+    return `Faça ${exam.slug === "exames-de-sangue" ? "seus exames de sangue" : `seu ${exame}`} sem agendamento: a coleta é por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Dúvidas de preparo e convênio pelo WhatsApp.`;
+  }
+  if (exam.category === "consulta") {
+    return `Agende a consulta com ${exam.shortTitle.toLowerCase()} pelo WhatsApp ou telefone: dias e horários são confirmados no atendimento. Atendimento particular e pelos convênios ${CONVENIOS_TEXTO}.`;
+  }
+  if (exam.category === "ocupacional") {
+    return "Empresas e trabalhadores agendam pelo WhatsApp ou telefone. PCMSO, exames ocupacionais, ASO e exames complementares no mesmo endereço.";
+  }
+  return `Agende seu ${exame} pelo WhatsApp ou telefone e faça em um só lugar todos os seus exames laboratoriais e de imagem.`;
+}
 
 export default function ExamePage() {
   const openWhatsApp = useWhatsAppRedirect();
   const abrirTelefone = useTelefoneRedirect();
   const params = useParams<{ slug: string }>();
   const [location, navigate] = useLocation();
-  const wrapperRef = useRef<HTMLDivElement>(null);
   // A mesma pagina serve /exames/:slug e /especialidades/:slug (consultas e
   // medicina do trabalho, 24/10/2026): muda a fonte dos dados e os textos.
   const isEspecialidade = location.startsWith(`${ESPECIALIDADES_BASE}/`);
@@ -32,7 +55,8 @@ export default function ExamePage() {
 
   useEffect(() => { window.scrollTo(0, 0); }, [params.slug]);
 
-  // SEO: Dynamic meta tags
+  // SEO: title e description da MESMA fonte que o servidor injeta
+  // (examesData -> routes-metadata.ts); numa navegacao interna ficam certos.
   useEffect(() => {
     if (exam) {
       document.title = exam.metaTitle;
@@ -41,56 +65,37 @@ export default function ExamePage() {
     }
   }, [exam]);
 
-  // SEO: Structured Data — BreadcrumbList
-  const breadcrumbs = useMemo(() => exam ? [
-    { name: "Início", url: "/" },
-    ...(isEspecialidade ? [] : [{ name: "Exames", url: "/exames" }]),
-    { name: exam.shortTitle, url: `${base}/${exam.slug}` },
-  ] : [], [exam, base, isEspecialidade]);
-  useBreadcrumbSchema(breadcrumbs);
-
-  // SEO: Structured Data — FAQPage
-  const faqs = useMemo(() => exam?.faqs || [], [exam]);
-  useFAQSchema(faqs);
-
-  // SEO: Structured Data — MedicalTest
-  useMedicalTestSchema({
-    name: exam?.title || "",
-    description: exam?.metaDescription || "",
-    url: `${base}/${exam?.slug || ""}`,
-    type: isEspecialidade ? "MedicalSpecialty" : "MedicalTest",
-  });
+  // JSON-LD (MedicalWebPage, BreadcrumbList, FAQPage): emitido pelo servidor
+  // no <head>, gerado dos mesmos dados desta pagina (seo-content.ts,
+  // examJsonLd). Os hooks que o repetiam no navegador sairam (Fase 1): eram
+  // um segundo grafo, diferente do do servidor.
 
   // SEO: Canonical URL
   useCanonical(`${base}/${params.slug || ""}`);
 
+  const wrapperRef = useScrollReveal([exam]);
+
   useEffect(() => {
-    const root = wrapperRef.current;
-    if (!root) return;
-    const els = root.querySelectorAll(".reveal, .reveal-left, .reveal-right");
-    const obs = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
-    );
-    els.forEach((el) => obs.observe(el));
-    return () => obs.disconnect();
-  }, [exam]);
+    if (!exam) navigate("/404");
+  }, [exam, navigate]);
 
-  if (!exam) {
-    navigate("/404");
-    return null;
-  }
+  if (!exam) return null;
 
+  // Medicina do trabalho aponta para o exame admissional (uma URL por
+  // intencao: a empresa aqui, quem vai fazer o exame la).
+  const examesDaEspecialidade = exam.category === "ocupacional"
+    ? examesData.filter((e) => e.slug === "exame-admissional" || e.slug === "exames-de-sangue")
+    : examesData.slice(0, 2);
   const otherExams = isEspecialidade
-    ? [...especialidadesData.filter((e) => e.slug !== exam.slug), ...examesData.slice(0, 2)]
+    ? [...especialidadesData.filter((e) => e.slug !== exam.slug), ...examesDaEspecialidade]
     : examesData.filter((e) => e.slug !== exam.slug).slice(0, 4);
   const otherHref = (slug: string) =>
     especialidadesData.some((e) => e.slug === slug) ? `${ESPECIALIDADES_BASE}/${slug}` : `/exames/${slug}`;
   const questionPrefix = exam.category === "consulta"
-    ? "O QUE FAZ O"
+    ? "O que faz o"
     : exam.category === "ocupacional"
-      ? "O QUE É A"
-      : exam.slug === "exames-de-sangue" ? "O QUE SÃO OS" : `O QUE É ${exam.slug === "ultrassonografia" ? "A" : "O"}`;
+      ? "O que é a"
+      : exam.slug === "exames-de-sangue" ? "O que são os" : `O que é ${exam.slug === "ultrassonografia" ? "a" : "o"}`;
 
   return (
     <div ref={wrapperRef} className="min-h-screen bg-white">
@@ -114,16 +119,20 @@ export default function ExamePage() {
               <span className="section-label mb-6 block">{exam.subtitle}</span>
             </div>
 
-            <h1 className="reveal heading-display text-[clamp(2.5rem,8vw,6rem)] leading-[0.85] mb-8" style={{ transitionDelay: "100ms" }}>
-              {exam.title.split(" ").map((word, i) => (
-                <span key={i} className={i === 0 ? "text-text" : "text-brand"}>
-                  {word}{" "}
-                </span>
-              ))}
+            {/* H1 = examH1(exam): "[Nome] em Caraguatatuba", o mesmo texto no
+                servidor e no navegador. Caixa alta so pelo CSS (.heading-display). */}
+            <h1 className="reveal heading-display leading-[0.85] mb-8" style={{ transitionDelay: "100ms" }}>
+              <span className="block text-[clamp(2.5rem,8vw,6rem)]">
+                {exam.title.split(" ").map((word, i) => (
+                  <span key={i} className={i === 0 ? "text-text" : "text-brand"}>
+                    {word}{" "}
+                  </span>
+                ))}
+              </span>
+              <span className="block font-sans text-base lg:text-lg text-text-light font-light tracking-wide mt-4 normal-case leading-normal">
+                em Caraguatatuba
+              </span>
             </h1>
-            <p className="reveal block text-base lg:text-lg text-text-light font-light tracking-wide mt-4 normal-case">
-              {exam.shortTitle} em Caraguatatuba - SP
-            </p>
 
             <p className="reveal text-text-light text-lg lg:text-xl leading-relaxed max-w-3xl mb-10" style={{ transitionDelay: "200ms" }}>
               {exam.heroDescription}
@@ -170,7 +179,7 @@ export default function ExamePage() {
           <div className="grid lg:grid-cols-12 gap-12">
             <div className="lg:col-span-5">
               <h2 className="reveal heading-display text-4xl lg:text-5xl text-text mb-4">
-                {questionPrefix}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}?</span>
+                {questionPrefix}{" "}<span className="text-brand">{exam.shortTitle}?</span>
               </h2>
             </div>
             <div className="lg:col-span-7">
@@ -194,7 +203,7 @@ export default function ExamePage() {
         }>
           <ScrollVideo src={exam.videoUrl} alt={`Vídeo de ${exam.shortTitle} - Total Quality`}>
             <h2 className="heading-display text-3xl xl:text-4xl text-text mb-6">
-              {questionPrefix}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}?</span>
+              {questionPrefix}{" "}<span className="text-brand">{exam.shortTitle}?</span>
             </h2>
             <p className="text-text-light text-base xl:text-lg leading-relaxed mb-6">
               {exam.whatIs}
@@ -213,7 +222,7 @@ export default function ExamePage() {
       <section className="py-16 lg:py-24 bg-surface">
         <div className="container">
           <h2 className="reveal heading-display text-4xl lg:text-5xl text-text mb-12">
-            {isEspecialidade ? <>QUANDO <span className="text-brand">PROCURAR?</span></> : <>QUANDO <span className="text-brand">REALIZAR?</span></>}
+            {isEspecialidade ? <>Quando <span className="text-brand">procurar?</span></> : <>Quando <span className="text-brand">realizar?</span></>}
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {exam.indications.map((indication, i) => (
@@ -236,12 +245,12 @@ export default function ExamePage() {
           <div className="grid lg:grid-cols-12 gap-12">
             <div className="lg:col-span-5">
               <h2 className="reveal heading-display text-4xl lg:text-5xl text-text mb-4">
-                {isEspecialidade ? <>O QUE <span className="text-brand">LEVAR</span></> : <>COMO SE <span className="text-brand">PREPARAR</span></>}
+                {isEspecialidade ? <>O que <span className="text-brand">levar</span></> : <>Como se <span className="text-brand">preparar</span></>}
               </h2>
               <p className="reveal text-text-muted mt-4" style={{ transitionDelay: "100ms" }}>
                 {isEspecialidade
                   ? "Organize os documentos abaixo antes do atendimento."
-                  : "Siga as orientações abaixo para garantir a qualidade do seu exame."}
+                  : "Siga as orientações abaixo antes do seu exame."}
               </p>
             </div>
             <div className="lg:col-span-7 space-y-6">
@@ -277,7 +286,7 @@ export default function ExamePage() {
             {exam.slug === "exames-de-sangue" && (
               <div className="mb-12">
                 <h2 className="heading-display text-3xl lg:text-4xl text-text mb-6">
-                  EXAMES DE SANGUE QUE <span className="text-brand">REALIZAMOS</span>
+                  Exames de sangue que <span className="text-brand">realizamos</span>
                 </h2>
                 <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-2 list-disc pl-5 text-text-light">
                   {examesDeSangueLista(blogPosts).map((item) => (
@@ -297,7 +306,7 @@ export default function ExamePage() {
             {blogLinksFor(exam.slug, blogPosts).length > 0 && (
               <>
                 <h2 className="heading-display text-3xl lg:text-4xl text-text mb-6">
-                  SAIBA MAIS NO <span className="text-brand">NOSSO BLOG</span>
+                  Saiba mais no <span className="text-brand">nosso blog</span>
                 </h2>
                 <ul className="space-y-3">
                   {blogLinksFor(exam.slug, blogPosts).map((post) => (
@@ -314,11 +323,15 @@ export default function ExamePage() {
         </section>
       )}
 
-      {/* FAQ */}
+      {/* Onde fazer: antes so existia no HTML do servidor (Fase 1). */}
+      <OndeFazer mensagem={mensagemOndeFazer(exam)} />
+
+      {/* FAQ — a resposta fica no DOM desde o primeiro render (dentro do
+          <details>), e e o mesmo texto do FAQPage do JSON-LD. */}
       <section className="py-16 lg:py-24 bg-surface">
         <div className="container">
           <h2 className="reveal heading-display text-4xl lg:text-5xl text-text mb-12">
-            PERGUNTAS <span className="text-brand">FREQUENTES</span>
+            Perguntas <span className="text-brand">frequentes</span>
           </h2>
           <div className="max-w-3xl space-y-6">
             {exam.faqs.map((faq, i) => (
@@ -344,7 +357,7 @@ export default function ExamePage() {
       <section className="py-16 lg:py-24">
         <div className="container">
           <h2 className="reveal heading-display text-4xl lg:text-5xl text-text mb-12">
-            {isEspecialidade ? <>OUTROS <span className="text-brand">ATENDIMENTOS</span></> : <>OUTROS <span className="text-brand">EXAMES</span></>}
+            {isEspecialidade ? <>Outros <span className="text-brand">atendimentos</span></> : <>Outros <span className="text-brand">exames</span></>}
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {otherExams.map((other, i) => (
@@ -356,7 +369,7 @@ export default function ExamePage() {
               >
                 <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand">{other.subtitle}</span>
                 <h3 className="heading-display text-xl text-text mt-2 mb-3 group-hover:text-brand transition-colors">
-                  {other.shortTitle.toUpperCase()}
+                  {other.shortTitle}
                 </h3>
                 <p className="text-text-muted text-sm leading-relaxed">{other.description}</p>
                 <span className="inline-flex items-center gap-1 text-brand text-sm font-medium mt-4">
@@ -373,12 +386,12 @@ export default function ExamePage() {
         <div className="container text-center">
           <h2 className="reveal heading-display text-4xl sm:text-5xl lg:text-6xl text-text mb-6">
             {exam.category === "laboratorio" ? (
-              <>FAÇA {exam.slug === "exames-de-sangue" ? "SEUS" : "SEU"}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}</span> SEM AGENDAMENTO</>
+              <>Faça {exam.slug === "exames-de-sangue" ? "seus" : "seu"}{" "}<span className="text-brand">{exam.shortTitle}</span> sem agendamento</>
             ) : (
               isEspecialidade ? (
-                <>AGENDE COM A <span className="text-brand">TOTAL QUALITY</span></>
+                <>Agende com a <span className="text-brand">Total Quality</span></>
               ) : (
-                <>AGENDE {exam.slug === "ultrassonografia" ? "SUA" : "SEU"}{" "}<span className="text-brand">{exam.shortTitle.toUpperCase()}</span></>
+                <>Agende {exam.slug === "ultrassonografia" ? "sua" : "seu"}{" "}<span className="text-brand">{exam.shortTitle}</span></>
               )
             )}
           </h2>

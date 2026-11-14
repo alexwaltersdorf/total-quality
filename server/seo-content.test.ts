@@ -15,6 +15,15 @@ import {
 import { getLegacyRedirect, isGone, LEGACY_REDIRECTS } from "./_core/legacy-redirects";
 import { anosDeAtuacao } from "@shared/const";
 
+// SEO nov/2026, Fase 1 (plano aprovado pelo Alex em 14/11/2026): as rotas de
+// template passaram a ser o HTML do proprio React renderizado no servidor, com
+// atributos (<h1 class="...">). A regra continua a mesma — ha um <h1> —, so
+// deixou de exigir a tag sem atributos.
+const H1 = /<h1[\s>]/;
+const H1_GLOBAL = /<h1[\s>]/g;
+/** Texto visivel do HTML (sem tags, espacos normalizados). */
+const textoDe = (html: string) => html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+
 const PRIORITY_ROUTES = [
   "/",
   "/laboratorio-caraguatatuba",
@@ -32,7 +41,7 @@ describe("getSeoContentForPath", () => {
   it.each(PRIORITY_ROUTES)("gera conteúdo pré-renderizado para %s", (route) => {
     const html = getSeoContentForPath(route);
     expect(html).toBeTruthy();
-    expect(html).toContain("<h1>");
+    expect(html).toMatch(H1);
     expect(html).toContain("Caraguatatuba");
     // NAP: telefone e endereço visíveis no HTML
     expect(html).toContain("(12) 3887-3535");
@@ -43,8 +52,10 @@ describe("getSeoContentForPath", () => {
 
   it("gera FAQ e preparo nas páginas de exame", () => {
     const html = getSeoContentForPath("/exames/exames-de-sangue")!;
-    expect(html).toContain("Perguntas frequentes");
-    expect(html).toContain("Preparo para o exame");
+    // Fase 1 (14/11/2026): o H2 do preparo passou a ser o da pagina React
+    // ("Como se preparar"); a regra — a pagina explica o preparo — e a mesma.
+    expect(textoDe(html)).toContain("Perguntas frequentes");
+    expect(textoDe(html)).toMatch(/Como se preparar|Preparo para o exame/);
     expect(html).toContain("jejum");
   });
 
@@ -122,7 +133,7 @@ describe("GUARD-RAIL: cobertura do sitemap (nao remover)", () => {
   )("rota do sitemap %s entrega conteudo pre-renderizado com H1", (pathname) => {
     const html = getSeoContentForPath(pathname);
     expect(html, `Rota ${pathname} esta no sitemap mas nao tem conteudo pre-renderizado em seo-content.ts`).toBeTruthy();
-    expect(html).toContain("<h1>");
+    expect(html).toMatch(H1);
   });
 
   it("novas paginas do hub e blog estao cobertas", () => {
@@ -1145,7 +1156,7 @@ describe("GUARD-RAIL: paginas de especialidade (24/10/2026)", () => {
 
   it.each(SLUGS)("/especialidades/%s: prerender dentro das regras do CFM e das decisoes do Alex", (slug) => {
     const html = getSeoContentForPath(`/especialidades/${slug}`)!;
-    expect(html.match(/<h1>/g)).toHaveLength(1);
+    expect(html.match(H1_GLOBAL)).toHaveLength(1);
     expect(html).toMatch(/Registro\s*970616/);
     expect(html).toContain("Alex Waltersdorf - 267.339");
     expect(html).not.toMatch(/\bCRM\b/);

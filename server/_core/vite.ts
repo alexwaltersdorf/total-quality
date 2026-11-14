@@ -7,7 +7,7 @@ import { createServer as createViteServer } from "vite";
 import viteConfig from "../../vite.config";
 import { getKnownBlogSlugs, getRouteMetadata, injectMetaTags } from "./routes-metadata";
 import { getKnownAutoSeoSlugs } from "./autoseo-slugs";
-import { getSeoContentForPath, injectSeoContent, resolveHttpStatus } from "./seo-content";
+import { getSeoContentForPath, getSsrPage, injectSeoContent, injectSsrPage, resolveHttpStatus } from "./seo-content";
 
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
@@ -49,9 +49,13 @@ export async function setupVite(app: Express, server: Server) {
         template = injectMetaTags(template, metadata);
       }
 
-      // Injetar conteúdo SEO pré-renderizado dentro do #root
-      const seoContent = getSeoContentForPath(pathname);
-      if (seoContent) {
+      // Rotas de template: o proprio React renderizado no servidor (Fase 1).
+      // As demais: o conteudo SEO pre-renderizado dentro do #root.
+      const ssr = getSsrPage(pathname);
+      const seoContent = ssr ? null : getSeoContentForPath(pathname);
+      if (ssr) {
+        template = injectSsrPage(template, ssr);
+      } else if (seoContent) {
         template = injectSeoContent(template, seoContent);
       }
 
@@ -95,10 +99,17 @@ export function serveStatic(app: Express) {
       html = injectMetaTags(html, metadata);
     }
 
-    // Injetar conteúdo SEO pré-renderizado dentro do #root
-    const seoContent = getSeoContentForPath(pathname);
-    if (seoContent) {
-      html = injectSeoContent(html, seoContent);
+    // Rotas de template: o proprio React renderizado no servidor, que o
+    // navegador hidrata (SEO nov/2026, Fase 1). As demais: o conteudo SEO
+    // pre-renderizado dentro do #root, que o React substitui ao montar.
+    const ssr = getSsrPage(pathname);
+    if (ssr) {
+      html = injectSsrPage(html, ssr);
+    } else {
+      const seoContent = getSeoContentForPath(pathname);
+      if (seoContent) {
+        html = injectSeoContent(html, seoContent);
+      }
     }
 
     // Rotas inexistentes devolvem 404 real (corrige soft-404)

@@ -1,0 +1,26 @@
+# Histórico de atualizações do site
+
+Registro permanente, em ordem cronológica inversa, de **por que** cada mudança
+foi feita e **o que olhar** depois. Não substitui o git. Atualizado no mesmo PR
+de cada mudança — o PR não fecha sem a linha (proposta do plano de SEO de
+nov/2026, `docs/seo-plano.md` §14).
+
+| Data | Mudança | Motivo / dado que motivou | PR | Métrica a acompanhar (e quando) |
+|---|---|---|---|---|
+| 14/11/2026 | **SEO Fase 1 — fonte única de conteúdo.** As rotas de template (`/exames/*`, `/especialidades/*`, `/laboratorio-caraguatatuba`, `/checkup`, `/bioimpedancia`) passam a ser o HTML do próprio React renderizado no servidor e hidratado no navegador (`hydrateRoot`), em vez de um HTML escrito à mão que o React apagava. H1 "[Nome] em Caraguatatuba" (caixa alta só no CSS), H2/H3, FAQ e links iguais no servidor e no navegador; title/description de uma fonte só (`examesData`/`shared/const.ts`); bloco "Onde fazer em Caraguatatuba" visível; FAQ visível no `/checkup`, no `/laboratorio-caraguatatuba` e na home (o FAQPage da home agora corresponde a um FAQ na página); JSON-LD da rota no `<head>`; folha de estilo bloqueante nessas rotas; `.reveal` não esconde conteúdo sem JavaScript. Textos: "resultados em até 48 horas úteis" → "em curto prazo" (`/checkup`); superlativos e recomendações médicas divergentes da bioimpedância trocados pelo texto do pré-render | Plano aprovado em 14/11/2026: H1, H2, ordem, description e FAQ divergiam entre o que o Google lia e o que o paciente via; a troca do bloco pré-renderizado pelo React causava CLS (desktop 0,254 no PageSpeed) | #105 | CLS desktop de laboratório < 0,1 no PageSpeed (Alex, após o deploy); `scripts/paridade-ssr.mjs` contra produção; impressões/CTR das páginas de exame no GSC em 28 dias; Rich Results (FAQ, Breadcrumb) no Search Console |
+| 14/11/2026 | Merge do PR #68 no branch de SEO: og:image da home no domínio próprio (`fachada-1024.webp`) e fallback métrico das fontes | og:image da home vinha do CloudFront; fontes sem fallback métrico deslocavam o texto ao carregar (CLS) | #68 (via #105) | Prévia de compartilhamento da home (WhatsApp/Facebook Debugger); CLS no PageSpeed após o deploy |
+| 14/11/2026 | Blog: rascunhos de tipo sanguíneo, ferritina e espirometria (ids 51–53), vindos da Airticles | Airticles passa a só escrever; artigo entra no `/blog` como rascunho para revisão (substitui #100 e #103) | #104 | Publicação após revisão; impressões dos 3 temas no GSC em 28 dias |
+| 14/11/2026 | Lead gravado no Google Sheets mesmo com o banco fora do ar | Leads se perdiam depois da migração quando o banco falhava | #102 | Leads no Sheets × `lead_qualificado` no GA4, semanal |
+| 14/11/2026 | Mamografia sai do site; `/exames/mamografia` → 301 para `/exames/ultrassonografia` | Decisão do Alex (31/10): a clínica não realiza mamografia — anunciar serviço não prestado viola CFM e as regras do Google | #99 | Impressões/cliques de `/exames/ultrassonografia`; queries "mamografia" no GSC |
+| 14/11/2026 | Blog: matéria do aplicativo Total Quality Health (rascunho) | Respostas do Alex sobre o aplicativo; `/cartao` sem o check-up gratuito para os 100 primeiros | #95 | — (rascunho) |
+| 14/11/2026 | Blog: padrão editorial do orquestrador (referências, citation, Twitter, datas, breadcrumb) | Padronizar E-E-A-T e dados do artigo | #93 | CTR médio do blog no GSC |
+| 29/10/2026 | Meta: lead como evento próprio (`lead_qualificado`); `faq_index` limpo após `faq_open` | Meta restringia o evento `Lead` padrão; parâmetro grudava nos eventos seguintes do GA4 | #98 | Eventos no Events Manager e GA4 |
+| 29/10/2026 | Regra do pixel para futuras atualizações, com trava nos artigos do blog | Link de WhatsApp no corpo do artigo pulava formulário e evento | #97 | Guard-rail `rastreamento-100.test.ts` |
+| 28/10/2026 | Rastreamento: visitante que volta, lead do contato e ids de clique na planilha | Consentimento salvo entrava no `default` e o visitante que voltava não era medido (perícia de 28/10) | #96 | Sessões de retorno no GA4; gclid preenchido na planilha |
+| 24/10/2026 | Lead: valor da sexagem fetal (R$ 250, interno — não publicado) | Valor do lead por tipo para o Ads | #92 | Valor de conversão no Ads |
+| 24/10/2026 | Página de sexagem fetal (`/exames/sexagem-fetal`) | Demanda de busca sem página própria | #91 | Impressões/posição da página (hoje 65–123 impr./28d) |
+| 24/10/2026 | Páginas de especialidade: endocrinologista, gastroenterologista, medicina do trabalho | Pedido do Alex; consultas sem página | #90 | Impressões e eventos por página (gastro 434 impr., endócrino 425, medicina do trabalho 357 em 28d) |
+| 24/10/2026 | Schema: bloco MedicalClinic do Alex fundido no `#medicalbusiness` | Duas entidades de negócio com `@id` diferentes | #89 | Rich Results / Search Console > Melhorias |
+| 23/10/2026 | Indexação: 10 URLs 404 com histórico viram 301; `/faq` vira 410 | Auditoria do Search Console (404 com impressões) | #88 | Relatório de páginas do GSC (404/soft 404) |
+| 22/10/2026 | Blog: publica "Siglas de exames laboratoriais" | Aprovado pelo Alex | #86 | Impressões do artigo |
+| 22/10/2026 | Blog: 5 artigos para exames prioritários + rodapé no modelo de fechamento; uma URL por intenção | Canibalização entre artigos e páginas de serviço (GSC de 21/10) | #85, #84 | Posição de "ultrassonografia caraguatatuba" e das páginas de serviço |

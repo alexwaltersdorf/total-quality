@@ -57,7 +57,10 @@ describe("GUARD-RAIL: sinais de interesse medidos", () => {
     const hook = source("client/src/hooks/useInteractionTracking.ts");
     expect(hook).toContain("trackFaqOpen");
     expect(hook).toContain("trackDirectionsClick");
-    expect(source("client/src/App.tsx")).toMatch(/useInteractionTracking\(\)/);
+    // SEO nov/2026, Fase 1 (14/11/2026): a arvore do App (providers, rotas e
+    // estes hooks) foi para AppShell.tsx, compartilhada com o servidor. Segue
+    // montado uma vez so, no topo do App.
+    expect(source("client/src/AppShell.tsx")).toMatch(/useInteractionTracking\(\)/);
   });
 });
 

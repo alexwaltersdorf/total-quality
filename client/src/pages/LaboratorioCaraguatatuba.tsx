@@ -16,6 +16,9 @@ import { ANALISES_TITLE, ANALISES_H1, ANALISES_DESCRIPTION } from "@shared/const
 import { trackScheduleExam } from "@/lib/tracking";
 import { BAIRROS_TITULO, BAIRROS_INTRO, BAIRROS_GRUPOS, BAIRROS_PARAGRAFOS } from "@/lib/bairrosAtendidos";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import { LAB_FAQS, labDiferenciais } from "@/lib/paginasServico";
+import OndeFazer from "@/components/OndeFazer";
+import { ChevronRight } from "lucide-react";
 
 
 /*
@@ -48,6 +51,8 @@ const examesLaboratoriais: ExamLink[] = [
   { name: "Sexagem fetal", href: "/exames/sexagem-fetal" },
   { name: "Exame toxicológico", href: "/exames/exame-toxicologico" },
   { name: "Sorologias" },
+  // Estava no pre-render e faltava aqui (SEO nov/2026, Fase 1).
+  { name: "Exames ocupacionais e ASO", href: "/exames/exame-admissional" },
   { name: "Parasitológico de fezes" },
 ];
 
@@ -88,21 +93,9 @@ export default function LaboratorioCaraguatatuba() {
   useCanonical("https://totalquality.med.br/laboratorio-caraguatatuba");
   useMetaDescription(ANALISES_DESCRIPTION);
 
-  // Inject BreadcrumbList schema
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.type = "application/ld+json";
-    script.textContent = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://totalquality.med.br/" },
-        { "@type": "ListItem", "position": 2, "name": "Análises clínicas", "item": "https://totalquality.med.br/laboratorio-caraguatatuba" },
-      ],
-    });
-    document.head.appendChild(script);
-    return () => { document.head.removeChild(script); };
-  }, []);
+  // BreadcrumbList, MedicalWebPage e FAQPage: emitidos pelo servidor no <head>
+  // a partir dos mesmos dados (seo-content.ts). O script que este efeito
+  // injetava repetia o breadcrumb (SEO nov/2026, Fase 1).
 
   const handleScheduleClick = () => {
     trackScheduleExam("lab_caraguatatuba_cta", "geral");
@@ -181,7 +174,7 @@ export default function LaboratorioCaraguatatuba() {
         <section className="py-16 lg:py-24 bg-neutral-50">
           <div className="container">
             <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-4">
-              EXAMES LABORATORIAIS EM <span className="text-brand">CARAGUATATUBA</span>
+              Exames laboratoriais em <span className="text-brand">Caraguatatuba</span>
             </h2>
             <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
               Nosso laboratório em Caraguatatuba realiza mais de 3.000 tipos de exames laboratoriais com
@@ -237,7 +230,7 @@ export default function LaboratorioCaraguatatuba() {
         <section className="py-16 lg:py-24">
           <div className="container">
             <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-4">
-              DIAGNÓSTICO POR IMAGEM EM <span className="text-brand">CARAGUATATUBA</span>
+              Diagnóstico por imagem em <span className="text-brand">Caraguatatuba</span>
             </h2>
             <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
               Além das análises clínicas, a Total Quality realiza exames de imagem e cardiológicos no mesmo
@@ -280,7 +273,7 @@ export default function LaboratorioCaraguatatuba() {
         <section className="py-16 lg:py-24 bg-neutral-50">
           <div className="container">
             <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-8">
-              COMO CHEGAR À <span className="text-brand">TOTAL QUALITY</span>
+              Como chegar à <span className="text-brand">Total Quality</span>
             </h2>
 
             <div className="grid lg:grid-cols-12 gap-8">
@@ -366,7 +359,7 @@ export default function LaboratorioCaraguatatuba() {
         <section className="py-16 lg:py-24">
           <div className="container">
             <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-4">
-              CONVÊNIOS <span className="text-brand">ACEITOS</span>
+              Convênios <span className="text-brand">aceitos</span>
             </h2>
             <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
               O laboratório Total Quality em Caraguatatuba atende Cartão de Todos, Solumedi e Leader. Veja a{" "}
@@ -402,12 +395,12 @@ export default function LaboratorioCaraguatatuba() {
         <section className="py-16 lg:py-24 bg-neutral-50">
           <div className="container">
             <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-8">
-              HORÁRIOS DE <span className="text-brand">ATENDIMENTO</span>
+              Horários de <span className="text-brand">atendimento</span>
             </h2>
 
             <div className="grid md:grid-cols-2 gap-8 max-w-2xl">
               <div className="reveal bg-white rounded-2xl p-8 border border-black/5">
-                <h3 className="heading-display text-xl text-text mb-4">COLETA LABORATORIAL</h3>
+                <h3 className="heading-display text-xl text-text mb-4">Coleta laboratorial</h3>
                 <div className="space-y-2 text-text-light">
                   <p>Segunda a Sexta: <strong className="text-text">07h30 às 18h</strong></p>
                   <p>Sábado e Domingo: <strong className="text-text">fechado</strong></p>
@@ -416,7 +409,7 @@ export default function LaboratorioCaraguatatuba() {
                 </div>
               </div>
               <div className="reveal bg-white rounded-2xl p-8 border border-black/5">
-                <h3 className="heading-display text-xl text-text mb-4">EXAMES DE IMAGEM</h3>
+                <h3 className="heading-display text-xl text-text mb-4">Exames de imagem</h3>
                 <div className="space-y-2 text-text-light">
                   <p>Segunda a Sexta: <strong className="text-text">07h30 às 18h</strong></p>
                   <p className="text-sm italic">Agendamento prévio necessário</p>
@@ -426,11 +419,50 @@ export default function LaboratorioCaraguatatuba() {
           </div>
         </section>
 
+        {/* Por que escolher + FAQ + Onde fazer: existiam so no HTML do
+            servidor; agora sao a pagina (SEO nov/2026, Fase 1). */}
+        <section className="py-16 lg:py-24">
+          <div className="container max-w-3xl">
+            <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-6">
+              Por que escolher a <span className="text-brand">Total Quality</span>
+            </h2>
+            <ul className="space-y-3">
+              {labDiferenciais().map((item) => (
+                <li key={item} className="flex items-start gap-3 text-text-light">
+                  <CheckCircle className="w-5 h-5 text-brand shrink-0 mt-0.5" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section className="py-16 lg:py-24 bg-neutral-50">
+          <div className="container max-w-3xl">
+            <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-8">
+              Perguntas <span className="text-brand">frequentes</span>
+            </h2>
+            <div className="space-y-4">
+              {LAB_FAQS.map((faq) => (
+                <details key={faq.q} className="group bg-white rounded-xl border border-black/5 overflow-hidden">
+                  <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+                    <span className="font-semibold text-text pr-4">{faq.q}</span>
+                    <ChevronRight className="w-5 h-5 text-text-muted shrink-0 transition-transform group-open:rotate-90" />
+                  </summary>
+                  <div className="px-6 pb-6 text-text-light leading-relaxed">{faq.a}</div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <OndeFazer mensagem="Venha fazer seus exames laboratoriais no Centro de Caraguatatuba, a poucos minutos da Praça Cândido Mota." />
+
         {/* CTA Final */}
         <section className="py-16 lg:py-24 bg-brand text-white">
           <div className="container text-center">
             <h2 className="reveal heading-display text-3xl lg:text-4xl mb-6">
-              FAÇA SEUS EXAMES LABORATORIAIS SEM AGENDAMENTO
+              Faça seus exames laboratoriais sem agendamento
             </h2>
             <p className="reveal text-white/80 text-lg max-w-2xl mx-auto mb-10">
               A coleta é por ordem de chegada, de segunda a sexta, das 07h30 às 18h — basta trazer

@@ -12,10 +12,13 @@ import {
   ANALISES_DESCRIPTION,
   CHECKUP_TITLE,
   CHECKUP_DESCRIPTION,
+  BIOIMPEDANCIA_TITLE,
+  BIOIMPEDANCIA_DESCRIPTION,
 } from "@shared/const";
 import blogIndex from "../../client/src/content/blog/index.json";
 import { blogDateIso, blogModifiedIso, isPublished, type BlogPostMeta } from "../../client/src/lib/blogMeta";
 import { especialidadesData, ESPECIALIDADES_BASE } from "../../client/src/lib/especialidadesData";
+import { examesData } from "../../client/src/lib/examesData";
 
 export interface RouteMetadata {
   title: string;
@@ -40,8 +43,16 @@ export interface RouteMetadata {
   ogImageAlt?: string;
 }
 
-// Dados dos exames para reutilização
-const examesMetadata: Record<string, RouteMetadata> = {
+/*
+ * Paginas de exame. Title e description NAO moram aqui: vem de
+ * client/src/lib/examesData.ts, a mesma fonte que o React usa no
+ * document.title (SEO nov/2026, Fase 1 — antes havia duas versoes e o React
+ * reescrevia a do servidor depois de montar). Aqui ficam so os extras de
+ * compartilhamento e sitemap. Os textos que estavam aqui foram levados para o
+ * examesData (eram os que o Google indexava).
+ */
+type ExtrasExame = Omit<RouteMetadata, "title" | "description" | "canonical">;
+const examesExtras: Record<string, ExtrasExame & { title?: string; description?: string; canonical?: string }> = {
   "exames-de-sangue": {
     title: "Exames de Sangue em Caraguatatuba | Total Quality",
     description: "Exames de sangue em Caraguatatuba na Total Quality. Coleta por ordem de chegada, sem agendamento. Consulte preparo, prazos, convênios e orçamento pelo WhatsApp.",
@@ -190,6 +201,24 @@ const examesMetadata: Record<string, RouteMetadata> = {
   // "mamografia" saiu em 31/10/2026 (fora do sitemap): a clinica nao realiza
   // no momento. A URL faz 301 para /exames/ultrassonografia.
 };
+
+const examesMetadata: Record<string, RouteMetadata> = Object.fromEntries(
+  examesData.map((e) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { title: _t, description: _d, canonical: _c, ...extras } = examesExtras[e.slug] ?? {};
+    return [
+      e.slug,
+      {
+        priority: 0.8,
+        changefreq: "monthly",
+        ...extras,
+        title: e.metaTitle,
+        description: e.metaDescription,
+        canonical: `https://totalquality.med.br/exames/${e.slug}`,
+      } satisfies RouteMetadata,
+    ];
+  })
+);
 
 // Paginas de especialidade (/especialidades/:slug), 24/10/2026. Title e
 // description sao os mesmos do client/src/lib/especialidadesData.ts.
@@ -394,8 +423,8 @@ const staticRoutes: Record<string, RouteMetadata> = {
   },
 
   "/bioimpedancia": {
-    title: "Bioimpedância em Caraguatatuba | Total Quality",
-    description: "Bioimpedância em Caraguatatuba - SP. Análise de composição corporal (gordura, músculo, água). Agende seu exame.",
+    title: BIOIMPEDANCIA_TITLE,
+    description: BIOIMPEDANCIA_DESCRIPTION,
     keywords: "bioimpedância, composição corporal, gordura corporal, análise de corpo, Caraguatatuba",
     ogTitle: "Bioimpedância | Total Quality",
     ogDescription: "Análise de composição corporal com tecnologia de bioimpedância.",

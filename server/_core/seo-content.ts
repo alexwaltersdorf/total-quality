@@ -15,7 +15,9 @@ import nodePath from "node:path";
  * React em /exames/:slug), evitando duplicação de copy.
  */
 
-import { examesData, type ExamData } from "../../client/src/lib/examesData";
+import { examesData, examH1, type ExamData } from "../../client/src/lib/examesData";
+import { renderSsrPage, isSsrPath } from "../../client/src/entry-server";
+import { LAB_FAQS, CHECKUP_FAQS, BIO_FAQS, HOME_FAQS } from "../../client/src/lib/paginasServico";
 import { especialidadesData, ESPECIALIDADES_BASE } from "../../client/src/lib/especialidadesData";
 import { linkifyText } from "../../client/src/lib/internalLinkTargets";
 import { blogLinksFor, examesDeSangueLista } from "../../client/src/lib/examBlogLinks";
@@ -50,6 +52,10 @@ import {
   ANALISES_H1,
   ANALISES_TITLE,
   ANALISES_DESCRIPTION,
+  CHECKUP_TITLE,
+  CHECKUP_DESCRIPTION,
+  BIOIMPEDANCIA_TITLE,
+  BIOIMPEDANCIA_DESCRIPTION,
   CONVENIOS_TEXTO,
   whatsappUrl,
   BLOG_EXTERNO_URL,
@@ -267,187 +273,172 @@ const SCHEMA_SPECIALTY: Record<string, string> = {
   gastroenterologista: "https://schema.org/Gastroenterologic",
 };
 
-function renderExamHtml(exam: ExamData, base = "/exames"): string {
-  const h1 = exam.metaTitle.split("|")[0].trim();
+/**
+ * JSON-LD da pagina de exame/especialidade (MedicalWebPage sobre um
+ * MedicalTest/MedicalSpecialty, ancorado no #medicalbusiness do index.html,
+ * mais o breadcrumb e o FAQPage). O FAQPage sai de exam.faqs — a MESMA lista
+ * que a pagina renderiza dentro dos <details>.
+ */
+function examJsonLd(exam: ExamData, base = "/exames"): object[] {
   const canonical = `${SITE}${base}/${exam.slug}`;
   const isEspecialidade = base === ESPECIALIDADES_BASE;
-  const indications = exam.indications
-    .map((item) => `<li>${escapeHtml(item)}</li>`)
-    .join("");
-  const preparations = exam.preparations
-    .map((prep) => `<li>${escapeHtml(prep.text)}</li>`)
-    .join("");
-
-  // Schema proprio da pagina de exame: MedicalWebPage sobre um MedicalTest,
-  // ancorado na mesma entidade canonica do index.html (#medicalbusiness) para
-  // nao criar entidade duplicada, mais o breadcrumb ate o hub /exames.
-  const pageLd = {
-    "@context": "https://schema.org",
-    "@type": "MedicalWebPage",
-    "@id": `${canonical}#webpage`,
-    url: canonical,
-    name: exam.metaTitle,
-    description: exam.metaDescription,
-    about: {
-      "@type": isEspecialidade ? "MedicalSpecialty" : "MedicalTest",
-      name: exam.shortTitle,
-      description: exam.whatIs,
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "MedicalWebPage",
+      "@id": `${canonical}#webpage`,
+      url: canonical,
+      name: exam.metaTitle,
+      headline: examH1(exam),
+      description: exam.metaDescription,
+      about: {
+        "@type": isEspecialidade ? "MedicalSpecialty" : "MedicalTest",
+        name: exam.shortTitle,
+        description: exam.whatIs,
+      },
+      ...(SCHEMA_SPECIALTY[exam.slug] && { specialty: SCHEMA_SPECIALTY[exam.slug] }),
+      provider: { "@id": BUSINESS_ID },
     },
-    ...(SCHEMA_SPECIALTY[exam.slug] && { specialty: SCHEMA_SPECIALTY[exam.slug] }),
-    provider: { "@id": BUSINESS_ID },
-  };
-  const cta =
-    exam.category === "laboratorio"
-      ? `Faça ${exam.slug === "exames-de-sangue" ? "seus exames de sangue" : `seu exame de ${exam.shortTitle.toLowerCase()}`} sem agendamento: a coleta é por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Dúvidas de preparo e convênio pelo WhatsApp.`
-      : exam.category === "consulta"
-        ? `Agende a consulta com ${exam.shortTitle.toLowerCase()} pelo WhatsApp ou telefone: dias e horários são confirmados no atendimento. Atendimento particular e pelos convênios ${CONVENIOS_TEXTO}.`
-        : exam.category === "ocupacional"
-          ? "Empresas e trabalhadores agendam pelo WhatsApp ou telefone. PCMSO, exames ocupacionais, ASO e exames complementares no mesmo endereço."
-          : `Agende seu exame de ${exam.shortTitle.toLowerCase()} pelo WhatsApp ou telefone e faça em um só lugar todos os seus exames laboratoriais e de imagem.`;
-
-  return `
-    <h1>${escapeHtml(h1)}</h1>
-    <p>${escapeHtml(exam.heroDescription)}</p>
-    <h2>${exam.category === "consulta" ? `O que faz o ${exam.shortTitle.toLowerCase()}` : "O que é"}</h2>
-    <p>${escapeHtml(exam.whatIs)}</p>
-    <h2>${exam.category === "consulta" ? "Como é a consulta" : "Como funciona"}</h2>
-    <p>${escapeHtml(exam.howItWorks)}</p>
-    <h2>${isEspecialidade ? "Quando procurar" : "Indicações"}</h2>
-    <ul>${indications}</ul>
-    <h2>${isEspecialidade ? "O que levar" : "Preparo para o exame"}</h2>
-    <ul>${preparations}</ul>
-    ${examBlogSectionHtml(exam.slug)}
-    ${faqSectionHtml(exam.faqs)}
-    ${napHtml(cta)}
-    ${internalLinksHtml(`${base}/${exam.slug}`)}
-    ${jsonLd([
-      pageLd,
-      breadcrumbLd([
-        ["Início", "/"],
-        ...(isEspecialidade ? [] : ([["Exames", "/exames"]] as Array<[string, string]>)),
-        [exam.shortTitle, `${base}/${exam.slug}`],
-      ]),
-    ])}`;
+    breadcrumbLd([
+      ["Início", "/"],
+      ...(isEspecialidade ? [] : ([["Exames", "/exames"]] as Array<[string, string]>)),
+      [exam.shortTitle, `${base}/${exam.slug}`],
+    ]),
+    faqPageLd(exam.faqs),
+  ];
 }
 
-const laboratorioHtml = `
-    <h1>${ANALISES_H1}</h1>
-    <p>A Total Quality é um <a href="/">laboratório em Caraguatatuba</a> que reúne análises clínicas e medicina diagnóstica no Centro da cidade, com mais de ${anosDeAtuacao()} anos de atuação no Litoral Norte. Realizamos mais de 3.000 tipos de exames laboratoriais e de imagem em um só lugar, com equipamentos automatizados, equipe especializada e resultados disponíveis online.</p>
-    <h2>Exames laboratoriais realizados</h2>
-    <ul>
-      <li><a href="/exames/hemograma">Hemograma completo</a> e <a href="/exames/exames-de-sangue">exames de sangue</a> em geral</li>
-      <li>Glicemia, hemoglobina glicada e curva glicêmica</li>
-      <li>Colesterol total e frações, triglicerídeos (perfil lipídico)</li>
-      <li>Hormônios: TSH, T4 livre, testosterona, estradiol e outros</li>
-      <li><a href="/blog/vitamina-d-importancia-saude">Vitamina D</a>, vitamina B12 e ferritina</li>
-      <li>PSA e marcadores tumorais</li>
-      <li>Exames de urina e fezes</li>
-      <li><a href="/exames/sexagem-fetal">Sexagem fetal</a> (exame de sangue que identifica o sexo do bebê)</li>
-      <li>Sorologias e <a href="/exames/exame-toxicologico">exames toxicológicos</a></li>
-      <li><a href="/exames/exame-admissional">Exames ocupacionais</a> (admissional, periódico, demissional e ASO)</li>
-    </ul>
-    <h2>Exames de imagem e cardiológicos</h2>
-    <ul>
-      <li><a href="/exames/tomografia-computadorizada">Tomografia computadorizada multislice</a></li>
-      <li><a href="/exames/ultrassonografia">Ultrassonografia geral e com Doppler</a></li>
-      <li><a href="/exames/raio-x">Raio-X digital</a></li>
-      <li><a href="/exames/eletrocardiograma">Eletrocardiograma</a>, <a href="/exames/holter">Holter 24h</a> e <a href="/exames/mapa">MAPA 24h</a></li>
-      <li><a href="/exames/eletroencefalograma">Eletroencefalograma</a></li>
-      <li><a href="/exames/espirometria">Espirometria</a> e <a href="/bioimpedancia">bioimpedância</a></li>
-    </ul>
-    <h2>Por que escolher a Total Quality</h2>
-    <ul>
-      <li>Mais de ${anosDeAtuacao()} anos de experiência em Caraguatatuba</li>
-      <li>Mais de 400 avaliações no Google</li>
-      <li>Coleta rápida, ambiente confortável e estacionamento no Centro</li>
-      <li>Resultados online em curto prazo para a maioria dos exames</li>
-      <li>Atendimento particular, convênios e empresas de Caraguatatuba, Ubatuba, São Sebastião e Ilhabela</li>
-    </ul>
-    <h2>${BAIRROS_TITULO}</h2>
-    <p>${BAIRROS_INTRO}</p>
-    <ul>${BAIRROS_GRUPOS.map((g) => `<li><strong>${g.titulo}:</strong> ${g.bairros}</li>`).join("")}</ul>
-    ${BAIRROS_PARAGRAFOS.map((t) => `<p>${t}</p>`).join("\n    ")}
-    <h2>Perguntas frequentes</h2>
-    <h3>Preciso agendar para fazer exames de sangue?</h3>
-    <p>Para a maioria dos exames laboratoriais não é necessário agendamento: basta comparecer com o pedido médico e documento com foto. Veja as <a href="/blog/alimentacao-e-exames-laboratoriais">orientações de preparo e jejum</a> antes de vir. Exames de imagem e procedimentos especiais podem ser agendados pelo WhatsApp.</p>
-    <h3>Quais convênios são aceitos?</h3>
-    <p>Atendemos ${CONVENIOS_TEXTO}. Fora deles, o atendimento é particular, com tabela própria. Veja os <a href="/convenios">convênios aceitos</a> ou tire dúvidas pelo WhatsApp (12) 3887-3535.</p>
-    <h3>Em quanto tempo sai o resultado?</h3>
-    <p>A maioria dos exames de sangue tem resultado em curto prazo, disponível online. Exames específicos podem levar até 7 dias úteis.</p>
-    <h3>Vocês fazem coleta domiciliar?</h3>
-    <p>Sim. Realizamos coleta domiciliar de <a href="/exames/exames-de-sangue">exames laboratoriais</a> em Caraguatatuba. Agende pelo WhatsApp (12) 3887-3535 para confirmar disponibilidade, horários e valores.</p>
-    ${napHtml("Venha fazer seus exames laboratoriais no Centro de Caraguatatuba, a poucos minutos da Praça Cândido Mota.")}
-    ${internalLinksHtml("/laboratorio-caraguatatuba")}
-    ${jsonLd([
-      {
-        "@context": "https://schema.org",
-        "@type": "MedicalWebPage",
-        "@id": `${SITE}/laboratorio-caraguatatuba#webpage`,
-        url: `${SITE}/laboratorio-caraguatatuba`,
-        name: ANALISES_TITLE,
-        description: ANALISES_DESCRIPTION,
-        about: { "@id": BUSINESS_ID },
-        provider: { "@id": BUSINESS_ID },
-      },
-      faqPageLd([
-        {
-          q: "Preciso agendar para fazer exames de sangue?",
-          a: "Para a maioria dos exames laboratoriais não é necessário agendamento: basta comparecer com o pedido médico e documento com foto, de segunda a sexta das 7h30 às 18h. Exames de imagem e procedimentos especiais podem ser agendados pelo WhatsApp (12) 3887-3535.",
-        },
-        {
-          q: "Quais convênios são aceitos?",
-          a: `Atendemos ${CONVENIOS_TEXTO}. Fora deles, o atendimento é particular, com tabela própria. Tire dúvidas pelo WhatsApp (12) 3887-3535.`,
-        },
-        {
-          q: "Em quanto tempo sai o resultado?",
-          a: "A maioria dos exames de sangue tem resultado em curto prazo, disponível online. Exames específicos podem levar até 7 dias úteis.",
-        },
-        {
-          q: "Vocês fazem coleta domiciliar?",
-          a: "Sim. Realizamos coleta domiciliar de exames laboratoriais em Caraguatatuba. Agende pelo WhatsApp (12) 3887-3535 para confirmar disponibilidade, horários e valores.",
-        },
-      ]),
-      breadcrumbLd([
-        ["Início", "/"],
-        ["Análises clínicas", "/laboratorio-caraguatatuba"],
-      ]),
-    ])}`;
+/*
+ * /laboratorio-caraguatatuba, /bioimpedancia, /checkup e as paginas de exame e
+ * especialidade nao tem mais HTML escrito a mao aqui: o servidor renderiza o
+ * proprio componente React (client/src/entry-server.tsx) e o navegador o
+ * hidrata. Aqui ficou so o JSON-LD de cada uma, gerado dos mesmos dados.
+ */
+function laboratorioJsonLd(): object[] {
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "MedicalWebPage",
+      "@id": `${SITE}/laboratorio-caraguatatuba#webpage`,
+      url: `${SITE}/laboratorio-caraguatatuba`,
+      name: ANALISES_TITLE,
+      description: ANALISES_DESCRIPTION,
+      about: { "@id": BUSINESS_ID },
+      provider: { "@id": BUSINESS_ID },
+    },
+    faqPageLd(LAB_FAQS),
+    breadcrumbLd([
+      ["Início", "/"],
+      ["Análises clínicas", "/laboratorio-caraguatatuba"],
+    ]),
+  ];
+}
 
-const bioimpedanciaHtml = `
-    <h1>Bioimpedância em Caraguatatuba</h1>
-    <p>A bioimpedância é um exame rápido e não invasivo que analisa a composição corporal: percentual de gordura, massa muscular, água corporal e taxa metabólica. Na Total Quality, o exame é realizado com equipamento profissional e laudo completo para acompanhamento nutricional, esportivo e clínico.</p>
-    <h2>O que o exame avalia</h2>
-    <ul>
-      <li>Percentual de gordura corporal e gordura visceral</li>
-      <li>Massa muscular esquelética</li>
-      <li>Água corporal total</li>
-      <li>Taxa metabólica basal</li>
-      <li>Idade metabólica</li>
-    </ul>
-    <h2>Preparo para o exame</h2>
-    <ul>
-      <li>Jejum de 4 horas antes do exame</li>
-      <li>Não praticar exercícios físicos intensos nas 12 horas anteriores</li>
-      <li>Evitar álcool e cafeína nas 24 horas anteriores</li>
-      <li>Estar bem hidratado no dia anterior</li>
-    </ul>
-    <h2>Perguntas frequentes</h2>
-    <h3>Quanto tempo dura o exame de bioimpedância?</h3>
-    <p>O exame dura poucos minutos e o resultado sai na hora, com laudo detalhado da composição corporal.</p>
-    <h3>Preciso de pedido médico?</h3>
-    <p>Não é obrigatório: a bioimpedância pode ser feita por indicação médica, nutricional ou por interesse próprio no acompanhamento da saúde.</p>
-    <h3>Quem não deve fazer o exame?</h3>
-    <p>A bioimpedância funciona com a passagem de uma corrente elétrica de baixa intensidade pelo corpo. Por isso, não é indicada para pessoas com marca-passo, desfibrilador implantável ou outros dispositivos eletrônicos internos. Gestantes devem consultar o médico antes de realizar o exame. Informe a nossa equipe no agendamento se algum desses casos se aplica a você.</p>
-    <h3>Qual a diferença entre bioimpedância e IMC?</h3>
-    <p>O IMC relaciona apenas peso e altura, sem distinguir do que o peso é feito. A bioimpedância separa esse total em gordura, massa muscular e água, o que permite acompanhar mudanças na composição corporal mesmo quando o peso na balança não muda.</p>
-    <h3>De quanto em quanto tempo posso repetir?</h3>
-    <p>O intervalo depende do objetivo do acompanhamento e de quem o conduz. Em geral, repetições muito próximas mostram variações pouco significativas, já que a composição corporal muda de forma gradual. O profissional que acompanha o seu caso é quem define a periodicidade adequada.</p>
-    <h3>A bioimpedância substitui exames de sangue?</h3>
-    <p>Não. Ela descreve a composição corporal e não investiga alterações metabólicas, hormonais ou nutricionais, que dependem de <a href="/exames/exames-de-sangue">exames laboratoriais</a>. Os dois se complementam, e a interpretação conjunta cabe ao profissional que acompanha você.</p>
-    <h3>O resultado serve para diagnóstico?</h3>
-    <p>O laudo da bioimpedância é um dado de acompanhamento, não um diagnóstico. Ele ganha sentido quando lido pelo médico ou nutricionista junto ao histórico e ao restante da avaliação clínica.</p>
-    ${napHtml("Agende sua bioimpedância pelo WhatsApp e acompanhe sua composição corporal com precisão.")}
-    ${internalLinksHtml("/bioimpedancia")}`;
+function bioimpedanciaJsonLd(): object[] {
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "MedicalWebPage",
+      "@id": `${SITE}/bioimpedancia#webpage`,
+      url: `${SITE}/bioimpedancia`,
+      name: BIOIMPEDANCIA_TITLE,
+      description: BIOIMPEDANCIA_DESCRIPTION,
+      about: { "@type": "MedicalTest", name: "Bioimpedância" },
+      provider: { "@id": BUSINESS_ID },
+    },
+    faqPageLd(BIO_FAQS),
+    breadcrumbLd([
+      ["Início", "/"],
+      ["Bioimpedância", "/bioimpedancia"],
+    ]),
+  ];
+}
+
+function checkupJsonLd(): object[] {
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "MedicalWebPage",
+      "@id": `${SITE}/checkup#webpage`,
+      url: `${SITE}/checkup`,
+      name: CHECKUP_TITLE,
+      description: CHECKUP_DESCRIPTION,
+      provider: { "@id": BUSINESS_ID },
+    },
+    faqPageLd(CHECKUP_FAQS),
+    breadcrumbLd([
+      ["Início", "/"],
+      ["Check-up", "/checkup"],
+    ]),
+  ];
+}
+
+/** JSON-LD de uma rota renderizada no servidor (vai para o <head>). */
+function ssrJsonLd(path: string): object[] {
+  if (path === "/laboratorio-caraguatatuba") return laboratorioJsonLd();
+  if (path === "/bioimpedancia") return bioimpedanciaJsonLd();
+  if (path === "/checkup") return checkupJsonLd();
+  const exame = path.match(/^\/exames\/([a-z0-9\-]+)$/);
+  if (exame) {
+    const e = examesData.find((x) => x.slug === exame[1]);
+    if (e) return examJsonLd(e);
+  }
+  const esp = path.match(/^\/especialidades\/([a-z0-9\-]+)$/);
+  if (esp) {
+    const e = especialidadesData.find((x) => x.slug === esp[1]);
+    if (e) return examJsonLd(e, ESPECIALIDADES_BASE);
+  }
+  return [];
+}
+
+export interface SsrPage {
+  /** HTML do React para dentro do #root. */
+  body: string;
+  /** Para o <head>: o JSON-LD da rota (data-route-ld). */
+  jsonLd: string;
+  /** Para o <head>: <link rel="preload" as="image"> que o React emitiu. */
+  preloads: string;
+  /**
+   * true = o navegador hidrata (hydrateRoot). Com barra final ou outra grafia
+   * do caminho o wouter do navegador pode nao casar a rota do mesmo jeito; ai
+   * o HTML vai, mas o React redesenha (createRoot), como antes.
+   */
+  hydrate: boolean;
+}
+
+/*
+ * renderToString custa alguns milissegundos por pagina, e o resultado so muda
+ * com o deploy — ou com a data (anosDeAtuacao, ano do rodape). Cache por dia.
+ */
+const ssrCache = new Map<string, SsrPage>();
+
+export function getSsrPage(pathname: string): SsrPage | null {
+  const raw = pathname.split("?")[0];
+  if (!isSsrPath(raw)) return null;
+  const path = raw.replace(/\/$/, "") || "/";
+  const chave = `${new Date().toISOString().slice(0, 10)} ${raw}`;
+  const emCache = ssrCache.get(chave);
+  if (emCache) return emCache;
+  const html = renderSsrPage(path);
+  if (html === null) return null;
+  // O React 19 abre o HTML com <link rel="preload" as="image"> das imagens sem
+  // loading="lazy". Dentro do #root eles quebrariam a hidratacao (no o
+  // cliente nao renderiza); no <head> sao o preload certo da imagem da rota.
+  const preloads: string[] = [];
+  const body = html.replace(/<link rel="preload" as="image"[^>]*\/>/g, (tag) => {
+    preloads.push(tag);
+    return "";
+  });
+  const page: SsrPage = {
+    body,
+    jsonLd: jsonLd(ssrJsonLd(path)).replace(/<script type="application\/ld\+json">/g, '<script type="application/ld+json" data-route-ld="">'),
+    preloads: preloads.join("\n"),
+    hydrate: raw === path,
+  };
+  if (ssrCache.size > 500) ssrCache.clear();
+  ssrCache.set(chave, page);
+  return page;
+}
 
 /**
  * Pagina /convenios: "aceita meu convenio?" e o principal desempate local
@@ -504,24 +495,7 @@ const homeHtml = `
     <h2>Como funciona o laboratório</h2>
     <p>Para <a href="/exames/exames-de-sangue">exames de sangue</a> e demais exames laboratoriais, basta vir com o pedido médico e um documento com foto, de segunda a sexta, das 7h30 às 18h — o atendimento é por ordem de chegada. Antes, confira as <a href="/blog/alimentacao-e-exames-laboratoriais">orientações de preparo e jejum</a>. Quem não pode se deslocar pode pedir a coleta domiciliar pelo WhatsApp (12) 3887-3535, que confirma área atendida, horário e valor. Os resultados ficam disponíveis online.</p>
     <p>Exames de imagem e cardiológicos, como tomografia, ultrassonografia, MAPA e Holter, são agendados pelo WhatsApp ou telefone, porque dependem de horário com o médico e de preparo específico.</p>
-    ${faqSectionHtml([
-      {
-        q: "Quais exames são realizados no laboratório em Caraguatatuba?",
-        a: "A Total Quality realiza mais de 3.000 tipos de exames em Caraguatatuba - SP, incluindo exames de sangue (hemograma, glicemia, colesterol, hormônios), tomografia computadorizada, ultrassonografia, raio-X, eletrocardiograma, holter 24h, MAPA, bioimpedância e check-up preventivo.",
-      },
-      {
-        q: "Qual o endereço do laboratório em Caraguatatuba?",
-        a: "O laboratório Total Quality está localizado na Rua Padre Anchieta, 1010 - Centro, Caraguatatuba - SP. Funcionamento de segunda a sexta, das 07h30 às 18h.",
-      },
-      {
-        q: "Como agendar exames no laboratório em Caraguatatuba?",
-        a: "Exames laboratoriais e de sangue não precisam de agendamento: o atendimento é por ordem de chegada, de segunda a sexta, das 07h30 às 18h. Exames de imagem e procedimentos especiais podem ser agendados pelo WhatsApp ou telefone (12) 3887-3535, ou pelo site totalquality.med.br.",
-      },
-      {
-        q: "O laboratório em Caraguatatuba aceita convênios?",
-        a: `Atendemos ${CONVENIOS_TEXTO}. Fora desses três, o atendimento é particular, com tabela própria. Tire dúvidas pelo WhatsApp (12) 3887-3535.`,
-      },
-    ])}
+    ${faqSectionHtml(HOME_FAQS)}
     ${napHtml("Agende seus exames pelo WhatsApp (12) 3887-3535 ou visite-nos no Centro de Caraguatatuba.")}
     ${internalLinksHtml("/")}`;
 
@@ -531,27 +505,18 @@ const homeHtml = `
 export function getSeoContentForPath(pathname: string): string | null {
   const path = pathname.split("?")[0].replace(/\/$/, "") || "/";
 
+  // Rotas renderizadas pelo React no servidor: devolve o que a resposta leva
+  // de conteudo — o HTML do #root mais o JSON-LD que vai para o <head>. Os
+  // guard-rails que leem esta funcao passam a valer sobre a pagina de verdade.
+  const ssr = getSsrPage(path);
+  if (ssr) return `${ssr.body}\n${ssr.jsonLd}`;
+
   if (path === "/") return wrap(homeHtml);
-  if (path === "/laboratorio-caraguatatuba") return wrap(laboratorioHtml);
-  if (path === "/bioimpedancia") return wrap(bioimpedanciaHtml);
 
   if (path === "/privacidade") return wrap(privacidadeHtml);
-  if (path === "/checkup") return wrap(checkupHtml);
   if (path === "/convenios") return wrap(conveniosHtml());
   if (path === "/outubro-rosa") return wrap(outubroRosaHtml);
   if (path === "/exames") return wrap(examesHubHtml());
-
-  const examMatch = path.match(/^\/exames\/([a-z0-9\-]+)$/);
-  if (examMatch) {
-    const exam = examesData.find((e) => e.slug === examMatch[1]);
-    if (exam) return wrap(renderExamHtml(exam));
-  }
-
-  const espMatch = path.match(/^\/especialidades\/([a-z0-9\-]+)$/);
-  if (espMatch) {
-    const esp = especialidadesData.find((e) => e.slug === espMatch[1]);
-    if (esp) return wrap(renderExamHtml(esp, ESPECIALIDADES_BASE));
-  }
 
   if (path === "/blog") return wrap(blogIndexHtml());
 
@@ -616,32 +581,6 @@ const privacidadeHtml = `
     <h2>Seus direitos</h2>
     <p>Você pode confirmar a existência de tratamento, acessar, corrigir, anonimizar ou excluir seus dados, revogar consentimento e solicitar portabilidade. Para exercer qualquer desses direitos, fale com a gente pelo telefone (12) 3887-3535 ou pelo e-mail contato@totalquality.med.br.</p>
     ${napHtml("Dúvidas sobre o tratamento dos seus dados? Fale com a nossa equipe.")}`;
-
-const checkupHtml = `
-    <h1>Check-up Preventivo em Caraguatatuba</h1>
-    <p>O check-up preventivo da Total Quality reúne exames laboratoriais, cardiológicos e de imagem em pacotes por faixa etária — Básico, Select e Premium — realizados em um só lugar, no Centro de Caraguatatuba, com resultados online e orientação da nossa equipe. É o check-up completo para cada fase da vida, montado a partir do pedido do seu médico.</p>
-    <h2>O que os pacotes incluem</h2>
-    <ul>
-      <li>Exames de sangue: hemograma completo, glicemia, perfil lipídico (colesterol e triglicerídeos), função renal e hepática</li>
-      <li>Hormônios: TSH e T4 livre para avaliação da tireoide</li>
-      <li>Vitamina D e vitamina B12</li>
-      <li>Avaliação cardiológica: <a href="/exames/eletrocardiograma">eletrocardiograma</a> e, conforme o pacote, <a href="/exames/holter">Holter 24h</a> ou <a href="/exames/mapa">MAPA 24h</a></li>
-      <li>PSA para homens e exames específicos por faixa etária</li>
-      <li>Exame de urina e outros conforme o pacote escolhido</li>
-    </ul>
-    <h2>Para quem é indicado</h2>
-    <ul>
-      <li>Adultos de 20 a 35 anos: check-up a cada dois anos</li>
-      <li>A partir dos 40 anos: check-up anual com marcadores adicionais</li>
-      <li>A partir dos 50 anos: protocolo ampliado com rastreamentos específicos</li>
-    </ul>
-    <h2>Perguntas frequentes</h2>
-    <h3>Preciso de pedido médico para fazer check-up?</h3>
-    <p>Para os pacotes de check-up da Total Quality não é necessário pedido médico — nossa equipe orienta o pacote mais adequado ao seu perfil e histórico.</p>
-    <h3>Quanto tempo demoram os resultados?</h3>
-    <p>A maioria dos exames laboratoriais tem resultado em curto prazo, com acesso online. Exames de imagem têm laudo rápido, geralmente em poucos dias.</p>
-    ${napHtml("Invista na sua saúde: agende seu check-up preventivo pelo WhatsApp e faça tudo em uma única visita.")}
-    ${internalLinksHtml("/checkup")}`;
 
 function examesHubHtml(): string {
   const categorias: Array<[string, string]> = [
@@ -872,6 +811,28 @@ export function injectSeoContent(html: string, content: string): string {
     /(<div id="root">)(\s*)(<\/div>)/,
     (_m, open, _ws, close) => `${open}${content}${close}`
   );
+}
+
+/**
+ * Monta a resposta de uma rota renderizada no servidor:
+ *   - o HTML do React dentro do #root, com data-ssr quando o navegador deve
+ *     hidratar (main.tsx le o atributo);
+ *   - o JSON-LD da rota no <head>;
+ *   - a folha de estilo principal volta a BLOQUEAR o primeiro paint. O
+ *     nonBlockingCss (vite.config.ts) existe porque o pre-render antigo tinha
+ *     estilo proprio inline; o HTML do React depende das classes do Tailwind, e
+ *     pintar sem a folha seria trocar um salto de layout por outro.
+ */
+export function injectSsrPage(html: string, page: SsrPage): string {
+  let out = html.replace(
+    /(<div id="root")(>)(\s*)(<\/div>)/,
+    (_m, open, gt, _ws, close) => `${open}${page.hydrate ? ' data-ssr=""' : ""}${gt}${page.body}${close}`
+  );
+  out = out.replace(
+    /<link rel="preload" as="style"([^>]*?)href="([^"]+)"([^>]*?) onload="this\.onload=null;this\.rel='stylesheet'"><noscript><link rel="stylesheet"[^>]*><\/noscript>/g,
+    (_m, before, href, after) => `<link rel="stylesheet"${before}href="${href}"${after}>`
+  );
+  return out.replace("</head>", `${page.preloads}\n${page.jsonLd}\n</head>`);
 }
 
 // Rotas exatas registradas no router do cliente (App.tsx)

@@ -3,16 +3,18 @@
  * Theme: White background, dark gray #5A5A5A text
  * Page: Check-Up Preventivo
  */
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { trackScheduleCheckup } from "@/lib/tracking";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
-import { ArrowUpRight, Heart, Shield, Activity, Clock, CheckCircle, Stethoscope, FlaskConical, Brain } from "lucide-react";
+import { ArrowUpRight, Heart, Shield, Activity, Clock, CheckCircle, Stethoscope, FlaskConical, Brain, ChevronRight } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { CHECKUP_TITLE, CHECKUP_DESCRIPTION } from "@shared/const";
-import { useSchemaBreadcrumb } from "@/hooks/useSchemaLocalBusiness";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { CHECKUP_FAQS } from "@/lib/paginasServico";
+import OndeFazer from "@/components/OndeFazer";
 
 const HERO_IMG = "/images/recepcao-1024.webp";
 const PROCESS_IMG = "/images/laboratorio-1024.webp";
@@ -91,9 +93,12 @@ const checkupPackages = [
 ];
 
 const benefits = [
-  { icon: Shield, title: "Prevenção", desc: "Detecte condições de saúde antes que se tornem problemas graves. A prevenção é o melhor tratamento." },
+  // "A prevenção é o melhor tratamento" saiu (superlativo, CFM 2.336/2023).
+  { icon: Shield, title: "Prevenção", desc: "Detecte condições de saúde antes que se tornem problemas graves." },
   { icon: Activity, title: "Monitoramento", desc: "Acompanhe a evolução dos seus indicadores de saúde ao longo do tempo com relatórios comparativos." },
-  { icon: Clock, title: "Agilidade", desc: "Todos os exames realizados em um único dia, com resultados em até 48 horas úteis." },
+  // Era "resultados em até 48 horas úteis": prazo prometido (decisão do Alex,
+  // 14/11/2026 — resultado é "em curto prazo", nunca um número de horas).
+  { icon: Clock, title: "Agilidade", desc: "Todos os exames realizados em um único dia, com resultados em curto prazo." },
   { icon: Heart, title: "Cuidado Integral", desc: "Equipe multidisciplinar que analisa seus resultados de forma integrada e personalizada." },
 ];
 
@@ -107,7 +112,7 @@ const processSteps = [
 export default function CheckUp() {
   const openWhatsApp = useWhatsAppRedirect();
   const abrirTelefone = useTelefoneRedirect();
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useScrollReveal();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -133,26 +138,9 @@ export default function CheckUp() {
    * o rastreador ve mesmo sem executar JavaScript. Nao reintroduzir aqui.
    */
 
-  // SEO: Breadcrumb para navegação estruturada
-  // O breadcrumb apontava para o dominio de rascunho do Manus
-  // (subdominio .manus): o Google lia o check-up como pagina
-  // de outro site. Agora, o dominio canonico.
-  useSchemaBreadcrumb([
-    { name: "Início", url: "https://totalquality.med.br/" },
-    { name: "Check-up", url: "https://totalquality.med.br/checkup" },
-  ]);
-
-  useEffect(() => {
-    const root = wrapperRef.current;
-    if (!root) return;
-    const els = root.querySelectorAll(".reveal, .reveal-left, .reveal-right");
-    const obs = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
-    );
-    els.forEach((el) => obs.observe(el));
-    return () => obs.disconnect();
-  }, []);
+  // BreadcrumbList e FAQPage: emitidos pelo servidor no <head>, dos mesmos
+  // dados desta pagina (seo-content.ts). O useSchemaBreadcrumb que ficava aqui
+  // repetia o breadcrumb no navegador (SEO nov/2026, Fase 1).
 
   return (
     <div ref={wrapperRef} className="min-h-screen bg-white">
@@ -163,8 +151,14 @@ export default function CheckUp() {
         <div className="container grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="reveal-left">
             <span className="section-label mb-4 block">Saúde preventiva</span>
-            <h1 className="heading-display text-5xl lg:text-6xl mb-6 leading-tight">
-              CHECK-UP <span className="text-brand">PREVENTIVO</span>
+            {/* H1 = CHECKUP_H1 ("Check-up Preventivo em Caraguatatuba"). */}
+            <h1 className="heading-display mb-6 leading-tight">
+              <span className="block text-5xl lg:text-6xl">
+                Check-up <span className="text-brand">Preventivo</span>
+              </span>{" "}
+              <span className="block font-sans text-base lg:text-lg text-text-light font-light tracking-wide mt-2 normal-case leading-normal">
+                em Caraguatatuba
+              </span>
             </h1>
             <p className="text-lg text-text-muted mb-8 max-w-lg leading-relaxed">
               Avaliação completa da sua saúde com exames laboratoriais e de imagem. Escolha o plano que melhor se adequa às suas necessidades.
@@ -194,7 +188,7 @@ export default function CheckUp() {
           <div className="text-center mb-16 reveal">
             <span className="section-label mb-4 inline-flex">Nossos pacotes</span>
             <h2 className="heading-display text-4xl lg:text-5xl mb-6">
-              ESCOLHA SEU <span className="text-brand">CHECK-UP</span>
+              Escolha seu <span className="text-brand">check-up</span>
             </h2>
             <p className="text-lg text-text-muted max-w-2xl mx-auto">
               Três opções de pacotes para atender diferentes necessidades de saúde e prevenção.
@@ -259,7 +253,7 @@ export default function CheckUp() {
           <div className="text-center mb-16 reveal">
             <p className="text-sm font-semibold text-brand mb-4 tracking-wide">BENEFÍCIOS</p>
             <h2 className="heading-display text-4xl lg:text-5xl mb-6">
-              POR QUE FAZER UM <span className="text-brand">CHECK-UP</span>
+              Por que fazer um <span className="text-brand">check-up</span>
             </h2>
           </div>
 
@@ -285,7 +279,7 @@ export default function CheckUp() {
             <div className="reveal-left">
               <p className="text-sm font-semibold text-brand mb-4 tracking-wide">COMO FUNCIONA</p>
               <h2 className="heading-display text-4xl lg:text-5xl mb-8">
-                PROCESSO <span className="text-brand">SIMPLES</span>
+                Processo <span className="text-brand">simples</span>
               </h2>
 
               <div className="space-y-6">
@@ -306,17 +300,43 @@ export default function CheckUp() {
             </div>
 
             <div className="reveal-right">
-              <img src={PROCESS_IMG} alt="Etapas do check-up preventivo na clínica Total Quality em Caraguatatuba - SP" className="w-full rounded-lg shadow-lg" />
+              <img src={PROCESS_IMG} alt="Etapas do check-up preventivo na clínica Total Quality em Caraguatatuba - SP" className="w-full rounded-lg shadow-lg" loading="lazy" />
             </div>
           </div>
         </div>
       </section>
 
+      {/* FAQ: o servidor publicava estas perguntas (e o FAQPage) e a pagina
+          nao as mostrava (SEO nov/2026, Fase 1). */}
+      <section className="py-20 px-4 bg-white">
+        <div className="container max-w-3xl">
+          <h2 className="reveal heading-display text-4xl lg:text-5xl mb-8">
+            Perguntas <span className="text-brand">frequentes</span>
+          </h2>
+          <div className="space-y-4">
+            {CHECKUP_FAQS.map((faq) => (
+              <details key={faq.q} className="group bg-gray-50 rounded-lg border border-black/5 overflow-hidden">
+                <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+                  <span className="font-semibold text-text pr-4">{faq.q}</span>
+                  <ChevronRight className="w-5 h-5 text-text-muted shrink-0 transition-transform group-open:rotate-90" />
+                </summary>
+                <div className="px-6 pb-6 text-text-muted leading-relaxed">{faq.a}</div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <OndeFazer
+        className="bg-gray-50 px-4"
+        mensagem="Agende seu check-up preventivo pelo WhatsApp e faça os exames em uma única visita, no Centro de Caraguatatuba."
+      />
+
       {/* CTA Section */}
       <section className="py-20 px-4 bg-brand text-white">
         <div className="container text-center reveal">
           <h2 className="heading-display text-4xl lg:text-5xl mb-6">
-            PRONTO PARA CUIDAR DA SUA SAÚDE?
+            Pronto para cuidar da sua saúde?
           </h2>
           <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
             Agende seu check-up agora e comece sua jornada em direção a uma vida mais saudável e preventiva.
