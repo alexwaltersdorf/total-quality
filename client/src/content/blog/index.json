@@ -1262,7 +1262,7 @@
     ]
   },
   {
-    "id": "50",
+    "id": "51",
     "slug": "exame-tipo-sanguineo",
     "title": "Exame para saber o tipo de sangue: sistema ABO, fator Rh e preparo",
     "metaTitle": "Exame Para Saber o Tipo de Sangue: ABO e Fator Rh | Total Quality",
@@ -1306,7 +1306,7 @@
     "draft": true,
     "reviewStatus": "revisao_medica_pendente",
     "dateModified": "2026-11-13",
-    "id": "51",
+    "id": "52",
     "slug": "exame-ferritina",
     "title": "Exame de ferritina: o que mostra, ferritina baixa e alta",
     "metaTitle": "Exame de Ferritina: O Que Mostra e Como Interpretar | Total Quality",
@@ -1343,7 +1343,7 @@
     "draft": true,
     "reviewStatus": "revisao_medica_pendente",
     "dateModified": "2026-11-13",
-    "id": "52",
+    "id": "53",
     "slug": "espirometria-preparo",
     "title": "Espirometria: para que serve, como é feita e como se preparar",
     "metaTitle": "Espirometria: Para Que Serve e Como Se Preparar | Total Quality",
