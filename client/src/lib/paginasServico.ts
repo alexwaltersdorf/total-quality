@@ -208,11 +208,14 @@ export const PAGINA_LABORATORIO: ConteudoPagina = {
   nomeOndeFazer: "exames laboratoriais",
   mensagemOndeFazer:
     "Venha fazer seus exames laboratoriais no Centro de Caraguatatuba: a coleta é por ordem de chegada, de segunda a sexta, das 7h30 às 18h.",
+  // Fase 4 (15/11/2026): o artigo do EAS (exame de urina) aponta para esta
+  // pagina — o caminho de volta entra aqui no lugar do guia de exames de
+  // sangue, que ja e linkado por /exames/exames-de-sangue.
   blog: [
     "como-escolher-laboratorio-analises-clinicas",
     "resultado-de-exames-online-seguranca",
     "alimentacao-e-exames-laboratoriais",
-    "exames-de-sangue-guia-completo",
+    "exame-de-urina-eas-como-coletar",
   ],
   relacionados: ["/exames/exames-de-sangue", "/exames/hemograma", "/checkup", "/exames/sexagem-fetal"],
   atualizadoEm: REVISAO_FASE_3,

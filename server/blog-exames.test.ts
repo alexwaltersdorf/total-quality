@@ -20,6 +20,10 @@ import {
   blogDateIso,
   blogPostingLd,
   CTA_MARKER,
+  CTA_FRACAO_MAX,
+  conteudoComCta,
+  rotuloPaginaExame,
+  stripInlineMarkdown,
   extractFaqs,
   extractReferences,
   isPublished,
@@ -424,7 +428,12 @@ describe("GUARD-RAIL: autoria e revisao visiveis (system prompt do blog, out/202
 
   it.each(publicados.map((p) => p.slug))("%s mostra revisao, data e identificacao", (slug) => {
     const html = getSeoContentForPath(`/blog/${slug}`)!;
-    expect(html).toContain("Revisado por Alex Waltersdorf, Responsável Técnico · Atualizado em");
+    // 15/11/2026 (SEO nov/2026, Fase 4 — briefing aprovado pelo Alex em
+    // 14/11): a linha passa a "Revisado por Dr. Alex Waltersdorf - 267.339",
+    // o mesmo formato das paginas de servico, e as datas vao em <time>.
+    // Antes: "Revisado por Alex Waltersdorf, Responsável Técnico · Atualizado em".
+    expect(html).toContain("<p>Revisado por Dr. Alex Waltersdorf - 267.339</p>");
+    expect(html).toMatch(/Publicado em <time datetime="\d{4}-\d{2}-\d{2}">\d{2}\/\d{2}\/\d{4}<\/time>/);
     // Modelo de fechamento do Alex (22/10/2026): identificacao em tres linhas.
     expect(html).toContain(
       "Total Quality Medicina Diagnóstica — Registro 970616<br>Responsável Técnico: Alex Waltersdorf - 267.339<br>Rua Padre Anchieta, 1010 – Centro – Caraguatatuba-SP · (12) 3887-3535"
@@ -567,7 +576,7 @@ describe("GUARD-RAIL: padrao editorial do orquestrador de SEO (27/10/2026)", () 
     for (const p of publicados) {
       const html = getSeoContentForPath(`/blog/${p.slug}`)!;
       expect(html, p.slug).toContain('<nav aria-label="Trilha de navegação"><a href="/">Início</a> › <a href="/blog">Blog</a>');
-      expect(html, p.slug).toMatch(/Publicado em \d{2}\/\d{2}\/\d{4}/);
+      expect(html, p.slug).toMatch(/Publicado em (<time datetime="[\d-]+">)?\d{2}\/\d{2}\/\d{4}/);
     }
   });
 
@@ -581,5 +590,102 @@ describe("GUARD-RAIL: padrao editorial do orquestrador de SEO (27/10/2026)", () 
     expect(html).toContain(`<meta property="article:published_time" content="${blogDateIso(p.date)}"`);
     expect(html).toMatch(/<meta property="article:modified_time" content="\d{4}-\d{2}-\d{2}"/);
     expect(html).not.toContain('twitter:title" content="Total Quality | Exames de Sangue e Laboratório');
+  });
+});
+
+
+/*
+ * SEO nov/2026, Fase 4 (plano aprovado pelo Alex em 14/11/2026): o blog
+ * trabalha para as paginas de servico. Quadro de contato no primeiro terco e
+ * no fim, ligado a pagina certa; ancora descritiva no corpo; revisao e datas
+ * visiveis no topo; title/description dos artigos de muita impressao e CTR
+ * perto de zero reescritos sem mexer no H1 nem na URL.
+ */
+describe("GUARD-RAIL: blog → pagina de servico (SEO nov/2026, Fase 4)", () => {
+  const palavras = (b: string) =>
+    b.trim() === CTA_MARKER ? 0 : stripInlineMarkdown(b).replace(/[#|*-]/g, " ").split(/\s+/).filter(Boolean).length;
+
+  it.each(publicados.map((p) => p.slug))("%s: primeiro quadro de contato no primeiro terco do texto", (slug) => {
+    const corpo = conteudoComCta(load(slug).content);
+    expect(corpo.filter((b) => b.trim() === CTA_MARKER)).toHaveLength(1);
+    const i = corpo.findIndex((b) => b.trim() === CTA_MARKER);
+    const total = corpo.map(palavras).reduce((a, b) => a + b, 0);
+    const antes = corpo.slice(0, i).map(palavras).reduce((a, b) => a + b, 0);
+    expect(antes / total).toBeGreaterThanOrEqual(0.1);
+    expect(antes / total).toBeLessThanOrEqual(CTA_FRACAO_MAX);
+    // No HTML: o quadro do meio vem antes do primeiro terco do texto, e ha um no fim.
+    const html = getSeoContentForPath(`/blog/${slug}`)!;
+    expect(html.match(/<aside>/g)).toHaveLength(2);
+  });
+
+  it.each(publicados.map((p) => p.slug))("%s: quadro diz 'Faça … em Caraguatatuba' e linka a pagina com texto descritivo", (slug) => {
+    const post = load(slug);
+    const html = getSeoContentForPath(`/blog/${slug}`)!;
+    expect(html).toContain(`<strong>Faça ${post.examName}`);
+    for (const href of post.examPages!) {
+      expect(html).toContain(`<a href="${href}">${rotuloPaginaExame(href)}</a>`);
+      if (href !== "/cartao") expect(rotuloPaginaExame(href)).toMatch(/ em Caraguatatuba$/);
+    }
+  });
+
+  it.each(publicados.map((p) => p.slug))("%s: corpo tem ancora para a pagina de servico, sem repetir demais", (slug) => {
+    const post = load(slug);
+    const html = getSeoContentForPath(`/blog/${slug}`)!;
+    const artigo = html.slice(html.indexOf("<article>"), html.indexOf("</article>")).replace(/<aside>[\s\S]*?<\/aside>/g, "");
+    const alvos = post.examPages!.map((h) => (artigo.match(new RegExp(`<a href="${h}">`, "g")) ?? []).length);
+    expect(alvos.some((n) => n > 0), "nenhuma ancora no corpo para a pagina do exame").toBe(true);
+    // Sem keyword stuffing: o auto-linker poe no maximo UMA ancora por destino
+    // e a Fase 4 acrescentou no maximo duas por artigo. Dois artigos ja tinham
+    // tres (auto + duas explicitas: raio-X e siglas) — teto 3, nao mais.
+    for (const n of alvos) expect(n).toBeLessThanOrEqual(3);
+  });
+
+  it("artigo do hemograma linka /exames/hemograma no primeiro terco (caminho de volta da Fase 3)", () => {
+    const html = getSeoContentForPath("/blog/hemograma-completo-o-que-avalia")!;
+    const artigo = html.slice(html.indexOf("<article>"), html.indexOf("</article>"));
+    const texto = artigo.replace(/<[^>]+>/g, " ");
+    const link = artigo.indexOf('<a href="/exames/hemograma">');
+    expect(link).toBeGreaterThan(0);
+    const antes = artigo.slice(0, link).replace(/<[^>]+>/g, " ");
+    expect(antes.split(/\s+/).length / texto.split(/\s+/).length).toBeLessThanOrEqual(1 / 3);
+  });
+
+  it("EAS (exame de urina) aponta para analises clinicas, nao para exames de sangue", () => {
+    const eas = index.find((p) => p.slug === "exame-de-urina-eas-como-coletar")!;
+    expect(eas.examPages).toEqual(["/laboratorio-caraguatatuba"]);
+  });
+
+  it("todo artigo publicado mostra revisor e datas em <time> no topo", () => {
+    for (const p of publicados) {
+      const html = getSeoContentForPath(`/blog/${p.slug}`)!;
+      const topo = html.slice(html.indexOf("<h1>"), html.indexOf("</h1>") + 600);
+      expect(topo, p.slug).toContain("Revisado por Dr. Alex Waltersdorf - 267.339");
+      expect(topo, p.slug).toContain(`<time datetime="${blogDateIso(p.date)}">`);
+    }
+  });
+
+  const REESCRITOS = [
+    "exame-de-urina-eas-como-coletar",
+    "eletrocardiograma-o-que-e-como-e-feito",
+    "hemograma-completo-o-que-avalia",
+    "exames-de-sangue-guia-completo",
+  ];
+  it.each(REESCRITOS)("%s: title ≤ 60 e description 120–160, H1 e URL mantidos", (slug) => {
+    const post = index.find((p) => p.slug === slug)!;
+    expect(post.metaTitle!.length).toBeLessThanOrEqual(60);
+    expect(post.excerpt.length).toBeGreaterThanOrEqual(120);
+    expect(post.excerpt.length).toBeLessThanOrEqual(160);
+    expect(post.metaTitle).not.toBe(post.title);
+    expect(getRouteMetadata(`/blog/${slug}`)!.description).toBe(post.excerpt);
+    // Sem isca: nada de "voce nao vai acreditar", "segredo", "!" no title.
+    expect(post.metaTitle).not.toMatch(/!|segredo|acreditar|chocante|melhor|garant/i);
+  });
+
+  it("imagens dos artigos relacionados tem width/height (sem CLS)", () => {
+    const src = fs.readFileSync(nodePath.resolve(import.meta.dirname, "../client/src/pages/BlogPost.tsx"), "utf8");
+    const bloco = src.slice(src.indexOf("relatedPosts.map"));
+    const img = bloco.slice(bloco.indexOf("<img"), bloco.indexOf("/>", bloco.indexOf("<img")));
+    expect(img).toMatch(/width=\{1024\}/);
+    expect(img).toMatch(/height=\{640\}/);
   });
 });

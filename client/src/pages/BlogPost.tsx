@@ -9,7 +9,7 @@ import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, ArrowUpRight, Clock, Calendar, Tag, Share2 } from "lucide-react";
 import { allBlogPosts, blogPosts, loadBlogPost, extractFaqs } from "@/lib/blogData";
-import { linhaRevisao, blogModifiedIso, relatedPosts as pickRelated, tableOfContents, isPublished } from "@/lib/blogMeta";
+import { linhaRevisao, datasArtigo, conteudoComCta, blogModifiedIso, relatedPosts as pickRelated, tableOfContents, isPublished } from "@/lib/blogMeta";
 import { renderBlogContent } from "@/lib/renderBlogContent";
 import { trpc } from "@/lib/trpc";
 import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
@@ -53,6 +53,8 @@ export default function BlogPost() {
   // Os tres escolhidos a mao no campo related; sem eles, mesma categoria/tag.
   const relatedPosts = useMemo(() => (post ? pickRelated(post, blogPosts) : []), [post]);
   const toc = useMemo(() => tableOfContents(post?.content ?? []), [post?.content]);
+  // Quadro de contato do meio no primeiro terco do texto (Fase 4, 15/11/2026).
+  const corpo = useMemo(() => conteudoComCta(post?.content ?? []), [post?.content]);
 
   useEffect(() => {
     if (!meta || isPublished(meta)) return;
@@ -162,7 +164,8 @@ export default function BlogPost() {
           <div className="flex items-center gap-4 mb-6">
             <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand">{post.category}</span>
             <span className="text-xs text-text-muted flex items-center gap-1">
-              <Calendar className="w-3 h-3" /> {post.date}
+              <Calendar className="w-3 h-3" /> Publicado em{" "}
+              <time dateTime={datasArtigo(post).publicado.iso}>{datasArtigo(post).publicado.br}</time>
             </span>
             <span className="text-xs text-text-muted flex items-center gap-1">
               <Clock className="w-3 h-3" /> {post.readTime} de leitura
@@ -181,11 +184,20 @@ export default function BlogPost() {
 
           <div className="flex items-center justify-between border-t border-b border-black/10 py-4">
             {/* Autoria e revisao (E-E-A-T de conteudo de saude): a clinica
-                assina, o responsavel tecnico revisa. Mesmo texto do prerender
-                (linhaRevisao, em blogMeta.ts). */}
+                assina, o responsavel tecnico revisa — "Revisado por Dr. Alex
+                Waltersdorf - 267.339" (Fase 4, 15/11/2026). Datas em <time>.
+                Mesmo texto do prerender (linhaRevisao/datasArtigo, blogMeta.ts). */}
             <div>
               <p className="text-sm font-semibold text-text">{post.author} · {post.authorRole}</p>
-              <p className="text-xs text-text-muted">{linhaRevisao(post)}</p>
+              <p className="text-xs text-text-muted">
+                {linhaRevisao(post)}
+                {datasArtigo(post).atualizado && (
+                  <>
+                    {" · Atualizado em "}
+                    <time dateTime={datasArtigo(post).atualizado!.iso}>{datasArtigo(post).atualizado!.br}</time>
+                  </>
+                )}
+              </p>
             </div>
             <button
               onClick={handleShare}
@@ -233,7 +245,7 @@ export default function BlogPost() {
                 listas, tabelas) e aplica a linkagem interna automática (mesmo
                 mapa do prerender — internalLinkTargets.ts): informacional →
                 página estratégica. */}
-            {renderBlogContent(post.content, `/blog/${post.slug}`, (key) =>
+            {renderBlogContent(corpo, `/blog/${post.slug}`, (key) =>
               post.examName ? (
                 <ExamCTA key={key} examName={post.examName} examType={post.examType} horaMarcada={post.horaMarcada} examPages={post.examPages} posicao="meio" />
               ) : null
@@ -309,18 +321,25 @@ export default function BlogPost() {
               {relatedPosts.map((rp) => (
                 <Link key={rp.id} href={`/blog/${rp.slug}`} className="group block space-y-3">
                   <div className="overflow-hidden">
+                    {/* width/height na proporcao da caixa (16/10): o navegador
+                        reserva o espaco antes de a imagem chegar (sem CLS). */}
                     <img
                       src={rp.image}
-                      alt={rp.title}
+                      alt={rp.imageAlt ?? rp.title}
+                      width={1024}
+                      height={640}
                       className="w-full aspect-[16/10] object-cover transition-transform duration-700 group-hover:scale-105"
                       loading="lazy"
+                      decoding="async"
                     />
                   </div>
                   <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand">{rp.category}</span>
                   <h3 className="heading-display text-xl text-text group-hover:text-brand transition-colors leading-tight">
                     {rp.title}
                   </h3>
-                  <p className="text-xs text-text-muted">{rp.date} — {rp.readTime}</p>
+                  <p className="text-xs text-text-muted">
+                    <time dateTime={datasArtigo(rp).publicado.iso}>{datasArtigo(rp).publicado.br}</time> — {rp.readTime}
+                  </p>
                 </Link>
               ))}
             </div>

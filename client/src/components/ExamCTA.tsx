@@ -16,12 +16,18 @@
  * exame (botao secundario), diz "em Caraguatatuba" no titulo (a ligacao local
  * fica aqui, nao no title do artigo) e a mensagem do WhatsApp avisa que o
  * paciente veio do blog. "Agendar" so para exame com hora marcada.
+ *
+ * SEO nov/2026, Fase 4 (15/11/2026): o quadro do meio fica no primeiro terco
+ * do texto (conteudoComCta, blogMeta.ts), o titulo e "Faça [exame] em
+ * Caraguatatuba" e o link da pagina de servico tem texto descritivo
+ * ("Hemograma completo em Caraguatatuba"). O event_label continua
+ * artigo_cta_meio / artigo_cta_fim — mudar o rotulo quebraria a serie no GA4.
  */
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
 import { trackWhatsAppConversion } from "@/lib/tracking";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
-import { mensagemContato, PAGINA_EXAME_LABEL, textoContato, tituloContato } from "@/lib/blogMeta";
+import { mensagemContato, PAGINA_EXAME_LABEL, rotuloPaginaExame, textoContato, tituloContato } from "@/lib/blogMeta";
 import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 type Props = {
@@ -62,7 +68,7 @@ export default function ExamCTA({ examName, examType, posicao, horaMarcada, exam
         </CtaWhatsApp>
         {paginas.map((href) => (
           <Link key={href} href={href} className="btn-pill-outline inline-flex items-center gap-2">
-            {PAGINA_EXAME_LABEL[href]}
+            {rotuloPaginaExame(href)}
           </Link>
         ))}
       </div>

@@ -32,6 +32,9 @@ import {
   blogModifiedIso,
   blogPostingLd,
   linhaRevisao,
+  datasArtigo,
+  conteudoComCta,
+  rotuloPaginaExame,
   IDENTIFICACAO,
   CTA_MARKER,
   extractFaqs,
@@ -817,7 +820,7 @@ function examCtaHtml(examName: string, horaMarcada?: boolean, examPages: string[
   const paragrafos = textoContato(horaMarcada).map((t) => `<p>${escapeHtml(t)}</p>`).join("\n      ");
   const paginas = examPages
     .filter((href) => PAGINA_EXAME_LABEL[href])
-    .map((href) => `<a href="${href}">${escapeHtml(PAGINA_EXAME_LABEL[href])}</a>`)
+    .map((href) => `<a href="${href}">${escapeHtml(rotuloPaginaExame(href))}</a>`)
     .join(" · ");
   const whats = whatsappUrl(mensagemContato(examName, horaMarcada));
   return `
@@ -847,7 +850,12 @@ function blogFooterHtml(post: BlogPost): string {
 function renderBlogHtml(post: BlogPost): string {
   const currentPath = `/blog/${post.slug}`;
   const cta = post.examName ? examCtaHtml(post.examName, post.horaMarcada, post.examPages) : "";
-  const bodyHtml = renderBlogBodyHtml(post.content, currentPath, cta);
+  // Quadro do meio no primeiro terco do texto (Fase 4, 15/11/2026).
+  const bodyHtml = renderBlogBodyHtml(conteudoComCta(post.content), currentPath, cta);
+  const datas = datasArtigo(post);
+  const datasHtml = `Publicado em <time datetime="${datas.publicado.iso}">${datas.publicado.br}</time>${
+    datas.atualizado ? ` · Atualizado em <time datetime="${datas.atualizado.iso}">${datas.atualizado.br}</time>` : ""
+  }`;
   const toc = tableOfContents(post.content);
   const tocHtml = toc.length
     ? `<nav aria-label="Sumário"><p>Neste artigo</p><ol>${toc
@@ -868,6 +876,7 @@ function renderBlogHtml(post: BlogPost): string {
       <p><em>${escapeHtml(post.subtitle)}</em></p>
       <p>${escapeHtml(post.author)} · ${escapeHtml(post.authorRole)} · ${escapeHtml(post.readTime)} de leitura</p>
       <p>${escapeHtml(linhaRevisao(post))}</p>
+      <p>${datasHtml}</p>
       ${tocHtml}
       ${bodyHtml}
       ${cta}
