@@ -106,6 +106,12 @@ export function whatsappUrl(text?: string): string {
 export const BLOG_EXTERNO_URL = "https://blog.totalquality.med.br/";
 export const BLOG_EXTERNO_TEXTO = "Mais artigos de saúde no blog da Total Quality";
 
+/** /especialidades — indice das consultas (SEO nov/2026, Fase 3). */
+export const ESPECIALIDADES_TITLE = "Especialidades Médicas em Caraguatatuba | Total Quality";
+export const ESPECIALIDADES_H1 = "Especialidades em Caraguatatuba";
+export const ESPECIALIDADES_DESCRIPTION =
+  "Especialidades da Total Quality em Caraguatatuba: cardiologista, endocrinologista, gastroenterologista, pediatra e medicina do trabalho. Agende pelo WhatsApp.";
+
 /*
  * /sobre e /contato — paginas reais desde a Fase 2 de SEO (nov/2026). Antes
  * eram 301 para as ancoras /#sobre e /#contato da home. Fonte unica do title,

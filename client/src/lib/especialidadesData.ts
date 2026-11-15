@@ -55,6 +55,8 @@ export const especialidadesData: ExamData[] = [
       { q: "Preciso estar em jejum para a consulta?", a: "Não. A consulta não exige jejum. Se o médico pedir exames de sangue, o preparo de cada um é informado no pedido e pode ser confirmado pelo WhatsApp." },
       { q: "Posso fazer os exames pedidos pelo endocrinologista na própria clínica?", a: "Sim. Os exames de sangue são coletados na Total Quality sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h. O ultrassom de tireoide é feito com hora marcada." },
       { q: "A consulta é coberta por convênio?", a: `A consulta é atendida de forma particular e pelos convênios ${CONVENIOS_TEXTO}. Outros planos não são atendidos. Valores e disponibilidade são confirmados pelo WhatsApp.` },
+      // Fase 3 (15/11/2026): do texto da consulta acima.
+      { q: "Quais exames o endocrinologista costuma pedir?", a: "Conforme o caso, exames de sangue como glicemia, hemoglobina glicada, TSH, T4 livre e perfil lipídico, ou exames de imagem, como o ultrassom de tireoide. Todos podem ser feitos na Total Quality: os de sangue sem agendamento e o ultrassom com hora marcada." },
       { q: "Onde fazer consulta com endocrinologista em Caraguatatuba?", a: "Na Total Quality Medicina Diagnóstica, na Rua Padre Anchieta, 1010 – Centro, Caraguatatuba-SP. A consulta é com hora marcada: dias e horários do especialista são confirmados pelo WhatsApp (12) 3887-3535. A clínica atende de segunda a sexta, das 7h30 às 18h." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar uma consulta com endocrinologista.",
@@ -92,6 +94,8 @@ export const especialidadesData: ExamData[] = [
       { q: "Preciso de encaminhamento para consultar com o gastroenterologista?", a: "Não. Você pode marcar a consulta direto pelo WhatsApp (12) 3887-3535. Se tiver encaminhamento ou exames de outro médico, leve no dia." },
       { q: "Quando a dor abdominal é urgência?", a: "Dor abdominal forte e repentina, vômito com sangue, fezes pretas ou com sangue, febre alta com dor ou pele e olhos amarelados pedem atendimento imediato: ligue para o SAMU 192 ou procure o pronto-socorro. A consulta com hora marcada é para queixas que podem esperar." },
       { q: "A consulta é coberta por convênio?", a: `A consulta é atendida de forma particular e pelos convênios ${CONVENIOS_TEXTO}. Outros planos não são atendidos. Valores e disponibilidade são confirmados pelo WhatsApp.` },
+      // Fase 3 (15/11/2026): do texto da consulta acima.
+      { q: "Quais exames pedidos pelo gastroenterologista posso fazer na clínica?", a: "Exames de sangue, como TGO, TGP e GGT, coletados sem agendamento, por ordem de chegada, e o ultrassom de abdome total, com hora marcada e jejum de 6 a 8 horas. Endoscopia e colonoscopia não são feitas na Total Quality." },
       { q: "Onde fazer consulta com gastroenterologista em Caraguatatuba?", a: "Na Total Quality Medicina Diagnóstica, na Rua Padre Anchieta, 1010 – Centro, Caraguatatuba-SP. A consulta é com hora marcada: dias e horários do especialista são confirmados pelo WhatsApp (12) 3887-3535. A clínica atende de segunda a sexta, das 7h30 às 18h." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar uma consulta com gastroenterologista.",
@@ -129,11 +133,80 @@ export const especialidadesData: ExamData[] = [
       { q: "A Total Quality elabora o PCMSO da empresa?", a: "Sim. A clínica elabora o PCMSO a partir das funções e dos riscos informados pela empresa e realiza os exames ocupacionais que ele prevê, com a emissão do ASO." },
       { q: "Os exames complementares são feitos no mesmo lugar?", a: "Sim. Audiometria, espirometria, acuidade visual, eletrocardiograma, raio-X e exames laboratoriais são feitos na própria Total Quality, conforme o que o PCMSO prevê para cada função." },
       { q: "O exame toxicológico entra no ASO?", a: "Não. Para motorista profissional, o exame toxicológico pode ser feito na mesma ida à clínica, mas, pela Portaria MTP nº 672/2021, o resultado segue à parte e não é registrado no ASO. Na Total Quality, a janela de detecção é de 180 dias e o resultado sai em 5 dias úteis." },
+      // Fase 3 (15/11/2026): do dado do exame admissional (examesData.ts).
+      { q: "Quem paga os exames ocupacionais?", a: "A empresa. O custo dos exames ocupacionais é sempre do empregador, nunca do trabalhador, nos termos da legislação trabalhista." },
       { q: "Onde fazer medicina do trabalho em Caraguatatuba?", a: "Na Total Quality Medicina Diagnóstica, na Rua Padre Anchieta, 1010 – Centro, Caraguatatuba-SP. Empresas e trabalhadores agendam pelo WhatsApp (12) 3887-3535, de segunda a sexta, das 7h30 às 18h." },
     ],
     whatsappMessage: "Olá! Gostaria de informações sobre medicina do trabalho (PCMSO e ASO) para minha empresa.",
     category: "ocupacional",
     keywords: ["medicina do trabalho", "medicina do trabalho Caraguatatuba", "PCMSO", "ASO", "exame ocupacional", "NR-7", "Caraguatatuba"],
+  },
+  /*
+   * Cardiologista e pediatra (14/11/2026): o Alex confirmou que a clinica
+   * atende ("SIM, ATENDEMOS. PODE CRIAR"), substituindo a informacao de 31/10.
+   * Nao ha no repositorio nenhum dado sobre essas consultas: so entra o que
+   * vale para toda consulta da clinica e o que ja esta nos dados dos exames.
+   * Sem nome de medico. O que falta esta em lib/paginas/especialidades.ts
+   * (TODO(alex)). Nunca citar ecocardiograma nem teste ergometrico.
+   */
+  {
+    slug: "cardiologista",
+    title: "Cardiologista",
+    shortTitle: "Cardiologista",
+    subtitle: "Consulta com especialista",
+    description: "Consulta com cardiologista e, na mesma clínica, eletrocardiograma, Holter e MAPA.",
+    metaTitle: "Cardiologista em Caraguatatuba | Total Quality",
+    metaDescription: "Consulta com cardiologista em Caraguatatuba, com hora marcada. Eletrocardiograma, Holter e MAPA na própria clínica. Agende pelo WhatsApp (12) 3887-3535.",
+    heroDescription: "Consulta com cardiologista na Rua Padre Anchieta, 1010, no Centro de Caraguatatuba, com hora marcada pelo WhatsApp.",
+    whatIs: "O cardiologista é o médico que cuida do coração e da circulação. Na Total Quality, a consulta é com hora marcada, e o eletrocardiograma, o Holter 24h e o MAPA 24h podem ser feitos na própria clínica.",
+    howItWorks: "A consulta é com hora marcada pelo WhatsApp (12) 3887-3535; dias e horários do especialista são confirmados no atendimento.",
+    indications: [
+      "Palpitações ou batimentos irregulares",
+      "Pressão alta",
+      "Tonturas ou desmaios",
+      "Falta de ar",
+    ],
+    preparations: [
+      { icon: FileText, text: "Leve exames anteriores do coração e a lista dos remédios em uso" },
+      { icon: Clock, text: "Consulta com hora marcada pelo WhatsApp (12) 3887-3535" },
+    ],
+    faqs: [
+      { q: "Quais exames do coração são feitos na Total Quality?", a: "Eletrocardiograma, Holter 24h e MAPA 24h, todos com hora marcada pelo WhatsApp (12) 3887-3535. Se o pedido tiver exames de sangue, a coleta é sem agendamento, por ordem de chegada, no mesmo endereço." },
+      { q: "Qual a diferença entre MAPA e Holter?", a: "O MAPA registra a pressão arterial ao longo de 24 horas; o Holter registra o ritmo do coração durante 24 horas. Respondem a perguntas diferentes, e quem escolhe o exame é o médico." },
+      { q: "O eletrocardiograma precisa de jejum?", a: "Não. O eletrocardiograma não exige jejum nem preparo especial: evite creme ou óleo no tórax e use roupa fácil de tirar. Se houver exames de sangue no mesmo pedido, siga o jejum deles." },
+      { q: "Estou com dor no peito. Devo esperar a consulta?", a: "Não. Dor ou aperto no peito, falta de ar súbita, desmaio ou mal-estar intenso são sinais de emergência: ligue para o SAMU 192 ou procure o pronto-socorro mais próximo. A consulta com hora marcada não substitui esse atendimento." },
+      { q: "A consulta é coberta por convênio?", a: `Os convênios atendidos na Total Quality são ${CONVENIOS_TEXTO}; fora deles, o atendimento é particular. A cobertura da consulta com cardiologista é confirmada pelo WhatsApp (12) 3887-3535.` },
+      { q: "Onde fazer consulta com cardiologista em Caraguatatuba?", a: "Na Total Quality Medicina Diagnóstica, na Rua Padre Anchieta, 1010 – Centro, Caraguatatuba-SP. A consulta é com hora marcada: dias e horários do especialista são confirmados pelo WhatsApp (12) 3887-3535. A clínica atende de segunda a sexta, das 7h30 às 18h." },
+    ],
+    whatsappMessage: "Olá! Gostaria de agendar uma consulta com cardiologista.",
+    category: "consulta",
+    keywords: ["cardiologista", "cardiologista Caraguatatuba", "consulta cardiologista", "cardiologia", "eletrocardiograma", "Holter", "MAPA", "Caraguatatuba"],
+  },
+  {
+    slug: "pediatra",
+    title: "Pediatra",
+    shortTitle: "Pediatra",
+    subtitle: "Consulta com especialista",
+    description: "Consulta com pediatra, com hora marcada, no Centro de Caraguatatuba.",
+    metaTitle: "Pediatra em Caraguatatuba | Total Quality",
+    metaDescription: "Consulta com pediatra em Caraguatatuba, com hora marcada pelo WhatsApp (12) 3887-3535. Total Quality, Rua Padre Anchieta, 1010, Centro.",
+    heroDescription: "Consulta com pediatra na Rua Padre Anchieta, 1010, no Centro de Caraguatatuba, com hora marcada pelo WhatsApp.",
+    whatIs: "O pediatra é o médico que acompanha a saúde de bebês, crianças e adolescentes. Na Total Quality, a consulta é com hora marcada pelo WhatsApp.",
+    howItWorks: "A consulta é com hora marcada pelo WhatsApp (12) 3887-3535; dias e horários do especialista são confirmados no atendimento.",
+    indications: ["Consulta com hora marcada para bebês, crianças e adolescentes"],
+    preparations: [
+      { icon: Clock, text: "Consulta com hora marcada pelo WhatsApp (12) 3887-3535" },
+    ],
+    faqs: [
+      { q: "Como agendar a consulta com pediatra?", a: "Pelo WhatsApp (12) 3887-3535 ou pelo telefone. Dias e horários do pediatra são confirmados no atendimento; a clínica funciona de segunda a sexta, das 7h30 às 18h." },
+      { q: "A consulta é coberta por convênio?", a: `Os convênios atendidos na Total Quality são ${CONVENIOS_TEXTO}; fora deles, o atendimento é particular. A cobertura da consulta com pediatra é confirmada pelo WhatsApp (12) 3887-3535.` },
+      { q: "Criança pode fazer espirometria?", a: "Sim, em geral a partir dos 6 anos, quando a criança já consegue colaborar com as manobras respiratórias. A espirometria é feita na Total Quality." },
+      { q: "Quando procurar atendimento de urgência?", a: "A clínica não é serviço de urgência. Febre alta que não cede, falta de ar ou dor forte pedem a UPA; em situação grave, ligue para o SAMU 192." },
+      { q: "Onde fazer consulta com pediatra em Caraguatatuba?", a: "Na Total Quality Medicina Diagnóstica, na Rua Padre Anchieta, 1010 – Centro, Caraguatatuba-SP, com hora marcada pelo WhatsApp (12) 3887-3535. A clínica atende de segunda a sexta, das 7h30 às 18h." },
+    ],
+    whatsappMessage: "Olá! Gostaria de agendar uma consulta com pediatra.",
+    category: "consulta",
+    keywords: ["pediatra", "pediatra Caraguatatuba", "consulta pediatra", "pediatria", "Caraguatatuba"],
   },
 ];
 

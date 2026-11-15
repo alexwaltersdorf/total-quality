@@ -136,11 +136,13 @@ for (const rota of ROTAS) {
   problemas.push(...diff("links", servidor.links, navegador.links));
   problemas.push(...diff("FAQPage x FAQ visivel", servidor.faqLd, servidor.faq));
   // /sobre e /contato (Fase 2) sao institucionais: sem FAQ nem "Onde fazer".
-  const institucional = rota === "/sobre" || rota === "/contato";
+  // /especialidades (Fase 3) e um indice: tem "Onde fazer", sem FAQ.
+  const institucional = rota === "/sobre" || rota === "/contato" || rota === "/especialidades";
   if (!institucional) {
     if (!servidor.faq.length) problemas.push("  sem FAQ visivel");
     if (servidor.faq.some((f) => f.a.length < 20)) problemas.push("  resposta do FAQ ausente do HTML do servidor");
-    if (!servidor.headings.includes("H2:Onde fazer em Caraguatatuba")) problemas.push('  sem "Onde fazer em Caraguatatuba"');
+    // Fase 3 (15/11/2026): o H2 nomeia o exame — "Onde fazer hemograma em Caraguatatuba".
+    if (!servidor.headings.some((h) => /^H2:Onde fazer (.+ )?em Caraguatatuba$/.test(h))) problemas.push('  sem "Onde fazer [exame] em Caraguatatuba"');
   }
   const hidratacao = mensagens.filter((m) => AVISO_HIDRATACAO.test(m));
   if (hidratacao.length) problemas.push(...hidratacao.map((m) => `  console: ${m.slice(0, 300)}`));

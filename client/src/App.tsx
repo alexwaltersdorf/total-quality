@@ -15,6 +15,7 @@ export const lazyPages: PageMap = {
   BlogPost: lazy(() => import("./pages/BlogPost")),
   ExamesHub: lazy(() => import("./pages/ExamesHub")),
   ExamePage: lazy(() => import("./pages/ExamePage")),
+  EspecialidadesHub: lazy(() => import("./pages/EspecialidadesHub")),
   LaboratorioCaraguatatuba: lazy(() => import("./pages/LaboratorioCaraguatatuba")),
   Sobre: lazy(() => import("./pages/Sobre")),
   Contato: lazy(() => import("./pages/Contato")),
@@ -36,6 +37,7 @@ export const lazyPages: PageMap = {
  */
 export function preloadSsrRoute(pathname: string): Promise<unknown> {
   if (/^\/(exames|especialidades)\/[^/]+\/?$/.test(pathname)) return import("./pages/ExamePage");
+  if (/^\/especialidades\/?$/.test(pathname)) return import("./pages/EspecialidadesHub");
   if (/^\/laboratorio-caraguatatuba\/?$/.test(pathname)) return import("./pages/LaboratorioCaraguatatuba");
   if (/^\/checkup\/?$/.test(pathname)) return import("./pages/CheckUp");
   if (/^\/bioimpedancia\/?$/.test(pathname)) return import("./pages/Bioimpedancia");

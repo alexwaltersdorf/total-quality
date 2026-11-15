@@ -9,6 +9,8 @@
  * 18h, fechado sabado e domingo. Nao alterar sem o Alex.
  */
 import { MapPin, Clock, Phone, ArrowUpRight } from "lucide-react";
+import ResponsiveImage from "@/components/ResponsiveImage";
+import type { ImagemReal } from "@/lib/modeloPagina";
 
 export const ENDERECO = {
   nome: "Total Quality Laboratório e Medicina Diagnóstica",
@@ -19,6 +21,11 @@ export const ENDERECO = {
   // Link de rota do Google Maps: o clique vira directions_click sozinho
   // (useInteractionTracking), sem onClick aqui.
   mapa: "https://www.google.com/maps/dir//Total+Quality+Medicina+Diagn%C3%B3stica,+Rua+Padre+Anchieta,+1010+-+Centro,+Caraguatatuba+-+SP,+11660-010",
+  // So fatos que ja estavam no site: LaboratorioCaraguatatuba ("a poucos
+  // minutos da Praca Candido Mota") e PorQueEscolherSection ("acesso de carro,
+  // onibus ou a pe", "estacionamento proximo"). SEO nov/2026, Fase 3.
+  comoChegar:
+    "A clínica fica no Centro de Caraguatatuba, a poucos minutos da Praça Cândido Mota, com acesso de carro, ônibus ou a pé e estacionamento próximo.",
 };
 
 export default function OndeFazer({
@@ -26,6 +33,8 @@ export default function OndeFazer({
   mensagem,
   className = "",
   mapa = false,
+  foto,
+  comoChegar = false,
 }: {
   titulo?: string;
   /** Frase propria da pagina (coleta sem agendamento, consulta agendada...). */
@@ -33,6 +42,10 @@ export default function OndeFazer({
   className?: string;
   /** Mapa do Google embutido, com carregamento preguicoso (iframe loading="lazy"). */
   mapa?: boolean;
+  /** Foto real da clinica (lazy, com width/height: sem CLS). Fase 3. */
+  foto?: ImagemReal;
+  /** Mostra a frase de como chegar (ENDERECO.comoChegar). Fase 3. */
+  comoChegar?: boolean;
 }) {
   return (
     <section id="onde-fazer" className={`py-16 lg:py-24 ${className}`}>
@@ -60,6 +73,7 @@ export default function OndeFazer({
           </address>
           <div className="space-y-4">
             <p className="text-text-light leading-relaxed">{mensagem}</p>
+            {comoChegar && <p className="text-text-light leading-relaxed">{ENDERECO.comoChegar}</p>}
             <p className="text-text-light leading-relaxed">
               Atendemos pacientes de Caraguatatuba, Ubatuba, São Sebastião e Ilhabela.
             </p>
@@ -75,6 +89,17 @@ export default function OndeFazer({
             </a>
           </div>
         </div>
+        {foto && (
+          <ResponsiveImage
+            slug={foto.slug}
+            alt={foto.alt}
+            widths={foto.widths}
+            sizes="(max-width: 1024px) 100vw, 896px"
+            width={foto.width}
+            height={foto.height}
+            className="mt-10 w-full h-auto rounded-2xl"
+          />
+        )}
         {mapa && (
           <iframe
             title="Localização da Total Quality Medicina Diagnóstica em Caraguatatuba - SP"

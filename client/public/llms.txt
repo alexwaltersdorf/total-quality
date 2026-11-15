@@ -28,8 +28,11 @@
 
 ## Consultas e medicina do trabalho
 
+- [Todas as especialidades](https://totalquality.med.br/especialidades)
+- [Cardiologista](https://totalquality.med.br/especialidades/cardiologista)
 - [Endocrinologista](https://totalquality.med.br/especialidades/endocrinologista)
 - [Gastroenterologista](https://totalquality.med.br/especialidades/gastroenterologista)
+- [Pediatra](https://totalquality.med.br/especialidades/pediatra)
 - [Medicina do Trabalho (PCMSO e ASO)](https://totalquality.med.br/especialidades/medicina-do-trabalho)
 
 ## Serviços e Recursos

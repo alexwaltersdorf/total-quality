@@ -18,6 +18,8 @@ import {
   SOBRE_DESCRIPTION,
   CONTATO_TITLE,
   CONTATO_DESCRIPTION,
+  ESPECIALIDADES_TITLE,
+  ESPECIALIDADES_DESCRIPTION,
 } from "@shared/const";
 import blogIndex from "../../client/src/content/blog/index.json";
 import { blogDateIso, blogModifiedIso, isPublished, type BlogPostMeta } from "../../client/src/lib/blogMeta";
@@ -423,6 +425,17 @@ const staticRoutes: Record<string, RouteMetadata> = {
     ogDescription: "Planos de check-up preventivo com exames completos para sua saúde.",
     canonical: "https://totalquality.med.br/checkup",
     priority: 0.9,
+    changefreq: "monthly",
+  },
+
+  // Indice das especialidades (SEO nov/2026, Fase 3): antes 404.
+  "/especialidades": {
+    title: ESPECIALIDADES_TITLE,
+    description: ESPECIALIDADES_DESCRIPTION,
+    ogTitle: ESPECIALIDADES_TITLE,
+    ogDescription: ESPECIALIDADES_DESCRIPTION,
+    canonical: "https://totalquality.med.br/especialidades",
+    priority: 0.8,
     changefreq: "monthly",
   },
 

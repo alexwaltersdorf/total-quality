@@ -33,8 +33,12 @@ const extrasExames = [
   { label: "Check-up", href: "/checkup" },
   { label: "Bioimpedância", href: "/bioimpedancia" },
   // Especialidades (24/10/2026): consultas e medicina do trabalho.
+  // Cardiologista, pediatra e o indice /especialidades: Fase 3 (15/11/2026).
+  { label: "Especialidades", href: "/especialidades" },
+  { label: "Cardiologista", href: "/especialidades/cardiologista" },
   { label: "Endocrinologista", href: "/especialidades/endocrinologista" },
   { label: "Gastroenterologista", href: "/especialidades/gastroenterologista" },
+  { label: "Pediatra", href: "/especialidades/pediatra" },
   { label: "Medicina do Trabalho", href: "/especialidades/medicina-do-trabalho" },
   { label: "Cartão Total Quality", href: "/cartao" },
 ];

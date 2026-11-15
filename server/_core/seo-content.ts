@@ -19,6 +19,8 @@ import { examesData, examH1, type ExamData } from "../../client/src/lib/examesDa
 import { renderSsrPage, isSsrPath } from "../../client/src/entry-server";
 import { LAB_FAQS, CHECKUP_FAQS, BIO_FAQS, HOME_FAQS } from "../../client/src/lib/paginasServico";
 import { especialidadesData, ESPECIALIDADES_BASE } from "../../client/src/lib/especialidadesData";
+import { conteudoDaRota } from "../../client/src/lib/paginasCatalogo";
+import { REVISOR_PAGINAS } from "../../client/src/lib/modeloPagina";
 import { linkifyText } from "../../client/src/lib/internalLinkTargets";
 import { blogLinksFor, examesDeSangueLista } from "../../client/src/lib/examBlogLinks";
 import { CONVENIOS_FAQS } from "../../client/src/lib/conveniosData";
@@ -60,6 +62,8 @@ import {
   SOBRE_DESCRIPTION,
   CONTATO_TITLE,
   CONTATO_DESCRIPTION,
+  ESPECIALIDADES_TITLE,
+  ESPECIALIDADES_DESCRIPTION,
   CONVENIOS_TEXTO,
   whatsappUrl,
   BLOG_EXTERNO_URL,
@@ -243,6 +247,10 @@ function internalLinksHtml(currentPath: string): string {
     ["/especialidades/endocrinologista", "Consulta com endocrinologista"],
     ["/especialidades/gastroenterologista", "Consulta com gastroenterologista"],
     ["/especialidades/medicina-do-trabalho", "Medicina do trabalho (PCMSO e ASO)"],
+    // Fase 3 (15/11/2026): consultas confirmadas pelo Alex em 14/11 e o indice.
+    ["/especialidades/cardiologista", "Consulta com cardiologista"],
+    ["/especialidades/pediatra", "Consulta com pediatra"],
+    ["/especialidades", "Todas as especialidades"],
     ["/exames/exame-admissional", "Exame admissional e ASO"],
     ["/blog", "Blog: saúde e diagnóstico"],
   ];
@@ -275,7 +283,23 @@ function examBlogSectionHtml(examSlug: string): string {
 const SCHEMA_SPECIALTY: Record<string, string> = {
   endocrinologista: "https://schema.org/Endocrine",
   gastroenterologista: "https://schema.org/Gastroenterologic",
+  // Fase 3 (15/11/2026): paginas criadas com a decisao do Alex de 14/11.
+  cardiologista: "https://schema.org/Cardiovascular",
+  pediatra: "https://schema.org/Pediatric",
 };
+
+/*
+ * Revisao visivel na pagina (Fase 3): "Revisado por Dr. Alex Waltersdorf -
+ * 267.339 · Atualizado em <time>". O schema diz o mesmo — e so isso.
+ */
+function revisaoLd(rota: string): object {
+  const c = conteudoDaRota(rota);
+  if (!c) return {};
+  return {
+    lastReviewed: c.atualizadoEm,
+    reviewedBy: { "@type": "Person", name: REVISOR_PAGINAS.replace(/^Dr\. /, "").replace(/ - .*$/, "") },
+  };
+}
 
 /**
  * JSON-LD da pagina de exame/especialidade (MedicalWebPage sobre um
@@ -301,11 +325,15 @@ function examJsonLd(exam: ExamData, base = "/exames"): object[] {
         description: exam.whatIs,
       },
       ...(SCHEMA_SPECIALTY[exam.slug] && { specialty: SCHEMA_SPECIALTY[exam.slug] }),
+      ...revisaoLd(`${base}/${exam.slug}`),
       provider: { "@id": BUSINESS_ID },
     },
     breadcrumbLd([
       ["Início", "/"],
-      ...(isEspecialidade ? [] : ([["Exames", "/exames"]] as Array<[string, string]>)),
+      // O indice /especialidades existe desde a Fase 3 (antes 404).
+      ...(isEspecialidade
+        ? ([["Especialidades", ESPECIALIDADES_BASE]] as Array<[string, string]>)
+        : ([["Exames", "/exames"]] as Array<[string, string]>)),
       [exam.shortTitle, `${base}/${exam.slug}`],
     ]),
     faqPageLd(exam.faqs),
@@ -326,6 +354,7 @@ function laboratorioJsonLd(): object[] {
       "@id": `${SITE}/laboratorio-caraguatatuba#webpage`,
       url: `${SITE}/laboratorio-caraguatatuba`,
       name: ANALISES_TITLE,
+      ...revisaoLd("/laboratorio-caraguatatuba"),
       description: ANALISES_DESCRIPTION,
       about: { "@id": BUSINESS_ID },
       provider: { "@id": BUSINESS_ID },
@@ -346,6 +375,7 @@ function bioimpedanciaJsonLd(): object[] {
       "@id": `${SITE}/bioimpedancia#webpage`,
       url: `${SITE}/bioimpedancia`,
       name: BIOIMPEDANCIA_TITLE,
+      ...revisaoLd("/bioimpedancia"),
       description: BIOIMPEDANCIA_DESCRIPTION,
       about: { "@type": "MedicalTest", name: "Bioimpedância" },
       provider: { "@id": BUSINESS_ID },
@@ -366,6 +396,7 @@ function checkupJsonLd(): object[] {
       "@id": `${SITE}/checkup#webpage`,
       url: `${SITE}/checkup`,
       name: CHECKUP_TITLE,
+      ...revisaoLd("/checkup"),
       description: CHECKUP_DESCRIPTION,
       provider: { "@id": BUSINESS_ID },
     },
@@ -398,9 +429,38 @@ function institucionalJsonLd(path: "/sobre" | "/contato"): object[] {
   ];
 }
 
+/** /especialidades — indice das consultas (Fase 3). */
+function especialidadesJsonLd(): object[] {
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": `${SITE}${ESPECIALIDADES_BASE}#webpage`,
+      url: `${SITE}${ESPECIALIDADES_BASE}`,
+      name: ESPECIALIDADES_TITLE,
+      description: ESPECIALIDADES_DESCRIPTION,
+      about: { "@id": BUSINESS_ID },
+      mainEntity: {
+        "@type": "ItemList",
+        itemListElement: especialidadesData.map((e, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          name: e.shortTitle,
+          url: `${SITE}${ESPECIALIDADES_BASE}/${e.slug}`,
+        })),
+      },
+    },
+    breadcrumbLd([
+      ["Início", "/"],
+      ["Especialidades", ESPECIALIDADES_BASE],
+    ]),
+  ];
+}
+
 /** JSON-LD de uma rota renderizada no servidor (vai para o <head>). */
 function ssrJsonLd(path: string): object[] {
   if (path === "/sobre" || path === "/contato") return institucionalJsonLd(path);
+  if (path === ESPECIALIDADES_BASE) return especialidadesJsonLd();
   if (path === "/laboratorio-caraguatatuba") return laboratorioJsonLd();
   if (path === "/bioimpedancia") return bioimpedanciaJsonLd();
   if (path === "/checkup") return checkupJsonLd();
@@ -511,7 +571,7 @@ function conveniosHtml(): string {
 
 const homeHtml = `
     <h1>${HOME_H1}</h1>
-    <p>Há mais de ${anosDeAtuacao()} anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>. Também oferece <a href="/especialidades/medicina-do-trabalho">medicina do trabalho</a> para empresas, com PCMSO e ASO, e consultas com <a href="/especialidades/endocrinologista">endocrinologista</a> e <a href="/especialidades/gastroenterologista">gastroenterologista</a>.</p>
+    <p>Há mais de ${anosDeAtuacao()} anos no Litoral Norte, a Total Quality reúne em um só lugar <a href="/laboratorio-caraguatatuba">análises clínicas</a> e centro de diagnóstico por imagem em Caraguatatuba – SP: mais de 3.000 tipos de <a href="/exames/exames-de-sangue">exames de sangue</a>, <a href="/exames/tomografia-computadorizada">tomografia computadorizada</a>, <a href="/exames/ultrassonografia">ultrassonografia com Doppler</a>, <a href="/exames/raio-x">raio-X</a>, <a href="/exames/mapa">MAPA</a>, <a href="/exames/holter">Holter 24h</a>, <a href="/exames/eletrocardiograma">eletrocardiograma</a>, <a href="/exames/eletroencefalograma">eletroencefalograma</a>, <a href="/exames/espirometria">espirometria</a>, <a href="/exames/exame-toxicologico">exame toxicológico</a>, <a href="/bioimpedancia">bioimpedância</a>, <a href="/checkup">check-up preventivo</a> e <a href="/exames/exame-admissional">medicina ocupacional</a>. Também oferece <a href="/especialidades/medicina-do-trabalho">medicina do trabalho</a> para empresas, com PCMSO e ASO, e <a href="/especialidades">consultas</a> com <a href="/especialidades/cardiologista">cardiologista</a>, <a href="/especialidades/endocrinologista">endocrinologista</a>, <a href="/especialidades/gastroenterologista">gastroenterologista</a> e <a href="/especialidades/pediatra">pediatra</a>.</p>
     <ul>
       <li>Resultados online em curto prazo para a maioria dos exames</li>
       <li>Coleta laboratorial sem agendamento, por ordem de chegada — e coleta domiciliar mediante agendamento</li>
@@ -630,7 +690,10 @@ function examesHubHtml(): string {
     <p>A Total Quality reúne em um só endereço, no Centro de Caraguatatuba, mais de 3.000 tipos de exames laboratoriais, exames de imagem, cardiológicos e ocupacionais — com resultados online em curto prazo para a maioria dos exames laboratoriais e equipe especializada há mais de ${anosDeAtuacao()} anos no Litoral Norte.</p>
     ${sections}
     <p><a href="/bioimpedancia">Bioimpedância</a> — análise completa de composição corporal.</p>
-    <p><a href="/checkup">Check-up preventivo</a> — pacotes completos por faixa etária.</p>
+    <p><a href="/checkup">Check-up preventivo</a> — planos Básico, Select e Premium.</p>
+    <h2>Consultas e medicina do trabalho</h2>
+    <ul>${especialidadesData.map((e) => `<li><a href="${ESPECIALIDADES_BASE}/${e.slug}">${escapeHtml(e.shortTitle)}</a> — ${escapeHtml(e.description)}</li>`).join("")}</ul>
+    <p><a href="${ESPECIALIDADES_BASE}">Todas as especialidades</a></p>
     ${napHtml("Não encontrou o exame que procura? Fale com a gente pelo WhatsApp — realizamos mais de 3.000 tipos de exames.")}`;
 }
 
@@ -871,6 +934,8 @@ const CLIENT_ROUTES = new Set([
   "/bioimpedancia",
   "/blog",
   "/laboratorio-caraguatatuba",
+  // Indice das especialidades (Fase 3, 15/11/2026); antes 404.
+  "/especialidades",
   // Paginas reais desde a Fase 2 de SEO (14/11/2026); antes, 301 para a home.
   "/sobre",
   "/contato",

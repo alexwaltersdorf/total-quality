@@ -55,7 +55,9 @@ describe("getSeoContentForPath", () => {
     // Fase 1 (14/11/2026): o H2 do preparo passou a ser o da pagina React
     // ("Como se preparar"); a regra — a pagina explica o preparo — e a mesma.
     expect(textoDe(html)).toContain("Perguntas frequentes");
-    expect(textoDe(html)).toMatch(/Como se preparar|Preparo para o exame/);
+    // Fase 3 (15/11/2026): o H2 virou pergunta, pelo modelo aprovado em
+    // 14/11/2026 ("Precisa de jejum ou preparo?"). A regra e a mesma.
+    expect(textoDe(html)).toMatch(/Como se preparar|Preparo para o exame|jejum ou preparo\?/);
     expect(html).toContain("jejum");
   });
 
@@ -1150,7 +1152,10 @@ describe("GUARD-RAIL: paginas de especialidade (24/10/2026)", () => {
   // trabalho. Decisoes: sem nome de medico, gastro so consulta (a clinica nao
   // faz endoscopia nem colonoscopia), PCMSO incluso, consultas particular e
   // pelos tres convenios.
-  const SLUGS = ["endocrinologista", "gastroenterologista", "medicina-do-trabalho"];
+  // 15/11/2026 (Fase 3 de SEO): cardiologista e pediatra entram — o Alex
+  // confirmou em 14/11/2026 que a clinica atende ("SIM, ATENDEMOS. PODE
+  // CRIAR"), substituindo a informacao de 31/10. Valem as mesmas regras.
+  const SLUGS = ["endocrinologista", "gastroenterologista", "medicina-do-trabalho", "cardiologista", "pediatra"];
 
   it.each(SLUGS)("/especialidades/%s responde 200, entra no sitemap e tem metadados", (slug) => {
     const path = `/especialidades/${slug}`;
@@ -1164,7 +1169,12 @@ describe("GUARD-RAIL: paginas de especialidade (24/10/2026)", () => {
   });
 
   it("especialidade inexistente responde 404", () => {
-    expect(resolveHttpStatus("/especialidades/pediatra", getKnownBlogSlugs(), new Set<string>())).toBe(404);
+    // Ate 14/11/2026 o exemplo era /especialidades/pediatra, que a clinica nao
+    // atendia. Decisao do Alex de 14/11/2026: atende — a pagina existe desde a
+    // Fase 3 (15/11/2026). O 404 segue valendo para especialidade sem pagina.
+    expect(resolveHttpStatus("/especialidades/ortopedista", getKnownBlogSlugs(), new Set<string>())).toBe(404);
+    expect(resolveHttpStatus("/especialidades/pediatra", getKnownBlogSlugs(), new Set<string>())).toBe(200);
+    expect(resolveHttpStatus("/especialidades", getKnownBlogSlugs(), new Set<string>())).toBe(200);
   });
 
   it.each(SLUGS)("/especialidades/%s: prerender dentro das regras do CFM e das decisoes do Alex", (slug) => {
@@ -1173,7 +1183,10 @@ describe("GUARD-RAIL: paginas de especialidade (24/10/2026)", () => {
     expect(html).toMatch(/Registro\s*970616/);
     expect(html).toContain("Alex Waltersdorf - 267.339");
     expect(html).not.toMatch(/\bCRM\b/);
-    expect(html).not.toMatch(/\bDra?\.\s/);
+    // Sem nome de medico. Unica excecao, decisao do Alex de 14/11/2026: a linha
+    // de revisao "Revisado por Dr. Alex Waltersdorf - 267.339" (o responsavel
+    // tecnico, ja identificado pelo art. 5o). Qualquer outro "Dr." quebra.
+    expect(html.split("Dr. Alex Waltersdorf - 267.339").join("")).not.toMatch(/\bDra?\.\s/);
     // (o rodape de endereco diz "Sábado e domingo fechado": horario, nao oferta)
     expect(html).not.toMatch(/\bmelhor(es)?\b|garant|R\$|\bpre[çc]o\b|wa\.me|resson[âa]ncia|ecocardiograma|ergom[ée]trico/i);
     expect(html).not.toMatch(/\b(Unimed|Bradesco|SulAm[ée]rica|Amil|Porto Seguro|NotreDame|Hapvida|Cassi|Geap)\b/);

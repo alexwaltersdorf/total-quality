@@ -181,16 +181,22 @@ describe("REGRA DE OURO — contexto: uma entidade só, tipada como laboratório
     expect(servicos).toMatch(/Coleta Domiciliar/);
   });
 
-  it("especialidade no schema só se o site tem a página (sem pediatria)", () => {
+  it("especialidade no schema só se o site tem a página", () => {
     // Schema que declara o que a página não mostra é dado estruturado
     // enganoso para o Google e serviço não prestado para o CFM. Endocrinologia
     // e gastroenterologia entraram com as páginas de 24/10/2026.
+    //
+    // Até 14/11/2026 este teste exigia "sem pediatria": em 31/10 a informação
+    // era que a clínica não atendia. Decisão do Alex de 14/11/2026 ("SIM,
+    // ATENDEMOS. PODE CRIAR"): atende. Pediatric entrou junto com a página
+    // /especialidades/pediatra (Fase 3, 15/11/2026) — e só pode ficar no
+    // schema enquanto a página existir (laço abaixo).
     const [n] = negocio;
     const declaradas: string[] = n.medicalSpecialty;
-    expect(declaradas.join(" ")).not.toMatch(/Pediatric/);
     const PAGINA_DA_ESPECIALIDADE: Record<string, string> = {
       "https://schema.org/Endocrine": "/especialidades/endocrinologista",
       "https://schema.org/Gastroenterologic": "/especialidades/gastroenterologista",
+      "https://schema.org/Pediatric": "/especialidades/pediatra",
     };
     for (const [especialidade, pagina] of Object.entries(PAGINA_DA_ESPECIALIDADE)) {
       if (declaradas.includes(especialidade)) {

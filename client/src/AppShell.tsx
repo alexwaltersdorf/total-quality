@@ -32,6 +32,7 @@ export type PageKey =
   | "BlogPost"
   | "ExamesHub"
   | "ExamePage"
+  | "EspecialidadesHub"
   | "LaboratorioCaraguatatuba"
   | "Sobre"
   | "Contato"
@@ -62,6 +63,8 @@ function Routes({ pages }: { pages: PageMap }) {
       <Route path={"/contato"} component={pages.Contato} />
       <Route path={"/exames"} component={pages.ExamesHub} />
       <Route path={"/exames/:slug"} component={pages.ExamePage} />
+      {/* Indice das especialidades (SEO nov/2026, Fase 3): antes 404. */}
+      <Route path={"/especialidades"} component={pages.EspecialidadesHub} />
       <Route path={"/especialidades/:slug"} component={pages.ExamePage} />
       <Route path={"/ligar"} component={pages.CallRedirect} />
       <Route path={"/obrigado-chamada"} component={pages.ThankYouCall} />

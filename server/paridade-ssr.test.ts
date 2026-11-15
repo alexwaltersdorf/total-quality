@@ -97,9 +97,11 @@ describe("Fase 1: o servidor entrega a pagina React (fonte unica)", () => {
     expect(faqJsonLd(page.jsonLd)).toEqual(visivel);
   });
 
-  it.each(ROTAS)("%s mostra 'Onde fazer em Caraguatatuba' com endereco, telefone e horario", (rota) => {
+  it.each(ROTAS)("%s mostra 'Onde fazer [exame] em Caraguatatuba' com endereco, telefone e horario", (rota) => {
     const html = getSsrPage(rota)!.body;
-    expect(headings(html)).toContain("h2:Onde fazer em Caraguatatuba");
+    // Fase 3 (15/11/2026, modelo aprovado em 14/11): o H2 nomeia o exame —
+    // "Onde fazer hemograma em Caraguatatuba". Continua obrigatorio.
+    expect(headings(html).some((h) => /^h2:Onde fazer (.+ )?em Caraguatatuba$/.test(h)), headings(html).join(" | ")).toBe(true);
     const texto = decode(html);
     expect(texto).toContain("Rua Padre Anchieta, 1010");
     expect(texto).toContain("(12) 3887-3535");

@@ -40,8 +40,12 @@ const examSitelinks = [
   { label: "Eletrocardiograma", href: "/exames/eletrocardiograma" },
   { label: "Eletroencefalograma", href: "/exames/eletroencefalograma" },
   { label: "Exame Toxicológico", href: "/exames/exame-toxicologico" },
+  // Fase 3 (15/11/2026): cardiologista, pediatra e o indice /especialidades.
+  { label: "Especialidades", href: "/especialidades" },
+  { label: "Cardiologista", href: "/especialidades/cardiologista" },
   { label: "Endocrinologista", href: "/especialidades/endocrinologista" },
   { label: "Gastroenterologista", href: "/especialidades/gastroenterologista" },
+  { label: "Pediatra", href: "/especialidades/pediatra" },
   { label: "Medicina do Trabalho", href: "/especialidades/medicina-do-trabalho" },
 ];
 
