@@ -20,7 +20,7 @@ import { renderSsrPage, isSsrPath } from "../../client/src/entry-server";
 import { LAB_FAQS, CHECKUP_FAQS, BIO_FAQS, HOME_FAQS } from "../../client/src/lib/paginasServico";
 import { especialidadesData, ESPECIALIDADES_BASE } from "../../client/src/lib/especialidadesData";
 import { conteudoDaRota } from "../../client/src/lib/paginasCatalogo";
-import { REVISOR_PAGINAS } from "../../client/src/lib/modeloPagina";
+import { SCHEMA_EXAMES } from "./schema-exames";
 import { linkifyText } from "../../client/src/lib/internalLinkTargets";
 import { blogLinksFor, examesDeSangueLista } from "../../client/src/lib/examBlogLinks";
 import { CONVENIOS_FAQS } from "../../client/src/lib/conveniosData";
@@ -31,6 +31,7 @@ import {
   blogDateIso,
   blogModifiedIso,
   blogPostingLd,
+  REVISOR_LD,
   linhaRevisao,
   datasArtigo,
   conteudoComCta,
@@ -300,7 +301,43 @@ function revisaoLd(rota: string): object {
   if (!c) return {};
   return {
     lastReviewed: c.atualizadoEm,
-    reviewedBy: { "@type": "Person", name: REVISOR_PAGINAS.replace(/^Dr\. /, "").replace(/ - .*$/, "") },
+    // Fase 5 (15/11/2026): a mesma Person (@id) do reviewedBy dos artigos do
+    // blog — uma entidade revisora so no grafo. Nome igual ao da linha
+    // visivel (REVISOR_PAGINAS) sem o tratamento e sem o numero.
+    reviewedBy: REVISOR_LD,
+  };
+}
+
+/** MedicalTest da pagina, com condicao/aparelho so quando o dado da pagina os cita (schema-exames.ts). */
+function medicalTestLd(exam: ExamData, canonical: string): object {
+  const extra = SCHEMA_EXAMES[exam.slug] ?? {};
+  return {
+    "@type": "MedicalTest",
+    "@id": `${canonical}#exame`,
+    name: exam.shortTitle,
+    description: exam.whatIs,
+    ...(extra.usedToDiagnose && {
+      usedToDiagnose: extra.usedToDiagnose.map((name) => ({ "@type": "MedicalCondition", name })),
+    }),
+    ...(extra.usesDevice && { usesDevice: { "@type": "MedicalDevice", name: extra.usesDevice } }),
+  };
+}
+
+/**
+ * Consulta (Fase 5): a pagina e sobre um medico GENERICO da especialidade na
+ * clinica — sem nome de pessoa (decisao do Alex de 14/11/2026: nenhum nome de
+ * medico em pagina nenhuma). A especialidade vai em `specialty` (enumeracao
+ * do schema.org) e no medicalSpecialty do Physician.
+ */
+function physicianLd(exam: ExamData, canonical: string): object {
+  const especialidade = SCHEMA_SPECIALTY[exam.slug];
+  return {
+    "@type": "Physician",
+    "@id": `${canonical}#medico`,
+    name: `${exam.shortTitle} — Total Quality Medicina Diagnóstica`,
+    description: exam.whatIs,
+    ...(especialidade && { medicalSpecialty: especialidade }),
+    parentOrganization: { "@id": BUSINESS_ID },
   };
 }
 
@@ -322,11 +359,7 @@ function examJsonLd(exam: ExamData, base = "/exames"): object[] {
       name: exam.metaTitle,
       headline: examH1(exam),
       description: exam.metaDescription,
-      about: {
-        "@type": isEspecialidade ? "MedicalSpecialty" : "MedicalTest",
-        name: exam.shortTitle,
-        description: exam.whatIs,
-      },
+      about: isEspecialidade ? physicianLd(exam, canonical) : medicalTestLd(exam, canonical),
       ...(SCHEMA_SPECIALTY[exam.slug] && { specialty: SCHEMA_SPECIALTY[exam.slug] }),
       ...revisaoLd(`${base}/${exam.slug}`),
       provider: { "@id": BUSINESS_ID },
@@ -697,7 +730,8 @@ function examesHubHtml(): string {
     <h2>Consultas e medicina do trabalho</h2>
     <ul>${especialidadesData.map((e) => `<li><a href="${ESPECIALIDADES_BASE}/${e.slug}">${escapeHtml(e.shortTitle)}</a> — ${escapeHtml(e.description)}</li>`).join("")}</ul>
     <p><a href="${ESPECIALIDADES_BASE}">Todas as especialidades</a></p>
-    ${napHtml("Não encontrou o exame que procura? Fale com a gente pelo WhatsApp — realizamos mais de 3.000 tipos de exames.")}`;
+    ${napHtml("Não encontrou o exame que procura? Fale com a gente pelo WhatsApp — realizamos mais de 3.000 tipos de exames.")}
+    ${jsonLd([colecaoLd("/exames", "Exames Laboratoriais e de Imagem em Caraguatatuba"), breadcrumbLd([["Início", "/"], ["Exames", "/exames"]])])}`;
 }
 
 function blogIndexHtml(): string {
@@ -713,7 +747,20 @@ function blogIndexHtml(): string {
     <h2>Mais artigos de saúde</h2>
     <p>Outros temas de prevenção e de exames, que não se repetem aqui, estão no blog externo da clínica: <a href="${BLOG_EXTERNO_URL}">${BLOG_EXTERNO_TEXTO}</a>.</p>
     ${identificacaoHtml()}
-    ${internalLinksHtml("/blog")}`;
+    ${internalLinksHtml("/blog")}
+    ${jsonLd([colecaoLd("/blog", "Blog Total Quality — Saúde e Diagnóstico"), breadcrumbLd([["Início", "/"], ["Blog", "/blog"]])])}`;
+}
+
+/** Indices /exames e /blog (Fase 5): CollectionPage do site, publicada pela clinica. */
+function colecaoLd(path: string, name: string): object {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${SITE}${path}#webpage`,
+    url: `${SITE}${path}`,
+    name,
+    publisher: { "@id": BUSINESS_ID },
+  };
 }
 
 function parseMarkdownTableRow(line: string): string[] {
@@ -905,10 +952,25 @@ function wrap(inner: string): string {
  * Injeta o conteúdo SEO dentro do <div id="root"> do HTML.
  */
 export function injectSeoContent(html: string, content: string): string {
-  return html.replace(
+  /*
+   * Fase 5 (15/11/2026): o JSON-LD do pre-render sai do #root e vai para o
+   * <head> (data-route-ld), como nas rotas SSR. Dentro do #root ele sumia
+   * quando o React montava (createRoot apaga o bloco): na home e em
+   * /convenios o FAQPage desaparecia da pagina renderizada; no blog os hooks
+   * do cliente recolocavam outra copia no <head>. Agora ha uma copia so, no
+   * <head>, que os hooks do cliente substituem (SEOHead.tsx) em vez de
+   * duplicar, e que sai na primeira navegacao interna (AppShell.tsx).
+   */
+  const scripts: string[] = [];
+  const corpo = content.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>\n?/g, (tag) => {
+    scripts.push(tag.trim().replace('<script type="application/ld+json">', '<script type="application/ld+json" data-route-ld="">'));
+    return "";
+  });
+  const out = html.replace(
     /(<div id="root">)(\s*)(<\/div>)/,
-    (_m, open, _ws, close) => `${open}${content}${close}`
+    (_m, open, _ws, close) => `${open}${corpo}${close}`
   );
+  return scripts.length ? out.replace("</head>", `${scripts.join("\n")}\n</head>`) : out;
 }
 
 /**

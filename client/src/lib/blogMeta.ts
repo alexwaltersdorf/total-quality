@@ -415,6 +415,21 @@ const SITE = "https://totalquality.med.br";
 const BUSINESS_ID = `${SITE}/#medicalbusiness`;
 
 /**
+ * O responsavel tecnico como entidade unica do grafo (SEO nov/2026, Fase 5):
+ * o mesmo @id no reviewedBy dos artigos e das paginas de servico, para o
+ * Google ler UMA pessoa revisora, e nao uma Person nova por pagina. Nome sem
+ * "Dr." e sem a sigla do conselho, como na linha visivel ("Revisado por Dr.
+ * Alex Waltersdorf - 267.339" — o "Dr." e tratamento, nao parte do nome).
+ */
+export const REVISOR_LD = {
+  "@type": "Person",
+  "@id": `${SITE}/#responsavel-tecnico`,
+  name: REVISOR.name,
+  jobTitle: REVISOR.jobTitle,
+  worksFor: { "@id": BUSINESS_ID },
+} as const;
+
+/**
  * Schema do artigo, igual no prerender e no cliente.
  *
  * publisher e (quando o autor e a equipe) author apontam para a MESMA
@@ -458,7 +473,7 @@ export function blogPostingLd(post: BlogPostMeta, content: string[] = []): objec
       "@id": `${url}#webpage`,
       url,
       ...(revisado && {
-        reviewedBy: { "@type": "Person", name: REVISOR.name, jobTitle: REVISOR.jobTitle, worksFor: { "@id": BUSINESS_ID } },
+        reviewedBy: REVISOR_LD,
         lastReviewed: post.lastReviewed || blogModifiedIso(post),
       }),
       ...(post.examName && { about: { "@type": "MedicalTest", name: post.examName } }),
