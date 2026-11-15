@@ -404,6 +404,29 @@
          widget Trysoro foram removidos daqui — pixels e conversoes devem ser
          configurados DENTRO do container GTM. Os eventos do site chegam la
          via dataLayer (client/src/lib/tracking.ts e useGoogleAdsConversion). -->
+
+    <!-- SEO nov/2026, Fase 2: os CTAs de WhatsApp sao links de verdade
+         (<a data-cta href="https://api.whatsapp.com/...">) e, nas paginas
+         renderizadas no servidor, aparecem antes de o JavaScript chegar. Um
+         clique nesse intervalo abriria a conversa sem o formulario de
+         qualificacao e sem o whatsapp_click. Este ouvinte segura o clique e
+         guarda o link; quando o componente hidrata, ele executa o clique com
+         o mesmo onClick de sempre (client/src/components/CtaWhatsApp.tsx).
+         Depois da hidratacao (data-hidratado) nao faz nada. Nao e pixel nem
+         tag: nao empurra nada no dataLayer. -->
+    <script>
+      (function () {
+        function segura(e) {
+          if (e.type === "auxclick" && e.button !== 1) return;
+          var a = e.target && e.target.closest ? e.target.closest("a[data-cta]") : null;
+          if (!a || a.hasAttribute("data-hidratado")) return;
+          e.preventDefault();
+          window.__tqCtaPendente = a;
+        }
+        document.addEventListener("click", segura, true);
+        document.addEventListener("auxclick", segura, true);
+      })();
+    </script>
   </head>
 
   <body>

@@ -16,6 +16,7 @@ import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useBreadcrumbSchema, useBlogPostingSchema, useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { renderMarkdown } from "@/lib/renderMarkdown";
 import GiscusComments from "@/components/GiscusComments";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 export default function AutoSeoArticle() {
   const openWhatsApp = useWhatsAppRedirect();
@@ -254,8 +255,8 @@ export default function AutoSeoArticle() {
             <p className="text-text-light text-sm mb-6 max-w-md mx-auto">
               Na Total Quality, no Centro de Caraguatatuba: coleta laboratorial sem agendamento e exames de imagem com hora marcada.
             </p>
-            <button
-              type="button"
+            <CtaWhatsApp
+              mensagem={`Olá! Li o artigo sobre ${article.title} e gostaria de agendar um exame.`}
               onClick={() => {
                 trackWhatsAppConversion("artigo_cta", "blog");
                 openWhatsApp("artigo_cta", `Olá! Li o artigo sobre ${article.title} e gostaria de agendar um exame.`);
@@ -263,7 +264,7 @@ export default function AutoSeoArticle() {
               className="btn-pill-brand inline-flex items-center gap-2"
             >
               Agendar pelo WhatsApp <ArrowUpRight className="w-4 h-4" />
-            </button>
+            </CtaWhatsApp>
           </div>
         </div>
       </article>

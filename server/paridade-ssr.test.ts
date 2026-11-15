@@ -148,3 +148,50 @@ describe("Fase 1: home — o FAQPage corresponde a um FAQ visivel", () => {
     expect(readFileSync(resolve(raiz, "server/_core/seo-content.ts"), "utf-8")).toContain("faqSectionHtml(HOME_FAQS)");
   });
 });
+
+describe("Fase 2: /sobre e /contato sao paginas reais, renderizadas no servidor", () => {
+  it.each([
+    ["/sobre", "Sobre a Total Quality em Caraguatatuba", "AboutPage"],
+    ["/contato", "Contato da Total Quality em Caraguatatuba", "ContactPage"],
+  ])("%s: H1 proprio, schema e identificacao do art. 5o", (rota, h1, tipo) => {
+    const page = getSsrPage(rota)!;
+    expect(page.hydrate).toBe(true);
+    expect(h1s(page.body)).toEqual([h1]);
+    expect(page.jsonLd).toContain(`"@type":"${tipo}"`);
+    const texto = decode(page.body);
+    expect(texto).toContain("Rua Padre Anchieta, 1010");
+    expect(texto).toContain("(12) 3887-3535");
+    expect(texto).toMatch(/Registro\s*970616/);
+    expect(texto).toContain("Responsável Técnico: Alex Waltersdorf - 267.339");
+    expect(getRouteMetadata(rota)!.canonical).toBe(`https://totalquality.med.br${rota}`);
+  });
+
+  it("/sobre conta a historia desde 2003 e /contato tem mapa com carregamento preguicoso", () => {
+    expect(decode(getSsrPage("/sobre")!.body)).toContain("Fundada em 2003");
+    expect(getSsrPage("/sobre")!.body).toMatch(/<iframe[^>]*loading="lazy"/);
+    expect(getSsrPage("/contato")!.body).toMatch(/<iframe[^>]*loading="lazy"/);
+  });
+});
+
+describe("Fase 2: CTAs como links reais no HTML do servidor", () => {
+  it("a pagina de exame leva links de WhatsApp com a mensagem da pagina", () => {
+    const html = getSsrPage("/exames/hemograma")!.body;
+    const hrefs = [...html.matchAll(/<a [^>]*href="(https:\/\/api\.whatsapp\.com[^"]*)"[^>]*data-cta="whatsapp"/g)].map((m) =>
+      decodeURIComponent(m[1].replace(/&amp;/g, "&"))
+    );
+    expect(hrefs.length).toBeGreaterThanOrEqual(3);
+    for (const h of hrefs) {
+      expect(h).toContain("phone=551238873535");
+      expect(h).toContain("Olá, vim pelo site e quero informações sobre hemograma completo");
+    }
+    expect(html).not.toContain("wa.me");
+  });
+
+  it("menu e rodape apontam para /sobre, /contato e os resultados online", () => {
+    const html = getSsrPage("/checkup")!.body;
+    expect(html).toContain('href="/sobre"');
+    expect(html).toContain('href="/contato"');
+    expect(html).toContain('href="https://app.totalquality.med.br/"');
+    expect(html).not.toMatch(/href="#(sobre|contato|inicio)"/);
+  });
+});

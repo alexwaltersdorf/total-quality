@@ -37,6 +37,11 @@ export interface ExamData {
   indications: string[];
   preparations: ExamPrep[];
   faqs: ExamFAQ[];
+  /**
+   * Mensagem antiga do WhatsApp. Desde a Fase 2 de SEO (nov/2026) a pagina usa
+   * "Olá, vim pelo site e quero informações sobre [exame]" (AssuntoPagina);
+   * este campo nao e mais lido pelo template.
+   */
   whatsappMessage: string;
   heroImage?: string;
   videoUrl?: string;

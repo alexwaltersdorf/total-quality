@@ -14,6 +14,7 @@ import {
   Check,
 } from "lucide-react";
 import { Link } from "wouter";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 const DIAGNOSTIC_IMG = "laboratorio";
 const CARDIOLOGY_IMG = "cardiologia";
@@ -234,13 +235,14 @@ export default function ExamesSection() {
             </div>
 
             <div className="flex flex-wrap gap-3 mt-8">
-              <button
+              <CtaWhatsApp
+                mensagem="Olá! Gostaria de agendar um exame."
                 onClick={() => { trackScheduleExam("exames_section", active); openWhatsApp("exames_section", "Olá! Gostaria de agendar um exame."); }}
                 className="btn-pill-brand btn-pill"
               >
                 Agendar Exame
                 <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
+              </CtaWhatsApp>
               <Link
                 href="/checkup"
                 className="btn-pill-outline"

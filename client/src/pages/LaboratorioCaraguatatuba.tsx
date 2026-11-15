@@ -19,6 +19,8 @@ import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLead
 import { LAB_FAQS, labDiferenciais } from "@/lib/paginasServico";
 import OndeFazer from "@/components/OndeFazer";
 import { ChevronRight } from "lucide-react";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
+import { AssuntoPagina, mensagemSobre } from "@/contexts/AssuntoPagina";
 
 
 /*
@@ -80,6 +82,8 @@ const convenios = [
   "Cartão de Todos", "Solumedi", "Leader",
 ];
 
+const ASSUNTO = "análises clínicas";
+
 export default function LaboratorioCaraguatatuba() {
   const openWhatsApp = useWhatsAppRedirect();
   const abrirTelefone = useTelefoneRedirect();
@@ -97,12 +101,15 @@ export default function LaboratorioCaraguatatuba() {
   // a partir dos mesmos dados (seo-content.ts). O script que este efeito
   // injetava repetia o breadcrumb (SEO nov/2026, Fase 1).
 
+  // Mensagem da pagina (Fase 2): "Olá, vim pelo site e quero informações sobre ...".
+  const mensagem = mensagemSobre(ASSUNTO);
   const handleScheduleClick = () => {
     trackScheduleExam("lab_caraguatatuba_cta", "geral");
-    openWhatsApp("lab_caraguatatuba_cta", "Olá! Gostaria de agendar um exame na Total Quality.");
+    openWhatsApp("lab_caraguatatuba_cta", mensagem);
   };
 
   return (
+    <AssuntoPagina value={ASSUNTO}>
     <div ref={scrollRef} className="min-h-screen bg-white">
       <Navbar />
 
@@ -135,14 +142,15 @@ export default function LaboratorioCaraguatatuba() {
                 </p>
 
                 <div className="reveal flex flex-wrap gap-4">
-                  <button
+                  <CtaWhatsApp
+                    mensagem={mensagem}
                     onClick={handleScheduleClick}
                     className="btn-pill-brand btn-pill"
                     aria-label="Agendar exame via WhatsApp"
                   >
                     Agendar Exame
                     <ArrowUpRight className="w-3.5 h-3.5" />
-                  </button>
+                  </CtaWhatsApp>
                   <button
                     type="button"
                     onClick={() => abrirTelefone("landing_lab_hero")}
@@ -470,13 +478,14 @@ export default function LaboratorioCaraguatatuba() {
               resultados online e equipe especializada.
             </p>
             <div className="reveal flex flex-wrap gap-4 justify-center">
-              <button
+              <CtaWhatsApp
+                mensagem={mensagem}
                 onClick={handleScheduleClick}
                 className="btn-pill !bg-white !text-brand hover:!bg-white/90"
               >
                 Agendar pelo WhatsApp
                 <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
+              </CtaWhatsApp>
               <button
                 type="button"
                 onClick={() => abrirTelefone("landing_lab_cta")}
@@ -493,5 +502,6 @@ export default function LaboratorioCaraguatatuba() {
       <Footer />
       <WhatsAppFAB />
     </div>
+    </AssuntoPagina>
   );
 }

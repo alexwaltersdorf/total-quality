@@ -8,6 +8,7 @@ import { Link } from "wouter";
 import { trackScheduleExam } from "@/lib/tracking";
 import { anosDeAtuacao, CONVENIOS_TEXTO } from "@shared/const";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 const diferenciais = [
   {
@@ -172,14 +173,15 @@ export default function PorQueEscolherSection() {
               </div>
             </div>
             <div className="lg:col-span-4 flex justify-center lg:justify-end">
-              <button
+              <CtaWhatsApp
+                mensagem="Olá! Gostaria de agendar um exame na Total Quality."
                 onClick={handleScheduleClick}
                 className="btn-pill-brand btn-pill"
                 aria-label="Agendar exame na Total Quality via WhatsApp"
               >
                 Agendar Exame
                 <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
+              </CtaWhatsApp>
             </div>
           </div>
         </div>

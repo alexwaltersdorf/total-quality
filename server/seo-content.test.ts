@@ -538,8 +538,12 @@ describe("GUARD-RAIL: links internos da landing de laboratorio (nao remover)", (
 describe("Redirecionamentos legados (auditoria Search Console jul/2026)", () => {
   it("mapeia as URLs legadas conhecidas pelo Google para o destino atual", () => {
     expect(getLegacyRedirect("/index")).toBe("/");
-    expect(getLegacyRedirect("/sobre")).toBe("/#sobre");
-    expect(getLegacyRedirect("/contato")).toBe("/#contato");
+    // SEO nov/2026, Fase 2 (plano aprovado pelo Alex em 14/11/2026): /sobre e
+    // /contato viraram paginas reais e deixaram de redirecionar para a home.
+    expect(getLegacyRedirect("/sobre")).toBeNull();
+    expect(getLegacyRedirect("/contato")).toBeNull();
+    expect(resolveHttpStatus("/sobre", getKnownBlogSlugs())).toBe(200);
+    expect(resolveHttpStatus("/contato", getKnownBlogSlugs())).toBe(200);
     expect(getLegacyRedirect("/mapa")).toBe("/exames/mapa");
     expect(getLegacyRedirect("/cartao-desconto")).toBe("/cartao");
     expect(getLegacyRedirect("/blog/index")).toBe("/blog");
@@ -1040,7 +1044,16 @@ describe("GUARD-RAIL: soft 404 do catch-all de artigos (Search Console, ago/2026
       "/contato",
       "/cartao-desconto",
     ];
+    // SEO nov/2026, Fase 2 (14/11/2026): /sobre e /contato deixaram de ser 301
+    // para a home e viraram paginas reais — "rota valida" com conteudo proprio.
+    const PAGINAS_REAIS = new Set(["/sobre", "/contato"]);
     for (const url of reportadas) {
+      if (PAGINAS_REAIS.has(url)) {
+        expect(getLegacyRedirect(url)).toBeNull();
+        expect(resolveHttpStatus(url, blogSlugs, new Set<string>())).toBe(200);
+        expect(getSeoContentForPath(url), `${url} sem conteudo proprio`).toMatch(/<h1[\s>]/);
+        continue;
+      }
       const destino = getLegacyRedirect(url);
       expect(destino, `${url} perdeu o 301 e volta a ser soft 404`).toBeTruthy();
       // O destino do 301 precisa existir de verdade.
@@ -1196,10 +1209,11 @@ describe("GUARD-RAIL: auditoria de indexacao (23/10/2026)", () => {
     "/eletroencefalograma": "/exames/eletroencefalograma",
     "/glossario/tempo-resultado-hemograma-completo/": "/exames/hemograma",
     "/category/blog/": "/blog",
-    "/about-us/": "/#sobre",
-    "/contact-us/": "/#contato",
-    "/contact-us-2/": "/#contato",
-    "/appointment/": "/#contato",
+    // Fase 2 (14/11/2026): destino passou a ser a pagina real, num salto so.
+    "/about-us/": "/sobre",
+    "/contact-us/": "/contato",
+    "/contact-us-2/": "/contato",
+    "/appointment/": "/contato",
   };
 
   it.each(Object.entries(COM_EQUIVALENTE))("%s faz 301 para %s", (origem, destino) => {

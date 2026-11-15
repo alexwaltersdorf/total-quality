@@ -36,6 +36,7 @@ import Footer from "@/components/Footer";
 import { useCanonical, useFAQSchema, useMetaDescription } from "@/components/SEOHead";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 import { anosDeAtuacao } from "@shared/const";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 const PRECO_DE = "R$ 500,00";
 const PRECO_POR_INTEIRO = "399";
@@ -130,8 +131,8 @@ function BotaoWhatsApp({
 }) {
   const abrirWhatsApp = useWhatsAppRedirect();
   return (
-    <button
-      type="button"
+    <CtaWhatsApp
+      mensagem={MENSAGEM}
       onClick={() => {
         // Ate 29/10/2026 estes botoes abriam o formulario sem whatsapp_click.
         trackWhatsAppClick(origem);
@@ -141,7 +142,7 @@ function BotaoWhatsApp({
     >
       {children}
       <ArrowUpRight className="h-4 w-4 shrink-0" aria-hidden="true" />
-    </button>
+    </CtaWhatsApp>
   );
 }
 

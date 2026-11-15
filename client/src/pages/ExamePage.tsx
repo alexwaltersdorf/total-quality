@@ -17,18 +17,33 @@ import { blogPosts } from "@/lib/blogPublicados";
 import { blogLinksFor, examesDeSangueLista } from "@/lib/examBlogLinks";
 import { useCanonical } from "@/components/SEOHead";
 import OndeFazer from "@/components/OndeFazer";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
+import { AssuntoPagina, mensagemSobre } from "@/contexts/AssuntoPagina";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { CONVENIOS_TEXTO } from "@shared/const";
 const ScrollVideo = lazy(() => import("@/components/ScrollVideo"));
 
-/** Frase do bloco "Onde fazer" por tipo de pagina (texto do antigo pre-render). */
-function mensagemOndeFazer(exam: ExamData): string {
-  // "MAPA" fica em caixa alta; "Raio-X" vira "raio-x"; "Exame Toxicológico" nao
-  // vira "exame de exame toxicológico".
-  const nome = exam.shortTitle
+/** "MAPA" fica em caixa alta; "Raio-X" vira "raio-x"; "(ECG)" fica. */
+function emMinusculas(texto: string): string {
+  return texto
     .split(" ")
     .map((p) => (p === p.toUpperCase() ? p : p.toLowerCase()))
     .join(" ");
+}
+
+/**
+ * Assunto da mensagem do WhatsApp nesta pagina (Fase 2): "Olá, vim pelo site
+ * e quero informações sobre hemograma completo".
+ */
+function assuntoDaPagina(exam: ExamData): string {
+  if (exam.category === "consulta") return `consulta com ${emMinusculas(exam.title)}`;
+  return emMinusculas(exam.title);
+}
+
+/** Frase do bloco "Onde fazer" por tipo de pagina (texto do antigo pre-render). */
+function mensagemOndeFazer(exam: ExamData): string {
+  // "Exame Toxicológico" nao vira "exame de exame toxicológico".
+  const nome = emMinusculas(exam.shortTitle);
   const exame = nome.startsWith("exame") ? nome : `exame de ${nome}`;
   if (exam.category === "laboratorio") {
     return `Faça ${exam.slug === "exames-de-sangue" ? "seus exames de sangue" : `seu ${exame}`} sem agendamento: a coleta é por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Dúvidas de preparo e convênio pelo WhatsApp.`;
@@ -97,7 +112,12 @@ export default function ExamePage() {
       ? "O que é a"
       : exam.slug === "exames-de-sangue" ? "O que são os" : `O que é ${exam.slug === "ultrassonografia" ? "a" : "o"}`;
 
+  const assunto = assuntoDaPagina(exam);
+  const mensagem = mensagemSobre(assunto);
+  const agendar = () => { trackScheduleExam(`exame_${exam.slug}`, exam.slug); openWhatsApp(`exame_${exam.slug}`, mensagem); };
+
   return (
+    <AssuntoPagina value={assunto}>
     <div ref={wrapperRef} className="min-h-screen bg-white">
       <Navbar />
 
@@ -139,13 +159,10 @@ export default function ExamePage() {
             </p>
 
             <div className="reveal flex flex-wrap gap-4 mb-16" style={{ transitionDelay: "300ms" }}>
-              <button
-                onClick={() => { trackScheduleExam(`exame_${exam.slug}`, exam.slug); openWhatsApp(`exame_${exam.slug}`, exam.whatsappMessage); }}
-                className="btn-pill"
-              >
+              <CtaWhatsApp mensagem={mensagem} onClick={agendar} className="btn-pill">
                 {exam.category === "laboratorio" ? "Consultar preparo e orçamento" : "Agendar pelo WhatsApp"}
                 <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
+              </CtaWhatsApp>
               <button type="button" onClick={() => abrirTelefone("exame_topo")} className="btn-pill-outline">
                 Ligar: (12) 3887-3535
               </button>
@@ -403,13 +420,10 @@ export default function ExamePage() {
                 : "Entre em contato conosco para agendar seu exame. Atendemos de segunda a sexta, das 07h30 às 18h."}
           </p>
           <div className="reveal flex flex-wrap gap-4 justify-center" style={{ transitionDelay: "200ms" }}>
-            <button
-              onClick={() => { trackScheduleExam(`exame_${exam.slug}`, exam.slug); openWhatsApp(`exame_${exam.slug}`, exam.whatsappMessage); }}
-              className="btn-pill"
-            >
+            <CtaWhatsApp mensagem={mensagem} onClick={agendar} className="btn-pill">
               {exam.category === "laboratorio" ? "Tirar dúvidas no WhatsApp" : "Agendar pelo WhatsApp"}
               <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
+            </CtaWhatsApp>
             <button type="button" onClick={() => abrirTelefone("exame_rodape")} className="btn-pill-outline">
               Ligar: (12) 3887-3535
             </button>
@@ -421,5 +435,6 @@ export default function ExamePage() {
 
       <WhatsAppFAB laboratory={exam.category === "laboratorio"} />
     </div>
+    </AssuntoPagina>
   );
 }

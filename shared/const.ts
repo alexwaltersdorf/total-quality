@@ -105,3 +105,17 @@ export function whatsappUrl(text?: string): string {
  */
 export const BLOG_EXTERNO_URL = "https://blog.totalquality.med.br/";
 export const BLOG_EXTERNO_TEXTO = "Mais artigos de saúde no blog da Total Quality";
+
+/*
+ * /sobre e /contato — paginas reais desde a Fase 2 de SEO (nov/2026). Antes
+ * eram 301 para as ancoras /#sobre e /#contato da home. Fonte unica do title,
+ * da description e do H1 (servidor e React).
+ */
+export const SOBRE_TITLE = "Sobre a Total Quality | Caraguatatuba desde 2003";
+export const SOBRE_H1 = "Sobre a Total Quality em Caraguatatuba";
+export const SOBRE_DESCRIPTION =
+  "Total Quality Medicina Diagnóstica, desde 2003 no Centro de Caraguatatuba: análises clínicas e diagnóstico por imagem no mesmo endereço.";
+export const CONTATO_TITLE = "Contato | Total Quality em Caraguatatuba";
+export const CONTATO_H1 = "Contato da Total Quality em Caraguatatuba";
+export const CONTATO_DESCRIPTION =
+  "Fale com a Total Quality: Rua Padre Anchieta, 1010, Centro, Caraguatatuba - SP. Telefone e WhatsApp (12) 3887-3535, de segunda a sexta, das 7h30 às 18h.";

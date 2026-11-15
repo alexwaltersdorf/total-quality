@@ -16,6 +16,8 @@ import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { BIO_FAQS } from "@/lib/paginasServico";
 import { BIOIMPEDANCIA_TITLE, BIOIMPEDANCIA_DESCRIPTION } from "@shared/const";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
+import { AssuntoPagina, mensagemSobre } from "@/contexts/AssuntoPagina";
 
 const HERO_IMG = "/images/recepcao-1024.webp";
 const DETAIL_IMG = "/images/laboratorio-1024.webp";
@@ -39,6 +41,8 @@ const whoNeeds = [
 // FAQ: lib/paginasServico.ts (BIO_FAQS), a mesma lista do FAQPage do servidor.
 const faqs = BIO_FAQS;
 
+const ASSUNTO = "bioimpedância";
+
 export default function Bioimpedancia() {
   const openWhatsApp = useWhatsAppRedirect();
   const abrirTelefone = useTelefoneRedirect();
@@ -56,7 +60,12 @@ export default function Bioimpedancia() {
   // FAQPage, MedicalWebPage e BreadcrumbList: emitidos pelo servidor no
   // <head>, dos mesmos dados (seo-content.ts) — SEO nov/2026, Fase 1.
 
+  // Mensagem da pagina (Fase 2): "Olá, vim pelo site e quero informações sobre bioimpedância".
+  const mensagem = mensagemSobre(ASSUNTO);
+  const agendar = () => { trackScheduleBioimpedancia(); openWhatsApp("bioimpedancia_cta", mensagem); };
+
   return (
+    <AssuntoPagina value={ASSUNTO}>
     <div ref={wrapperRef} className="min-h-screen bg-white">
       <Navbar />
 
@@ -79,13 +88,10 @@ export default function Bioimpedancia() {
                 Conheça seu corpo por dentro. A bioimpedância é um exame rápido e não invasivo que analisa a composição corporal: percentual de gordura, massa muscular, água corporal e taxa metabólica.
               </p>
               <div className="reveal flex flex-wrap gap-4 mb-12" style={{ transitionDelay: "300ms" }}>
-                <button
-                  onClick={() => { trackScheduleBioimpedancia(); openWhatsApp("bioimpedancia_cta", "Olá! Gostaria de agendar um exame de Bioimpedância."); }}
-                  className="btn-pill-brand btn-pill"
-                >
+                <CtaWhatsApp mensagem={mensagem} onClick={agendar} className="btn-pill-brand btn-pill">
                   Agendar Exame
                   <ArrowUpRight className="w-3.5 h-3.5" />
-                </button>
+                </CtaWhatsApp>
                 <button
                   onClick={() => { const el = document.querySelector("#metricas"); if (el) el.scrollIntoView({ behavior: "smooth" }); }}
                   className="btn-pill bg-transparent !text-text border border-black/20 hover:!bg-black/5"
@@ -286,13 +292,10 @@ export default function Bioimpedancia() {
                 Agende sua bioimpedância e leve os dados de composição corporal para a conversa com seu médico, nutricionista ou educador físico.
               </p>
               <div className="flex flex-wrap gap-4">
-                <button
-                  onClick={() => { trackScheduleBioimpedancia(); openWhatsApp("bioimpedancia_cta", "Olá! Gostaria de agendar um exame de Bioimpedância."); }}
-                  className="btn-pill !bg-white !text-brand hover:!bg-white/90"
-                >
+                <CtaWhatsApp mensagem={mensagem} onClick={agendar} className="btn-pill !bg-white !text-brand hover:!bg-white/90">
                   Agendar pelo WhatsApp
                   <ArrowUpRight className="w-3.5 h-3.5" />
-                </button>
+                </CtaWhatsApp>
                 <button type="button" onClick={() => abrirTelefone("bioimpedancia_cta")} className="btn-pill bg-transparent !text-white border border-white/30 hover:!bg-white/10">
                   (12) 3887-3535
                 </button>
@@ -342,5 +345,6 @@ export default function Bioimpedancia() {
       <Footer />
       <WhatsAppFAB />
     </div>
+    </AssuntoPagina>
   );
 }

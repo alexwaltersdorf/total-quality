@@ -25,11 +25,14 @@ export default function OndeFazer({
   titulo = "Onde fazer em Caraguatatuba",
   mensagem,
   className = "",
+  mapa = false,
 }: {
   titulo?: string;
   /** Frase propria da pagina (coleta sem agendamento, consulta agendada...). */
   mensagem: string;
   className?: string;
+  /** Mapa do Google embutido, com carregamento preguicoso (iframe loading="lazy"). */
+  mapa?: boolean;
 }) {
   return (
     <section id="onde-fazer" className={`py-16 lg:py-24 ${className}`}>
@@ -72,6 +75,18 @@ export default function OndeFazer({
             </a>
           </div>
         </div>
+        {mapa && (
+          <iframe
+            title="Localização da Total Quality Medicina Diagnóstica em Caraguatatuba - SP"
+            src="https://www.google.com/maps?q=R.+Padre+Anchieta,+1010+-+Centro,+Caraguatatuba+-+SP,+11660-010&z=16&output=embed"
+            className="mt-10 w-full h-[320px] lg:h-[400px] border-0 rounded-2xl"
+            width={1200}
+            height={400}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          />
+        )}
       </div>
     </section>
   );

@@ -14,6 +14,10 @@ import {
   CHECKUP_DESCRIPTION,
   BIOIMPEDANCIA_TITLE,
   BIOIMPEDANCIA_DESCRIPTION,
+  SOBRE_TITLE,
+  SOBRE_DESCRIPTION,
+  CONTATO_TITLE,
+  CONTATO_DESCRIPTION,
 } from "@shared/const";
 import blogIndex from "../../client/src/content/blog/index.json";
 import { blogDateIso, blogModifiedIso, isPublished, type BlogPostMeta } from "../../client/src/lib/blogMeta";
@@ -495,6 +499,28 @@ const staticRoutes: Record<string, RouteMetadata> = {
     canonical: "https://totalquality.med.br/outubro-rosa",
     priority: 0.7,
     changefreq: "weekly",
+  },
+
+  // Paginas institucionais reais (SEO nov/2026, Fase 2). Ate 14/11/2026 as
+  // duas URLs faziam 301 para /#sobre e /#contato.
+  "/sobre": {
+    title: SOBRE_TITLE,
+    description: SOBRE_DESCRIPTION,
+    ogTitle: SOBRE_TITLE,
+    ogDescription: SOBRE_DESCRIPTION,
+    canonical: "https://totalquality.med.br/sobre",
+    priority: 0.6,
+    changefreq: "yearly",
+  },
+
+  "/contato": {
+    title: CONTATO_TITLE,
+    description: CONTATO_DESCRIPTION,
+    ogTitle: CONTATO_TITLE,
+    ogDescription: CONTATO_DESCRIPTION,
+    canonical: "https://totalquality.med.br/contato",
+    priority: 0.7,
+    changefreq: "yearly",
   },
 
   "/laboratorio-caraguatatuba": {

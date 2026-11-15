@@ -22,6 +22,7 @@ import { Link } from "wouter";
 import { trackWhatsAppConversion } from "@/lib/tracking";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 import { mensagemContato, PAGINA_EXAME_LABEL, textoContato, tituloContato } from "@/lib/blogMeta";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 type Props = {
   examName: string;
@@ -49,8 +50,8 @@ export default function ExamCTA({ examName, examType, posicao, horaMarcada, exam
         </p>
       ))}
       <div className="flex flex-wrap gap-3">
-        <button
-          type="button"
+        <CtaWhatsApp
+          mensagem={mensagemContato(examName, horaMarcada)}
           onClick={() => {
             trackWhatsAppConversion(label, "blog", examType);
             openWhatsApp(label, mensagemContato(examName, horaMarcada));
@@ -58,7 +59,7 @@ export default function ExamCTA({ examName, examType, posicao, horaMarcada, exam
           className="btn-pill-brand inline-flex items-center gap-2"
         >
           {horaMarcada ? "Agendar pelo WhatsApp" : "Tirar dúvidas pelo WhatsApp"} <ArrowUpRight className="w-4 h-4" />
-        </button>
+        </CtaWhatsApp>
         {paginas.map((href) => (
           <Link key={href} href={href} className="btn-pill-outline inline-flex items-center gap-2">
             {PAGINA_EXAME_LABEL[href]}

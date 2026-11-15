@@ -20,6 +20,7 @@ import { useBreadcrumbSchema, useBlogArticleSchema, useFAQSchema, useCanonical, 
 import GiscusComments from "@/components/GiscusComments";
 import ExamCTA from "@/components/ExamCTA";
 import MedicalFooter from "@/components/MedicalFooter";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 export default function BlogPost() {
   const openWhatsApp = useWhatsAppRedirect();
@@ -271,8 +272,8 @@ export default function BlogPost() {
             <p className="text-text-light text-sm mb-6 max-w-md mx-auto">
               Coleta laboratorial sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Exames de imagem com hora marcada pelo WhatsApp (12) 3887-3535.
             </p>
-            <button
-              type="button"
+            <CtaWhatsApp
+              mensagem={`Olá! Li o artigo sobre ${post.title} e tenho uma dúvida.`}
               onClick={() => {
                 trackWhatsAppConversion("artigo_cta", "blog", meta?.examType);
                 openWhatsApp("artigo_cta", `Olá! Li o artigo sobre ${post.title} e tenho uma dúvida.`);
@@ -280,7 +281,7 @@ export default function BlogPost() {
               className="btn-pill-brand inline-flex items-center gap-2"
             >
               Falar pelo WhatsApp <ArrowUpRight className="w-4 h-4" />
-            </button>
+            </CtaWhatsApp>
           </div>
           )}
         </div>

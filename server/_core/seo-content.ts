@@ -56,6 +56,10 @@ import {
   CHECKUP_DESCRIPTION,
   BIOIMPEDANCIA_TITLE,
   BIOIMPEDANCIA_DESCRIPTION,
+  SOBRE_TITLE,
+  SOBRE_DESCRIPTION,
+  CONTATO_TITLE,
+  CONTATO_DESCRIPTION,
   CONVENIOS_TEXTO,
   whatsappUrl,
   BLOG_EXTERNO_URL,
@@ -373,8 +377,30 @@ function checkupJsonLd(): object[] {
   ];
 }
 
+/** /sobre (AboutPage) e /contato (ContactPage) — Fase 2, sobre a mesma entidade. */
+function institucionalJsonLd(path: "/sobre" | "/contato"): object[] {
+  const sobre = path === "/sobre";
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": sobre ? "AboutPage" : "ContactPage",
+      "@id": `${SITE}${path}#webpage`,
+      url: `${SITE}${path}`,
+      name: sobre ? SOBRE_TITLE : CONTATO_TITLE,
+      description: sobre ? SOBRE_DESCRIPTION : CONTATO_DESCRIPTION,
+      about: { "@id": BUSINESS_ID },
+      mainEntity: { "@id": BUSINESS_ID },
+    },
+    breadcrumbLd([
+      ["Início", "/"],
+      [sobre ? "Sobre" : "Contato", path],
+    ]),
+  ];
+}
+
 /** JSON-LD de uma rota renderizada no servidor (vai para o <head>). */
 function ssrJsonLd(path: string): object[] {
+  if (path === "/sobre" || path === "/contato") return institucionalJsonLd(path);
   if (path === "/laboratorio-caraguatatuba") return laboratorioJsonLd();
   if (path === "/bioimpedancia") return bioimpedanciaJsonLd();
   if (path === "/checkup") return checkupJsonLd();
@@ -845,6 +871,9 @@ const CLIENT_ROUTES = new Set([
   "/bioimpedancia",
   "/blog",
   "/laboratorio-caraguatatuba",
+  // Paginas reais desde a Fase 2 de SEO (14/11/2026); antes, 301 para a home.
+  "/sobre",
+  "/contato",
   "/ligar",
   "/obrigado-chamada",
   "/formulario-sucesso",

@@ -33,6 +33,8 @@ export type PageKey =
   | "ExamesHub"
   | "ExamePage"
   | "LaboratorioCaraguatatuba"
+  | "Sobre"
+  | "Contato"
   | "CallRedirect"
   | "ThankYouCall"
   | "FormSubmissionSuccess"
@@ -56,6 +58,8 @@ function Routes({ pages }: { pages: PageMap }) {
       <Route path={"/blog"} component={pages.Blog} />
       <Route path={"/blog/:slug"} component={pages.BlogPost} />
       <Route path={"/laboratorio-caraguatatuba"} component={pages.LaboratorioCaraguatatuba} />
+      <Route path={"/sobre"} component={pages.Sobre} />
+      <Route path={"/contato"} component={pages.Contato} />
       <Route path={"/exames"} component={pages.ExamesHub} />
       <Route path={"/exames/:slug"} component={pages.ExamePage} />
       <Route path={"/especialidades/:slug"} component={pages.ExamePage} />

@@ -26,9 +26,9 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   // placeholder "Total Quality – TotalQuality".
   "/total-quality": "/",
 
-  // Eram âncoras da home em uma versão antiga do site, nunca rotas próprias
-  "/sobre": "/#sobre",
-  "/contato": "/#contato",
+  // "/sobre" e "/contato" eram âncoras da home numa versão antiga do site e
+  // sairam daqui em 14/11/2026 (SEO, Fase 2): viraram
+  // paginas reais. As URLs antigas abaixo apontam direto para elas (um salto).
 
   // Renomeadas
   "/mapa": "/exames/mapa",
@@ -83,10 +83,10 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   "/eletroencefalograma": "/exames/eletroencefalograma",
   "/glossario/tempo-resultado-hemograma-completo": "/exames/hemograma",
   "/category/blog": "/blog",
-  "/about-us": "/#sobre",
-  "/contact-us": "/#contato",
-  "/contact-us-2": "/#contato",
-  "/appointment": "/#contato",
+  "/about-us": "/sobre",
+  "/contact-us": "/contato",
+  "/contact-us-2": "/contato",
+  "/appointment": "/contato",
 
   // Servico que a clinica deixou de oferecer (31/10/2026): "No momento nao
   // realizamos Mamografia" (decisao do Alex). A pagina tinha historico no

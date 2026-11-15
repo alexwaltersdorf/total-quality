@@ -13,7 +13,7 @@
  *
  * Uso (com o servidor de producao no ar: pnpm build && pnpm start):
  *   node scripts/paridade-ssr.mjs http://localhost:3000
- *   node scripts/paridade-ssr.mjs http://localhost:3000 /bioimpedancia /exames/raio-x
+ *   node scripts/paridade-ssr.mjs http://localhost:3000 /bioimpedancia /exames/raio-x /sobre /contato
  *
  * Precisa do Playwright com o Chromium instalado (nao e dependencia do
  * projeto). Sai com codigo 1 se qualquer rota divergir.
@@ -135,9 +135,13 @@ for (const rota of ROTAS) {
   problemas.push(...diff("FAQ", servidor.faq, navegador.faq));
   problemas.push(...diff("links", servidor.links, navegador.links));
   problemas.push(...diff("FAQPage x FAQ visivel", servidor.faqLd, servidor.faq));
-  if (!servidor.faq.length) problemas.push("  sem FAQ visivel");
-  if (servidor.faq.some((f) => f.a.length < 20)) problemas.push("  resposta do FAQ ausente do HTML do servidor");
-  if (!servidor.headings.includes("H2:Onde fazer em Caraguatatuba")) problemas.push('  sem "Onde fazer em Caraguatatuba"');
+  // /sobre e /contato (Fase 2) sao institucionais: sem FAQ nem "Onde fazer".
+  const institucional = rota === "/sobre" || rota === "/contato";
+  if (!institucional) {
+    if (!servidor.faq.length) problemas.push("  sem FAQ visivel");
+    if (servidor.faq.some((f) => f.a.length < 20)) problemas.push("  resposta do FAQ ausente do HTML do servidor");
+    if (!servidor.headings.includes("H2:Onde fazer em Caraguatatuba")) problemas.push('  sem "Onde fazer em Caraguatatuba"');
+  }
   const hidratacao = mensagens.filter((m) => AVISO_HIDRATACAO.test(m));
   if (hidratacao.length) problemas.push(...hidratacao.map((m) => `  console: ${m.slice(0, 300)}`));
   if (!reaproveitou) problemas.push("  o React redesenhou o #root em vez de hidratar (H1 trocado)");

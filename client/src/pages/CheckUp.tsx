@@ -15,6 +15,8 @@ import { CHECKUP_TITLE, CHECKUP_DESCRIPTION } from "@shared/const";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { CHECKUP_FAQS } from "@/lib/paginasServico";
 import OndeFazer from "@/components/OndeFazer";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
+import { AssuntoPagina, mensagemSobre } from "@/contexts/AssuntoPagina";
 
 const HERO_IMG = "/images/recepcao-1024.webp";
 const PROCESS_IMG = "/images/laboratorio-1024.webp";
@@ -109,6 +111,8 @@ const processSteps = [
   { num: "04", title: "Laudo e Orientação", desc: "Receba seu laudo completo com recomendações personalizadas e, se necessário, encaminhamento especializado." },
 ];
 
+const ASSUNTO = "check-up";
+
 export default function CheckUp() {
   const openWhatsApp = useWhatsAppRedirect();
   const abrirTelefone = useTelefoneRedirect();
@@ -142,7 +146,12 @@ export default function CheckUp() {
   // dados desta pagina (seo-content.ts). O useSchemaBreadcrumb que ficava aqui
   // repetia o breadcrumb no navegador (SEO nov/2026, Fase 1).
 
+  // Mensagem da pagina (Fase 2): "Olá, vim pelo site e quero informações sobre check-up".
+  const mensagem = mensagemSobre(ASSUNTO);
+  const agendar = () => { trackScheduleCheckup("geral"); openWhatsApp("checkup_geral", mensagem); };
+
   return (
+    <AssuntoPagina value={ASSUNTO}>
     <div ref={wrapperRef} className="min-h-screen bg-white">
       <Navbar />
 
@@ -164,13 +173,10 @@ export default function CheckUp() {
               Avaliação completa da sua saúde com exames laboratoriais e de imagem. Escolha o plano que melhor se adequa às suas necessidades.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={() => { trackScheduleCheckup("geral"); openWhatsApp("checkup_geral", "Olá! Gostaria de agendar um Check-Up."); }}
-                className="btn-pill"
-              >
+              <CtaWhatsApp mensagem={mensagem} onClick={agendar} className="btn-pill">
                 Agendar Check-Up
                 <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
+              </CtaWhatsApp>
               <button type="button" onClick={() => abrirTelefone("checkup_topo")} className="btn-pill bg-transparent !text-text border border-black/20 hover:!bg-black/5">
                 Ligar: (12) 3887-3535
               </button>
@@ -229,9 +235,10 @@ export default function CheckUp() {
                     ))}
                   </div>
 
-                  <button
-                    onClick={() => { trackScheduleCheckup(pkg.title); openWhatsApp(`checkup_pkg_${pkg.title}`, "Olá! Gostaria de agendar o " + pkg.title + "."); }}
-                    className={`w-full py-3 px-4 rounded-lg font-semibold transition-all ${
+                  <CtaWhatsApp
+                    mensagem={mensagemSobre(`o ${pkg.title}`)}
+                    onClick={() => { trackScheduleCheckup(pkg.title); openWhatsApp(`checkup_pkg_${pkg.title}`, mensagemSobre(`o ${pkg.title}`)); }}
+                    className={`block text-center w-full py-3 px-4 rounded-lg font-semibold transition-all ${
                       pkg.highlight
                         ? "bg-white text-brand hover:bg-white/90"
                         : "bg-brand text-white hover:bg-brand-dark"
@@ -239,7 +246,7 @@ export default function CheckUp() {
                   >
                     Agendar {pkg.title.split(" ")[1]}
                     <ArrowUpRight className="w-3.5 h-3.5 inline ml-2" />
-                  </button>
+                  </CtaWhatsApp>
                 </div>
               </div>
             ))}
@@ -342,13 +349,10 @@ export default function CheckUp() {
             Agende seu check-up agora e comece sua jornada em direção a uma vida mais saudável e preventiva.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => { trackScheduleCheckup("geral"); openWhatsApp("checkup_geral", "Olá! Gostaria de agendar um Check-Up."); }}
-              className="btn-pill bg-white text-brand hover:bg-white/90"
-            >
+            <CtaWhatsApp mensagem={mensagem} onClick={agendar} className="btn-pill bg-white text-brand hover:bg-white/90">
               Agendar pelo WhatsApp
               <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
+            </CtaWhatsApp>
             <button type="button" onClick={() => abrirTelefone("checkup_rodape")} className="btn-pill bg-transparent text-white border border-white/30 hover:bg-white/10">
               Ligar: (12) 3887-3535
             </button>
@@ -359,5 +363,6 @@ export default function CheckUp() {
       <Footer />
       <WhatsAppFAB />
     </div>
+    </AssuntoPagina>
   );
 }

@@ -16,6 +16,7 @@ import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { trpc } from "@/lib/trpc";
 import { Loader2 } from "lucide-react";
 import { BLOG_EXTERNO_URL, BLOG_EXTERNO_TEXTO } from "@shared/const";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 function BlogCard({ post, featured = false }: { post: BlogPostMeta; featured?: boolean }) {
   if (featured) {
@@ -267,8 +268,8 @@ export default function Blog() {
             Na Total Quality em Caraguatatuba, oferecemos exames laboratoriais, diagnóstico por imagem
             e cardiologia no Centro, com resultados online e atendimento humanizado.
           </p>
-          <button
-            type="button"
+          <CtaWhatsApp
+            mensagem="Olá! Gostaria de agendar um exame."
             onClick={() => {
               trackWhatsAppConversion("blog_cta", "blog");
               openWhatsApp("blog_cta", "Olá! Gostaria de agendar um exame.");
@@ -276,7 +277,7 @@ export default function Blog() {
             className="btn-pill-brand inline-flex items-center gap-2"
           >
             Agendar pelo WhatsApp <ArrowUpRight className="w-4 h-4" />
-          </button>
+          </CtaWhatsApp>
         </div>
       </section>
 

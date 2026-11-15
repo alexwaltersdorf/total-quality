@@ -24,6 +24,8 @@ import ExamePage from "./pages/ExamePage";
 import LaboratorioCaraguatatuba from "./pages/LaboratorioCaraguatatuba";
 import CheckUp from "./pages/CheckUp";
 import Bioimpedancia from "./pages/Bioimpedancia";
+import Sobre from "./pages/Sobre";
+import Contato from "./pages/Contato";
 import { examesData } from "@/lib/examesData";
 import { especialidadesData, ESPECIALIDADES_BASE } from "@/lib/especialidadesData";
 
@@ -39,6 +41,8 @@ const SSR_PAGES: PageMap = {
   ExamesHub: Nada,
   ExamePage,
   LaboratorioCaraguatatuba,
+  Sobre,
+  Contato,
   CallRedirect: Nada,
   ThankYouCall: Nada,
   FormSubmissionSuccess: Nada,
@@ -56,7 +60,7 @@ const ESPECIALIDADE_SLUGS = new Set(especialidadesData.map((e) => e.slug));
 /** Caminho normalizado (sem barra final e sem query) se a rota e de SSR. */
 export function isSsrPath(pathname: string): boolean {
   const path = pathname.split("?")[0].replace(/\/$/, "") || "/";
-  if (["/laboratorio-caraguatatuba", "/checkup", "/bioimpedancia"].includes(path)) return true;
+  if (["/laboratorio-caraguatatuba", "/checkup", "/bioimpedancia", "/sobre", "/contato"].includes(path)) return true;
   const exame = path.match(/^\/exames\/([a-z0-9-]+)$/);
   if (exame) return EXAM_SLUGS.has(exame[1]);
   const esp = path.match(new RegExp(`^${ESPECIALIDADES_BASE}/([a-z0-9-]+)$`));
