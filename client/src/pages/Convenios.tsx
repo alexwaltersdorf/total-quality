@@ -33,7 +33,7 @@ export default function Convenios() {
   const openWhatsApp = useWhatsAppRedirect();
   useCanonical("https://totalquality.med.br/convenios");
   useMetaDescription(
-    "Convênios aceitos no laboratório Total Quality em Caraguatatuba: Cartão de Todos, Solumedi e Leader. Nos demais casos, atendimento particular."
+    "Convênios aceitos no laboratório Total Quality em Caraguatatuba: Cartão de Todos, Solumedi e Leader. Fora deles, atendimento particular. Confirme pelo WhatsApp."
   );
 
   return (

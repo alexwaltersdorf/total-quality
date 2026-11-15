@@ -87,7 +87,7 @@ export default function BlogPost() {
 
   // SEO: Meta description
   useMetaDescription(
-    post?.excerpt || "Blog Total Quality Medicina Diagnóstica - Artigos sobre saúde e bem-estar"
+    post?.metaDescription || post?.excerpt || "Blog Total Quality Medicina Diagnóstica - Artigos sobre saúde e bem-estar"
   );
 
   // SEO: Canonical URL

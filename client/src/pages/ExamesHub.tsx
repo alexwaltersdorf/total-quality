@@ -59,7 +59,7 @@ function ExamCard({ exam }: { exam: ExamData }) {
 export default function ExamesHub() {
   useCanonical("https://totalquality.med.br/exames");
   useMetaDescription(
-    "Todos os exames da Total Quality em Caraguatatuba: exames laboratoriais, hemograma, ultrassom, tomografia, cardiológicos, ocupacionais e mais. Veja a lista completa."
+    "Exames da Total Quality em Caraguatatuba: laboratoriais, hemograma, ultrassom, tomografia, raio-X, cardiológicos, ocupacionais e mais. Veja a lista completa."
   );
 
   return (

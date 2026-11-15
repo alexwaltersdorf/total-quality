@@ -697,3 +697,41 @@ describe("GUARD-RAIL: blog → pagina de servico (SEO nov/2026, Fase 4)", () => 
     expect(img).toMatch(/height=\{640\}/);
   });
 });
+
+/*
+ * Fase 7 de SEO (15/11/2026): a auditoria de todas as URLs do sitemap
+ * (scripts/auditoria-sitemap.mjs) achou o React trocando, depois de montar, a
+ * description do servidor pelo excerpt em 6 artigos (ate 211 caracteres) e os
+ * cards do blog sem width/height. Servidor e React leem agora o mesmo campo.
+ */
+describe("meta description do artigo: a mesma no servidor e no navegador", () => {
+  const publicados = (blogIndex as BlogPostMeta[]).filter(isPublished);
+
+  it.each(publicados.map((p) => p.slug))("%s", (slug) => {
+    const post = publicados.find((p) => p.slug === slug)!;
+    // BlogPost.tsx: useMetaDescription(post.metaDescription || post.excerpt)
+    const doNavegador = post.metaDescription || post.excerpt;
+    const doServidor = getRouteMetadata(`/blog/${slug}`)!.description;
+    expect(doServidor).toBe(doNavegador);
+    expect(doServidor.length).toBeGreaterThanOrEqual(120);
+    expect(doServidor.length).toBeLessThanOrEqual(160);
+  });
+
+  it("BlogPost.tsx usa metaDescription antes do excerpt", () => {
+    const src = fs.readFileSync(nodePath.resolve(import.meta.dirname, "../client/src/pages/BlogPost.tsx"), "utf8");
+    expect(src).toMatch(/useMetaDescription\(\s*post\?\.metaDescription \|\| post\?\.excerpt/);
+  });
+
+  it.each(["../client/src/pages/Blog.tsx", "../client/src/components/BlogPreviewSection.tsx"])(
+    "%s: imagens dos cards com width/height",
+    (arquivo) => {
+      const src = fs.readFileSync(nodePath.resolve(import.meta.dirname, arquivo), "utf8");
+      const imgs = src.split("<img").slice(1).map((s) => s.slice(0, s.indexOf("/>")));
+      expect(imgs.length).toBeGreaterThan(0);
+      for (const img of imgs) {
+        expect(img).toMatch(/width=\{1024\}/);
+        expect(img).toMatch(/height=\{640\}/);
+      }
+    },
+  );
+});

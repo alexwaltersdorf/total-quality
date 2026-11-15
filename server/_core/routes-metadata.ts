@@ -20,6 +20,8 @@ import {
   CONTATO_DESCRIPTION,
   ESPECIALIDADES_TITLE,
   ESPECIALIDADES_DESCRIPTION,
+  BLOG_TITLE,
+  BLOG_DESCRIPTION,
 } from "@shared/const";
 import blogIndex from "../../client/src/content/blog/index.json";
 import { blogDateIso, blogModifiedIso, isPublished, type BlogPostMeta } from "../../client/src/lib/blogMeta";
@@ -122,7 +124,7 @@ const examesExtras: Record<string, ExtrasExame & { title?: string; description?:
 
   "holter": {
     title: "Holter 24h em Caraguatatuba | Total Quality",
-    description: "Holter 24h em Caraguatatuba - SP. Monitoramento contínuo do coração. Diagnóstico de arritmias. Agende seu exame.",
+    description: "Holter 24h em Caraguatatuba - SP: registro contínuo do ritmo do coração durante a rotina e o sono, para investigar arritmias. Tire dúvidas pelo WhatsApp.",
     ogTitle: "Holter 24h | Total Quality",
     ogDescription: "Monitoramento contínuo do coração por 24 horas.",
     canonical: "https://totalquality.med.br/exames/holter",
@@ -142,7 +144,7 @@ const examesExtras: Record<string, ExtrasExame & { title?: string; description?:
 
   "eletrocardiograma": {
     title: "Eletrocardiograma (ECG) em Caraguatatuba | Total Quality",
-    description: "Eletrocardiograma em Caraguatatuba - SP. Diagnóstico de problemas cardíacos. Exame rápido e não invasivo. Agende.",
+    description: "Eletrocardiograma (ECG) em Caraguatatuba - SP: exame rápido e indolor que registra a atividade elétrica do coração, em 5 a 10 minutos. Agende pelo WhatsApp.",
     ogTitle: "Eletrocardiograma | Total Quality",
     ogDescription: "Exame do coração rápido e não invasivo.",
     canonical: "https://totalquality.med.br/exames/eletrocardiograma",
@@ -152,7 +154,7 @@ const examesExtras: Record<string, ExtrasExame & { title?: string; description?:
 
   "eletroencefalograma": {
     title: "Eletroencefalograma (EEG) em Caraguatatuba | Total Quality",
-    description: "Eletroencefalograma em Caraguatatuba - SP. Diagnóstico de problemas neurológicos. Exame não invasivo. Agende seu EEG.",
+    description: "Eletroencefalograma (EEG) em Caraguatatuba - SP: exame não invasivo que registra a atividade elétrica do cérebro. Veja o preparo e tire dúvidas pelo WhatsApp.",
     ogTitle: "Eletroencefalograma | Total Quality",
     ogDescription: "Exame neurológico não invasivo para diagnóstico de problemas cerebrais.",
     canonical: "https://totalquality.med.br/exames/eletroencefalograma",
@@ -172,7 +174,7 @@ const examesExtras: Record<string, ExtrasExame & { title?: string; description?:
 
   "hemograma": {
     title: "Hemograma Completo em Caraguatatuba | Total Quality",
-    description: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Faça na Total Quality, resultado em curto prazo.",
+    description: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Resultado em curto prazo na Total Quality.",
     ogTitle: "Hemograma Completo | Total Quality",
     ogDescription: "Tudo sobre o hemograma completo: o que avalia, preparo e resultado em curto prazo.",
     canonical: "https://totalquality.med.br/exames/hemograma",
@@ -435,8 +437,8 @@ const staticRoutes: Record<string, RouteMetadata> = {
   },
 
   "/blog": {
-    title: "Blog Total Quality | Artigos sobre Saúde e Diagnóstico",
-    description: "Blog Total Quality: artigos sobre saúde, diagnóstico, exames preventivos e bem-estar. Informações de especialistas.",
+    title: BLOG_TITLE,
+    description: BLOG_DESCRIPTION,
     ogTitle: "Blog Total Quality | Saúde e Diagnóstico",
     ogDescription: "Leia artigos sobre saúde, diagnóstico e bem-estar de especialistas.",
     canonical: "https://totalquality.med.br/blog",
@@ -456,7 +458,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
 
   "/exames": {
     title: "Exames Laboratoriais e de Imagem | Total Quality",
-    description: "Todos os exames da Total Quality em Caraguatatuba: exames laboratoriais, hemograma, ultrassom, tomografia, cardiológicos, ocupacionais e mais. Veja a lista completa.",
+    description: "Exames da Total Quality em Caraguatatuba: laboratoriais, hemograma, ultrassom, tomografia, raio-X, cardiológicos, ocupacionais e mais. Veja a lista completa.",
     ogTitle: "Exames | Total Quality Medicina Diagnóstica",
     ogDescription: "Lista completa de exames laboratoriais, de imagem e cardiológicos em Caraguatatuba.",
     canonical: "https://totalquality.med.br/exames",
@@ -634,7 +636,7 @@ function blogRoute(slug: string): RouteMetadata | null {
   const canonical = `https://totalquality.med.br/blog/${slug}`;
   const base: RouteMetadata = blogMetadata[slug] ?? {
     title: post.metaTitle ?? post.title,
-    description: post.excerpt,
+    description: post.metaDescription ?? post.excerpt,
     ogTitle: post.title,
     ogDescription: post.excerpt,
     ogImage: post.image,

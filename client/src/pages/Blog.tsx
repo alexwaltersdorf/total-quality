@@ -13,6 +13,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
+import { BLOG_TITLE, BLOG_DESCRIPTION } from "@shared/const";
 import { trpc } from "@/lib/trpc";
 import { Loader2 } from "lucide-react";
 import { BLOG_EXTERNO_URL, BLOG_EXTERNO_TEXTO } from "@shared/const";
@@ -27,6 +28,8 @@ function BlogCard({ post, featured = false }: { post: BlogPostMeta; featured?: b
             <img
               src={post.image}
               alt={post.title}
+              width={1024}
+              height={640}
               className="w-full aspect-[16/10] object-cover transition-transform duration-700 group-hover:scale-105"
               loading="lazy"
             />
@@ -62,6 +65,8 @@ function BlogCard({ post, featured = false }: { post: BlogPostMeta; featured?: b
           <img
             src={post.image}
             alt={post.title}
+            width={1024}
+            height={640}
             className="w-full aspect-[16/10] object-cover transition-transform duration-700 group-hover:scale-105"
             loading="lazy"
           />
@@ -102,11 +107,11 @@ export default function Blog() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "Blog | Total Quality Medicina Diagnóstica — Artigos sobre Saúde e Bem-Estar";
+    document.title = BLOG_TITLE;
   }, []);
 
   // SEO: Meta description e canonical
-  useMetaDescription("Blog da Total Quality Medicina Diagnóstica em Caraguatatuba - SP. Artigos sobre saúde preventiva, exames laboratoriais, cardiologia, nutrição e bem-estar. Dicas de especialistas para cuidar da sua saúde.");
+  useMetaDescription(BLOG_DESCRIPTION);
   useCanonical("/blog");
 
   // Combinar artigos estáticos com artigos do AutoSEO

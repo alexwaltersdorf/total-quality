@@ -56,6 +56,12 @@ export interface BlogPostMeta {
   related?: string[];
   /** <title> da pagina, quando diferente do H1. Fonte: routes-metadata.ts. */
   metaTitle?: string;
+  /**
+   * meta description, quando diferente do excerpt (que aparece nos cards).
+   * Servidor e React leem o mesmo campo (SEO nov/2026, Fase 7: o React trocava
+   * a description do servidor pelo excerpt, de ate 211 caracteres).
+   */
+  metaDescription?: string;
 }
 
 export interface BlogPost extends BlogPostMeta {

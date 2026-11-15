@@ -82,7 +82,14 @@ export const CHECKUP_H1 = "Check-up Preventivo em Caraguatatuba";
  */
 export const BIOIMPEDANCIA_TITLE = "Bioimpedância em Caraguatatuba | Total Quality";
 export const BIOIMPEDANCIA_H1 = "Bioimpedância em Caraguatatuba";
-export const BIOIMPEDANCIA_DESCRIPTION = "Bioimpedância em Caraguatatuba - SP. Análise de composição corporal (gordura, músculo, água). Agende seu exame.";
+/*
+ * /blog — fonte unica (SEO nov/2026, Fase 7): o servidor dizia um title e uma
+ * description (115 caracteres) e o React trocava por outros (title de 75,
+ * description de 196) depois de montar.
+ */
+export const BLOG_TITLE = "Blog Total Quality | Artigos sobre Saúde e Diagnóstico";
+export const BLOG_DESCRIPTION = "Blog da Total Quality em Caraguatatuba: artigos sobre exames laboratoriais e de imagem, preparo, check-up e saúde preventiva, com revisão médica.";
+export const BIOIMPEDANCIA_DESCRIPTION = "Bioimpedância em Caraguatatuba - SP: análise da composição corporal (gordura, músculo e água) na Total Quality. Tire dúvidas e agende pelo WhatsApp.";
 
 /**
  * Link de WhatsApp da clinica — formato unico do site (system prompt do blog,
