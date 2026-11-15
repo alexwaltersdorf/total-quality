@@ -18,6 +18,7 @@ import { describe, expect, it } from "vitest";
 import blogIndex from "../client/src/content/blog/index.json";
 import {
   blogDateIso,
+  blogModifiedIso,
   blogPostingLd,
   CTA_MARKER,
   CTA_FRACAO_MAX,
@@ -314,8 +315,15 @@ describe("GUARD-RAIL: sitemap e meta tags dos artigos (out/2026)", () => {
   it("lastmod so com data real; nunca a data do dia para todas as URLs", () => {
     const xml = generateSitemap();
     const lastmods = Array.from(xml.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)).map((m) => m[1]);
-    expect(lastmods.length).toBe(publicados.length);
+    // 15/11/2026 (SEO nov/2026, Fase 6, plano aprovado em 14/11): TODA URL do
+    // sitemap tem lastmod — artigos pelo dateModified, paginas do modelo pelo
+    // atualizadoEm, indices pela pagina mais recente que listam e as demais
+    // por um mapa datado (routes-metadata.ts). Antes so os artigos tinham.
+    expect(lastmods.length).toBe((xml.match(/<loc>/g) ?? []).length);
     for (const l of lastmods) expect(l).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    // Data real, nao "hoje" em todas: os artigos guardam a data de cada um.
+    expect(new Set(lastmods).size).toBeGreaterThan(3);
+    for (const p of publicados) expect(xml).toContain(`/blog/${p.slug}</loc>\n    <lastmod>${blogModifiedIso(p)}</lastmod>`);
   });
 
   it("artigo sai com og:type article", () => {

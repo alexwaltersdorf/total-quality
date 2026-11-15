@@ -66,9 +66,6 @@
     <!-- SEO: Meta Description com palavras-chave -->
     <meta name="description" content="Laboratório de análises clínicas em Caraguatatuba. Exames de sangue sem agendamento, por ordem de chegada, coleta domiciliar e exames de imagem." />
 
-    <!-- SEO: Keywords -->
-    <meta name="keywords" content="laboratório Caraguatatuba, exames de sangue, tomografia, ultrassom, check-up" />
-
     <!-- SEO: Canonical URL -->
     <link rel="canonical" href="https://totalquality.med.br/" />
 
@@ -89,8 +86,8 @@
     <meta property="og:site_name" content="Total Quality Medicina Diagnóstica" />
     <meta property="og:locale" content="pt_BR" />
     <meta property="og:image" content="https://totalquality.med.br/images/fachada-1024.webp" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:width" content="1024" />
+    <meta property="og:image:height" content="843" />
     <meta property="og:image:alt" content="Total Quality Medicina Diagnóstica — Laboratório em Caraguatatuba" />
 
     <!-- SEO: Twitter Card -->
@@ -389,15 +386,11 @@
       .seo-prerender a { color: #9b212b; }
     </style>
 
-    <!-- LCP: preload do hero image (WebP local, servido pelo proprio dominio/CDN Hostinger) -->
-    <link
-      rel="preload"
-      as="image"
-      type="image/avif"
-      href="/images/recepcao-1024.avif"
-      imagesrcset="/images/recepcao-480.avif 480w, /images/recepcao-768.avif 768w, /images/recepcao-1024.avif 1024w"
-      imagesizes="(max-width: 1024px) 100vw, 55vw"
-      fetchpriority="high" />
+    <!-- LCP: o preload da foto da recepcao (LCP da home) entra SO na home,
+         no marcador abaixo (routes-metadata.ts, LCP_PRELOAD_HOME). Ate
+         15/11/2026 ele estava aqui para todas as rotas, e as paginas de exame
+         e o blog baixavam uma imagem que nao exibiam. -->
+    <!-- lcp-preload -->
 
     <!-- Fontes self-hosted: @font-face em client/src/index.css, arquivos em
          client/public/fonts. Sem preconnect e sem folha de estilo de terceiro.
@@ -406,8 +399,14 @@
     <link rel="preload" as="font" type="font/woff2" href="/fonts/dm-sans-latin.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/bebas-neue-latin.woff2" crossorigin />
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/webp" href="/images/logo-276.webp" />
+    <!-- Favicon (SEO nov/2026, Fase 6): simbolo do logo (o "Q" com o coracao)
+         recortado do logo-414.webp, em formato quadrado. Antes o icone era o
+         logo inteiro 276x96 e /favicon.ico dava 404. -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#9B212B" />
 
     <!-- Rastreamento: SOMENTE o container GTM-WLR7JD57 (decisao do Alex,
          01/08/2026). O Meta Pixel direto, o gtag direto do Google Ads e o

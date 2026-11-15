@@ -97,7 +97,37 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   // clinica voltar a realizar mamografia, tirar esta linha ANTES de
   // republicar a pagina em examesData.ts.
   "/exames/mamografia": "/exames/ultrassonografia",
+
+  // Campanha Check-up Outubro Rosa encerrada (SEO nov/2026, Fase 6 — decisao
+  // do Alex de 14/11/2026: nao publicar preco de exame). A pagina mostrava
+  // o preco promocional de tres exames de imagem/coleta ginecologica; a rota sai e a
+  // URL (anunciada no Google Ads em outubro) vai para a ultrassonografia, que
+  // cobre o ultrassom das mamas e o transvaginal. Nada aqui diz que um exame
+  // substitui a mamografia.
+  "/outubro-rosa": "/exames/ultrassonografia",
+
+  // Blog antigo da Airticles (blog.totalquality.med.br/posts/<slug>), que o
+  // Google conhecia tambem no dominio principal (/posts/... dava 404). SEO
+  // nov/2026, Fase 6: artigo com equivalente PUBLICADO no /blog vai para ele;
+  // os demais caem na regra de prefixo abaixo (/posts/* e /category/* → /blog).
+  // Tirzepatida e ultrassom de tireoide so existem como rascunho no PR #94 e
+  // "hormonios do amor" nao tem equivalente — todos para /blog por enquanto.
+  "/posts/hipoglicemia-o-que-voce-precisa-saber-para-manter-sua-saude-em-dia": "/blog/hipoglicemia-sintomas-e-exames",
+  "/posts/hemograma-completo-o-que-ele-pode-revelar": "/blog/hemograma-completo-o-que-avalia",
+  "/posts/hormonios-do-amor-o-que-sao-e-como-agem": "/blog",
+  "/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao": "/blog",
+  "/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito": "/blog",
 };
+
+/**
+ * Prefixos legados sem pagina equivalente uma a uma (Fase 6, 15/11/2026):
+ * qualquer /posts/<slug> ou /category/<nome> do blog antigo vai para o /blog.
+ * As entradas exatas de LEGACY_REDIRECTS tem prioridade.
+ */
+export const LEGACY_PREFIX_REDIRECTS: Array<[RegExp, string]> = [
+  [/^\/posts(\/.*)?$/, "/blog"],
+  [/^\/category(\/.*)?$/, "/blog"],
+];
 
 /**
  * URLs que devem responder 410 Gone: artefatos de links quebrados que o Google
@@ -118,7 +148,9 @@ export const GONE_PATHS = new Set([
 /** Resolve o destino do 301 para uma URL legada, ou null se não houver. */
 export function getLegacyRedirect(pathname: string): string | null {
   const path = pathname.replace(/\/+$/, "") || "/";
-  return LEGACY_REDIRECTS[path] ?? null;
+  if (LEGACY_REDIRECTS[path]) return LEGACY_REDIRECTS[path];
+  for (const [re, destino] of LEGACY_PREFIX_REDIRECTS) if (re.test(path)) return destino;
+  return null;
 }
 
 /** Indica se o caminho deve responder 410 Gone. */

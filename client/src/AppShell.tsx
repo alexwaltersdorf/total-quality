@@ -42,7 +42,6 @@ export type PageKey =
   | "CartaoPage"
   | "Privacidade"
   | "Convenios"
-  | "OutubroRosa"
   | "AutoSeoArticle"
   | "NotFound";
 
@@ -72,11 +71,15 @@ function Routes({ pages }: { pages: PageMap }) {
       <Route path={"/cartao"} component={pages.CartaoPage} />
       <Route path={"/privacidade"} component={pages.Privacidade} />
       <Route path={"/convenios"} component={pages.Convenios} />
-      <Route path={"/outubro-rosa"} component={pages.OutubroRosa} />
+      {/* /outubro-rosa saiu em 15/11/2026 (campanha encerrada): 301 para
+          /exames/ultrassonografia em server/_core/legacy-redirects.ts. */}
+      {/* /404 antes do catch-all (Fase 6, 15/11/2026): o ExamePage manda slug
+          desconhecido para /404, e o "/:slug" abaixo a capturava como artigo
+          AutoSEO ("ARTIGO NAO ENCONTRADO", canonical mantido). */}
+      <Route path={"/404"} component={pages.NotFound} />
       {/* Catch-all de artigos AutoSEO: DEVE ficar por ultimo, depois das rotas estaticas,
           para nao interceptar /laboratorio-caraguatatuba, /cartao, /dashboard, etc. */}
       <Route path={"/:slug"} component={pages.AutoSeoArticle} />
-      <Route path={"/404"} component={pages.NotFound} />
       <Route component={pages.NotFound} />
     </Switch>
     </Suspense>

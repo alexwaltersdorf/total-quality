@@ -11,6 +11,7 @@ import { ArrowLeft, ArrowUpRight, Clock, Calendar, Share2, Loader2 } from "lucid
 import { trpc } from "@/lib/trpc";
 import { trackEventDirect } from "@/hooks/useAnalyticsTracker";
 import Navbar from "@/components/Navbar";
+import NotFound from "@/pages/NotFound";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useBreadcrumbSchema, useBlogPostingSchema, useCanonical, useMetaDescription } from "@/components/SEOHead";
@@ -125,21 +126,9 @@ export default function AutoSeoArticle() {
     );
   }
 
-  if (!article) {
-    return (
-      <div className="min-h-screen bg-white">
-        <Navbar />
-        <div className="pt-40 pb-20 text-center container">
-          <h1 className="heading-display text-5xl text-text mb-4">ARTIGO NÃO ENCONTRADO</h1>
-          <p className="text-text-light mb-8">O artigo que você procura não existe ou foi removido.</p>
-          <Link href="/blog" className="btn-pill inline-flex items-center gap-2">
-            <ArrowLeft className="w-4 h-4" /> Voltar ao Blog
-          </Link>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+  // Endereco inexistente: a pagina 404 do site (Fase 6, 15/11/2026) — mesmo
+  // texto do servidor, noindex e sem canonical.
+  if (!article) return <NotFound />;
 
   return (
     <div className="min-h-screen bg-white">

@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, TRPCClientError } from "@trpc/client";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import superjson from "superjson";
-import App, { preloadSsrRoute } from "./App";
+import App, { preloadRotaInicial, preloadSsrRoute } from "./App";
 import { getLoginUrl } from "./const";
 import "./index.css";
 
@@ -81,5 +81,11 @@ if (root.hasAttribute("data-ssr")) {
   // A animacao de entrada (.reveal) so esconde com esta classe; aqui nao ha
   // HTML do servidor a preservar (ver hooks/useScrollReveal.ts).
   document.documentElement.classList.add("reveal-on");
-  createRoot(root).render(arvore);
+  // Fase 6: a Home e um chunk proprio; buscado antes do render para o
+  // pre-render da home nao ser trocado por uma tela vazia de Suspense.
+  preloadRotaInicial(window.location.pathname)
+    .catch(() => undefined)
+    .then(() => {
+      createRoot(root).render(arvore);
+    });
 }

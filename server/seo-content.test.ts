@@ -276,8 +276,10 @@ describe("GUARD-RAIL: mamografia nao realizada (decisao do Alex, 31/10/2026)", (
     expect(jsonLd).not.toMatch(/mamografia/i);
   });
 
-  it("artigo educativo e Outubro Rosa dizem que a clinica nao realiza mamografia", () => {
-    for (const rota of ["/blog/mamografia-ultrassom-mamas-diferencas", "/outubro-rosa"]) {
+  // 15/11/2026: /outubro-rosa saiu (campanha encerrada, Fase 6 — decisao do
+  // Alex de 14/11); a frase neutra segue exigida no artigo educativo.
+  it("artigo educativo diz que a clinica nao realiza mamografia", () => {
+    for (const rota of ["/blog/mamografia-ultrassom-mamas-diferencas"]) {
       const html = getSeoContentForPath(rota)!;
       expect(html, `${rota} perdeu a frase neutra`).toMatch(/n[ãa]o realiza mamografia/);
     }
@@ -1505,115 +1507,40 @@ describe("GUARD-RAIL: cada artigo tem a sua propria imagem (out/2026)", () => {
   });
 });
 
-describe("GUARD-RAIL: campanha Outubro Rosa (out/2026)", () => {
-  // Pagina de campanha com preco anunciado: o que esta escrito vincula a
-  // clinica (CDC art. 30) e passa pelas vedacoes da Resolucao CFM 2.336/2023.
-  // Tres riscos concretos, e um teste para cada:
-  //
-  //   1. O pre-render e a pagina React sao DOIS textos. Se alguem corrigir o
-  //      preco em um e esquecer o outro, o robo e o paciente passam a ler
-  //      ofertas diferentes — e a que vincula e a que o paciente viu.
-  //   2. A ressalva da mamografia e o que impede o pacote de ser lido como
-  //      rastreamento completo de cancer de mama. Ela nao e enfeite.
-  //   3. Promessa de resultado, urgencia fabricada e brinde sao exatamente o
-  //      que o art. 11 veda, e sao o que primeiro aparece quando alguem
-  //      "melhora a conversao" da pagina.
-  const ROTA = "/outubro-rosa";
+describe("GUARD-RAIL: campanha Outubro Rosa encerrada (15/11/2026)", () => {
+  // De 18/10 a 14/11/2026 esta suite travava a oferta da campanha (os dois
+  // precos, os tres exames, a ressalva da mamografia, nada de urgencia ou
+  // brinde). A campanha encerrou e a decisao do Alex de 14/11/2026 e nao
+  // publicar preco de exame: a rota saiu (SEO nov/2026, Fase 6) com 301 para
+  // /exames/ultrassonografia, que cobre o ultrassom das mamas e o
+  // transvaginal. A trava agora garante que ela nao volta pela metade.
+  it("/outubro-rosa faz 301 para /exames/ultrassonografia", () => {
+    expect(getLegacyRedirect("/outubro-rosa")).toBe("/exames/ultrassonografia");
+    expect(getLegacyRedirect("/outubro-rosa/")).toBe("/exames/ultrassonografia");
+  });
 
-  async function fontePagina(): Promise<string> {
+  it("a rota saiu do sitemap, do pre-render e das rotas do cliente", async () => {
+    expect(getAllRoutes().some((r) => r.canonical.endsWith("/outubro-rosa"))).toBe(false);
+    expect(getSeoContentForPath("/outubro-rosa")).toBeNull();
     const fs = await import("node:fs");
     const nodePath = await import("node:path");
-    return fs.readFileSync(
-      nodePath.resolve(import.meta.dirname, "../client/src/pages/OutubroRosa.tsx"),
-      "utf-8"
-    );
-  }
-
-  /*
-   * Precos CITADOS, nao precos PRESENTES. A primeira versao deste teste so
-   * exigia que "R$ 399,90" aparecesse em algum lugar — e passou com o preco
-   * trocado numa frase, porque a string sobrevivia na resposta do FAQ. Agora
-   * o teste coleta todo preco do texto e exige que o conjunto seja exatamente
-   * os dois: um terceiro valor significa oferta se contradizendo.
-   */
-  const PRECOS_AUTORIZADOS = ["R$ 500,00", "R$ 399,90"];
-  const precosCitados = (texto: string) =>
-    Array.from(
-      new Set(Array.from(texto.matchAll(/R\$\s?\d{1,3}(?:\.\d{3})*,\d{2}/g)).map((m) => m[0]))
-    ).sort();
-
-  it("o pre-render anuncia os tres exames e nenhum preco alem dos dois", () => {
-    const html = getSeoContentForPath(ROTA)!;
-    for (const exame of [
-      "Ultrassonografia das mamas",
-      "Ultrassonografia transvaginal",
-      "Papanicolau",
-    ]) {
-      expect(html, `o pre-render perdeu "${exame}"`).toContain(exame);
-    }
-    expect(precosCitados(html), "preco fora da oferta no pre-render").toEqual(
-      [...PRECOS_AUTORIZADOS].sort()
-    );
+    const raiz = nodePath.resolve(import.meta.dirname, "..");
+    const shell = fs.readFileSync(nodePath.join(raiz, "client/src/AppShell.tsx"), "utf-8");
+    expect(shell).not.toMatch(/path=\{"\/outubro-rosa"\}/);
+    expect(fs.readFileSync(nodePath.join(raiz, "client/public/llms.txt"), "utf-8")).not.toMatch(/outubro/i);
   });
 
-  it("a pagina React anuncia exatamente a mesma oferta do pre-render", async () => {
-    const src = await fontePagina();
-    for (const exame of [
-      "Ultrassonografia das mamas",
-      "Ultrassonografia transvaginal",
-      "Papanicolau",
-    ]) {
-      expect(src, `a pagina perdeu "${exame}"`).toContain(exame);
-    }
-    // O preco promocional aparece quebrado no bloco grande (399 + ,90), entao
-    // o teste cobra as duas partes alem do texto corrido.
-    expect(src).toContain('PRECO_POR_INTEIRO = "399"');
-    expect(src).toContain('PRECO_POR_CENTAVOS = ",90"');
-    expect(precosCitados(src), "preco fora da oferta na pagina").toEqual(
-      [...PRECOS_AUTORIZADOS].sort()
-    );
-  });
-
-  it("a ressalva da mamografia aparece nos dois pontos de cada versao", async () => {
-    /*
-     * Duas vezes em cada versao, e o teste cobra as duas: a nota abaixo dos
-     * cartoes e a resposta do FAQ. Exigir uma so deixava apagar a nota — a
-     * que o paciente le junto da oferta — sem o teste perceber, porque a
-     * frase sobrevivia no FAQ.
-     */
-    const ressalva = /n[ãa]o substitui a/gi;
-    const html = getSeoContentForPath(ROTA)!;
-    const src = await fontePagina();
-    expect((html.match(ressalva) || []).length, "pre-render perdeu uma ressalva").toBe(2);
-    expect((src.match(ressalva) || []).length, "pagina React perdeu uma ressalva").toBe(2);
-    expect(html).toContain("conforme indica");
-  });
-
-  it("nem o pre-render nem a pagina usam promessa, urgencia ou brinde", async () => {
-    const VEDADO = [
-      /prote[çc][ãa]o completa/i,
-      /100\s*%\s*de\s*preven/i,
-      /diagn[óo]stico garantido/i,
-      /livre do c[âa]ncer/i,
-      /vagas limitadas/i,
-      /[úu]ltima chance/i,
-      /contagem regressiva/i,
-      /resultado em 24\s*horas/i,
-      /brinde/i,
-      /sorteio/i,
-      /parcelamos|parcelamento em/i,
-      /desconto no pix/i,
-      /no mesmo dia garantido/i,
-    ];
-    const alvos: Array<[string, string]> = [
-      ["pre-render", getSeoContentForPath(ROTA)!],
-      ["pagina React", await fontePagina()],
-    ];
-    for (const [onde, texto] of alvos) {
-      for (const proibido of VEDADO) {
-        expect(texto, `${onde} usa ${proibido}`).not.toMatch(proibido);
+  it("nenhum preco da campanha sobrou no site", async () => {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const raiz = nodePath.resolve(import.meta.dirname, "..");
+    const arquivos: string[] = [];
+    for (const d of ["client/src", "server/_core", "shared"]) {
+      for (const f of fs.readdirSync(nodePath.join(raiz, d), { recursive: true, encoding: "utf-8" })) {
+        if (/\.(tsx?|json)$/.test(f) && !/\.test\./.test(f)) arquivos.push(nodePath.join(raiz, d, f));
       }
     }
+    for (const a of arquivos) expect(fs.readFileSync(a, "utf-8"), a).not.toMatch(/399,90|R\$ 500,00/);
   });
 });
 describe("GUARD-RAIL: artigo de hipoglicemia, conteudo de terceiro (out/2026)", () => {

@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 /*
@@ -77,8 +77,14 @@ describe("GUARD-RAIL: todo caminho de lead tem conversao, uma vez so", () => {
     expect(sucesso).toContain("trackWhatsAppRedirectRequested");
   });
 
-  it("o botao do Outubro Rosa emite whatsapp_click", () => {
-    expect(source("client/src/pages/OutubroRosa.tsx")).toMatch(/trackWhatsAppClick\(origem\)/);
+  // 15/11/2026 (SEO nov/2026, Fase 6 — decisao do Alex de 14/11): a campanha
+  // Outubro Rosa encerrou e a pagina saiu (301 para /exames/ultrassonografia).
+  // A trava do botao dela vira a trava de que a pagina nao volta sem evento:
+  // se alguem recriar o arquivo, o botao tem de emitir whatsapp_click.
+  it("a pagina do Outubro Rosa saiu; se voltar, o botao emite whatsapp_click", () => {
+    const arquivo = new URL("../client/src/pages/OutubroRosa.tsx", import.meta.url);
+    if (existsSync(arquivo)) expect(source("client/src/pages/OutubroRosa.tsx")).toMatch(/trackWhatsAppClick\(origem\)/);
+    else expect(existsSync(arquivo)).toBe(false);
   });
 
   it("o quadro de contato do blog informa o exame do artigo", () => {

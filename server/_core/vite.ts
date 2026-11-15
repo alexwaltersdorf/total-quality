@@ -5,9 +5,9 @@ import { nanoid } from "nanoid";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import viteConfig from "../../vite.config";
-import { getKnownBlogSlugs, getRouteMetadata, injectMetaTags } from "./routes-metadata";
+import { getKnownBlogSlugs, getRouteMetadata, injectMetaTags, injectNotFoundMeta } from "./routes-metadata";
 import { getKnownAutoSeoSlugs } from "./autoseo-slugs";
-import { getSeoContentForPath, getSsrPage, injectSeoContent, injectSsrPage, resolveHttpStatus } from "./seo-content";
+import { getSeoContentForPath, getSsrPage, injectSeoContent, injectSsrPage, notFoundHtml, resolveHttpStatus } from "./seo-content";
 
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
@@ -59,8 +59,9 @@ export async function setupVite(app: Express, server: Server) {
         template = injectSeoContent(template, seoContent);
       }
 
-      const page = await vite.transformIndexHtml(url, template);
       const status = resolveHttpStatus(pathname, getKnownBlogSlugs(), getKnownAutoSeoSlugs());
+      if (status === 404) template = paginaNaoEncontrada(template);
+      const page = await vite.transformIndexHtml(url, template);
       res.status(status).set({ "Content-Type": "text/html" }).end(page);
     } catch (e) {
       vite.ssrFixStacktrace(e as Error);
@@ -114,6 +115,26 @@ export function serveStatic(app: Express) {
 
     // Rotas inexistentes devolvem 404 real (corrige soft-404)
     const status = resolveHttpStatus(pathname, getKnownBlogSlugs(), getKnownAutoSeoSlugs());
-    res.status(status).set({ "Content-Type": "text/html" }).send(html);
+    if (status === 404) html = paginaNaoEncontrada(html);
+    res
+      .status(status)
+      .set({
+        "Content-Type": "text/html",
+        // Fase 6 (15/11/2026): toda pagina HTML com o mesmo cache curto da home
+        // (antes so "/" tinha; as internas saiam sem Cache-Control). O 404 —
+        // inclusive de arquivo que nao existe, como o /favicon.ico de antes —
+        // nunca fica em cache (o middleware de cache ja o marcara "immutable").
+        "Cache-Control": status === 404 ? "no-cache" : "public, max-age=300, must-revalidate",
+      })
+      .send(html);
   });
+}
+
+/**
+ * Resposta 404 (SEO nov/2026, Fase 6): noindex, sem canonical, titulo e texto
+ * em portugues com links para exames, especialidades, blog e home. O status
+ * continua 404. Antes saia o HTML da home (index, follow + canonical da home).
+ */
+function paginaNaoEncontrada(html: string): string {
+  return injectSeoContent(injectNotFoundMeta(html), notFoundHtml());
 }

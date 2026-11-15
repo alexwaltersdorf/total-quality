@@ -51,7 +51,6 @@ const SSR_PAGES: PageMap = {
   CartaoPage: Nada,
   Privacidade: Nada,
   Convenios: Nada,
-  OutubroRosa: Nada,
   AutoSeoArticle: Nada,
   NotFound: Nada,
 };

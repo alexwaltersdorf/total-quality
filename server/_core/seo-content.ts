@@ -637,7 +637,6 @@ export function getSeoContentForPath(pathname: string): string | null {
 
   if (path === "/privacidade") return wrap(privacidadeHtml);
   if (path === "/convenios") return wrap(conveniosHtml());
-  if (path === "/outubro-rosa") return wrap(outubroRosaHtml);
   if (path === "/exames") return wrap(examesHubHtml());
 
   if (path === "/blog") return wrap(blogIndexHtml());
@@ -652,42 +651,24 @@ export function getSeoContentForPath(pathname: string): string | null {
 }
 
 /*
- * Campanha Check-up Outubro Rosa.
- *
- * O texto aqui e o que o robo le antes do React montar, entao precisa dizer o
- * mesmo que a pagina: os tres exames, os dois precos e a ressalva da
- * mamografia. Nada de "a partir de" nem de prazo que nao foi confirmado.
- *
- * Desde 31/10/2026 a clinica nao realiza mamografia: a ressalva fica (ela e
- * o que impede o pacote de parecer rastreamento completo), mas sem link para
- * /exames/mamografia e com a frase de que o exame nao e feito aqui.
- *
- * Sazonal: sai junto com a rota quando a campanha encerrar.
+ * Pagina 404 (SEO nov/2026, Fase 6). Antes o 404 saia com o HTML da home:
+ * robots "index, follow", canonical da home e, no React, texto em ingles com
+ * um botao so. Agora: status 404 mantido, noindex, sem canonical
+ * (routes-metadata.ts, injectNotFoundMeta) e este texto em portugues com os
+ * caminhos que o visitante mais procura.
  */
-const outubroRosaHtml = `
-    <h1>Check-up Outubro Rosa</h1>
-    <p><strong>Cuidar de você é um gesto de amor.</strong> Conheça a condição especial da Total Quality para três exames voltados à saúde mamária e ginecológica, em Caraguatatuba.</p>
-    <h2>Os três exames do Check-up Rosa</h2>
+export function notFoundHtml(): string {
+  return wrap(`
+    <h1>Página não encontrada</h1>
+    <p>O endereço que você abriu não existe ou mudou de lugar. Veja se encontra o que procura por aqui:</p>
     <ul>
-      <li><strong>Ultrassonografia das mamas</strong> — exame de imagem que auxilia na avaliação das mamas, conforme a indicação e o contexto clínico.</li>
-      <li><strong>Ultrassonografia transvaginal</strong> — exame de imagem utilizado para avaliar estruturas ginecológicas, como útero e ovários, conforme indicação médica.</li>
-      <li><strong>Preventivo — Papanicolau</strong> — exame que avalia células do colo do útero para identificar alterações que possam precisar de acompanhamento.</li>
+      <li><a href="/exames">Exames laboratoriais e de imagem</a></li>
+      <li><a href="/especialidades">Consultas e especialidades</a></li>
+      <li><a href="/blog">Blog: saúde e diagnóstico</a></li>
+      <li><a href="/">Página inicial da Total Quality</a></li>
     </ul>
-    <p>De R$ 500,00 por <strong>R$ 399,90</strong>. Valor do conjunto dos três exames. Exames conforme indicação médica.</p>
-    <p>A ultrassonografia das mamas não substitui a mamografia quando indicada. No momento, a Total Quality não realiza mamografia. A escolha dos exames deve considerar a avaliação individual.</p>
-    <h2>Como agendar</h2>
-    <p>O agendamento começa por uma conversa: fale com a equipe pelo WhatsApp para verificar disponibilidade, documentos e preparo. A confirmação de data e horário é feita pela equipe.</p>
-    <h2>Perguntas frequentes</h2>
-    <h3>O que está incluído no valor de R$ 399,90?</h3>
-    <p>O valor anunciado corresponde ao conjunto de ultrassonografia das mamas, ultrassonografia transvaginal e preventivo — Papanicolau.</p>
-    <h3>A mamografia está incluída?</h3>
-    <p>Não. A oferta apresentada contempla os três exames listados, e no momento a Total Quality não realiza mamografia. A ultrassonografia das mamas não substitui a mamografia quando ela é indicada.</p>
-    <h3>Esse pacote é indicado para qualquer pessoa?</h3>
-    <p>A necessidade de cada exame depende da avaliação individual. Converse com o profissional que acompanha sua saúde e esclareça as orientações com nossa equipe.</p>
-    <h3>Posso fazer os três exames no mesmo dia?</h3>
-    <p>Essa possibilidade depende da disponibilidade dos profissionais e das orientações de cada exame. Confirme com a equipe pelo WhatsApp.</p>
-    ${napHtml("Fale com a Total Quality e saiba como agendar seu Check-up Outubro Rosa.")}
-    ${internalLinksHtml("/outubro-rosa")}`;
+    ${napHtml("Não encontrou? Fale com a nossa equipe pelo WhatsApp (12) 3887-3535.")}`);
+}
 
 const privacidadeHtml = `
     <h1>Política de Privacidade</h1>
@@ -1019,8 +1000,8 @@ const CLIENT_ROUTES = new Set([
   // entrega o documento inteiro, so que com status 404. O Google nao indexa
   // pagina servida assim, e um anuncio pago leva o clique para uma URL
   // marcada como inexistente. Foi o que aconteceu com /outubro-rosa entre
-  // 18 e 19/10/2026, numa pagina de campanha com preco anunciado.
-  "/outubro-rosa",
+  // 18 e 19/10/2026, numa pagina de campanha com preco anunciado. (A rota
+  // saiu em 15/11/2026, campanha encerrada: 301 em legacy-redirects.ts.)
 ]);
 
 const VALID_EXAM_SLUGS = new Set(examesData.map((exam) => exam.slug));

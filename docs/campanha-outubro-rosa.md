@@ -1,5 +1,11 @@
 # Campanha Check-up Outubro Rosa — `/outubro-rosa`
 
+> **Encerrada.** Em 15/11/2026 (SEO nov/2026, Fase 6 — decisão do Alex de
+> 14/11/2026: não publicar preço de exame) a rota saiu do site: `/outubro-rosa`
+> faz 301 para `/exames/ultrassonografia` (`server/_core/legacy-redirects.ts`),
+> a página, as imagens e o pré-render foram removidos e a URL saiu do sitemap.
+> O texto abaixo fica como registro do que esteve no ar.
+
 Documento interno. Não aparece no site.
 
 ## O que está no ar
