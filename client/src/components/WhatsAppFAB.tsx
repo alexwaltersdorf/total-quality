@@ -8,11 +8,16 @@ import { useState, useEffect } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { trackCtaClick, trackWhatsAppClick } from "@/lib/tracking";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import { useMensagemWhatsApp } from "@/contexts/AssuntoPagina";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 export default function WhatsAppFAB({ laboratory = false }: { laboratory?: boolean }) {
   const openWhatsApp = useWhatsAppRedirect();
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const mensagem = useMensagemWhatsApp(
+    laboratory ? "Olá! Gostaria de consultar preparo e orçamento de exames laboratoriais." : "Olá! Gostaria de agendar um exame."
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,16 +42,17 @@ export default function WhatsAppFAB({ laboratory = false }: { laboratory?: boole
         <div className="bg-white shadow-xl p-5 w-64 border border-black/10 rounded-2xl">
           <p className="font-semibold text-text text-sm mb-1">Precisa de ajuda?</p>
           <p className="text-text-muted text-xs mb-3">{laboratory ? "Consulte preparo e orçamento pelo WhatsApp." : "Tire dúvidas de preparo, convênio e horários pelo WhatsApp."}</p>
-          <button
-            type="button"
+          <CtaWhatsApp
+            mensagem={mensagem}
             onClick={() => {
               trackWhatsAppClick("fab_iniciar_conversa");
-              openWhatsApp("whatsapp_fab", laboratory ? "Olá! Gostaria de consultar preparo e orçamento de exames laboratoriais." : "Olá! Gostaria de agendar um exame.");
+              openWhatsApp("whatsapp_fab", mensagem);
             }}
             className="btn-pill w-full"
+            tabIndex={expanded ? 0 : -1}
           >
             Iniciar Conversa
-          </button>
+          </CtaWhatsApp>
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 /*
@@ -57,7 +57,10 @@ describe("GUARD-RAIL: sinais de interesse medidos", () => {
     const hook = source("client/src/hooks/useInteractionTracking.ts");
     expect(hook).toContain("trackFaqOpen");
     expect(hook).toContain("trackDirectionsClick");
-    expect(source("client/src/App.tsx")).toMatch(/useInteractionTracking\(\)/);
+    // SEO nov/2026, Fase 1 (14/11/2026): a arvore do App (providers, rotas e
+    // estes hooks) foi para AppShell.tsx, compartilhada com o servidor. Segue
+    // montado uma vez so, no topo do App.
+    expect(source("client/src/AppShell.tsx")).toMatch(/useInteractionTracking\(\)/);
   });
 });
 
@@ -74,8 +77,14 @@ describe("GUARD-RAIL: todo caminho de lead tem conversao, uma vez so", () => {
     expect(sucesso).toContain("trackWhatsAppRedirectRequested");
   });
 
-  it("o botao do Outubro Rosa emite whatsapp_click", () => {
-    expect(source("client/src/pages/OutubroRosa.tsx")).toMatch(/trackWhatsAppClick\(origem\)/);
+  // 15/11/2026 (SEO nov/2026, Fase 6 — decisao do Alex de 14/11): a campanha
+  // Outubro Rosa encerrou e a pagina saiu (301 para /exames/ultrassonografia).
+  // A trava do botao dela vira a trava de que a pagina nao volta sem evento:
+  // se alguem recriar o arquivo, o botao tem de emitir whatsapp_click.
+  it("a pagina do Outubro Rosa saiu; se voltar, o botao emite whatsapp_click", () => {
+    const arquivo = new URL("../client/src/pages/OutubroRosa.tsx", import.meta.url);
+    if (existsSync(arquivo)) expect(source("client/src/pages/OutubroRosa.tsx")).toMatch(/trackWhatsAppClick\(origem\)/);
+    else expect(existsSync(arquivo)).toBe(false);
   });
 
   it("o quadro de contato do blog informa o exame do artigo", () => {
@@ -200,5 +209,72 @@ describe("GUARD-RAIL: regra do pixel nos artigos do blog (Alex, 29/10/2026)", ()
     expect(cta).toContain("useWhatsAppRedirect");
     expect(cta).toMatch(/trackWhatsAppConversion\(label, "blog", examType\)/);
     expect(source("client/src/pages/BlogPost.tsx")).toContain("ExamCTA");
+  });
+});
+
+describe("GUARD-RAIL: CTA de contato e link de verdade, com o mesmo evento (SEO nov/2026, Fase 2)", () => {
+  /*
+   * Ate 14/11/2026 todo CTA de WhatsApp era <button> sem href: o Google nao
+   * via o destino e o leitor de tela nao anunciava um link. Agora e
+   * <CtaWhatsApp> (um <a href="https://api.whatsapp.com/send?...">) cujo
+   * clique faz EXATAMENTE o que o botao fazia (evento + formulario de
+   * qualificacao). Estas travas impedem a volta do <button> e o link solto
+   * que pularia o formulario.
+   */
+  const arquivos = readdirSync(new URL("../client/src", import.meta.url), { recursive: true, encoding: "utf-8" })
+    .filter((f) => f.endsWith(".tsx"))
+    .map((f) => f.split("\\").join("/"));
+
+  it("nenhum <button> abre o WhatsApp: o CTA e <CtaWhatsApp>", () => {
+    const problemas: string[] = [];
+    for (const rel of arquivos) {
+      const src = source(`client/src/${rel}`);
+      for (const m of src.matchAll(/<button\b[\s\S]*?<\/button>/g)) {
+        if (/\b(openWhatsApp|abrirWhatsApp)\(/.test(m[0])) problemas.push(rel);
+      }
+    }
+    expect(problemas, problemas.join("\n")).toEqual([]);
+  });
+
+  it("todo <CtaWhatsApp> leva a mensagem no href e chama o formulario no clique", () => {
+    const problemas: string[] = [];
+    for (const rel of arquivos) {
+      const src = source(`client/src/${rel}`);
+      for (const m of src.matchAll(/<CtaWhatsApp\b[\s\S]*?>/g)) {
+        if (!/mensagem=/.test(m[0])) problemas.push(`${rel}: CtaWhatsApp sem mensagem`);
+        if (!/onClick=/.test(m[0])) problemas.push(`${rel}: CtaWhatsApp sem onClick`);
+      }
+    }
+    expect(problemas, problemas.join("\n")).toEqual([]);
+  });
+
+  it("o componente intercepta clique, clique do meio e clique antes da hidratacao", () => {
+    const cta = source("client/src/components/CtaWhatsApp.tsx");
+    expect(cta).toMatch(/e\.preventDefault\(\);\s*\n\s*onClick\(\);/);
+    expect(cta).toContain("onAuxClick");
+    expect(cta).toContain('target="_blank"');
+    expect(cta).toContain('data-cta="whatsapp"');
+    expect(cta).toContain("whatsappUrl(mensagem)");
+    expect(cta).toContain("__tqCtaPendente");
+    const html = source("client/index.html");
+    expect(html).toContain('closest("a[data-cta]")');
+    expect(html).toContain('addEventListener("auxclick"');
+  });
+
+  it("nenhum link de WhatsApp montado a mao fora do CtaWhatsApp (pularia o formulario)", () => {
+    const problemas = arquivos
+      .filter((rel) => rel !== "components/CtaWhatsApp.tsx")
+      .filter((rel) => /href=\{\s*whatsappUrl\(|href="https:\/\/api\.whatsapp\.com/.test(source(`client/src/${rel}`)));
+    expect(problemas).toEqual([]);
+  });
+
+  it("a saudacao 'Olá, vim pelo site' recebe o nome sem virgula solta", () => {
+    const ctx = source("client/src/contexts/ContatoLeadContext.tsx");
+    expect(ctx).toContain("/^olá[!,]?\\s*/i");
+    expect(source("client/src/contexts/AssuntoPagina.tsx")).toContain(
+      "Olá, vim pelo site e quero informações sobre ${assunto}"
+    );
+    // O codigo de referencia do anuncio continua sendo acrescentado no clique.
+    expect(ctx).toMatch(/whatsappUrl\(mensagemComCodigo\(message, source\)\)/);
   });
 });

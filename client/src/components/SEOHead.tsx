@@ -9,6 +9,23 @@ import { blogPostingLd, type BlogPostMeta } from "@/lib/blogMeta";
 const SITE_URL = "https://totalquality.med.br";
 const ORG_NAME = "Total Quality Medicina Diagnóstica";
 
+/**
+ * Remove o bloco do servidor (data-route-ld) do mesmo @type antes de o hook
+ * colocar o seu (SEO nov/2026, Fase 5). Desde que o JSON-LD do pre-render foi
+ * para o <head>, o hook do artigo do blog duplicaria BlogPosting, breadcrumb
+ * e FAQPage na primeira carga. O conteudo e o mesmo (mesmas funcoes de
+ * blogMeta.ts) — fica uma copia so.
+ */
+function tiraLdDoServidor(tipo: string) {
+  document.querySelectorAll<HTMLScriptElement>("script[data-route-ld]").forEach((el) => {
+    try {
+      if (JSON.parse(el.textContent || "{}")["@type"] === tipo) el.remove();
+    } catch {
+      /* bloco invalido: deixa como esta */
+    }
+  });
+}
+
 // ── Breadcrumb Schema ──
 interface BreadcrumbItem {
   name: string;
@@ -35,6 +52,7 @@ export function useBreadcrumbSchema(items: BreadcrumbItem[]) {
 
     // Remove existing if present
     document.getElementById("schema-breadcrumb")?.remove();
+    tiraLdDoServidor("BreadcrumbList");
     document.head.appendChild(script);
 
     return () => { document.getElementById("schema-breadcrumb")?.remove(); };
@@ -70,6 +88,7 @@ export function useFAQSchema(faqs: FAQItem[]) {
     script.textContent = JSON.stringify(schema);
 
     document.getElementById("schema-faq")?.remove();
+    tiraLdDoServidor("FAQPage");
     document.head.appendChild(script);
 
     return () => { document.getElementById("schema-faq")?.remove(); };
@@ -167,6 +186,7 @@ export function useBlogPostingSchema(props: BlogPostingSchemaProps) {
     script.textContent = JSON.stringify(schema);
 
     document.getElementById("schema-blogposting")?.remove();
+    tiraLdDoServidor("BlogPosting");
     document.head.appendChild(script);
 
     return () => { document.getElementById("schema-blogposting")?.remove(); };
@@ -185,6 +205,7 @@ export function useBlogArticleSchema(post: BlogPostMeta | undefined, content?: s
     script.textContent = JSON.stringify(blogPostingLd(post, content));
 
     document.getElementById("schema-blogposting")?.remove();
+    tiraLdDoServidor("BlogPosting");
     document.head.appendChild(script);
 
     return () => { document.getElementById("schema-blogposting")?.remove(); };

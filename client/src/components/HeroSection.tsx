@@ -10,12 +10,14 @@ import { Link } from "wouter";
 import { trackScheduleExam } from "@/lib/tracking";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 import { HOME_H1, anosDeAtuacao } from "@shared/const";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 export default function HeroSection() {
   const openWhatsApp = useWhatsAppRedirect();
+  const MENSAGEM = "Olá! Gostaria de agendar um exame na Total Quality.";
   const handleScheduleClick = () => {
     trackScheduleExam("hero_cta", "geral");
-    openWhatsApp("hero_cta", "Olá! Gostaria de agendar um exame na Total Quality.");
+    openWhatsApp("hero_cta", MENSAGEM);
   };
 
   return (
@@ -58,14 +60,15 @@ export default function HeroSection() {
             </p>
 
             <div className="reveal flex flex-wrap gap-4 mb-16" style={{ transitionDelay: "300ms" }}>
-              <button
+              <CtaWhatsApp
+                mensagem={MENSAGEM}
                 onClick={handleScheduleClick}
                 className="btn-pill"
                 aria-label="Agendar exame na Total Quality via WhatsApp"
               >
                 Agendar Exame
                 <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
+              </CtaWhatsApp>
               <button
                 onClick={() => {
                   const el = document.querySelector("#exames");

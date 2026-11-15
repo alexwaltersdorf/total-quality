@@ -6,9 +6,23 @@ import {
   resolveHttpStatus,
 } from "./_core/seo-content";
 import { CONVENIOS as CONVENIOS_CLIENT } from "@/lib/conveniosData";
-import { getAllRoutes, getKnownBlogSlugs, getRouteMetadata } from "./_core/routes-metadata";
+import {
+  getAllRoutes,
+  getKnownBlogSlugs,
+  getRouteMetadata,
+  injectMetaTags,
+} from "./_core/routes-metadata";
 import { getLegacyRedirect, isGone, LEGACY_REDIRECTS } from "./_core/legacy-redirects";
 import { anosDeAtuacao } from "@shared/const";
+
+// SEO nov/2026, Fase 1 (plano aprovado pelo Alex em 14/11/2026): as rotas de
+// template passaram a ser o HTML do proprio React renderizado no servidor, com
+// atributos (<h1 class="...">). A regra continua a mesma — ha um <h1> —, so
+// deixou de exigir a tag sem atributos.
+const H1 = /<h1[\s>]/;
+const H1_GLOBAL = /<h1[\s>]/g;
+/** Texto visivel do HTML (sem tags, espacos normalizados). */
+const textoDe = (html: string) => html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
 
 const PRIORITY_ROUTES = [
   "/",
@@ -27,7 +41,7 @@ describe("getSeoContentForPath", () => {
   it.each(PRIORITY_ROUTES)("gera conteúdo pré-renderizado para %s", (route) => {
     const html = getSeoContentForPath(route);
     expect(html).toBeTruthy();
-    expect(html).toContain("<h1>");
+    expect(html).toMatch(H1);
     expect(html).toContain("Caraguatatuba");
     // NAP: telefone e endereço visíveis no HTML
     expect(html).toContain("(12) 3887-3535");
@@ -38,8 +52,12 @@ describe("getSeoContentForPath", () => {
 
   it("gera FAQ e preparo nas páginas de exame", () => {
     const html = getSeoContentForPath("/exames/exames-de-sangue")!;
-    expect(html).toContain("Perguntas frequentes");
-    expect(html).toContain("Preparo para o exame");
+    // Fase 1 (14/11/2026): o H2 do preparo passou a ser o da pagina React
+    // ("Como se preparar"); a regra — a pagina explica o preparo — e a mesma.
+    expect(textoDe(html)).toContain("Perguntas frequentes");
+    // Fase 3 (15/11/2026): o H2 virou pergunta, pelo modelo aprovado em
+    // 14/11/2026 ("Precisa de jejum ou preparo?"). A regra e a mesma.
+    expect(textoDe(html)).toMatch(/Como se preparar|Preparo para o exame|jejum ou preparo\?/);
     expect(html).toContain("jejum");
   });
 
@@ -117,7 +135,7 @@ describe("GUARD-RAIL: cobertura do sitemap (nao remover)", () => {
   )("rota do sitemap %s entrega conteudo pre-renderizado com H1", (pathname) => {
     const html = getSeoContentForPath(pathname);
     expect(html, `Rota ${pathname} esta no sitemap mas nao tem conteudo pre-renderizado em seo-content.ts`).toBeTruthy();
-    expect(html).toContain("<h1>");
+    expect(html).toMatch(H1);
   });
 
   it("novas paginas do hub e blog estao cobertas", () => {
@@ -258,8 +276,10 @@ describe("GUARD-RAIL: mamografia nao realizada (decisao do Alex, 31/10/2026)", (
     expect(jsonLd).not.toMatch(/mamografia/i);
   });
 
-  it("artigo educativo e Outubro Rosa dizem que a clinica nao realiza mamografia", () => {
-    for (const rota of ["/blog/mamografia-ultrassom-mamas-diferencas", "/outubro-rosa"]) {
+  // 15/11/2026: /outubro-rosa saiu (campanha encerrada, Fase 6 — decisao do
+  // Alex de 14/11); a frase neutra segue exigida no artigo educativo.
+  it("artigo educativo diz que a clinica nao realiza mamografia", () => {
+    for (const rota of ["/blog/mamografia-ultrassom-mamas-diferencas"]) {
       const html = getSeoContentForPath(rota)!;
       expect(html, `${rota} perdeu a frase neutra`).toMatch(/n[ãa]o realiza mamografia/);
     }
@@ -327,6 +347,23 @@ describe("GUARD-RAIL: horario oficial unico (nao remover)", () => {
     expect(indexHtml).not.toContain("trysoro");
     expect(indexHtml).toContain('og:image" content="https://totalquality.med.br/images/');
     expect(indexHtml).toContain('"image": ["https://totalquality.med.br/images/');
+  });
+
+  it("nenhuma rota injeta og:image de CDN de terceiro", () => {
+    // Auditoria out/2026: o teste acima le o client/index.html, que esta
+    // correto desde agosto. O PNG do CloudFront sobrevivia em routes-metadata,
+    // no ogImage da home, e injectMetaTags sobrescreve a tag certa em tempo de
+    // requisicao — por isso a producao servia o PNG de 5,7 MB enquanto o HTML
+    // de origem declarava o WebP. Verificar o HTML INJETADO, nao o de origem.
+    for (const metadata of getAllRoutes()) {
+      if (!metadata.ogImage) continue;
+      expect(metadata.ogImage, metadata.canonical).not.toContain("cloudfront.net");
+      const injected = injectMetaTags(
+        '<meta property="og:image" content="PLACEHOLDER" />',
+        metadata
+      );
+      expect(injected, metadata.canonical).not.toContain("cloudfront.net");
+    }
   });
 });
 
@@ -505,8 +542,12 @@ describe("GUARD-RAIL: links internos da landing de laboratorio (nao remover)", (
 describe("Redirecionamentos legados (auditoria Search Console jul/2026)", () => {
   it("mapeia as URLs legadas conhecidas pelo Google para o destino atual", () => {
     expect(getLegacyRedirect("/index")).toBe("/");
-    expect(getLegacyRedirect("/sobre")).toBe("/#sobre");
-    expect(getLegacyRedirect("/contato")).toBe("/#contato");
+    // SEO nov/2026, Fase 2 (plano aprovado pelo Alex em 14/11/2026): /sobre e
+    // /contato viraram paginas reais e deixaram de redirecionar para a home.
+    expect(getLegacyRedirect("/sobre")).toBeNull();
+    expect(getLegacyRedirect("/contato")).toBeNull();
+    expect(resolveHttpStatus("/sobre", getKnownBlogSlugs())).toBe(200);
+    expect(resolveHttpStatus("/contato", getKnownBlogSlugs())).toBe(200);
     expect(getLegacyRedirect("/mapa")).toBe("/exames/mapa");
     expect(getLegacyRedirect("/cartao-desconto")).toBe("/cartao");
     expect(getLegacyRedirect("/blog/index")).toBe("/blog");
@@ -1007,7 +1048,16 @@ describe("GUARD-RAIL: soft 404 do catch-all de artigos (Search Console, ago/2026
       "/contato",
       "/cartao-desconto",
     ];
+    // SEO nov/2026, Fase 2 (14/11/2026): /sobre e /contato deixaram de ser 301
+    // para a home e viraram paginas reais — "rota valida" com conteudo proprio.
+    const PAGINAS_REAIS = new Set(["/sobre", "/contato"]);
     for (const url of reportadas) {
+      if (PAGINAS_REAIS.has(url)) {
+        expect(getLegacyRedirect(url)).toBeNull();
+        expect(resolveHttpStatus(url, blogSlugs, new Set<string>())).toBe(200);
+        expect(getSeoContentForPath(url), `${url} sem conteudo proprio`).toMatch(/<h1[\s>]/);
+        continue;
+      }
       const destino = getLegacyRedirect(url);
       expect(destino, `${url} perdeu o 301 e volta a ser soft 404`).toBeTruthy();
       // O destino do 301 precisa existir de verdade.
@@ -1104,7 +1154,10 @@ describe("GUARD-RAIL: paginas de especialidade (24/10/2026)", () => {
   // trabalho. Decisoes: sem nome de medico, gastro so consulta (a clinica nao
   // faz endoscopia nem colonoscopia), PCMSO incluso, consultas particular e
   // pelos tres convenios.
-  const SLUGS = ["endocrinologista", "gastroenterologista", "medicina-do-trabalho"];
+  // 15/11/2026 (Fase 3 de SEO): cardiologista e pediatra entram — o Alex
+  // confirmou em 14/11/2026 que a clinica atende ("SIM, ATENDEMOS. PODE
+  // CRIAR"), substituindo a informacao de 31/10. Valem as mesmas regras.
+  const SLUGS = ["endocrinologista", "gastroenterologista", "medicina-do-trabalho", "cardiologista", "pediatra"];
 
   it.each(SLUGS)("/especialidades/%s responde 200, entra no sitemap e tem metadados", (slug) => {
     const path = `/especialidades/${slug}`;
@@ -1118,16 +1171,24 @@ describe("GUARD-RAIL: paginas de especialidade (24/10/2026)", () => {
   });
 
   it("especialidade inexistente responde 404", () => {
-    expect(resolveHttpStatus("/especialidades/pediatra", getKnownBlogSlugs(), new Set<string>())).toBe(404);
+    // Ate 14/11/2026 o exemplo era /especialidades/pediatra, que a clinica nao
+    // atendia. Decisao do Alex de 14/11/2026: atende — a pagina existe desde a
+    // Fase 3 (15/11/2026). O 404 segue valendo para especialidade sem pagina.
+    expect(resolveHttpStatus("/especialidades/ortopedista", getKnownBlogSlugs(), new Set<string>())).toBe(404);
+    expect(resolveHttpStatus("/especialidades/pediatra", getKnownBlogSlugs(), new Set<string>())).toBe(200);
+    expect(resolveHttpStatus("/especialidades", getKnownBlogSlugs(), new Set<string>())).toBe(200);
   });
 
   it.each(SLUGS)("/especialidades/%s: prerender dentro das regras do CFM e das decisoes do Alex", (slug) => {
     const html = getSeoContentForPath(`/especialidades/${slug}`)!;
-    expect(html.match(/<h1>/g)).toHaveLength(1);
+    expect(html.match(H1_GLOBAL)).toHaveLength(1);
     expect(html).toMatch(/Registro\s*970616/);
     expect(html).toContain("Alex Waltersdorf - 267.339");
     expect(html).not.toMatch(/\bCRM\b/);
-    expect(html).not.toMatch(/\bDra?\.\s/);
+    // Sem nome de medico. Unica excecao, decisao do Alex de 14/11/2026: a linha
+    // de revisao "Revisado por Dr. Alex Waltersdorf - 267.339" (o responsavel
+    // tecnico, ja identificado pelo art. 5o). Qualquer outro "Dr." quebra.
+    expect(html.split("Dr. Alex Waltersdorf - 267.339").join("")).not.toMatch(/\bDra?\.\s/);
     // (o rodape de endereco diz "Sábado e domingo fechado": horario, nao oferta)
     expect(html).not.toMatch(/\bmelhor(es)?\b|garant|R\$|\bpre[çc]o\b|wa\.me|resson[âa]ncia|ecocardiograma|ergom[ée]trico/i);
     expect(html).not.toMatch(/\b(Unimed|Bradesco|SulAm[ée]rica|Amil|Porto Seguro|NotreDame|Hapvida|Cassi|Geap)\b/);
@@ -1163,10 +1224,11 @@ describe("GUARD-RAIL: auditoria de indexacao (23/10/2026)", () => {
     "/eletroencefalograma": "/exames/eletroencefalograma",
     "/glossario/tempo-resultado-hemograma-completo/": "/exames/hemograma",
     "/category/blog/": "/blog",
-    "/about-us/": "/#sobre",
-    "/contact-us/": "/#contato",
-    "/contact-us-2/": "/#contato",
-    "/appointment/": "/#contato",
+    // Fase 2 (14/11/2026): destino passou a ser a pagina real, num salto so.
+    "/about-us/": "/sobre",
+    "/contact-us/": "/contato",
+    "/contact-us-2/": "/contato",
+    "/appointment/": "/contato",
   };
 
   it.each(Object.entries(COM_EQUIVALENTE))("%s faz 301 para %s", (origem, destino) => {
@@ -1445,115 +1507,40 @@ describe("GUARD-RAIL: cada artigo tem a sua propria imagem (out/2026)", () => {
   });
 });
 
-describe("GUARD-RAIL: campanha Outubro Rosa (out/2026)", () => {
-  // Pagina de campanha com preco anunciado: o que esta escrito vincula a
-  // clinica (CDC art. 30) e passa pelas vedacoes da Resolucao CFM 2.336/2023.
-  // Tres riscos concretos, e um teste para cada:
-  //
-  //   1. O pre-render e a pagina React sao DOIS textos. Se alguem corrigir o
-  //      preco em um e esquecer o outro, o robo e o paciente passam a ler
-  //      ofertas diferentes — e a que vincula e a que o paciente viu.
-  //   2. A ressalva da mamografia e o que impede o pacote de ser lido como
-  //      rastreamento completo de cancer de mama. Ela nao e enfeite.
-  //   3. Promessa de resultado, urgencia fabricada e brinde sao exatamente o
-  //      que o art. 11 veda, e sao o que primeiro aparece quando alguem
-  //      "melhora a conversao" da pagina.
-  const ROTA = "/outubro-rosa";
+describe("GUARD-RAIL: campanha Outubro Rosa encerrada (15/11/2026)", () => {
+  // De 18/10 a 14/11/2026 esta suite travava a oferta da campanha (os dois
+  // precos, os tres exames, a ressalva da mamografia, nada de urgencia ou
+  // brinde). A campanha encerrou e a decisao do Alex de 14/11/2026 e nao
+  // publicar preco de exame: a rota saiu (SEO nov/2026, Fase 6) com 301 para
+  // /exames/ultrassonografia, que cobre o ultrassom das mamas e o
+  // transvaginal. A trava agora garante que ela nao volta pela metade.
+  it("/outubro-rosa faz 301 para /exames/ultrassonografia", () => {
+    expect(getLegacyRedirect("/outubro-rosa")).toBe("/exames/ultrassonografia");
+    expect(getLegacyRedirect("/outubro-rosa/")).toBe("/exames/ultrassonografia");
+  });
 
-  async function fontePagina(): Promise<string> {
+  it("a rota saiu do sitemap, do pre-render e das rotas do cliente", async () => {
+    expect(getAllRoutes().some((r) => r.canonical.endsWith("/outubro-rosa"))).toBe(false);
+    expect(getSeoContentForPath("/outubro-rosa")).toBeNull();
     const fs = await import("node:fs");
     const nodePath = await import("node:path");
-    return fs.readFileSync(
-      nodePath.resolve(import.meta.dirname, "../client/src/pages/OutubroRosa.tsx"),
-      "utf-8"
-    );
-  }
-
-  /*
-   * Precos CITADOS, nao precos PRESENTES. A primeira versao deste teste so
-   * exigia que "R$ 399,90" aparecesse em algum lugar — e passou com o preco
-   * trocado numa frase, porque a string sobrevivia na resposta do FAQ. Agora
-   * o teste coleta todo preco do texto e exige que o conjunto seja exatamente
-   * os dois: um terceiro valor significa oferta se contradizendo.
-   */
-  const PRECOS_AUTORIZADOS = ["R$ 500,00", "R$ 399,90"];
-  const precosCitados = (texto: string) =>
-    Array.from(
-      new Set(Array.from(texto.matchAll(/R\$\s?\d{1,3}(?:\.\d{3})*,\d{2}/g)).map((m) => m[0]))
-    ).sort();
-
-  it("o pre-render anuncia os tres exames e nenhum preco alem dos dois", () => {
-    const html = getSeoContentForPath(ROTA)!;
-    for (const exame of [
-      "Ultrassonografia das mamas",
-      "Ultrassonografia transvaginal",
-      "Papanicolau",
-    ]) {
-      expect(html, `o pre-render perdeu "${exame}"`).toContain(exame);
-    }
-    expect(precosCitados(html), "preco fora da oferta no pre-render").toEqual(
-      [...PRECOS_AUTORIZADOS].sort()
-    );
+    const raiz = nodePath.resolve(import.meta.dirname, "..");
+    const shell = fs.readFileSync(nodePath.join(raiz, "client/src/AppShell.tsx"), "utf-8");
+    expect(shell).not.toMatch(/path=\{"\/outubro-rosa"\}/);
+    expect(fs.readFileSync(nodePath.join(raiz, "client/public/llms.txt"), "utf-8")).not.toMatch(/outubro/i);
   });
 
-  it("a pagina React anuncia exatamente a mesma oferta do pre-render", async () => {
-    const src = await fontePagina();
-    for (const exame of [
-      "Ultrassonografia das mamas",
-      "Ultrassonografia transvaginal",
-      "Papanicolau",
-    ]) {
-      expect(src, `a pagina perdeu "${exame}"`).toContain(exame);
-    }
-    // O preco promocional aparece quebrado no bloco grande (399 + ,90), entao
-    // o teste cobra as duas partes alem do texto corrido.
-    expect(src).toContain('PRECO_POR_INTEIRO = "399"');
-    expect(src).toContain('PRECO_POR_CENTAVOS = ",90"');
-    expect(precosCitados(src), "preco fora da oferta na pagina").toEqual(
-      [...PRECOS_AUTORIZADOS].sort()
-    );
-  });
-
-  it("a ressalva da mamografia aparece nos dois pontos de cada versao", async () => {
-    /*
-     * Duas vezes em cada versao, e o teste cobra as duas: a nota abaixo dos
-     * cartoes e a resposta do FAQ. Exigir uma so deixava apagar a nota — a
-     * que o paciente le junto da oferta — sem o teste perceber, porque a
-     * frase sobrevivia no FAQ.
-     */
-    const ressalva = /n[ãa]o substitui a/gi;
-    const html = getSeoContentForPath(ROTA)!;
-    const src = await fontePagina();
-    expect((html.match(ressalva) || []).length, "pre-render perdeu uma ressalva").toBe(2);
-    expect((src.match(ressalva) || []).length, "pagina React perdeu uma ressalva").toBe(2);
-    expect(html).toContain("conforme indica");
-  });
-
-  it("nem o pre-render nem a pagina usam promessa, urgencia ou brinde", async () => {
-    const VEDADO = [
-      /prote[çc][ãa]o completa/i,
-      /100\s*%\s*de\s*preven/i,
-      /diagn[óo]stico garantido/i,
-      /livre do c[âa]ncer/i,
-      /vagas limitadas/i,
-      /[úu]ltima chance/i,
-      /contagem regressiva/i,
-      /resultado em 24\s*horas/i,
-      /brinde/i,
-      /sorteio/i,
-      /parcelamos|parcelamento em/i,
-      /desconto no pix/i,
-      /no mesmo dia garantido/i,
-    ];
-    const alvos: Array<[string, string]> = [
-      ["pre-render", getSeoContentForPath(ROTA)!],
-      ["pagina React", await fontePagina()],
-    ];
-    for (const [onde, texto] of alvos) {
-      for (const proibido of VEDADO) {
-        expect(texto, `${onde} usa ${proibido}`).not.toMatch(proibido);
+  it("nenhum preco da campanha sobrou no site", async () => {
+    const fs = await import("node:fs");
+    const nodePath = await import("node:path");
+    const raiz = nodePath.resolve(import.meta.dirname, "..");
+    const arquivos: string[] = [];
+    for (const d of ["client/src", "server/_core", "shared"]) {
+      for (const f of fs.readdirSync(nodePath.join(raiz, d), { recursive: true, encoding: "utf-8" })) {
+        if (/\.(tsx?|json)$/.test(f) && !/\.test\./.test(f)) arquivos.push(nodePath.join(raiz, d, f));
       }
     }
+    for (const a of arquivos) expect(fs.readFileSync(a, "utf-8"), a).not.toMatch(/399,90|R\$ 500,00/);
   });
 });
 describe("GUARD-RAIL: artigo de hipoglicemia, conteudo de terceiro (out/2026)", () => {

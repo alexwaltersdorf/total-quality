@@ -55,6 +55,8 @@ export default function BlogPreviewSection() {
                 <img
                   src={post.image}
                   alt={post.title}
+                  width={1024}
+                  height={640}
                   className="w-full aspect-[16/10] object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
                 />

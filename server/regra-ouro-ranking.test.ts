@@ -31,8 +31,12 @@ function arquivos(dir: string, ext: RegExp): string[] {
   return out;
 }
 
+// SEO nov/2026, Fase 1 (plano aprovado pelo Alex em 14/11/2026): as rotas de
+// template passaram a ser o HTML do proprio React renderizado no servidor, com
+// atributos (<h1 class="...">). A regra continua a mesma — ha um <h1> —, so
+// deixou de exigir a tag sem atributos.
 const h1De = (html: string) =>
-  (html.match(/<h1>([\s\S]*?)<\/h1>/)?.[1] ?? "").replace(/<[^>]+>/g, "").trim();
+  (html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)?.[1] ?? "").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
 
 describe("REGRA DE OURO — relevância: a home é a dona de 'laboratório'", () => {
   /*
@@ -94,7 +98,8 @@ describe("REGRA DE OURO — significado: a landing é de 'análises clínicas'",
 
   it("a landing passa a autoridade do termo para a home com link de âncora exata", () => {
     const html = getSeoContentForPath("/laboratorio-caraguatatuba")!;
-    expect(html).toMatch(/<a href="\/">laborat[óo]rio em Caraguatatuba<\/a>/i);
+    // Fase 1 (14/11/2026): o link e o do React, com classe; a ancora exata e a mesma.
+    expect(html).toMatch(/<a href="\/"[^>]*>laborat[óo]rio em Caraguatatuba<\/a>/i);
   });
 });
 
@@ -176,16 +181,22 @@ describe("REGRA DE OURO — contexto: uma entidade só, tipada como laboratório
     expect(servicos).toMatch(/Coleta Domiciliar/);
   });
 
-  it("especialidade no schema só se o site tem a página (sem pediatria)", () => {
+  it("especialidade no schema só se o site tem a página", () => {
     // Schema que declara o que a página não mostra é dado estruturado
     // enganoso para o Google e serviço não prestado para o CFM. Endocrinologia
     // e gastroenterologia entraram com as páginas de 24/10/2026.
+    //
+    // Até 14/11/2026 este teste exigia "sem pediatria": em 31/10 a informação
+    // era que a clínica não atendia. Decisão do Alex de 14/11/2026 ("SIM,
+    // ATENDEMOS. PODE CRIAR"): atende. Pediatric entrou junto com a página
+    // /especialidades/pediatra (Fase 3, 15/11/2026) — e só pode ficar no
+    // schema enquanto a página existir (laço abaixo).
     const [n] = negocio;
     const declaradas: string[] = n.medicalSpecialty;
-    expect(declaradas.join(" ")).not.toMatch(/Pediatric/);
     const PAGINA_DA_ESPECIALIDADE: Record<string, string> = {
       "https://schema.org/Endocrine": "/especialidades/endocrinologista",
       "https://schema.org/Gastroenterologic": "/especialidades/gastroenterologista",
+      "https://schema.org/Pediatric": "/especialidades/pediatra",
     };
     for (const [especialidade, pagina] of Object.entries(PAGINA_DA_ESPECIALIDADE)) {
       if (declaradas.includes(especialidade)) {

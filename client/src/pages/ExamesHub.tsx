@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
 import { examesData, type ExamData } from "@/lib/examesData";
+import { especialidadesData, ESPECIALIDADES_BASE } from "@/lib/especialidadesData";
 
 const CATEGORIES: Array<{ key: ExamData["category"]; label: string; blurb: string }> = [
   {
@@ -21,12 +22,12 @@ const CATEGORIES: Array<{ key: ExamData["category"]; label: string; blurb: strin
   {
     key: "imagem",
     label: "Diagnóstico por Imagem",
-    blurb: "Equipamentos modernos e laudos rápidos, sem precisar sair do Litoral Norte.",
+    blurb: "Tomografia, ultrassom e raio-X com hora marcada, sem precisar sair do Litoral Norte.",
   },
   {
     key: "cardiologia",
     label: "Cardiologia",
-    blurb: "Avaliação completa do coração, do ECG ao monitoramento de 24 horas.",
+    blurb: "Do eletrocardiograma ao monitoramento de 24 horas do ritmo e da pressão.",
   },
   {
     key: "neurologia",
@@ -58,7 +59,7 @@ function ExamCard({ exam }: { exam: ExamData }) {
 export default function ExamesHub() {
   useCanonical("https://totalquality.med.br/exames");
   useMetaDescription(
-    "Todos os exames da Total Quality em Caraguatatuba: exames laboratoriais, hemograma, ultrassom, tomografia, cardiológicos, ocupacionais e mais. Veja a lista completa."
+    "Exames da Total Quality em Caraguatatuba: laboratoriais, hemograma, ultrassom, tomografia, raio-X, cardiológicos, ocupacionais e mais. Veja a lista completa."
   );
 
   return (
@@ -103,8 +104,26 @@ export default function ExamesHub() {
               </Link>
               <Link href="/checkup" className="group block border border-border rounded-2xl p-6 hover:border-brand transition-colors duration-300">
                 <h3 className="heading-display text-2xl text-text group-hover:text-brand transition-colors duration-300 mb-3">Check-up Preventivo</h3>
-                <p className="text-text-light text-sm">Pacotes completos de exames por faixa etária.</p>
+                <p className="text-text-light text-sm">Planos Básico, Select e Premium, com os exames feitos em um único dia.</p>
               </Link>
+            </div>
+          </section>
+
+          {/* Especialidades (SEO nov/2026, Fase 3): consultas e medicina do trabalho. */}
+          <section className="mt-16 mb-8">
+            <h2 className="heading-display text-3xl text-text mb-2">Consultas e medicina do trabalho</h2>
+            <p className="text-text-light mb-8">
+              Consultas com especialistas, com hora marcada, no mesmo endereço dos exames.{" "}
+              <Link href={ESPECIALIDADES_BASE} className="text-brand underline underline-offset-2">Ver todas as especialidades</Link>
+            </p>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {especialidadesData.map((e) => (
+                <Link key={e.slug} href={`${ESPECIALIDADES_BASE}/${e.slug}`} className="group block border border-border rounded-2xl p-6 hover:border-brand transition-colors duration-300">
+                  <span className="text-xs font-semibold uppercase tracking-[0.15em] text-brand">{e.subtitle}</span>
+                  <h3 className="heading-display text-2xl text-text group-hover:text-brand transition-colors duration-300 mt-2 mb-3">{e.shortTitle}</h3>
+                  <p className="text-text-light leading-relaxed text-sm">{e.description}</p>
+                </Link>
+              ))}
             </div>
           </section>
         </div>

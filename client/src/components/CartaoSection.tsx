@@ -6,6 +6,7 @@ import { ArrowUpRight, CreditCard, Users, Percent } from "lucide-react";
 import { Link } from "wouter";
 import { trackCardInterest } from "@/lib/tracking";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 export default function CartaoSection() {
   const openWhatsApp = useWhatsAppRedirect();
@@ -55,13 +56,14 @@ export default function CartaoSection() {
               </Link>{" "}
               para toda sua família em Caraguatatuba. Faça seu cartão e aproveite benefícios especiais.
             </p>
-            <button
+            <CtaWhatsApp
+              mensagem="Olá! Gostaria de saber mais sobre o Cartão Total Quality."
               onClick={() => { trackCardInterest(); openWhatsApp("cartao_cta", "Olá! Gostaria de saber mais sobre o Cartão Total Quality."); }}
               className="btn-pill"
             >
               Saiba Mais
               <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
+            </CtaWhatsApp>
           </div>
 
           {/* Benefits */}

@@ -18,10 +18,17 @@ export interface ExamPrep {
 
 export interface ExamData {
   slug: string;
+  /**
+   * Nome da pagina em caixa normal ("Hemograma Completo"). O H1 e
+   * `${title} em Caraguatatuba` (examH1). A caixa alta do layout vem SO do CSS
+   * (.heading-display) — texto maiusculo no dado fazia o Google e o leitor de
+   * tela lerem "HEMOGRAMA COMPLETO" (SEO nov/2026, Fase 1).
+   */
   title: string;
   shortTitle: string;
   subtitle: string;
   description: string;
+  /** Fonte unica do <title> e da description: o servidor (routes-metadata.ts) le daqui. */
   metaTitle: string;
   metaDescription: string;
   heroDescription: string;
@@ -30,6 +37,11 @@ export interface ExamData {
   indications: string[];
   preparations: ExamPrep[];
   faqs: ExamFAQ[];
+  /**
+   * Mensagem antiga do WhatsApp. Desde a Fase 2 de SEO (nov/2026) a pagina usa
+   * "Olá, vim pelo site e quero informações sobre [exame]" (AssuntoPagina);
+   * este campo nao e mais lido pelo template.
+   */
   whatsappMessage: string;
   heroImage?: string;
   videoUrl?: string;
@@ -41,7 +53,7 @@ export interface ExamData {
 export const examesData: ExamData[] = [
   {
     slug: "exames-de-sangue",
-    title: "EXAMES DE SANGUE",
+    title: "Exames de Sangue",
     shortTitle: "Exames de Sangue",
     subtitle: "Laboratório de Análises Clínicas",
     description: "Mais de 3.000 tipos de exames laboratoriais.",
@@ -71,7 +83,7 @@ export const examesData: ExamData[] = [
       { q: "Posso tomar água durante o jejum?", a: "Sim! A ingestão de água é permitida e até recomendada durante o período de jejum. Evite apenas sucos, café e outras bebidas." },
       { q: "Quais exames de sangue vocês realizam?", a: "Realizamos mais de 3.000 tipos, incluindo hemograma, glicemia, colesterol, triglicerídeos, TSH, T4 livre, PSA, vitamina D, ácido úrico, ureia, creatinina, TGO, TGP, hormônios, marcadores tumorais e muito mais." },
       { q: "Preciso agendar horário para fazer exame de sangue?", a: "Não. A coleta é feita sem agendamento, por ordem de chegada: basta comparecer com o pedido médico e documento com foto, de segunda a sexta, das 7h30 às 18h. Se preferir, chame no WhatsApp (12) 3887-3535 para tirar dúvidas e já receber as orientações de preparo." },
-      { q: "Quanto custa um exame de sangue?", a: "O valor varia conforme o exame solicitado. Envie o seu pedido médico pelo WhatsApp (12) 3887-3535 e retornamos com o orçamento. Atendemos particular com pagamento em dinheiro, cartão, débito ou PIX, e o Cartão Total Quality oferece até 70% de desconto em exames laboratoriais." },
+      { q: "Quanto custa um exame de sangue?", a: "O valor varia conforme o exame solicitado. Envie o seu pedido médico pelo WhatsApp (12) 3887-3535 e retornamos com o orçamento. Atendemos particular com pagamento em dinheiro, cartão, débito ou PIX." },
       { q: "Meu convênio cobre exames de sangue?", a: `Atendemos ${CONVENIOS_TEXTO}. Fora desses três, o atendimento é particular, com tabela própria. Tire dúvidas pelo WhatsApp (12) 3887-3535.` },
       { q: "Vocês fazem coleta domiciliar?", a: "Sim. Realizamos coleta domiciliar de exames laboratoriais em Caraguatatuba. Agende pelo WhatsApp (12) 3887-3535 para confirmar disponibilidade, horários e valores." },
     ],
@@ -81,13 +93,13 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "tomografia-computadorizada",
-    title: "TOMOGRAFIA COMPUTADORIZADA",
+    title: "Tomografia Computadorizada",
     shortTitle: "Tomografia",
     subtitle: "Diagnóstico por Imagem",
     description: "Imagens detalhadas do corpo com tecnologia de tomografia multislice.",
     metaTitle: "Tomografia Computadorizada em Caraguatatuba | Total Quality",
-    metaDescription: "Tomografia computadorizada em Caraguatatuba - SP na Total Quality. Tomógrafo multislice para crânio, tórax, abdômen e coluna. Laudo rápido. Agende.",
-    heroDescription: "A tomografia computadorizada é um dos exames de imagem mais completos e precisos da medicina moderna. Na Total Quality, contamos com equipamento multislice que produz imagens de alta resolução em poucos minutos.",
+    metaDescription: "Tomografia computadorizada em Caraguatatuba - SP na Total Quality. Tomógrafo multislice para crânio, tórax, abdômen e coluna, com e sem contraste. Agende.",
+    heroDescription: "A tomografia computadorizada produz imagens em cortes de ossos, órgãos, vasos e tecidos. Na Total Quality, o exame é feito em tomógrafo multislice, com hora marcada.",
     whatIs: "A Tomografia Computadorizada (TC) é um exame de diagnóstico por imagem que utiliza raios-X e processamento computadorizado para produzir imagens detalhadas em cortes transversais do corpo. Permite visualizar ossos, órgãos internos, vasos sanguíneos e tecidos moles com grande precisão.",
     howItWorks: "O paciente deita em uma mesa que desliza para dentro do aparelho em formato de anel. O tubo de raios-X gira ao redor do corpo, capturando múltiplas imagens que são processadas por computador para criar imagens tridimensionais detalhadas. O exame dura entre 10 e 30 minutos.",
     indications: [
@@ -122,11 +134,11 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "raio-x",
-    title: "RAIO-X",
+    title: "Raio-X",
     shortTitle: "Raio-X",
     subtitle: "Diagnóstico por Imagem",
-    description: "Radiografia digital com alta resolução para diagnóstico rápido e preciso.",
-    metaTitle: "Raio-X em Caraguatatuba | Total Quality",
+    description: "Radiografia digital de tórax, coluna, membros e seios da face.",
+    metaTitle: "Raio-X em Caraguatatuba | Clínica Total Quality",
     metaDescription: "Raio-X digital em Caraguatatuba na Total Quality. Faça exame de tórax, coluna, membros e seios da face com alta resolução. Agende o seu atendimento online.",
     heroDescription: "O Raio-X é um dos exames de imagem mais utilizados na medicina, essencial para diagnóstico de fraturas, doenças pulmonares e diversas condições. Na Total Quality, utilizamos equipamento digital para imagens de alta resolução.",
     whatIs: "O Raio-X (radiografia) é um exame de diagnóstico por imagem que utiliza radiação ionizante em doses baixas para produzir imagens do interior do corpo. É especialmente eficaz para visualizar ossos, pulmões e certas condições dos tecidos moles. A tecnologia digital permite imagens de alta qualidade com menor exposição à radiação.",
@@ -147,10 +159,13 @@ export const examesData: ExamData[] = [
       { icon: AlertTriangle, text: "Remova objetos metálicos da região a ser examinada" },
     ],
     faqs: [
-      { q: "O Raio-X é perigoso?", a: "Não. A dose de radiação utilizada no Raio-X digital é muito baixa e segura. Nosso equipamento digital utiliza doses ainda menores que os aparelhos convencionais." },
+      { q: "O raio-X usa radiação?", a: "Sim. O raio-X usa radiação ionizante em dose baixa, que varia conforme a região e o protocolo. Quando o exame é clinicamente necessário, a equipe usa protocolos voltados à imagem adequada com a exposição necessária. Informe sempre a gravidez ou a suspeita de gravidez." },
       { q: "Preciso de algum preparo?", a: "Na maioria dos casos, não é necessário preparo especial. Apenas remova objetos metálicos (joias, piercings) da região a ser examinada." },
       { q: "Quanto tempo demora?", a: "O exame é muito rápido, levando apenas alguns minutos. Cada incidência leva poucos segundos." },
       { q: "Gestantes podem fazer Raio-X?", a: "Raio-X em gestantes deve ser evitado, especialmente no primeiro trimestre. Em casos de urgência, pode ser realizado com proteção abdominal adequada, sempre sob orientação médica." },
+      // Fase 3 (15/11/2026): do artigo publicado diferenca-raio-x-tomografia.
+      { q: "Qual a diferença entre raio-X e tomografia?", a: "Os dois usam raios-X. O raio-X produz imagens planas e costuma ser a avaliação inicial; a tomografia reúne imagens de vários ângulos e forma cortes com mais detalhe. A escolha depende da pergunta clínica e é feita pelo médico que pede o exame." },
+      { q: "Precisa marcar horário para o raio-X?", a: "Sim. O raio-X é feito com hora marcada pelo WhatsApp (12) 3887-3535, de segunda a sexta, das 7h30 às 18h. Leve o pedido médico e um documento com foto." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar um exame de Raio-X.",
     category: "imagem",
@@ -158,12 +173,12 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "ultrassonografia",
-    title: "ULTRASSONOGRAFIA",
+    title: "Ultrassonografia",
     shortTitle: "Ultrassonografia",
     subtitle: "Diagnóstico por Imagem",
     description: "Exame de imagem por ultrassom para avaliação de órgãos e tecidos.",
-    metaTitle: "Ultrassonografia em Caraguatatuba | Total Quality",
-    metaDescription: "Ultrassonografia em Caraguatatuba - SP na Total Quality: abdominal, pélvica, obstétrica, tireoide, mama e Doppler. Radiologistas experientes. Agende.",
+    metaTitle: "Ultrassonografia (Ultrassom) Caraguatatuba | Total Quality",
+    metaDescription: "Ultrassom (ultrassonografia) em Caraguatatuba: abdome total, pélvico, obstétrico, tireoide, mamas e Doppler, com hora marcada. Preparo pelo WhatsApp.",
     heroDescription: "A ultrassonografia é um exame seguro e indolor que utiliza ondas sonoras para produzir imagens em tempo real dos órgãos internos. Na Total Quality, contamos com equipamentos digitais e médicos especialistas que assinam os laudos.",
     whatIs: "A Ultrassonografia (ecografia) é um exame de diagnóstico por imagem que utiliza ondas sonoras de alta frequência para criar imagens dos órgãos e estruturas internas do corpo. É um método seguro, indolor, não invasivo e que não utiliza radiação ionizante, sendo seguro inclusive para gestantes.",
     howItWorks: "Um transdutor (sonda) é colocado sobre a pele com gel condutor. O transdutor emite ondas sonoras que penetram no corpo e retornam ao encontrar diferentes tecidos, criando imagens em tempo real no monitor. O médico analisa as imagens durante o exame.",
@@ -189,6 +204,8 @@ export const examesData: ExamData[] = [
       { q: "Quanto tempo dura o exame?", a: "Em média, 20 a 30 minutos, dependendo da região examinada e da complexidade do caso." },
       // Migradas de /blog/ultrassonografia-caraguatatuba antes do 301 (22/10/2026).
       { q: "Para que serve o ultrassom com Doppler?", a: "O Doppler avalia o fluxo de sangue em artérias e veias. É pedido, por exemplo, na investigação de varizes, de trombose venosa e de estreitamento das artérias carótidas. O médico define no pedido a região a ser examinada." },
+      // Fase 3 (15/11/2026): do artigo publicado diferenca-ultrassom-comum-doppler.
+      { q: "Todo ultrassom tem Doppler?", a: "Não. O Doppler é um recurso acrescentado quando o protocolo inclui a avaliação do fluxo de sangue. O pedido médico normalmente informa a região e se o exame deve incluir Doppler; na dúvida, envie uma foto legível do pedido para a equipe." },
       { q: "O que evitar antes do ultrassom abdominal?", a: "Além do jejum de 6 a 8 horas, evite nas 24 horas anteriores alimentos que formam gases, como feijão, refrigerante e leite. Os gases atrapalham a visualização dos órgãos." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar uma ultrassonografia.",
@@ -204,13 +221,13 @@ export const examesData: ExamData[] = [
   // Google e as normas do CFM, mesma regra do ecocardiograma (01/08/2026).
   {
     slug: "mapa",
-    title: "MAPA",
+    title: "MAPA 24h",
     shortTitle: "MAPA",
     subtitle: "Monitorização Ambulatorial da Pressão Arterial",
     description: "Monitoramento contínuo da pressão arterial por 24 horas.",
     metaTitle: "MAPA 24h em Caraguatatuba | Total Quality",
-    metaDescription: "MAPA 24h em Caraguatatuba - SP na Total Quality. Monitorização da pressão arterial para diagnóstico preciso de hipertensão. Agende pelo WhatsApp.",
-    heroDescription: "O MAPA é um exame que monitora a pressão arterial continuamente durante 24 horas, registrando medições automáticas durante as atividades do dia a dia e durante o sono. É o exame mais preciso para diagnóstico e acompanhamento da hipertensão arterial.",
+    metaDescription: "MAPA em Caraguatatuba - SP. Monitoramento de pressão arterial por 24 horas. Diagnóstico de hipertensão. Agende seu exame.",
+    heroDescription: "O MAPA é um exame que monitora a pressão arterial continuamente durante 24 horas, registrando medições automáticas durante as atividades do dia a dia e durante o sono. É usado no diagnóstico e no acompanhamento da hipertensão arterial.",
     whatIs: "O MAPA (Monitorização Ambulatorial da Pressão Arterial) é um exame que registra a pressão arterial automaticamente a cada 15-20 minutos durante o dia e a cada 30 minutos durante a noite, ao longo de 24 horas. Permite avaliar o comportamento da pressão arterial em condições reais do cotidiano do paciente.",
     howItWorks: "Um aparelho portátil com manguito é instalado no braço do paciente. O equipamento realiza medições automáticas programadas ao longo de 24 horas. O paciente mantém suas atividades normais e registra em um diário os horários de sono, refeições e atividades. Após 24 horas, o aparelho é retirado e os dados são analisados por software especializado.",
     indications: [
@@ -233,6 +250,9 @@ export const examesData: ExamData[] = [
       { q: "Posso tomar banho com o aparelho?", a: "Não. O aparelho não pode ser molhado. Evite banho de chuveiro durante as 24 horas. Você pode fazer higiene parcial sem molhar o equipamento." },
       { q: "Preciso manter minhas atividades normais?", a: "Sim! O objetivo é avaliar a pressão durante suas atividades habituais. Mantenha sua rotina normal, incluindo trabalho e atividades do dia a dia." },
       { q: "O que é o diário de atividades?", a: "É um formulário onde você anota horários de sono, refeições, medicamentos, atividades físicas e sintomas. Essas informações ajudam o médico a correlacionar as medições com suas atividades." },
+      // Fase 3 (15/11/2026): do artigo publicado mapa-ou-holter-diferenca.
+      { q: "Qual a diferença entre MAPA e Holter?", a: "O MAPA registra a pressão arterial ao longo de 24 horas; o Holter registra a atividade elétrica e o ritmo do coração. Respondem a perguntas diferentes, e um não substitui o outro: quem escolhe é o médico, conforme o que está sendo investigado." },
+      { q: "Posso fazer exercício durante o MAPA?", a: "Não. A diretriz brasileira orienta não praticar exercícios físicos durante o período do MAPA. Mantenha o trabalho e o restante da rotina normalmente." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar um exame MAPA (Monitorização da Pressão Arterial 24h).",
     category: "cardiologia",
@@ -240,12 +260,12 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "holter",
-    title: "HOLTER",
+    title: "Holter 24h",
     shortTitle: "Holter",
     subtitle: "Monitorização Cardíaca 24 Horas",
     description: "Monitoramento contínuo do ritmo cardíaco por 24 horas.",
     metaTitle: "Holter 24h em Caraguatatuba | Total Quality",
-    metaDescription: "Faça o exame Holter em Caraguatatuba no Total Quality. O monitoramento registra a atividade cardíaca por período prolongado para avaliação médica.",
+    metaDescription: "Holter 24h em Caraguatatuba - SP: registro contínuo do ritmo do coração durante a rotina e o sono, para investigar arritmias. Tire dúvidas pelo WhatsApp.",
     heroDescription: "O Holter é um exame que registra continuamente a atividade elétrica do coração durante 24 horas, permitindo detectar arritmias e alterações que podem não aparecer em um eletrocardiograma convencional.",
     whatIs: "O Holter é um exame de monitorização eletrocardiográfica contínua por 24 horas. Um pequeno gravador portátil registra todos os batimentos cardíacos durante as atividades diárias e o sono, permitindo identificar arritmias, isquemias e outras alterações do ritmo cardíaco que podem ser intermitentes.",
     howItWorks: "Eletrodos adesivos são colocados no tórax do paciente e conectados a um pequeno gravador digital portátil. O aparelho registra continuamente o eletrocardiograma durante 24 horas. O paciente mantém suas atividades normais e registra sintomas em um diário. Após 24 horas, o aparelho é retirado e os dados são analisados.",
@@ -269,6 +289,9 @@ export const examesData: ExamData[] = [
       { q: "O Holter é desconfortável?", a: "Os eletrodos podem causar leve coceira na pele, mas o aparelho é pequeno e leve, não interferindo significativamente nas atividades diárias." },
       { q: "Posso tomar banho?", a: "Não durante o exame. Tome banho antes da instalação. O aparelho e os eletrodos não podem ser molhados." },
       { q: "O que devo anotar no diário?", a: "Registre horários de sono, atividades físicas, refeições, medicamentos e principalmente qualquer sintoma como palpitação, tontura, dor no peito ou falta de ar." },
+      // Fase 3 (15/11/2026): dos artigos publicados mapa-ou-holter-diferenca e eletrocardiograma-o-que-e-como-e-feito.
+      { q: "MAPA e Holter podem ser feitos ao mesmo tempo?", a: "Em alguns casos, sim. Como monitoram coisas diferentes — a pressão arterial no MAPA e a atividade elétrica do coração no Holter —, o médico pode pedir os dois juntos quando a avaliação exigir." },
+      { q: "Qual a diferença entre Holter e eletrocardiograma?", a: "O eletrocardiograma registra a atividade elétrica do coração por poucos minutos, em repouso. O Holter grava o ritmo de forma contínua por 24 horas, durante a rotina, e por isso pode captar alterações que aparecem e somem." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar um exame Holter 24h.",
     category: "cardiologia",
@@ -276,13 +299,13 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "espirometria",
-    title: "ESPIROMETRIA",
+    title: "Espirometria",
     shortTitle: "Espirometria",
     subtitle: "Prova de Função Pulmonar",
     description: "Avaliação completa da capacidade respiratória e função pulmonar.",
-    metaTitle: "Espirometria em Caraguatatuba | Total Quality",
-    metaDescription: "Faça espirometria em Caraguatatuba no Total Quality. O exame avalia a função pulmonar, DPOC, bronquite e auxilia no acompanhamento respiratório. Avaliação pré-operatória",
-    heroDescription: "A espirometria é o exame padrão-ouro para avaliação da função pulmonar. Mede volumes e fluxos de ar nos pulmões, sendo essencial para diagnóstico e acompanhamento de doenças respiratórias como asma e DPOC.",
+    metaTitle: "Espirometria em Caraguatatuba | Teste de Função Pulmonar",
+    metaDescription: "Espirometria em Caraguatatuba - SP. Teste de função pulmonar para diagnóstico de doenças respiratórias. Agende seu exame.",
+    heroDescription: "A espirometria avalia a função pulmonar. Mede volumes e fluxos de ar nos pulmões, sendo essencial para diagnóstico e acompanhamento de doenças respiratórias como asma e DPOC.",
     whatIs: "A Espirometria (prova de função pulmonar) é um exame que mede a quantidade e a velocidade do ar que entra e sai dos pulmões. Avalia a capacidade pulmonar e detecta obstruções ou restrições nas vias aéreas. É fundamental para diagnóstico de asma, DPOC, fibrose pulmonar e outras doenças respiratórias.",
     howItWorks: "O paciente sopra com força máxima em um bocal conectado ao espirômetro. O aparelho mede o volume de ar expirado e a velocidade do fluxo. São realizadas várias manobras para garantir resultados confiáveis. O exame pode incluir teste com broncodilatador para avaliar a reversibilidade de obstruções.",
     indications: [
@@ -305,6 +328,9 @@ export const examesData: ExamData[] = [
       { q: "Quanto tempo dura?", a: "O exame dura aproximadamente 15 a 30 minutos, incluindo as repetições necessárias e o teste com broncodilatador, quando indicado." },
       { q: "Preciso suspender medicamentos?", a: "Depende do objetivo do exame. Seu médico orientará se deve suspender broncodilatadores antes do teste. Nunca suspenda medicamentos por conta própria." },
       { q: "Crianças podem fazer?", a: "Sim, geralmente a partir dos 6 anos de idade, quando a criança já consegue colaborar com as manobras respiratórias necessárias." },
+      // Fase 3 (15/11/2026): do dado de medicina do trabalho e das indicacoes acima.
+      { q: "A espirometria entra no exame admissional?", a: "Pode entrar. Ela é um dos exames complementares que o PCMSO da empresa pode prever para a função, e na Total Quality é feita no mesmo local do exame clínico ocupacional." },
+      { q: "Fumante pode fazer espirometria?", a: "Sim: a avaliação de fumantes é uma das indicações do exame. Não fume nas 4 horas anteriores ao exame." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar uma espirometria (prova de função pulmonar).",
     category: "outros",
@@ -312,12 +338,12 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "eletrocardiograma",
-    title: "ELETROCARDIOGRAMA",
+    title: "Eletrocardiograma (ECG)",
     shortTitle: "Eletrocardiograma",
     subtitle: "ECG - Avaliação Cardíaca",
     description: "Registro da atividade elétrica do coração para diagnóstico cardíaco.",
     metaTitle: "Eletrocardiograma (ECG) em Caraguatatuba | Total Quality",
-    metaDescription: "Eletrocardiograma (ECG) em Caraguatatuba - SP na Total Quality. Avaliação cardíaca rápida e indolor para arritmias e doenças do coração. Agende.",
+    metaDescription: "Eletrocardiograma (ECG) em Caraguatatuba - SP: exame rápido e indolor que registra a atividade elétrica do coração, em 5 a 10 minutos. Agende pelo WhatsApp.",
     heroDescription: "O Eletrocardiograma (ECG) é um exame rápido, indolor e fundamental para avaliação da saúde do coração. Registra a atividade elétrica cardíaca e permite diagnosticar arritmias, isquemias e outras condições cardíacas.",
     whatIs: "O Eletrocardiograma (ECG) é um exame que registra a atividade elétrica do coração através de eletrodos colocados na pele. Produz um traçado gráfico que mostra o ritmo cardíaco, a frequência dos batimentos e possíveis alterações na condução elétrica do coração. É um dos exames mais realizados na cardiologia.",
     howItWorks: "Eletrodos adesivos são colocados no tórax, braços e pernas do paciente. Esses eletrodos captam os sinais elétricos do coração e os transmitem ao aparelho, que produz um traçado em papel ou digital. O exame é rápido, durando apenas 5 a 10 minutos, e é completamente indolor.",
@@ -338,9 +364,12 @@ export const examesData: ExamData[] = [
     ],
     faqs: [
       { q: "O eletrocardiograma dói?", a: "Não. O exame é completamente indolor. Os eletrodos apenas captam sinais elétricos, não emitem nenhum tipo de corrente ou choque." },
-      { q: "Quanto tempo dura?", a: "O exame é muito rápido, durando apenas 5 a 10 minutos. O resultado é imediato." },
+      { q: "Quanto tempo dura?", a: "O registro do traçado leva poucos minutos: o exame fica entre 5 e 10 minutos e, em geral, abaixo de 15. O tempo na clínica pode variar com o movimento da recepção." },
       { q: "Preciso de algum preparo?", a: "Não é necessário jejum. Apenas evite aplicar cremes no tórax e tente chegar relaxado ao exame." },
       { q: "Com que frequência devo fazer?", a: "Depende da indicação médica. Para check-up, geralmente é anual. Pacientes cardíacos podem necessitar com maior frequência." },
+      // Fase 3 (15/11/2026): do artigo publicado eletrocardiograma-o-que-e-como-e-feito.
+      { q: "O que significa ECG?", a: "ECG é a sigla de eletrocardiograma, o exame que registra a atividade elétrica do coração. EKG, sigla que vem do alemão, e ECG de repouso indicam o mesmo exame." },
+      { q: "Precisa marcar horário para o eletrocardiograma?", a: "Sim. O eletrocardiograma é feito com hora marcada pelo WhatsApp (12) 3887-3535, de segunda a sexta, das 7h30 às 18h. Leve o pedido médico e um documento com foto." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar um eletrocardiograma.",
     category: "cardiologia",
@@ -348,13 +377,13 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "eletroencefalograma",
-    title: "ELETROENCEFALOGRAMA",
+    title: "Eletroencefalograma (EEG)",
     shortTitle: "Eletroencefalograma",
     subtitle: "EEG - Avaliação Neurológica",
     description: "Registro da atividade elétrica cerebral para diagnóstico neurológico.",
-    metaTitle: "Eletroencefalograma em Caraguatatuba | Total Quality",
-    metaDescription: "Faça eletroencefalograma em Caraguatatuba no Total Quality. O EEG registra a atividade elétrica cerebral e auxilia na avaliação neurológica.",
-    heroDescription: "O Eletroencefalograma (EEG) é um exame que registra a atividade elétrica do cérebro, sendo fundamental para diagnóstico de epilepsia, convulsões e outros distúrbios neurológicos. Na Total Quality, realizamos o exame com equipamento digital de alta sensibilidade.",
+    metaTitle: "Eletroencefalograma (EEG) em Caraguatatuba | Total Quality",
+    metaDescription: "Eletroencefalograma (EEG) em Caraguatatuba - SP: exame não invasivo que registra a atividade elétrica do cérebro. Veja o preparo e tire dúvidas pelo WhatsApp.",
+    heroDescription: "O Eletroencefalograma (EEG) é um exame que registra a atividade elétrica do cérebro, sendo fundamental para diagnóstico de epilepsia, convulsões e outros distúrbios neurológicos. Na Total Quality, o exame é feito com equipamento digital.",
     whatIs: "O Eletroencefalograma (EEG) é um exame neurofisiológico que registra a atividade elétrica do cérebro através de eletrodos colocados no couro cabeludo. Produz um traçado que mostra padrões de ondas cerebrais, permitindo identificar alterações associadas a epilepsia, distúrbios do sono, encefalopatias e outras condições neurológicas.",
     howItWorks: "Eletrodos são posicionados no couro cabeludo com pasta condutora. O paciente permanece deitado ou sentado confortavelmente enquanto o aparelho registra a atividade elétrica cerebral. Durante o exame, podem ser realizadas estimulações como hiperventilação e fotoestimulação para provocar respostas cerebrais específicas.",
     indications: [
@@ -377,6 +406,8 @@ export const examesData: ExamData[] = [
       { q: "Quanto tempo dura?", a: "O exame dura entre 20 e 40 minutos. Em alguns casos, pode ser solicitado EEG prolongado de várias horas." },
       { q: "Por que preciso dormir menos?", a: "A privação parcial de sono pode facilitar o aparecimento de alterações no EEG que ajudam no diagnóstico, especialmente em casos de epilepsia." },
       { q: "Posso usar condicionador?", a: "Não. Produtos como condicionador, gel e creme criam uma camada que dificulta a captação dos sinais elétricos pelos eletrodos." },
+      // Fase 3 (15/11/2026): do preparo acima.
+      { q: "Devo parar meus remédios antes do EEG?", a: "Não suspenda nenhum remédio sem orientação médica. Leve a lista dos medicamentos em uso e os exames anteriores no dia do exame." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar um eletroencefalograma.",
     category: "neurologia",
@@ -384,7 +415,7 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "exame-toxicologico",
-    title: "EXAME TOXICOLÓGICO",
+    title: "Exame Toxicológico",
     shortTitle: "Exame Toxicológico",
     subtitle: "Análise Toxicológica",
     description: "Exame toxicológico para detecção de substâncias com janela de 180 dias.",
@@ -414,6 +445,9 @@ export const examesData: ExamData[] = [
       { q: "E se eu tiver cabelo muito curto?", a: "Se o cabelo da cabeça for muito curto, pode ser coletado pelo de outras regiões do corpo (braço, perna, tórax). O importante é ter no mínimo 3cm." },
       { q: "Exames toxicológicos para CNH e para empresa são iguais?", a: "A coleta é a mesma: amostra de cabelo ou pelo. O que muda é a finalidade. O toxicológico da CNH segue o padrão exigido pelo DETRAN para o motorista profissional das categorias C, D e E; o admissional, demissional ou periódico segue o pedido da empresa. Informe a finalidade na coleta." },
       { q: "Quanto tempo demora o resultado?", a: "O resultado sai em 5 dias úteis. É emitido em formato padronizado aceito pelo DETRAN." },
+      // Fase 3 (15/11/2026): do artigo publicado exame-toxicologico-cnh.
+      { q: "Preciso parar de tomar medicamentos?", a: "Não. Não suspenda medicamentos sem orientação médica: informe o tratamento no momento da coleta e leve a receita ou o relatório médico quando pedido." },
+      { q: "Como saber a data do próximo exame toxicológico?", a: "Consulte a área de exames toxicológicos na Carteira Digital de Trânsito ou no Portal de Serviços da Senatran, que mostram a coleta anterior e o prazo do próximo exame." },
     ],
     whatsappMessage: "Olá! Gostaria de agendar um exame toxicológico.",
     category: "outros",
@@ -421,13 +455,13 @@ export const examesData: ExamData[] = [
   },
 {
     slug: "hemograma",
-    title: "HEMOGRAMA COMPLETO",
+    title: "Hemograma Completo",
     shortTitle: "Hemograma",
     subtitle: "Análises Clínicas",
-    description: "O exame de sangue mais solicitado do Brasil, com resultado em curto prazo.",
+    description: "Glóbulos vermelhos, glóbulos brancos e plaquetas em uma coleta, sem agendamento.",
     metaTitle: "Hemograma Completo em Caraguatatuba | Total Quality",
-    metaDescription: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Resultado em curto prazo.",
-    heroDescription: "O hemograma completo é o exame de sangue mais solicitado na prática médica: avalia glóbulos vermelhos, glóbulos brancos e plaquetas em uma única coleta. Na Total Quality, a coleta leva minutos e o resultado sai em curto prazo, disponível online.",
+    metaDescription: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Resultado em curto prazo na Total Quality.",
+    heroDescription: "O hemograma completo é um exame de sangue que avalia glóbulos vermelhos, glóbulos brancos e plaquetas em uma única coleta. Na Total Quality, a coleta leva minutos e o resultado sai em curto prazo, disponível online.",
     whatIs: "O hemograma completo é uma análise quantitativa e qualitativa das células do sangue, dividida em três partes: o eritrograma (glóbulos vermelhos, hemoglobina e hematócrito, usados para investigar anemias), o leucograma (glóbulos brancos, que indicam infecções, inflamações e alterações imunológicas) e a contagem de plaquetas (relacionada à coagulação). É um exame de triagem fundamental em check-ups, no pré-operatório, no pré-natal e na investigação de sintomas como cansaço, febre prolongada e sangramentos.",
     howItWorks: "A coleta é feita por punção venosa no braço e leva poucos minutos. Não é necessário jejum para o hemograma isolado — apenas evite atividade física intensa imediatamente antes. A amostra é processada em analisador hematológico automatizado e revisada pela equipe do laboratório. O resultado fica disponível online em curto prazo; os valores de referência vêm impressos no laudo e devem sempre ser interpretados pelo seu médico, junto ao seu histórico clínico.",
     indications: [
@@ -451,6 +485,9 @@ export const examesData: ExamData[] = [
       { q: "Em quanto tempo sai o resultado do hemograma?", a: "Na Total Quality, o resultado do hemograma fica pronto em curto prazo e pode ser acessado online, sem precisar voltar ao laboratório." },
       { q: "Quanto custa um hemograma completo?", a: `Consulte o valor particular atualizado pelo WhatsApp (12) 3887-3535. Nos convênios atendidos (${CONVENIOS_TEXTO}), a equipe confirma a cobertura antes do exame.` },
       { q: "Preciso agendar para fazer o hemograma?", a: "Não é necessário agendamento: basta comparecer com o pedido médico e um documento com foto. A coleta funciona de segunda a sexta a partir das 7h30." },
+      // Fase 3 (15/11/2026): do artigo publicado hemograma-completo-o-que-avalia (sem repetir o texto dele).
+      { q: "Glicemia e colesterol fazem parte do hemograma?", a: "Não. Eles costumam vir no mesmo pedido, mas são exames separados, cada um com o seu preparo. O hemograma é um exame só, com três partes: série vermelha, série branca e plaquetas." },
+      { q: "Vocês fazem coleta domiciliar de hemograma?", a: "Sim. A Total Quality faz coleta domiciliar de exames laboratoriais; a área atendida, o horário e o valor são confirmados pelo WhatsApp (12) 3887-3535." },
     ],
     whatsappMessage: "Olá! Gostaria de fazer um hemograma completo.",
     category: "laboratorio",
@@ -458,7 +495,7 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "sexagem-fetal",
-    title: "SEXAGEM FETAL",
+    title: "Sexagem Fetal",
     shortTitle: "Sexagem Fetal",
     subtitle: "Exame de Sangue na Gestação",
     description: "Exame de sangue da gestante que identifica o sexo do bebê a partir da 8ª semana de gestação.",
@@ -494,12 +531,12 @@ export const examesData: ExamData[] = [
   },
   {
     slug: "exame-admissional",
-    title: "EXAMES OCUPACIONAIS",
+    title: "Exame Admissional e ASO",
     shortTitle: "Exame Admissional",
     subtitle: "Medicina Ocupacional",
     description: "Admissional, periódico, demissional, mudança de função e ASO para empresas do Litoral Norte.",
-    metaTitle: "Exame Admissional em Caraguatatuba | Total Quality",
-    metaDescription: "Exame admissional, periódico, demissional e ASO em Caraguatatuba. Medicina ocupacional completa para empresas do Litoral Norte, com agilidade.",
+    metaTitle: "Exame Admissional e ASO em Caraguatatuba | Total Quality",
+    metaDescription: "Exame admissional, periódico, demissional e ASO em Caraguatatuba. Exames complementares no mesmo local, para empresas do Litoral Norte. Agende.",
     heroDescription: "A Total Quality realiza todos os exames de medicina ocupacional exigidos por lei — admissional, periódico, demissional, retorno ao trabalho e mudança de função — com emissão do ASO e exames complementares no mesmo local. Atendemos empresas de Caraguatatuba, Ubatuba, São Sebastião e Ilhabela.",
     whatIs: "Os exames ocupacionais são avaliações médicas obrigatórias previstas na CLT e nas Normas Regulamentadoras (NR-7/PCMSO). O exame admissional é realizado antes da contratação; o periódico acompanha a saúde do trabalhador ao longo do contrato; o demissional encerra o vínculo; e há ainda os exames de retorno ao trabalho e de mudança de riscos ocupacionais. Ao final de cada avaliação é emitido o ASO (Atestado de Saúde Ocupacional).",
     howItWorks: "A empresa ou o candidato agenda pelo WhatsApp ou telefone. A avaliação inclui exame clínico com médico do trabalho e, conforme o risco da função, exames complementares como audiometria, espirometria, acuidade visual, eletrocardiograma, raio-X e exames laboratoriais — todos realizados aqui mesmo, em uma única visita. Para motorista profissional, o exame toxicológico também pode entrar no admissional, com resultado à parte em 5 dias úteis. O ASO é emitido na hora e a documentação atende ao eSocial.",
@@ -520,14 +557,22 @@ export const examesData: ExamData[] = [
     faqs: [
       { q: "O que é avaliado no exame admissional?", a: "Exame clínico com médico do trabalho e, conforme a função e os riscos do cargo, exames complementares (audiometria, espirometria, acuidade visual, exames laboratoriais, raio-X). Ao final é emitido o ASO." },
       { q: "Quanto tempo demora o exame admissional?", a: "A avaliação clínica leva cerca de 20 a 30 minutos. Quando há exames complementares, tudo é feito no mesmo local e, na maioria dos casos, na mesma visita, com ASO emitido na hora." },
+      // Fase 3 (15/11/2026): do artigo publicado aso-exames-ocupacionais e do dado acima.
+      { q: "ASO e exame admissional são a mesma coisa?", a: "Não. O admissional é uma modalidade de exame ocupacional, a avaliação feita antes da contratação. O ASO é o documento emitido depois dela, com a conclusão de apto ou inapto para a função." },
+      { q: "O exame toxicológico entra no admissional?", a: "Para motorista profissional, pode ser feito na mesma ida à clínica. O resultado sai à parte, em 5 dias úteis, e não é registrado no ASO." },
       { q: "O exame demissional é obrigatório? Quem paga?", a: "Sim, é obrigatório por lei nos casos previstos na NR-7, e o custo dos exames ocupacionais é sempre de responsabilidade da empresa, nunca do trabalhador." },
-      { q: "Vocês atendem empresas com contrato contínuo?", a: "Sim. Atendemos empresas de Caraguatatuba e de todo o Litoral Norte com condições especiais para demanda recorrente de admissionais, periódicos e demissionais. Fale com a gente pelo WhatsApp (12) 3887-3535." },
+      { q: "Vocês atendem empresas com contrato contínuo?", a: "Sim. Atendemos empresas de Caraguatatuba e de todo o Litoral Norte com atendimento contínuo para a demanda de admissionais, periódicos e demissionais. Fale com a gente pelo WhatsApp (12) 3887-3535." },
     ],
     whatsappMessage: "Olá! Preciso agendar exames ocupacionais (admissional/periódico/demissional).",
     category: "outros",
     keywords: ["exame admissional", "ASO", "exame ocupacional", "exame demissional", "exame periódico", "medicina do trabalho", "Caraguatatuba"],
   },
 ];
+
+/** H1 da pagina de exame/especialidade: o mesmo no servidor e no navegador. */
+export function examH1(exam: Pick<ExamData, "title">): string {
+  return `${exam.title} em Caraguatatuba`;
+}
 
 export function getExamBySlug(slug: string): ExamData | undefined {
   return examesData.find((e) => e.slug === slug);

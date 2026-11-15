@@ -13,9 +13,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
+import { BLOG_TITLE, BLOG_DESCRIPTION } from "@shared/const";
 import { trpc } from "@/lib/trpc";
 import { Loader2 } from "lucide-react";
 import { BLOG_EXTERNO_URL, BLOG_EXTERNO_TEXTO } from "@shared/const";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 function BlogCard({ post, featured = false }: { post: BlogPostMeta; featured?: boolean }) {
   if (featured) {
@@ -26,6 +28,8 @@ function BlogCard({ post, featured = false }: { post: BlogPostMeta; featured?: b
             <img
               src={post.image}
               alt={post.title}
+              width={1024}
+              height={640}
               className="w-full aspect-[16/10] object-cover transition-transform duration-700 group-hover:scale-105"
               loading="lazy"
             />
@@ -61,6 +65,8 @@ function BlogCard({ post, featured = false }: { post: BlogPostMeta; featured?: b
           <img
             src={post.image}
             alt={post.title}
+            width={1024}
+            height={640}
             className="w-full aspect-[16/10] object-cover transition-transform duration-700 group-hover:scale-105"
             loading="lazy"
           />
@@ -101,11 +107,11 @@ export default function Blog() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "Blog | Total Quality Medicina Diagnóstica — Artigos sobre Saúde e Bem-Estar";
+    document.title = BLOG_TITLE;
   }, []);
 
   // SEO: Meta description e canonical
-  useMetaDescription("Blog da Total Quality Medicina Diagnóstica em Caraguatatuba - SP. Artigos sobre saúde preventiva, exames laboratoriais, cardiologia, nutrição e bem-estar. Dicas de especialistas para cuidar da sua saúde.");
+  useMetaDescription(BLOG_DESCRIPTION);
   useCanonical("/blog");
 
   // Combinar artigos estáticos com artigos do AutoSEO
@@ -267,8 +273,8 @@ export default function Blog() {
             Na Total Quality em Caraguatatuba, oferecemos exames laboratoriais, diagnóstico por imagem
             e cardiologia no Centro, com resultados online e atendimento humanizado.
           </p>
-          <button
-            type="button"
+          <CtaWhatsApp
+            mensagem="Olá! Gostaria de agendar um exame."
             onClick={() => {
               trackWhatsAppConversion("blog_cta", "blog");
               openWhatsApp("blog_cta", "Olá! Gostaria de agendar um exame.");
@@ -276,7 +282,7 @@ export default function Blog() {
             className="btn-pill-brand inline-flex items-center gap-2"
           >
             Agendar pelo WhatsApp <ArrowUpRight className="w-4 h-4" />
-          </button>
+          </CtaWhatsApp>
         </div>
       </section>
 

@@ -1,109 +1,63 @@
-import NotFound from "@/pages/NotFound";
-import { lazy, Suspense, useEffect, useState } from "react";
-import { Route, Switch } from "wouter";
-import ErrorBoundary from "./components/ErrorBoundary";
-import { usePageViewTracking } from "@/hooks/usePageViewTracking";
-import { useInteractionTracking } from "@/hooks/useInteractionTracking";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import { ContatoLeadProvider } from "./contexts/ContatoLeadContext";
-import Home from "./pages/Home";
+import { lazy } from "react";
+import { AppShell, type PageMap } from "./AppShell";
+
+/*
+ * SEO nov/2026, Fase 6 — divisao do JS por rota. A Home (com todas as secoes)
+ * e a pagina 404 eram import estatico: todo visitante de exame, artigo ou
+ * consulta baixava o codigo da home no bundle de entrada. Agora a Home e um
+ * chunk proprio, que o main.tsx busca ANTES do primeiro render quando a rota e
+ * "/" (sem tela vazia de Suspense na pagina mais visitada).
+ */
+const carregarHome = () => import("./pages/Home");
 
 // Rotas secundarias em lazy loading: cada pagina vira um chunk proprio,
-// fora do bundle inicial que o paciente baixa na home.
-const CheckUp = lazy(() => import("./pages/CheckUp"));
-const Bioimpedancia = lazy(() => import("./pages/Bioimpedancia"));
-const Blog = lazy(() => import("./pages/Blog"));
-const BlogPost = lazy(() => import("./pages/BlogPost"));
-const ExamesHub = lazy(() => import("./pages/ExamesHub"));
-const ExamePage = lazy(() => import("./pages/ExamePage"));
-const LaboratorioCaraguatatuba = lazy(() => import("./pages/LaboratorioCaraguatatuba"));
-const CallRedirect = lazy(() => import("./pages/CallRedirect"));
-const ThankYouCall = lazy(() => import("./pages/ThankYouCall"));
-const FormSubmissionSuccess = lazy(() => import("./pages/FormSubmissionSuccess"));
-const CartaoPage = lazy(() => import("./pages/CartaoPage"));
-const Privacidade = lazy(() => import("./pages/Privacidade"));
-const Convenios = lazy(() => import("./pages/Convenios"));
-const OutubroRosa = lazy(() => import("./pages/OutubroRosa"));
-const AutoSeoArticle = lazy(() => import("./pages/AutoSeoArticle"));
+// fora do bundle inicial que o paciente baixa na home. A arvore (rotas,
+// providers, Suspense) vive em AppShell.tsx, compartilhada com o servidor
+// (entry-server.tsx), que renderiza as mesmas paginas sem lazy.
+export const lazyPages: PageMap = {
+  Home: lazy(carregarHome),
+  CheckUp: lazy(() => import("./pages/CheckUp")),
+  Bioimpedancia: lazy(() => import("./pages/Bioimpedancia")),
+  Blog: lazy(() => import("./pages/Blog")),
+  BlogPost: lazy(() => import("./pages/BlogPost")),
+  ExamesHub: lazy(() => import("./pages/ExamesHub")),
+  ExamePage: lazy(() => import("./pages/ExamePage")),
+  EspecialidadesHub: lazy(() => import("./pages/EspecialidadesHub")),
+  LaboratorioCaraguatatuba: lazy(() => import("./pages/LaboratorioCaraguatatuba")),
+  Sobre: lazy(() => import("./pages/Sobre")),
+  Contato: lazy(() => import("./pages/Contato")),
+  CallRedirect: lazy(() => import("./pages/CallRedirect")),
+  ThankYouCall: lazy(() => import("./pages/ThankYouCall")),
+  FormSubmissionSuccess: lazy(() => import("./pages/FormSubmissionSuccess")),
+  CartaoPage: lazy(() => import("./pages/CartaoPage")),
+  Privacidade: lazy(() => import("./pages/Privacidade")),
+  Convenios: lazy(() => import("./pages/Convenios")),
+  AutoSeoArticle: lazy(() => import("./pages/AutoSeoArticle")),
+  NotFound: lazy(() => import("./pages/NotFound")),
+};
 
-function Router() {
-  return (
-    <Suspense fallback={null}>
-    <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/checkup"} component={CheckUp} />
-      <Route path={"/bioimpedancia"} component={Bioimpedancia} />
-      <Route path={"/blog"} component={Blog} />
-      <Route path={"/blog/:slug"} component={BlogPost} />
-      <Route path={"/laboratorio-caraguatatuba"} component={LaboratorioCaraguatatuba} />
-      <Route path={"/exames"} component={ExamesHub} />
-      <Route path={"/exames/:slug"} component={ExamePage} />
-      <Route path={"/especialidades/:slug"} component={ExamePage} />
-      <Route path={"/ligar"} component={CallRedirect} />
-      <Route path={"/obrigado-chamada"} component={ThankYouCall} />
-      <Route path={"/formulario-sucesso"} component={FormSubmissionSuccess} />
-      <Route path={"/cartao"} component={CartaoPage} />
-      <Route path={"/privacidade"} component={Privacidade} />
-      <Route path={"/convenios"} component={Convenios} />
-      <Route path={"/outubro-rosa"} component={OutubroRosa} />
-      {/* Catch-all de artigos AutoSEO: DEVE ficar por ultimo, depois das rotas estaticas,
-          para nao interceptar /laboratorio-caraguatatuba, /cartao, /dashboard, etc. */}
-      <Route path={"/:slug"} component={AutoSeoArticle} />
-      <Route path={"/404"} component={NotFound} />
-      <Route component={NotFound} />
-    </Switch>
-    </Suspense>
-  );
+/** Chunk da rota que o createRoot vai desenhar primeiro (so a home hoje). */
+export function preloadRotaInicial(pathname: string): Promise<unknown> {
+  if (pathname === "/" || pathname === "") return carregarHome();
+  return Promise.resolve();
 }
-
-const Toaster = lazy(() => import("@/components/ui/sonner").then((m) => ({ default: m.Toaster })));
-const CookieConsent = lazy(() => import("@/components/CookieConsent"));
 
 /**
- * Carrega o Toaster (sonner) apos o navegador ficar ocioso. Toasts sempre
- * partem de uma acao do usuario (envio de formulario), que ocorre bem depois
- * do carregamento inicial — manter sonner fora do caminho critico reduz o TBT.
+ * Pre-carrega o chunk da rota antes de hidratar o HTML do servidor
+ * (main.tsx). Sem isso a hidratacao espera o chunk dentro do <Suspense> —
+ * funciona, mas atrasa os botoes. So as rotas renderizadas no servidor.
  */
-function DeferredToaster() {
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const show = () => setReady(true);
-    const idle = typeof window.requestIdleCallback === "function" ? window.requestIdleCallback : null;
-    if (idle) {
-      const id = idle(show, { timeout: 3000 });
-      return () => window.cancelIdleCallback(id);
-    }
-    const id = window.setTimeout(show, 2000);
-    return () => window.clearTimeout(id);
-  }, []);
-
-  if (!ready) return null;
-  return (
-    <Suspense fallback={null}>
-      <Toaster />
-    </Suspense>
-  );
+export function preloadSsrRoute(pathname: string): Promise<unknown> {
+  if (/^\/(exames|especialidades)\/[^/]+\/?$/.test(pathname)) return import("./pages/ExamePage");
+  if (/^\/especialidades\/?$/.test(pathname)) return import("./pages/EspecialidadesHub");
+  if (/^\/laboratorio-caraguatatuba\/?$/.test(pathname)) return import("./pages/LaboratorioCaraguatatuba");
+  if (/^\/checkup\/?$/.test(pathname)) return import("./pages/CheckUp");
+  if (/^\/bioimpedancia\/?$/.test(pathname)) return import("./pages/Bioimpedancia");
+  if (/^\/sobre\/?$/.test(pathname)) return import("./pages/Sobre");
+  if (/^\/contato\/?$/.test(pathname)) return import("./pages/Contato");
+  return Promise.resolve();
 }
 
-function App() {
-  // Fonte unica de page_view do site (ver docs/analytics.md).
-  usePageViewTracking();
-  useInteractionTracking();
-
-  return (
-    <ErrorBoundary>
-      <ThemeProvider defaultTheme="light">
-        <ContatoLeadProvider>
-          <DeferredToaster />
-          <Suspense fallback={null}>
-            <CookieConsent />
-          </Suspense>
-          <Router />
-        </ContatoLeadProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
-  );
+export default function App() {
+  return <AppShell pages={lazyPages} />;
 }
-
-export default App;

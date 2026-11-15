@@ -35,9 +35,12 @@ describe("mídias das páginas de exames", () => {
   });
 
   it("usa imagens locais nos previews dos exames que possuíam OG externo", () => {
+    // 15/11/2026 (SEO nov/2026, Fase 6): a og:image passa a ser a foto real
+    // da propria pagina (modelo da Fase 3) na variante de 1024px, com as
+    // dimensoes reais no og:image:width/height. Continua local.
     expect(getRouteMetadata("/exames/exames-de-sangue")?.ogImage)
-      .toBe("https://totalquality.med.br/images/laboratorio-1440.webp");
+      .toBe("https://totalquality.med.br/images/laboratorio-1024.webp");
     expect(getRouteMetadata("/exames/tomografia-computadorizada")?.ogImage)
-      .toBe("https://totalquality.med.br/images/tomografia-1440.webp");
+      .toBe("https://totalquality.med.br/images/tomografia-1024.webp");
   });
 });

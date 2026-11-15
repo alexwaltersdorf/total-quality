@@ -23,6 +23,7 @@ import { blogPosts } from "@/lib/blogData";
 const COLETA_DOMICILIAR = blogPosts.find((p) => p.slug === "coleta-domiciliar-exames-caraguatatuba");
 import { trackWhatsAppConversion } from "@/lib/tracking";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 const WHATSAPP_MESSAGE =
   "Olá! Gostaria de confirmar se meu convênio é aceito na Total Quality.";
@@ -32,7 +33,7 @@ export default function Convenios() {
   const openWhatsApp = useWhatsAppRedirect();
   useCanonical("https://totalquality.med.br/convenios");
   useMetaDescription(
-    "Convênios aceitos no laboratório Total Quality em Caraguatatuba: Cartão de Todos, Solumedi e Leader. Nos demais casos, atendimento particular."
+    "Convênios aceitos no laboratório Total Quality em Caraguatatuba: Cartão de Todos, Solumedi e Leader. Fora deles, atendimento particular. Confirme pelo WhatsApp."
   );
 
   return (
@@ -83,13 +84,13 @@ export default function Convenios() {
               <p className="mt-4">
                 Não trabalhamos com outros convênios ou planos de saúde: fora dessa lista, o
                 atendimento é particular. Confirme condições e valores pelo WhatsApp{" "}
-                <button
-                  type="button"
+                <CtaWhatsApp
+                  mensagem={WHATSAPP_MESSAGE}
                   className="text-primary underline"
                   onClick={() => { trackWhatsAppConversion("convenios_link", "convenios"); openWhatsApp("convenios_link", WHATSAPP_MESSAGE); }}
                 >
                   (12) 3887-3535
-                </button>{" "}
+                </CtaWhatsApp>{" "}
                 antes de agendar.
               </p>
               {COLETA_DOMICILIAR && (
@@ -124,13 +125,13 @@ export default function Convenios() {
                 sexta, das 7h30 às 18h. A coleta laboratorial é sem agendamento, por ordem de
                 chegada; exames de imagem são agendados pelo WhatsApp.
               </p>
-              <button
-                type="button"
+              <CtaWhatsApp
+                mensagem={WHATSAPP_MESSAGE}
                 onClick={() => { trackWhatsAppConversion("convenios_cta", "convenios"); openWhatsApp("convenios_cta", WHATSAPP_MESSAGE); }}
                 className="inline-block bg-primary text-white font-semibold px-6 py-3 rounded-full hover:opacity-90 transition-opacity"
               >
                 Agendar pelo WhatsApp
-              </button>
+              </CtaWhatsApp>
             </section>
           </div>
         </div>
