@@ -72,6 +72,24 @@ export const CONVENIOS_TEXTO = "Cartão de Todos, Solumedi e Leader";
  */
 export const CHECKUP_TITLE = "Check-up Completo em Caraguatatuba | Total Quality";
 export const CHECKUP_DESCRIPTION = "Check-up em Caraguatatuba com planos Básico, Select e Premium: exames de sangue, cardiológicos e de imagem por faixa etária. Dúvidas pelo WhatsApp.";
+/** H1 de /checkup, igual no servidor e no React (era o do pre-render). */
+export const CHECKUP_H1 = "Check-up Preventivo em Caraguatatuba";
+
+/*
+ * /bioimpedancia — fonte unica (SEO nov/2026, Fase 1). O servidor dizia uma
+ * description e o React reescrevia outra depois de montar. Ficou a que o
+ * Google indexava.
+ */
+export const BIOIMPEDANCIA_TITLE = "Bioimpedância em Caraguatatuba | Total Quality";
+export const BIOIMPEDANCIA_H1 = "Bioimpedância em Caraguatatuba";
+/*
+ * /blog — fonte unica (SEO nov/2026, Fase 7): o servidor dizia um title e uma
+ * description (115 caracteres) e o React trocava por outros (title de 75,
+ * description de 196) depois de montar.
+ */
+export const BLOG_TITLE = "Blog Total Quality | Artigos sobre Saúde e Diagnóstico";
+export const BLOG_DESCRIPTION = "Blog da Total Quality em Caraguatatuba: artigos sobre exames laboratoriais e de imagem, preparo, check-up e saúde preventiva, com revisão médica.";
+export const BIOIMPEDANCIA_DESCRIPTION = "Bioimpedância em Caraguatatuba - SP: análise da composição corporal (gordura, músculo e água) na Total Quality. Tire dúvidas e agende pelo WhatsApp.";
 
 /**
  * Link de WhatsApp da clinica — formato unico do site (system prompt do blog,
@@ -85,3 +103,23 @@ export function whatsappUrl(text?: string): string {
   const base = `https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}`;
   return text ? `${base}&text=${encodeURIComponent(text)}` : base;
 }
+
+/** /especialidades — indice das consultas (SEO nov/2026, Fase 3). */
+export const ESPECIALIDADES_TITLE = "Especialidades Médicas em Caraguatatuba | Total Quality";
+export const ESPECIALIDADES_H1 = "Especialidades em Caraguatatuba";
+export const ESPECIALIDADES_DESCRIPTION =
+  "Especialidades da Total Quality em Caraguatatuba: cardiologista, endocrinologista, gastroenterologista, pediatra e medicina do trabalho. Agende pelo WhatsApp.";
+
+/*
+ * /sobre e /contato — paginas reais desde a Fase 2 de SEO (nov/2026). Antes
+ * eram 301 para as ancoras /#sobre e /#contato da home. Fonte unica do title,
+ * da description e do H1 (servidor e React).
+ */
+export const SOBRE_TITLE = "Sobre a Total Quality | Caraguatatuba desde 2003";
+export const SOBRE_H1 = "Sobre a Total Quality em Caraguatatuba";
+export const SOBRE_DESCRIPTION =
+  "Total Quality Medicina Diagnóstica, desde 2003 no Centro de Caraguatatuba: análises clínicas e diagnóstico por imagem no mesmo endereço.";
+export const CONTATO_TITLE = "Contato | Total Quality em Caraguatatuba";
+export const CONTATO_H1 = "Contato da Total Quality em Caraguatatuba";
+export const CONTATO_DESCRIPTION =
+  "Fale com a Total Quality: Rua Padre Anchieta, 1010, Centro, Caraguatatuba - SP. Telefone e WhatsApp (12) 3887-3535, de segunda a sexta, das 7h30 às 18h.";

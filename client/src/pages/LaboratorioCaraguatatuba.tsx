@@ -1,21 +1,26 @@
 /*
- * Landing page dedicada para a keyword "laboratorio caraguatatuba"
- * URL: /laboratorio-caraguatatuba
- * SEO: H1 + H2s geolocalizados, 800-1000 palavras, schema BreadcrumbList
+ * /laboratorio-caraguatatuba — "analises clinicas em Caraguatatuba" (a home e
+ * a dona de "laboratorio": shared/const.ts).
+ *
+ * SEO nov/2026, Fase 3: desenhada pelo modelo unico (components/PaginaServico.tsx)
+ * com o conteudo de lib/paginasServico.ts (PAGINA_LABORATORIO). Os blocos
+ * proprios desta pagina — listas de exames com link, bairros, convenios,
+ * horarios e "por que escolher" — entram como extras do modelo.
+ *
+ * Rastreamento: os mesmos eventos de antes (lab_caraguatatuba_cta;
+ * telefone landing_lab_hero, landing_lab_contato e landing_lab_cta).
  */
-import ResponsiveImage from "@/components/ResponsiveImage";
 import { useEffect } from "react";
 import { Link } from "wouter";
-import { ArrowUpRight, MapPin, Phone, Clock, CheckCircle, Stethoscope, Microscope, Heart, Brain, Shield } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import WhatsAppFAB from "@/components/WhatsAppFAB";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { CheckCircle, Stethoscope, Microscope, Heart, Brain, Phone } from "lucide-react";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
-import { ANALISES_TITLE, ANALISES_H1, ANALISES_DESCRIPTION } from "@shared/const";
+import { ANALISES_TITLE, ANALISES_H1, ANALISES_DESCRIPTION, CONVENIOS_TEXTO } from "@shared/const";
 import { trackScheduleExam } from "@/lib/tracking";
 import { BAIRROS_TITULO, BAIRROS_INTRO, BAIRROS_GRUPOS, BAIRROS_PARAGRAFOS } from "@/lib/bairrosAtendidos";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import { LAB_FAQS, PAGINA_LABORATORIO, labDiferenciais } from "@/lib/paginasServico";
+import PaginaServico, { artigosDaPagina, type BlocoExtra } from "@/components/PaginaServico";
+import { mensagemSobre } from "@/contexts/AssuntoPagina";
 
 
 /*
@@ -48,14 +53,18 @@ const examesLaboratoriais: ExamLink[] = [
   { name: "Sexagem fetal", href: "/exames/sexagem-fetal" },
   { name: "Exame toxicológico", href: "/exames/exame-toxicologico" },
   { name: "Sorologias" },
+  // Estava no pre-render e faltava aqui (SEO nov/2026, Fase 1).
+  { name: "Exames ocupacionais e ASO", href: "/exames/exame-admissional" },
   { name: "Parasitológico de fezes" },
 ];
 
 const examesImagem: Array<ExamLink & { icon: typeof Microscope }> = [
   { icon: Microscope, name: "Tomografia Computadorizada Multislice", href: "/exames/tomografia-computadorizada" },
   { icon: Stethoscope, name: "Ultrassonografia Geral e Doppler", href: "/exames/ultrassonografia" },
-  { icon: Shield, name: "Mamografia Digital", href: "/exames/mamografia" },
   { icon: Microscope, name: "Raio-X Digital", href: "/exames/raio-x" },
+  // Mamografia saiu daqui em 31/10/2026, pelo mesmo motivo: a clinica NAO
+  // realiza no momento ("No momento nao realizamos Mamografia", Alex).
+  // /exames/mamografia faz 301 para /exames/ultrassonografia.
   // Ecocardiograma saiu daqui em 01/08/2026: a clinica NAO realiza no momento
   // (informado pelo Alex), embora pretenda oferecer no futuro. Nao reintroduzir
   // sem confirmacao — anunciar servico nao prestado viola as diretrizes do
@@ -69,14 +78,34 @@ const examesImagem: Array<ExamLink & { icon: typeof Microscope }> = [
   { icon: Stethoscope, name: "Bioimpedância", href: "/bioimpedancia" },
 ];
 
-const convenios = [
-  "Cartão de Todos", "Solumedi", "Leader",
-];
+const ASSUNTO = "análises clínicas";
+
+function ListaDeExames({ itens }: { itens: ExamLink[] }) {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      {itens.map((exame) => {
+        const conteudo = (
+          <>
+            <CheckCircle className="w-4 h-4 text-brand flex-shrink-0" />
+            <span className="text-sm text-text">{exame.name}</span>
+          </>
+        );
+        const base = "flex items-center gap-2 bg-white rounded-lg px-4 py-3 border border-black/5";
+        return exame.href ? (
+          <Link key={exame.name} href={exame.href} className={`${base} hover:border-brand hover:shadow-sm transition-all`}>
+            {conteudo}
+          </Link>
+        ) : (
+          <div key={exame.name} className={base}>{conteudo}</div>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function LaboratorioCaraguatatuba() {
   const openWhatsApp = useWhatsAppRedirect();
   const abrirTelefone = useTelefoneRedirect();
-  const scrollRef = useScrollReveal();
 
   useEffect(() => {
     // Esta pagina e de "analises clinicas"; "laboratorio" e da home (shared/const.ts).
@@ -86,266 +115,91 @@ export default function LaboratorioCaraguatatuba() {
   useCanonical("https://totalquality.med.br/laboratorio-caraguatatuba");
   useMetaDescription(ANALISES_DESCRIPTION);
 
-  // Inject BreadcrumbList schema
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.type = "application/ld+json";
-    script.textContent = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://totalquality.med.br/" },
-        { "@type": "ListItem", "position": 2, "name": "Análises clínicas", "item": "https://totalquality.med.br/laboratorio-caraguatatuba" },
-      ],
-    });
-    document.head.appendChild(script);
-    return () => { document.head.removeChild(script); };
-  }, []);
+  // BreadcrumbList, MedicalWebPage e FAQPage: emitidos pelo servidor no <head>
+  // a partir dos mesmos dados (seo-content.ts).
 
+  // Mensagem da pagina (Fase 2): "Olá, vim pelo site e quero informações sobre ...".
+  const mensagem = mensagemSobre(ASSUNTO);
   const handleScheduleClick = () => {
     trackScheduleExam("lab_caraguatatuba_cta", "geral");
-    openWhatsApp("lab_caraguatatuba_cta", "Olá! Gostaria de agendar um exame na Total Quality.");
+    openWhatsApp("lab_caraguatatuba_cta", mensagem);
   };
 
-  return (
-    <div ref={scrollRef} className="min-h-screen bg-white">
-      <Navbar />
-
-      <main role="main">
-        {/* Hero */}
-        <section className="pt-28 lg:pt-36 pb-16 lg:pb-24">
+  const extras: BlocoExtra[] = [
+    {
+      id: "exames-laboratoriais",
+      rotulo: "Exames laboratoriais em Caraguatatuba",
+      node: (
+        <section className="py-12 lg:py-16 bg-neutral-50">
           <div className="container">
-            <div className="grid lg:grid-cols-12 gap-12 items-center">
-              <div className="lg:col-span-7">
-                <nav className="reveal text-sm text-text-light mb-6" aria-label="Breadcrumb">
-                  <a href="/" className="hover:text-brand transition-colors">Início</a>
-                  <span className="mx-2">›</span>
-                  <span className="text-text">Análises clínicas</span>
-                </nav>
-
-                <span className="section-label mb-4 block">Laboratório de Análises Clínicas</span>
-
-                <h1 className="reveal heading-display text-4xl lg:text-5xl xl:text-6xl text-text mb-6">
-                  {ANALISES_H1}
-                </h1>
-
-                <p className="reveal text-lg text-text-light leading-relaxed max-w-2xl mb-8">
-                  A Total Quality é um{" "}
-                  <a href="/" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
-                    laboratório em Caraguatatuba
-                  </a>{" "}
-                  que reúne análises clínicas e medicina diagnóstica no Centro da cidade. Desde 2003, realizamos
-                  mais de 3.000 tipos de exames, com equipamentos automatizados, equipe especializada e resultados
-                  disponíveis online. A coleta laboratorial é por ordem de chegada, sem agendamento.
-                </p>
-
-                <div className="reveal flex flex-wrap gap-4">
-                  <button
-                    onClick={handleScheduleClick}
-                    className="btn-pill-brand btn-pill"
-                    aria-label="Agendar exame via WhatsApp"
-                  >
-                    Agendar Exame
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => abrirTelefone("landing_lab_hero")}
-                    className="btn-pill-outline"
-                  >
-                    <Phone className="w-3.5 h-3.5" />
-                    (12) 3887-3535
-                  </button>
-                </div>
-              </div>
-
-              <div className="lg:col-span-5">
-                <ResponsiveImage
-                  slug="recepcao"
-                  widths={[480, 768, 1024]}
-                  sizes="(max-width: 1024px) 100vw, 40vw"
-                  width={1024}
-                  height={576}
-                  alt="Recepção do laboratório Total Quality em Caraguatatuba - SP"
-                  className="reveal w-full rounded-2xl shadow-lg"
-                  priority
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Exames Laboratoriais */}
-        <section className="py-16 lg:py-24 bg-neutral-50">
-          <div className="container">
-            <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-4">
-              EXAMES LABORATORIAIS EM <span className="text-brand">CARAGUATATUBA</span>
+            <h2 className="heading-display text-3xl lg:text-4xl text-text mb-4">
+              Exames laboratoriais em <span className="text-brand">Caraguatatuba</span>
             </h2>
-            <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
-              Nosso laboratório em Caraguatatuba realiza mais de 3.000 tipos de exames laboratoriais com
-              equipamentos automatizados. A coleta é feita por profissionais treinados em
-              ambiente confortável e seguro. Os resultados ficam disponíveis online, em curto prazo para a
-              maioria dos{" "}
+            <p className="text-text-light text-lg leading-relaxed max-w-3xl mb-10">
+              A Total Quality é um{" "}
+              <a href="/" className="underline decoration-brand/40 underline-offset-2 hover:text-brand transition-colors">
+                laboratório em Caraguatatuba
+              </a>{" "}
+              que reúne análises clínicas e medicina diagnóstica no Centro da cidade desde 2003. Os resultados
+              ficam disponíveis online, em curto prazo para a maioria dos{" "}
               <Link href="/exames/exames-de-sangue" className="text-brand hover:underline">
                 exames de sangue em Caraguatatuba
               </Link>
-              . Se a ideia é acompanhar a saúde de forma preventiva, veja também o{" "}
-              <Link href="/checkup" className="text-brand hover:underline">
-                check-up completo
-              </Link>{" "}
+              . Para acompanhar a saúde de forma preventiva, veja também o{" "}
+              <Link href="/checkup" className="text-brand hover:underline">check-up completo</Link>{" "}
               e as{" "}
               <Link href="/blog/alimentacao-e-exames-laboratoriais" className="text-brand hover:underline">
                 orientações de preparo e jejum
               </Link>
               .
             </p>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {examesLaboratoriais.map((exame, i) => {
-                const conteudo = (
-                  <>
-                    <CheckCircle className="w-4 h-4 text-brand flex-shrink-0" />
-                    <span className="text-sm text-text">{exame.name}</span>
-                  </>
-                );
-                const base =
-                  "reveal flex items-center gap-2 bg-white rounded-lg px-4 py-3 border border-black/5";
-                const delay = { transitionDelay: `${i * 30}ms` };
-
-                return exame.href ? (
-                  <Link
-                    key={exame.name}
-                    href={exame.href}
-                    className={`${base} hover:border-brand hover:shadow-sm transition-all`}
-                    style={delay}
-                  >
-                    {conteudo}
-                  </Link>
-                ) : (
-                  <div key={exame.name} className={base} style={delay}>
-                    {conteudo}
-                  </div>
-                );
-              })}
-            </div>
+            <ListaDeExames itens={examesLaboratoriais} />
           </div>
         </section>
-
-        {/* Diagnóstico por Imagem */}
-        <section className="py-16 lg:py-24">
+      ),
+    },
+    {
+      id: "diagnostico-por-imagem",
+      rotulo: "Diagnóstico por imagem",
+      node: (
+        <section className="py-12 lg:py-16">
           <div className="container">
-            <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-4">
-              DIAGNÓSTICO POR IMAGEM EM <span className="text-brand">CARAGUATATUBA</span>
+            <h2 className="heading-display text-3xl lg:text-4xl text-text mb-4">
+              Diagnóstico por imagem em <span className="text-brand">Caraguatatuba</span>
             </h2>
-            <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
+            <p className="text-text-light text-lg leading-relaxed max-w-3xl mb-10">
               Além das análises clínicas, a Total Quality realiza exames de imagem e cardiológicos no mesmo
-              endereço, com equipe médica especializada em radiologia, cardiologia e neurologia, que assina os
-              laudos.
+              endereço, com equipe médica de radiologia, cardiologia e neurologia, que assina os laudos.
             </p>
-
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {examesImagem.map((exame, i) => {
+              {examesImagem.map((exame) => {
                 const conteudo = (
                   <>
                     <exame.icon className="w-6 h-6 text-brand flex-shrink-0" />
                     <span className="text-text font-medium">{exame.name}</span>
                   </>
                 );
-                const base =
-                  "reveal flex items-center gap-4 bg-neutral-50 rounded-xl px-6 py-5 border border-black/5 hover:shadow-md transition-shadow";
-                const delay = { transitionDelay: `${i * 50}ms` };
-
+                const base = "flex items-center gap-4 bg-neutral-50 rounded-xl px-6 py-5 border border-black/5 hover:shadow-md transition-shadow";
                 return exame.href ? (
-                  <Link
-                    key={exame.name}
-                    href={exame.href}
-                    className={`${base} hover:border-brand`}
-                    style={delay}
-                  >
-                    {conteudo}
-                  </Link>
+                  <Link key={exame.name} href={exame.href} className={`${base} hover:border-brand`}>{conteudo}</Link>
                 ) : (
-                  <div key={exame.name} className={base} style={delay}>
-                    {conteudo}
-                  </div>
+                  <div key={exame.name} className={base}>{conteudo}</div>
                 );
               })}
             </div>
           </div>
         </section>
-
-        {/* Como Chegar */}
-        <section className="py-16 lg:py-24 bg-neutral-50">
-          <div className="container">
-            <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-8">
-              COMO CHEGAR À <span className="text-brand">TOTAL QUALITY</span>
-            </h2>
-
-            <div className="grid lg:grid-cols-12 gap-8">
-              <div className="lg:col-span-5">
-                <div className="reveal bg-white rounded-2xl p-8 border border-black/5">
-                  <div className="space-y-6">
-                    <div className="flex items-start gap-4">
-                      <MapPin className="w-5 h-5 text-brand flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-medium text-text">Endereço</p>
-                        <p className="text-text-light">R. Padre Anchieta, 1010, Centro</p>
-                        <p className="text-text-light">Caraguatatuba - SP, CEP 11660-010</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-4">
-                      <Phone className="w-5 h-5 text-brand flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-medium text-text">Telefone e WhatsApp</p>
-                        <button type="button" onClick={() => abrirTelefone("landing_lab_contato")} className="text-brand hover:underline text-left">(12) 3887-3535</button>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-4">
-                      <Clock className="w-5 h-5 text-brand flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-medium text-text">Horários de Atendimento</p>
-                        <p className="text-text-light">Segunda a Sexta: 07h30 às 18h</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <a
-                    href="https://www.google.com/maps/dir//Total+Quality+Medicina+Diagn%C3%B3stica,+Rua+Padre+Anchieta,+1010+-+Centro,+Caraguatatuba+-+SP,+11660-010"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-pill-brand btn-pill mt-8 w-full justify-center"
-                  >
-                    <MapPin className="w-3.5 h-3.5" />
-                    Ver no Google Maps
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </a>
-                </div>
-              </div>
-
-              <div className="lg:col-span-7">
-                <div className="reveal w-full h-full min-h-[400px] rounded-2xl overflow-hidden border border-black/5">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3653.8!2d-45.4132!3d-23.6225!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cd5a0a0a0a0a0a%3A0x0!2sRua+Padre+Anchieta%2C+1010+-+Centro%2C+Caraguatatuba+-+SP%2C+11660-010!5e0!3m2!1spt-BR!2sbr!4v1"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0, minHeight: "400px" }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Mapa - Laboratório Total Quality em Caraguatatuba"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Quem vem de outros bairros — herdado dos artigos da regiao sul e do
-            Jardim Primavera, consolidados aqui com 301 (22/10/2026). Mesmo
-            texto do prerender: client/src/lib/bairrosAtendidos.ts. */}
-        <section className="py-16 lg:py-24">
-          <div className="container max-w-3xl">
-            <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-6">{BAIRROS_TITULO}</h2>
+      ),
+    },
+    {
+      // Herdado dos artigos da regiao sul e do Jardim Primavera, consolidados
+      // aqui com 301 (22/10/2026). Mesmo texto: lib/bairrosAtendidos.ts.
+      id: "outros-bairros",
+      rotulo: BAIRROS_TITULO,
+      node: (
+        <section className="py-12 lg:py-16 bg-neutral-50">
+          <div className="container max-w-4xl">
+            <h2 className="heading-display text-3xl lg:text-4xl text-text mb-6">{BAIRROS_TITULO}</h2>
             <p className="text-text-light leading-relaxed mb-6">{BAIRROS_INTRO}</p>
             <ul className="space-y-2 mb-6">
               {BAIRROS_GRUPOS.map((g) => (
@@ -359,105 +213,88 @@ export default function LaboratorioCaraguatatuba() {
             ))}
           </div>
         </section>
-
-        {/* Convênios */}
-        <section className="py-16 lg:py-24">
-          <div className="container">
-            <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-4">
-              CONVÊNIOS <span className="text-brand">ACEITOS</span>
+      ),
+    },
+    {
+      id: "convenios-e-horarios",
+      rotulo: "Convênios e horários",
+      node: (
+        <section className="py-12 lg:py-16">
+          <div className="container max-w-4xl">
+            <h2 className="heading-display text-3xl lg:text-4xl text-text mb-4">
+              Convênios e <span className="text-brand">horários</span>
             </h2>
-            <p className="reveal text-text-light text-lg leading-relaxed max-w-3xl mb-10">
-              O laboratório Total Quality em Caraguatatuba atende Cartão de Todos, Solumedi e Leader. Veja a{" "}
-              <Link
-                href="/convenios"
-                className="text-brand hover:underline"
-              >
-                lista completa de convênios aceitos
-              </Link>{" "}
-              ou fale pelo WhatsApp para confirmar condições e valores. Fora desses, o
-              atendimento é particular.
+            <p className="text-text-light text-lg leading-relaxed mb-8">
+              O laboratório atende {CONVENIOS_TEXTO}. Veja a{" "}
+              <Link href="/convenios" className="text-brand hover:underline">lista de convênios aceitos</Link>{" "}
+              ou fale pelo WhatsApp para confirmar condições e valores. Fora desses, o atendimento é particular.
             </p>
-
-            <div className="flex flex-wrap gap-3 mb-10">
-              {convenios.map((convenio) => (
-                <span
-                  key={convenio}
-                  className="reveal inline-flex items-center gap-2 bg-neutral-50 border border-black/5 rounded-full px-5 py-2.5 text-text font-medium"
-                >
-                  <CheckCircle className="w-4 h-4 text-brand" />
-                  {convenio}
-                </span>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-neutral-50 rounded-2xl p-6 border border-black/5">
+                <h3 className="heading-display text-xl text-text mb-3">Coleta laboratorial</h3>
+                <p className="text-text-light">Segunda a sexta, das 7h30 às 18h; sábado e domingo, fechado.</p>
+                <p className="text-text-light text-sm mt-2">Sem agendamento, por ordem de chegada. Coleta domiciliar mediante agendamento.</p>
+              </div>
+              <div className="bg-neutral-50 rounded-2xl p-6 border border-black/5">
+                <h3 className="heading-display text-xl text-text mb-3">Exames de imagem</h3>
+                <p className="text-text-light">Segunda a sexta, das 7h30 às 18h.</p>
+                <p className="text-text-light text-sm mt-2">Com hora marcada pelo WhatsApp ou telefone.</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => abrirTelefone("landing_lab_contato")}
+              className="btn-pill-outline mt-8"
+            >
+              <Phone className="w-3.5 h-3.5" />
+              (12) 3887-3535
+            </button>
+          </div>
+        </section>
+      ),
+    },
+    {
+      id: "por-que-escolher",
+      rotulo: "Por que escolher a Total Quality",
+      node: (
+        <section className="py-12 lg:py-16 bg-neutral-50">
+          <div className="container max-w-4xl">
+            <h2 className="heading-display text-3xl lg:text-4xl text-text mb-6">
+              Por que escolher a <span className="text-brand">Total Quality</span>
+            </h2>
+            <ul className="space-y-3">
+              {labDiferenciais().map((item) => (
+                <li key={item} className="flex items-start gap-3 text-text-light">
+                  <CheckCircle className="w-5 h-5 text-brand shrink-0 mt-0.5" />
+                  <span>{item}</span>
+                </li>
               ))}
-            </div>
-
-            <p className="reveal text-text-light text-sm">
-              * A lista de convênios pode variar. Consulte disponibilidade pelo WhatsApp ou telefone (12) 3887-3535.
-            </p>
+            </ul>
           </div>
         </section>
+      ),
+    },
+  ];
 
-        {/* Horários */}
-        <section className="py-16 lg:py-24 bg-neutral-50">
-          <div className="container">
-            <h2 className="reveal heading-display text-3xl lg:text-4xl text-text mb-8">
-              HORÁRIOS DE <span className="text-brand">ATENDIMENTO</span>
-            </h2>
-
-            <div className="grid md:grid-cols-2 gap-8 max-w-2xl">
-              <div className="reveal bg-white rounded-2xl p-8 border border-black/5">
-                <h3 className="heading-display text-xl text-text mb-4">COLETA LABORATORIAL</h3>
-                <div className="space-y-2 text-text-light">
-                  <p>Segunda a Sexta: <strong className="text-text">07h30 às 18h</strong></p>
-                  <p>Sábado e Domingo: <strong className="text-text">fechado</strong></p>
-                  <p className="text-sm italic">Sem agendamento — atendimento por ordem de chegada</p>
-                  <p className="text-sm italic">Coleta domiciliar disponível mediante agendamento</p>
-                </div>
-              </div>
-              <div className="reveal bg-white rounded-2xl p-8 border border-black/5">
-                <h3 className="heading-display text-xl text-text mb-4">EXAMES DE IMAGEM</h3>
-                <div className="space-y-2 text-text-light">
-                  <p>Segunda a Sexta: <strong className="text-text">07h30 às 18h</strong></p>
-                  <p className="text-sm italic">Agendamento prévio necessário</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Final */}
-        <section className="py-16 lg:py-24 bg-brand text-white">
-          <div className="container text-center">
-            <h2 className="reveal heading-display text-3xl lg:text-4xl mb-6">
-              FAÇA SEUS EXAMES LABORATORIAIS SEM AGENDAMENTO
-            </h2>
-            <p className="reveal text-white/80 text-lg max-w-2xl mx-auto mb-10">
-              A coleta é por ordem de chegada, de segunda a sexta, das 07h30 às 18h — basta trazer
-              o pedido médico e um documento com foto. Atendimento rápido e humanizado, com
-              resultados online e equipe especializada.
-            </p>
-            <div className="reveal flex flex-wrap gap-4 justify-center">
-              <button
-                onClick={handleScheduleClick}
-                className="btn-pill !bg-white !text-brand hover:!bg-white/90"
-              >
-                Agendar pelo WhatsApp
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => abrirTelefone("landing_lab_cta")}
-                className="btn-pill !bg-transparent !text-white border border-white/30 hover:!bg-white/10"
-              >
-                <Phone className="w-3.5 h-3.5" />
-                (12) 3887-3535
-              </button>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <Footer />
-      <WhatsAppFAB />
-    </div>
+  return (
+    <PaginaServico
+      assunto={ASSUNTO}
+      h1={ANALISES_H1}
+      rotulo="Laboratório de Análises Clínicas"
+      migalha="Análises clínicas"
+      conteudo={PAGINA_LABORATORIO}
+      faqs={LAB_FAQS}
+      artigos={artigosDaPagina(PAGINA_LABORATORIO.blog ?? [])}
+      mensagem={mensagem}
+      agendar={handleScheduleClick}
+      textoCta="Agendar Exame"
+      telefone={{ topo: "landing_lab_hero", rodape: "landing_lab_cta" }}
+      extras={extras}
+      ctaFinal={{
+        titulo: "Faça seus exames laboratoriais sem agendamento",
+        texto: "A coleta é por ordem de chegada, de segunda a sexta, das 7h30 às 18h — basta trazer o pedido médico e um documento com foto.",
+        botao: "Agendar pelo WhatsApp",
+      }}
+    />
   );
 }

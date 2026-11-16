@@ -5,7 +5,7 @@
  */
 import { trpc } from "@/lib/trpc";
 import { useCallback, useRef } from "react";
-import { getUTMForAPI } from "@/lib/utmTracker";
+import { getLeadClickIdsForAPI, getUTMForAPI } from "@/lib/utmTracker";
 
 // Gerar ou recuperar sessionId do sessionStorage
 function getSessionId(): string {
@@ -153,6 +153,7 @@ export async function trackLeadDirect(
           referrer: document.referrer || undefined,
           sessionId,
           ...utm,
+          ...getLeadClickIdsForAPI(),
           ...extraData,
           ...(conversao ?? {}),
         },

@@ -24,10 +24,14 @@ const toast = {
   error: (msg: string) => import("sonner").then((m) => m.toast.error(msg)),
 };
 import { trpc } from "@/lib/trpc";
-import { trackFormStart, trackFormSubmit, trackWhatsAppClick, trackExternalLink, trackMapInteraction } from "@/lib/tracking";
+import { trackFormStart, trackFormSubmit, trackWhatsAppClick, trackExternalLink, trackMapInteraction, trackLeadQualificado } from "@/lib/tracking";
+import { consentState, readFbCookies, readGaClientId } from "@/lib/conversionContext";
+import { examTypeAtual } from "@/lib/pageContext";
+import { resolveLeadValue } from "@/lib/leadValues";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 import { storeLeadHandoff } from "@/lib/leadHandoff";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 export default function ContatoSection() {
   const openWhatsApp = useWhatsAppRedirect();
@@ -84,12 +88,48 @@ export default function ContatoSection() {
       message: formData.mensagem,
     });
 
-    // Rastrear como lead com UTM params
-    trackLeadDirect("form_contato", {
-      name: formData.nome,
-      phone: formData.telefone || undefined,
-      email: formData.email,
-    });
+    // Lead qualificado, como no formulario do WhatsApp: o evento do navegador
+    // devolve o event_id e o servidor recebe o MESMO id, para o Meta e o GA4
+    // deduplicarem. Ate 29/10/2026 este formulario gravava o lead sem id —
+    // sem conversao pelo servidor — e a conversao do Ads so saia depois, na
+    // tela de sucesso, quando o WhatsApp abria sozinho.
+    void (async () => {
+      const examType = examTypeAtual();
+      let eventId: string | undefined;
+      try {
+        eventId = await trackLeadQualificado(
+          "form_contato",
+          examType,
+          { email: formData.email, telefone: formData.telefone || undefined },
+          "whatsapp"
+        );
+      } catch {
+        eventId = undefined;
+      }
+      const consent = consentState();
+      const { fbc, fbp } = readFbCookies();
+      void trackLeadDirect(
+        "form_contato",
+        {
+          name: formData.nome,
+          phone: formData.telefone || undefined,
+          email: formData.email,
+        },
+        eventId
+          ? {
+              eventId,
+              examType,
+              value: resolveLeadValue("form_contato", examType),
+              leadChannel: "whatsapp",
+              clientId: readGaClientId(),
+              fbc,
+              fbp,
+              consentMarketing: consent.marketing,
+              consentAnalytics: consent.analytics,
+            }
+          : undefined
+      );
+    })();
   };
 
   const handleFormFocus = () => {
@@ -111,9 +151,9 @@ export default function ContatoSection() {
           <div>
             <span className="reveal section-label mb-4 block">Exames de sangue e diagnóstico em Caraguatatuba</span>
             <h2 className="reveal heading-display text-5xl sm:text-6xl lg:text-7xl text-text" style={{ transitionDelay: "100ms" }}>
-              ENTRE EM{" "}
+              Entre em{" "}
               <br />
-              <span className="text-brand">CONTATO</span>
+              <span className="text-brand">contato</span>
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
@@ -130,10 +170,7 @@ export default function ContatoSection() {
             <Link href="/exames/ultrassonografia" className="text-brand hover:underline">
               ultrassonografia
             </Link>
-            ,{" "}
-            <Link href="/exames/mamografia" className="text-brand hover:underline">
-              mamografia
-            </Link>{" "}
+{" "}
             e{" "}
             <Link href="/checkup" className="text-brand hover:underline">
               check-up
@@ -191,13 +228,13 @@ export default function ContatoSection() {
                     >
                       LIGAR: (12) 3887-3535
                     </button>
-                    <button
-                      type="button"
+                    <CtaWhatsApp
+                      mensagem="Olá! Gostaria de informações."
                       className="flex items-center justify-center px-6 py-3 bg-[#25D366] text-white rounded-full hover:bg-[#1da851] transition-colors font-semibold text-center"
                       onClick={() => { trackWhatsAppClick("contato_section"); openWhatsApp("contato_section", "Olá! Gostaria de informações."); }}
                     >
                       WHATSAPP: (12) 3887-3535
-                    </button>
+                    </CtaWhatsApp>
                   </div>
                 </div>
 
@@ -221,13 +258,14 @@ export default function ContatoSection() {
 
               {/* Quick actions */}
               <div className="mt-10 space-y-3">
-                <button
+                <CtaWhatsApp
+                  mensagem="Olá! Gostaria de informações."
                   onClick={() => { trackWhatsAppClick("contato_quick_action"); openWhatsApp("contato_quick_action", "Olá! Gostaria de informações."); }}
                   className="btn-pill w-full justify-center"
                 >
                   <MessageCircle className="w-4 h-4" />
                   WhatsApp
-                </button>
+                </CtaWhatsApp>
               </div>
 
               {/* Social */}

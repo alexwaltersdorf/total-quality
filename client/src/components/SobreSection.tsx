@@ -9,11 +9,11 @@ import { Link } from "wouter";
 import { anosDeAtuacao } from "@shared/const";
 
 
-const values = [
+export const values = [
   {
     icon: Target,
     title: "Missão",
-    description: "Oferecer diagnósticos precisos em exames de sangue, análises clínicas, tomografia, ultrassonografia, mamografia e cardiologia com atendimento humanizado em Caraguatatuba - SP.",
+    description: "Oferecer diagnósticos precisos em exames de sangue, análises clínicas, tomografia, ultrassonografia e cardiologia com atendimento humanizado em Caraguatatuba - SP.",
   },
   {
     icon: Eye,
@@ -27,9 +27,9 @@ const values = [
   },
 ];
 
-const timeline = [
+export const timeline = [
   { year: "2003", title: "Fundação", description: "Início das atividades de medicina diagnóstica em Caraguatatuba com foco em exames de qualidade", icon: ShieldCheck },
-  { year: "2015", title: "Expansão", description: "Ampliação da estrutura com tomografia multislice, mamografia digital e novos equipamentos de cardiologia", icon: GraduationCap },
+  { year: "2015", title: "Expansão", description: "Ampliação da estrutura com tomografia multislice e novos equipamentos de cardiologia", icon: GraduationCap },
   { year: "2020", title: "Sustentabilidade", description: "Implementação do sistema de energia solar sustentável", icon: Leaf },
 ];
 
@@ -52,7 +52,7 @@ export default function SobreSection() {
             />
             {/* Floating experience card */}
             <div className="absolute -bottom-8 right-4 lg:right-8 bg-brand text-white p-6">
-              <span className="heading-display text-5xl block">22+</span>
+              <span className="heading-display text-5xl block">{anosDeAtuacao()}+</span>
               <span className="text-xs uppercase tracking-[0.15em] font-semibold text-white/80">Anos de Experiência</span>
             </div>
           </div>
@@ -77,10 +77,6 @@ export default function SobreSection() {
                 ultrassonografia
               </Link>
               ,{" "}
-              <Link href="/exames/mamografia" className="text-brand hover:underline">
-                mamografia
-              </Link>
-              ,{" "}
               <Link href="/laboratorio-caraguatatuba" className="text-brand hover:underline">
                 exames laboratoriais
               </Link>{" "}
@@ -101,16 +97,11 @@ export default function SobreSection() {
               </div>
             </div>
 
-            <button
-              onClick={() => {
-                const el = document.querySelector("#contato");
-                if (el) el.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="btn-pill"
-            >
+            {/* Link de verdade para a pagina de contato (SEO nov/2026, Fase 2). */}
+            <Link href="/contato" className="btn-pill">
               Entre em Contato
               <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
+            </Link>
           </div>
         </div>
 

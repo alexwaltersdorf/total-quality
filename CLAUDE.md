@@ -40,6 +40,44 @@ que o assunto principal da conversa seja outro.
    contêiner não pode emitir o dela.
 7. **Todo CTA de WhatsApp abre em nova aba e dispara evento**; todo link `tel:`
    dispara `phone_click` com origem própria.
+8. **Toda conversão passa pelo formulário de qualificação e leva `event_id`.**
+   O clique no CTA emite `whatsapp_click` (intenção); a conversão do Ads é o
+   envio do formulário (`trackLeadQualificado` → `event_label:
+   "formulario_qualificacao"`), e o mesmo `event_id` vai ao servidor por
+   `trackLeadDirect` (Meta CAPI e GA4 MP deduplicam). Formulário novo segue o
+   modelo de `ContatoSection`/`ContatoLeadContext`; nunca contar conversão em
+   tela de sucesso nem em janela aberta sozinha.
+9. **Evento novo só existe se o GTM souber dele.** Nome novo entra em
+   `tracking.ts` **e** no regex do gatilho GA4 do pacote
+   (`gtm/gtm-import-rastreamento-v2-2026-10.json`, repo de SEO), com nota no
+   `gtm/README.md`. Fora do regex, o evento vai ao dataLayer e não chega a lugar
+   nenhum.
+10. **Consentimento: default sempre negado; o salvo entra como `update`.** Nunca
+    ler o consentimento salvo dentro do `default` — foi o que deixou o
+    visitante que volta sem medição até 29/10/2026. `user_data` só sai por
+    `trackLeadQualificado` e é limpo do dataLayer logo após o push.
+11. **Use o que já é medido de graça:** pergunta frequente em `<details>` gera
+    `faq_open` e link para `google.com/maps` gera `directions_click`
+    (`useInteractionTracking`, no `App`). Não reimplementar com `onClick`.
+12. **Blog — regra do pixel nos artigos** (decisão do Alex, 29/10/2026):
+    - contato no artigo **só pelo `ExamCTA`** (meio e fim), que passa pelo
+      formulário de qualificação com `lead_source` próprio
+      (`artigo_cta_meio`/`artigo_cta_fim`) e o `examType` do artigo;
+    - **nenhum link de WhatsApp, `tel:`, `wa.me` ou mapa no corpo** do artigo
+      (`client/src/content/blog/<slug>.json`) — link no texto pula o formulário
+      e o evento, e o lead some da planilha e do Ads. Texto vindo da Airticles
+      perde esses links na migração;
+    - todo artigo tem `examType` (dimensão do GA4 e valor do lead em
+      `leadValues.ts`); o publicado tem também `examPages` (botão para a página
+      do exame) — rascunho pode nascer sem;
+    - nada de script, `onclick`, iframe ou pixel no corpo do artigo;
+    - artigo novo com CTA diferente do `ExamCTA` precisa de evento no
+      `tracking.ts` e de linha no regex do GTM (item 9) **antes** de publicar.
+    Travas em `server/rastreamento-100.test.ts`.
+13. **Antes de dizer que funciona:** Playwright com user agent de iPhone (o de
+    headless é filtrado pelo Meta), aceitar os cookies, conferir dataLayer e
+    rede (GA4 `/g/collect`, Ads com `label`, Meta `/tr`), recarregar como
+    visitante que volta e enviar um formulário. Teste unitário não basta.
 
 ## LGPD — dado sensível de saúde
 

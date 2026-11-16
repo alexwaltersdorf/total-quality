@@ -56,6 +56,12 @@ export interface BlogPostMeta {
   related?: string[];
   /** <title> da pagina, quando diferente do H1. Fonte: routes-metadata.ts. */
   metaTitle?: string;
+  /**
+   * meta description, quando diferente do excerpt (que aparece nos cards).
+   * Servidor e React leem o mesmo campo (SEO nov/2026, Fase 7: o React trocava
+   * a description do servidor pelo excerpt, de ate 211 caracteres).
+   */
+  metaDescription?: string;
 }
 
 export interface BlogPost extends BlogPostMeta {
@@ -77,19 +83,87 @@ export const PAGINA_EXAME_LABEL: Record<string, string> = {
   "/exames/holter": "Holter 24h",
   "/exames/mapa": "MAPA 24h",
   "/exames/ultrassonografia": "Ultrassonografia",
-  "/exames/mamografia": "Mamografia",
   "/exames/raio-x": "Raio-X",
   "/exames/tomografia-computadorizada": "Tomografia computadorizada",
   "/exames/exame-admissional": "Exames ocupacionais",
   "/exames/exame-toxicologico": "Exame toxicológico",
   "/checkup": "Check-up",
   "/laboratorio-caraguatatuba": "Análises clínicas",
+  "/cartao": "Cartão Total Quality Care",
 };
 
-/** Titulo do quadro: a ligacao local ("em Caraguatatuba") fica aqui, nao no title do artigo. */
+/**
+ * Titulo do quadro: a ligacao local ("em Caraguatatuba") fica aqui, nao no
+ * title do artigo. Desde a Fase 4 de SEO (15/11/2026) o quadro convida para a
+ * pagina de servico: "Faça [exame] em Caraguatatuba".
+ */
 export function tituloContato(examName: string): string {
   if (examName === "coleta domiciliar") return "Coleta domiciliar em Caraguatatuba";
-  return `${examName[0].toUpperCase()}${examName.slice(1)} em Caraguatatuba`;
+  return `Faça ${examName} em Caraguatatuba`;
+}
+
+/**
+ * Texto do link do quadro para a pagina de servico (Fase 4, 15/11/2026):
+ * ancora descritiva ("Hemograma completo em Caraguatatuba") em vez do nome
+ * solto. O cartao nao e servico local de exame e fica sem a cidade.
+ */
+export function rotuloPaginaExame(href: string): string {
+  const rotulo = PAGINA_EXAME_LABEL[href];
+  if (!rotulo) return "";
+  return href === "/cartao" ? rotulo : `${rotulo} em Caraguatatuba`;
+}
+
+/** Fracao maxima do texto antes do primeiro quadro de contato (primeiro terco). */
+export const CTA_FRACAO_MAX = 1 / 3;
+
+function palavrasDoBloco(block: string): number {
+  if (block.trim() === CTA_MARKER) return 0;
+  return stripInlineMarkdown(block).replace(/[#|*-]/g, " ").split(/\s+/).filter(Boolean).length;
+}
+
+/**
+ * Corpo com o quadro de contato do meio ([[cta]]) no PRIMEIRO TERCO do texto
+ * (SEO nov/2026, Fase 4): o leitor que chega pela busca decide nos primeiros
+ * paragrafos; o marcador do JSON ficava entre 24% e 80% do artigo.
+ *
+ * Regra, a mesma no cliente e no prerender:
+ *   - marcador ja no primeiro terco (e depois de pelo menos 10% do texto):
+ *     fica onde esta;
+ *   - senao, o quadro entra antes do primeiro H2 ("## ") que comeca entre 15%
+ *     e 33% das palavras; sem H2 nessa faixa, depois do ultimo bloco que ainda
+ *     termina dentro do primeiro terco (nunca logo depois de um titulo).
+ * O marcador original sai do lugar — sao sempre dois quadros: este e o do fim.
+ */
+export function conteudoComCta(content: string[]): string[] {
+  const semMarcador = content.filter((b) => b.trim() !== CTA_MARKER);
+  const palavras = semMarcador.map(palavrasDoBloco);
+  const total = palavras.reduce((a, b) => a + b, 0);
+  if (total === 0) return content;
+  const antes = (i: number) => palavras.slice(0, i).reduce((a, b) => a + b, 0);
+
+  const marcador = content.findIndex((b) => b.trim() === CTA_MARKER);
+  if (marcador >= 0) {
+    const fracao = antes(marcador) / total;
+    if (fracao >= 0.1 && fracao <= CTA_FRACAO_MAX) return content;
+  }
+
+  let pos = -1;
+  for (let i = 1; i < semMarcador.length; i++) {
+    const f = antes(i) / total;
+    if (f > CTA_FRACAO_MAX) break;
+    if (f >= 0.15 && semMarcador[i].trimStart().startsWith("## ")) {
+      pos = i;
+      break;
+    }
+  }
+  if (pos < 0) {
+    for (let i = 1; i < semMarcador.length; i++) {
+      if (antes(i) / total > CTA_FRACAO_MAX) break;
+      if (!/^#{2,3} /.test(semMarcador[i - 1].trimStart())) pos = i;
+    }
+  }
+  if (pos < 0) return content;
+  return [...semMarcador.slice(0, pos), CTA_MARKER, ...semMarcador.slice(pos)];
 }
 
 /**
@@ -128,10 +202,16 @@ export const AVISO_INFORMATIVO =
 
 /**
  * Responsavel tecnico que assina a revisao dos artigos publicados (system
- * prompt do blog, 21/10/2026, fase 2). Sem a sigla do conselho: so o nome e
- * o cargo aqui; o numero vai no rodape, no bloco padrao de identificacao.
+ * prompt do blog, 21/10/2026, fase 2). Sem a sigla do conselho. `name` e
+ * `jobTitle` vao para o schema (Person); `linha` e o texto visivel, no formato
+ * decidido pelo Alex em 14/11/2026 e usado nas paginas de servico
+ * (REVISOR_PAGINAS, Fase 3): "Dr. Alex Waltersdorf - 267.339".
  */
-export const REVISOR = { name: "Alex Waltersdorf", jobTitle: "Responsável Técnico" } as const;
+export const REVISOR = {
+  name: "Alex Waltersdorf",
+  jobTitle: "Responsável Técnico",
+  linha: "Dr. Alex Waltersdorf - 267.339",
+} as const;
 
 /**
  * Identificacao do art. 5o da Resolucao CFM 2.336/2023 no fim de cada artigo:
@@ -145,14 +225,30 @@ export const IDENTIFICACAO = [
 ] as const;
 
 /**
- * Linha visivel no topo do artigo. Rascunho nunca diz "revisado": a revisao
- * medica e justamente o que falta para ele ser publicado.
+ * Linha de revisao visivel no topo do artigo: "Revisado por Dr. Alex
+ * Waltersdorf - 267.339" (Fase 4 de SEO, 15/11/2026; antes "Revisado por
+ * Alex Waltersdorf, Responsável Técnico"). As datas vem ao lado, em <time>
+ * (datasArtigo). Rascunho nunca diz "revisado": a revisao medica e
+ * justamente o que falta para ele ser publicado.
  */
-export function linhaRevisao(post: Pick<BlogPostMeta, "draft" | "date" | "dateModified">): string {
-  const atualizado = `Atualizado em ${isoToBr(blogModifiedIso(post))}`;
-  return isPublished(post)
-    ? `Revisado por ${REVISOR.name}, ${REVISOR.jobTitle} · ${atualizado}`
-    : `Rascunho — revisão médica pendente · ${atualizado}`;
+export function linhaRevisao(post: Pick<BlogPostMeta, "draft">): string {
+  return isPublished(post) ? `Revisado por ${REVISOR.linha}` : "Rascunho — revisão médica pendente";
+}
+
+/**
+ * Datas do topo do artigo, em ISO (para <time datetime>) e como aparecem
+ * ("12/09/2026"). `atualizado` so quando difere da publicacao.
+ */
+export function datasArtigo(post: Pick<BlogPostMeta, "date" | "dateModified">): {
+  publicado: { iso: string; br: string };
+  atualizado: { iso: string; br: string } | null;
+} {
+  const pub = blogDateIso(post.date);
+  const mod = blogModifiedIso(post);
+  return {
+    publicado: { iso: pub, br: isoToBr(pub) },
+    atualizado: mod && mod !== pub ? { iso: mod, br: isoToBr(mod) } : null,
+  };
 }
 
 export function isPublished(post: Pick<BlogPostMeta, "draft">): boolean {
@@ -325,6 +421,21 @@ const SITE = "https://totalquality.med.br";
 const BUSINESS_ID = `${SITE}/#medicalbusiness`;
 
 /**
+ * O responsavel tecnico como entidade unica do grafo (SEO nov/2026, Fase 5):
+ * o mesmo @id no reviewedBy dos artigos e das paginas de servico, para o
+ * Google ler UMA pessoa revisora, e nao uma Person nova por pagina. Nome sem
+ * "Dr." e sem a sigla do conselho, como na linha visivel ("Revisado por Dr.
+ * Alex Waltersdorf - 267.339" — o "Dr." e tratamento, nao parte do nome).
+ */
+export const REVISOR_LD = {
+  "@type": "Person",
+  "@id": `${SITE}/#responsavel-tecnico`,
+  name: REVISOR.name,
+  jobTitle: REVISOR.jobTitle,
+  worksFor: { "@id": BUSINESS_ID },
+} as const;
+
+/**
  * Schema do artigo, igual no prerender e no cliente.
  *
  * publisher e (quando o autor e a equipe) author apontam para a MESMA
@@ -368,7 +479,7 @@ export function blogPostingLd(post: BlogPostMeta, content: string[] = []): objec
       "@id": `${url}#webpage`,
       url,
       ...(revisado && {
-        reviewedBy: { "@type": "Person", name: REVISOR.name, jobTitle: REVISOR.jobTitle, worksFor: { "@id": BUSINESS_ID } },
+        reviewedBy: REVISOR_LD,
         lastReviewed: post.lastReviewed || blogModifiedIso(post),
       }),
       ...(post.examName && { about: { "@type": "MedicalTest", name: post.examName } }),

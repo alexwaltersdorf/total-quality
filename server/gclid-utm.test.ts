@@ -76,9 +76,9 @@ describe("GUARD-RAIL: o gclid nao vai no payload do lead (nao remover)", () => {
     const payload = t.getUTMForAPI();
 
     /*
-     * O schema de lead.create no servidor nao aceita estes campos. Mandar um
-     * deles faz o tRPC devolver HTTP 400 e o lead se perde — medicao quebrando
-     * atendimento. O gclid tem caminho proprio: getAdClickIds -> ADS-01.
+     * getUTMForAPI tambem alimenta a sessao e a conversao, cujos schemas nao
+     * conhecem estes campos. O lead.create passou a aceitar gclid/gbraid/wbraid
+     * em 29/10/2026, mas por caminho proprio: getLeadClickIdsForAPI.
      */
     for (const proibido of ["gclid", "gbraid", "wbraid", "keyword", "campaignid", "adgroupid"]) {
       expect(Object.keys(payload)).not.toContain(proibido);

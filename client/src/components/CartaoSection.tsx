@@ -6,6 +6,7 @@ import { ArrowUpRight, CreditCard, Users, Percent } from "lucide-react";
 import { Link } from "wouter";
 import { trackCardInterest } from "@/lib/tracking";
 import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 export default function CartaoSection() {
   const openWhatsApp = useWhatsAppRedirect();
@@ -48,29 +49,27 @@ export default function CartaoSection() {
               <Link href="/exames/ultrassonografia" className="text-brand hover:underline">
                 ultrassonografia
               </Link>
-              ,{" "}
-              <Link href="/exames/mamografia" className="text-brand hover:underline">
-                mamografia
-              </Link>{" "}
+{" "}
               e{" "}
               <Link href="/laboratorio-caraguatatuba" className="text-brand hover:underline">
                 análises laboratoriais
               </Link>{" "}
               para toda sua família em Caraguatatuba. Faça seu cartão e aproveite benefícios especiais.
             </p>
-            <button
+            <CtaWhatsApp
+              mensagem="Olá! Gostaria de saber mais sobre o Cartão Total Quality."
               onClick={() => { trackCardInterest(); openWhatsApp("cartao_cta", "Olá! Gostaria de saber mais sobre o Cartão Total Quality."); }}
               className="btn-pill"
             >
               Saiba Mais
               <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
+            </CtaWhatsApp>
           </div>
 
           {/* Benefits */}
           <div className="reveal grid grid-cols-1 gap-0" style={{ transitionDelay: "200ms" }}>
             {[
-              { icon: Percent, title: "Descontos Exclusivos em Exames de Sangue e Diagnósticos", description: "Preços especiais em exames de sangue, hemograma, glicemia, colesterol, tomografia, ultrassonografia, mamografia e check-up" },
+              { icon: Percent, title: "Descontos Exclusivos em Exames de Sangue e Diagnósticos", description: "Preços especiais em exames de sangue, hemograma, glicemia, colesterol, tomografia, ultrassonografia e check-up" },
               { icon: Users, title: "Benefícios Familiares", description: "Extensível para toda a família sem custo adicional" },
               { icon: CreditCard, title: "Fácil e Prático", description: "Cadastro simples e rápido, sem burocracia" },
             ].map((item, i) => (

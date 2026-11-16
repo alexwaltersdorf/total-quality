@@ -112,6 +112,9 @@ export function normalizeFirstName(bruto: string): string | null {
  * Silencioso e nao-bloqueante por contrato: qualquer falha aqui e registrada e
  * engolida. Um lead jamais deixa de ser gravado porque o Meta respondeu 500.
  */
+/** Evento de lead no Meta, igual no navegador (GTM) e no servidor. */
+export const META_EVENTO_LEAD = "lead_qualificado";
+
 async function sendToMeta(lead: LeadConversion): Promise<"sent" | "skipped" | "failed"> {
   if (!lead.consent.marketing) return "skipped";
   const pixelId = ENV.metaPixelId;
@@ -136,7 +139,12 @@ async function sendToMeta(lead: LeadConversion): Promise<"sent" | "skipped" | "f
   const payload = {
     data: [
       {
-        event_name: "Lead",
+        // Nome proprio, nunca "Lead": a Meta classificou o pixel como saude e
+        // descarta Lead, Contact e InitiateCheckout (restrictedEventNames na
+        // config do pixel, conferida em 29/10/2026). Tem de ser o MESMO nome que
+        // a tag do GTM manda no navegador ("JS - nome do evento no Meta"), senao
+        // nao ha deduplicacao.
+        event_name: META_EVENTO_LEAD,
         event_time: Math.floor(Date.now() / 1000),
         // Mesmo id do evento do navegador: o Meta descarta a copia.
         event_id: lead.eventId,

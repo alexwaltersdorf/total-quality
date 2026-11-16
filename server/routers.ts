@@ -5,6 +5,7 @@ import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_
 import { ENV } from "./_core/env";
 import { notifyOwner } from "./_core/notification";
 import { syncLeadToSheet } from "./_core/googleSheetsSync";
+import { persistLead } from "./_core/persistLead";
 import { dispatchLeadConversion } from "./_core/conversions";
 import { sdk } from "./_core/sdk";
 import { z } from "zod";
@@ -223,18 +224,26 @@ export const appRouter = router({
         fbp: z.string().max(255).optional(),
         consentMarketing: z.boolean().optional(),
         consentAnalytics: z.boolean().optional(),
+        // Identificadores de clique do Google Ads: vao so para a planilha,
+        // para a conversao offline "Exame agendado" (pericia de 28/10/2026).
+        gclid: z.string().max(255).optional(),
+        gbraid: z.string().max(255).optional(),
+        wbraid: z.string().max(255).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
         // O banco nao tem colunas para os campos de despacho; eles existem so
         // para a viagem ate as plataformas.
         const {
           eventId, examType, value, leadChannel, clientId, fbc, fbp,
-          consentMarketing, consentAnalytics, ...leadInput
+          consentMarketing, consentAnalytics, gclid, gbraid, wbraid, ...leadInput
         } = input;
         const userAgent = ctx.req.headers["user-agent"] ?? null;
         const ipAddress =
           (ctx.req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? ctx.req.ip ?? null;
-        const result = await createLead({ ...leadInput, userAgent, ipAddress });
+        const result = await persistLead(
+          () => createLead({ ...leadInput, userAgent, ipAddress }),
+          () => syncLeadToSheet({ ...leadInput, gclid, gbraid, wbraid, examType, eventId, value }),
+        );
         /*
          * Mesma ressalva do contato acima: notifyOwner NAO envia e-mail e nao
          * tem destinatario. Ver docs/notificacao-de-leads.md.
@@ -256,8 +265,8 @@ export const appRouter = router({
         } catch (e) {
           console.warn("[Notification] Falha ao notificar novo lead:", e);
         }
-        // Sincroniza o lead com a planilha Google Sheets (não bloqueia nem falha o lead)
-        await syncLeadToSheet(leadInput);
+        // Banco e planilha ja foram tentados independentemente, antes das
+        // notificacoes opcionais. Sem pelo menos um registro, nao ha sucesso.
 
         // Conversao pelo servidor: Meta CAPI e GA4 Measurement Protocol.
         // So acontece com eventId — sem ele nao ha como deduplicar contra o

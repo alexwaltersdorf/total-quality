@@ -136,47 +136,49 @@ async function startServer() {
     if (resposta.status === 410) return res.status(410).type("text/plain").send("Gone");
     return res.redirect(301, resposta.location);
   });
-  app.use((req, res, next) => {
-    // Skip in development so localhost previews keep working
-    if (process.env.NODE_ENV !== "production") return next();
-
-    const host = (req.headers.host || "").toLowerCase();
-    // Check for HTTPS: either proto is https OR X-Forwarded-Proto header is https
-    const isHttps = req.protocol === "https" || req.get("X-Forwarded-Proto") === "https";
-
-    // Only enforce on the production domain — preview / staging hosts pass through
-    const isProductionDomain =
-      host === "totalquality.med.br" || host === "www.totalquality.med.br";
-    if (!isProductionDomain) return next();
-
-    // Check if already on canonical domain with HTTPS
-    const isCanonical = host === "totalquality.med.br" && isHttps;
-    if (isCanonical) return next();
-
-    // Redirect to canonical domain (without www) and ensure HTTPS
-    return res.redirect(
-      301,
-      `https://totalquality.med.br${req.originalUrl}`
-    );
-  });
-
-  // Redirecionamentos de URLs legadas conhecidas pelo Google (auditoria do
-  // Search Console): 301 para o equivalente atual, 410 para artefatos de link
-  // quebrado. Precisa vir antes do catch-all da SPA, senao viram soft 404.
+  /*
+   * Redirecionamento em UM salto so (SEO nov/2026, Fase 6). Antes eram dois
+   * middlewares — host canonico (www → apex, http → https) e URLs legadas — e
+   * a barra final nao era tratada: /exames/ e /exames/hemograma/ respondiam
+   * 200 com o mesmo conteudo da forma sem barra. Agora o destino final e
+   * calculado de uma vez — host canonico + caminho sem barra final + destino
+   * legado — e sai um unico 301, com a query string preservada.
+   *
+   * O salto http → https que a CDN da Hostinger faz ANTES de o pedido chegar
+   * aqui (mantendo o www) e configuracao do hPanel, fora do repositorio.
+   */
+  const ORIGEM_CANONICA = "https://totalquality.med.br";
+  // A barra final faz parte destes caminhos (gateway da tag em /metrics/, API).
+  const BARRA_FINAL_E_DO_CAMINHO = /^\/(metrics|api)(\/|$)/;
   app.use((req, res, next) => {
     const pathname = req.path;
 
+    // URLs legadas que respondem 410 Gone (antes de qualquer redirecionamento).
     if (isGone(pathname)) {
-      return res.status(410).type("text/plain").send("Gone");
+      return res.status(410).type("text/plain").set("Cache-Control", "no-cache").send("Gone");
     }
 
-    const destination = getLegacyRedirect(pathname);
-    if (destination) {
-      const query = req.originalUrl.slice(req.path.length);
-      return res.redirect(301, `${destination}${destination.includes("#") ? "" : query}`);
-    }
+    const host = (req.headers.host || "").toLowerCase();
+    // Host canonico so em producao e so no dominio de producao — preview,
+    // staging e localhost passam.
+    const dominioProducao =
+      process.env.NODE_ENV === "production" &&
+      (host === "totalquality.med.br" || host === "www.totalquality.med.br");
+    const isHttps = req.protocol === "https" || req.get("X-Forwarded-Proto") === "https";
+    const hostErrado = dominioProducao && !(host === "totalquality.med.br" && isHttps);
 
-    next();
+    let destino = pathname;
+    if (pathname.length > 1 && pathname.endsWith("/") && !BARRA_FINAL_E_DO_CAMINHO.test(pathname)) {
+      destino = pathname.replace(/\/+$/, "") || "/";
+    }
+    const legado = getLegacyRedirect(destino);
+    if (legado) destino = legado;
+
+    if (destino === pathname && !hostErrado) return next();
+
+    const query = req.originalUrl.slice(req.path.length);
+    const origem = dominioProducao ? ORIGEM_CANONICA : "";
+    return res.redirect(301, `${origem}${destino}${destino.includes("#") ? "" : query}`);
   });
 
   // CWV Optimization: Cache headers para assets estáticos
@@ -185,17 +187,31 @@ async function startServer() {
     // Skip em desenvolvimento
     if (process.env.NODE_ENV !== "production") return next();
 
-    // Cache imagens por 1 ano (assets imutáveis)
-    if (req.path.match(/\.(png|jpg|jpeg|gif|webp|svg|ico)$/i)) {
+    // Fase 6 (15/11/2026): este cabecalho e definido ANTES de se saber se o
+    // arquivo existe. Um arquivo que nao existe cai no catch-all da SPA
+    // (vite.ts), que responde 404 e troca o cabecalho por "no-cache" — antes o
+    // 404 do /favicon.ico saia "immutable" por 1 ano.
+    //
+    // Cache imagens por 1 ano (AVIF entrou em 15/11/2026: a foto LCP da home
+    // e .avif e saia com max-age=0)
+    if (req.path.match(/\.(png|jpg|jpeg|gif|webp|avif|svg)$/i)) {
       res.set("Cache-Control", "public, max-age=31536000, immutable");
+    }
+    // Icone e manifesto: nome fixo, sem hash — cache de 1 dia.
+    else if (req.path.match(/\.(ico|webmanifest)$/i)) {
+      res.set("Cache-Control", "public, max-age=86400");
     }
     // Cache fonts por 1 ano
     else if (req.path.match(/\.(woff|woff2|ttf|eot)$/i)) {
       res.set("Cache-Control", "public, max-age=31536000, immutable");
     }
-    // Cache CSS/JS por 1 ano (vite adiciona hash no nome)
+    // CSS/JS com hash do Vite (/assets/): 1 ano, imutavel. Fora de /assets o
+    // nome nao muda a cada build — cache de 1 hora.
     else if (req.path.match(/\.(css|js)$/i)) {
-      res.set("Cache-Control", "public, max-age=31536000, immutable");
+      res.set(
+        "Cache-Control",
+        req.path.startsWith("/assets/") ? "public, max-age=31536000, immutable" : "public, max-age=3600"
+      );
     }
     // HTML: cache curto (5 minutos) para permitir atualizações
     else if (req.path.endsWith(".html") || req.path === "/") {

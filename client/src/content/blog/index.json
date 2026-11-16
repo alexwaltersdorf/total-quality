@@ -5,6 +5,7 @@
     "title": "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer",
     "subtitle": "Quando a glicose cai abaixo de 70 mg/dL, o que fazer na hora e quais exames investigam a causa",
     "excerpt": "Hipoglicemia é a queda da glicose no sangue abaixo de 70 mg/dL. Veja os sinais de alerta, quando o caso é de emergência, a diferença entre a reativa e a de jejum, e quais exames o médico pede para achar a causa.",
+    "metaDescription": "Hipoglicemia é a glicose abaixo de 70 mg/dL. Sinais de alerta, quando procurar emergência e quais exames investigam a causa.",
     "category": "Exames Laboratoriais",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
@@ -30,9 +31,9 @@
     "id": "2",
     "slug": "exames-de-sangue-guia-completo",
     "title": "Exames de Sangue: Tipos e Como Entender o Resultado",
-    "metaTitle": "Tipos de Exame de Sangue e Como Entender o Resultado",
+    "metaTitle": "Tipos de Exame de Sangue: Tabela, Preparo e Como Ler o Laudo",
     "subtitle": "Hemograma, glicemia, colesterol, tireoide e mais: o que cada exame avalia, como se preparar e como ler o laudo",
-    "excerpt": "Conheça os tipos de exame de sangue mais pedidos, o preparo de cada um e como ler o laudo: resultado, unidade e valor de referência. Tire dúvidas.",
+    "excerpt": "Tabela com os tipos de exame de sangue mais pedidos e o que cada um avalia, o preparo e o jejum, e como ler o laudo: resultado, unidade e referência.",
     "category": "Exames Laboratoriais",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
@@ -141,9 +142,9 @@
     "id": "11",
     "slug": "hemograma-completo-o-que-avalia",
     "title": "Hemograma Completo: O Que Avalia e Quais Exames Inclui",
-    "metaTitle": "Hemograma Completo: O Que Avalia e Quais Exames Inclui",
+    "metaTitle": "Hemograma Completo: Tabela do Que Cada Parte Avalia",
     "subtitle": "Série vermelha, série branca e plaquetas: o que cada parte do exame mostra, se precisa de jejum e como é a coleta",
-    "excerpt": "O hemograma completo avalia hemácias, leucócitos e plaquetas em uma só amostra de sangue. Veja o que cada série mostra e se o exame precisa de jejum.",
+    "excerpt": "Tabela com o que o hemograma completo avalia em cada série (hemácias, leucócitos e plaquetas), se precisa de jejum, como é a coleta e quando é pedido.",
     "category": "Exames Laboratoriais",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
@@ -171,6 +172,7 @@
     "metaTitle": "Tomografia Computadorizada: Como Funciona? | Total Quality",
     "subtitle": "Entenda como é feito o exame, se dói, quanto tempo dura e quando o contraste é necessário",
     "excerpt": "Saiba como funciona a tomografia computadorizada, como é feito o exame, quando o contraste é necessário e em quais situações o médico costuma solicitar.",
+    "metaDescription": "Entenda como funciona a tomografia computadorizada, como é feito o exame, quando o contraste é necessário, quanto tempo dura e se dói.",
     "category": "Medicina Preventiva",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
@@ -190,7 +192,7 @@
       "/exames/tomografia-computadorizada"
     ],
     "horaMarcada": true,
-    "dateModified": "2026-10-22"
+    "dateModified": "2026-10-31"
   },
   {
     "id": "13",
@@ -199,6 +201,7 @@
     "metaTitle": "MAPA ou Holter: Qual a Diferença? | Total Quality",
     "subtitle": "Entenda o que cada exame monitora, para que serve e como se preparar",
     "excerpt": "MAPA e Holter são exames cardiológicos diferentes: entenda o que cada um monitora, para que serve, se podem ser feitos juntos e como se preparar.",
+    "metaDescription": "Entenda a diferença entre MAPA e Holter: o que cada exame monitora, para que serve, se podem ser feitos juntos e como se preparar.",
     "category": "Saúde do Coração",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
@@ -229,6 +232,7 @@
     "metaTitle": "Check-up Médico: Quais Exames Fazer? | Total Quality",
     "subtitle": "Entenda como o check-up se organiza entre exames laboratoriais, cardiológicos e de imagem",
     "excerpt": "Entenda o que compõe um check-up médico, quais exames laboratoriais, cardiológicos e de imagem podem fazer parte e com que frequência repetir.",
+    "metaDescription": "Entenda o que compõe um check-up médico: exames laboratoriais, cardiológicos e de imagem, com que frequência repetir e como se preparar.",
     "category": "Medicina Preventiva",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
@@ -248,7 +252,7 @@
       "/checkup"
     ],
     "horaMarcada": true,
-    "dateModified": "2026-10-22"
+    "dateModified": "2026-10-31"
   },
   {
     "id": "15",
@@ -298,14 +302,13 @@
       "diagnóstico por imagem",
       "Caraguatatuba"
     ],
-    "examName": "mamografia e ultrassom das mamas",
-    "examType": "mamografia",
+    "examName": "ultrassom das mamas",
+    "examType": "ultrassonografia",
     "examPages": [
-      "/exames/mamografia",
       "/exames/ultrassonografia"
     ],
     "horaMarcada": true,
-    "dateModified": "2026-10-22"
+    "dateModified": "2026-10-31"
   },
   {
     "id": "17",
@@ -398,9 +401,9 @@
     "id": "20",
     "slug": "eletrocardiograma-o-que-e-como-e-feito",
     "title": "Eletrocardiograma (ECG): Para Que Serve e Como É Feito",
-    "metaTitle": "Eletrocardiograma (ECG): Para Que Serve e Como É Feito",
+    "metaTitle": "Eletrocardiograma (ECG): Passo a Passo, Preparo e Duração",
     "subtitle": "O que significa ECG, para que serve, como é feito, quanto tempo demora e se precisa de jejum ou preparo",
-    "excerpt": "O eletrocardiograma (ECG) registra a atividade elétrica do coração em poucos minutos, sem dor e sem jejum. Veja para que serve, como é feito e o preparo.",
+    "excerpt": "Como é feito o eletrocardiograma passo a passo, quanto tempo demora, se precisa de jejum e uma tabela que compara ECG, Holter e MAPA. Exame sem dor.",
     "category": "Saúde do Coração",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
@@ -429,6 +432,7 @@
     "metaTitle": "Como Escolher um Laboratório: 8 Critérios Técnicos",
     "subtitle": "Os critérios técnicos que o paciente pode conferir antes de decidir onde coletar",
     "excerpt": "O que mostra se um resultado é confiável não está na fachada nem na tabela de preços: está em critérios técnicos verificáveis. São oito, e o paciente pode conferir todos antes de coletar.",
+    "metaDescription": "Licença sanitária, responsável técnico, controle externo de qualidade e prazo por exame: os 8 critérios que mostram se um laboratório é confiável.",
     "category": "Exames Laboratoriais",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
@@ -456,6 +460,7 @@
     "metaTitle": "Resultado de Exames Online: Acesso Seguro e LGPD",
     "subtitle": "Quem pode receber, o que a LGPD garante e por que o laudo nunca vai para um grupo de mensagens",
     "excerpt": "Resultado de exame é dado sensível de saúde. Veja como acessar o seu laudo online, quem tem direito a recebê-lo, o que a LGPD garante na prática e o que fazer quando o acesso falha.",
+    "metaDescription": "Como acessar seu resultado de exames online com segurança, quem pode recebê-lo e o que a LGPD garante sobre o seu dado sensível de saúde.",
     "category": "Bem-Estar",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
@@ -480,9 +485,9 @@
     "id": "24",
     "slug": "exame-de-urina-eas-como-coletar",
     "title": "Exame de Urina (EAS): O Que É e Como Coletar Corretamente",
-    "metaTitle": "Exame de Urina EAS: O Que É e Como Coletar | Total Quality",
+    "metaTitle": "Exame de Urina EAS: Passo a Passo da Coleta e 5 Erros",
     "subtitle": "O que o EAS avalia, se precisa de jejum e o passo a passo da coleta para reduzir a chance de repetir o exame",
-    "excerpt": "O EAS (urina tipo 1) é o exame de urina de rotina: não precisa de jejum, mas exige coleta certa. Veja o que avalia e como coletar para evitar repetições.",
+    "excerpt": "Passo a passo da coleta do EAS (urina tipo 1), os 5 erros que fazem repetir o exame, se precisa de jejum e a diferença para a urocultura em tabela.",
     "category": "Exames Laboratoriais",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
@@ -498,9 +503,9 @@
     ],
     "dateModified": "2026-10-22",
     "examName": "exame de urina (EAS)",
-    "examType": "exames-de-sangue",
+    "examType": "laboratorio",
     "examPages": [
-      "/exames/exames-de-sangue"
+      "/laboratorio-caraguatatuba"
     ]
   },
   {
@@ -1223,6 +1228,154 @@
       "exame-toxicologico-cnh",
       "aso-exames-ocupacionais",
       "resultado-de-exames-online-seguranca"
+    ]
+  },
+  {
+    "id": "50",
+    "slug": "aplicativo-total-quality-health-cashback",
+    "title": "Total Quality Health: o aplicativo da clínica com cashback em Pix e descontos em exames",
+    "metaTitle": "App Total Quality Health: Cashback e Descontos | Total Quality",
+    "subtitle": "Como funciona o aplicativo gratuito, o que cada plano do Cartão Total Quality Care inclui e como ativar os descontos",
+    "excerpt": "O aplicativo gratuito da Total Quality reúne cashback em Pix em lojas parceiras e dá acesso aos planos com teleconsulta e descontos em exames. Veja como funciona.",
+    "category": "Medicina Preventiva",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "27 Out 2026",
+    "readTime": "5 min",
+    "image": "https://totalquality.med.br/images/blog/aplicativo-total-quality-health-cashback.webp",
+    "imageAlt": "Mão segurando um celular com a tela iluminada, sobre fundo de luzes desfocadas — aplicativo de benefícios",
+    "tags": [
+      "Total Quality Health",
+      "aplicativo de saúde",
+      "cashback em Pix",
+      "Cartão Total Quality Care",
+      "desconto em exames",
+      "teleconsulta"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-27",
+    "examName": "exames com o Cartão Total Quality Care",
+    "examType": "cartao",
+    "examPages": [
+      "/cartao",
+      "/exames/exames-de-sangue"
+    ],
+    "related": [
+      "check-up-medico-quais-exames-fazer",
+      "exames-de-sangue-guia-completo",
+      "resultado-de-exames-online-seguranca"
+    ]
+  },
+  {
+    "id": "51",
+    "slug": "exame-tipo-sanguineo",
+    "title": "Exame para saber o tipo de sangue: sistema ABO, fator Rh e preparo",
+    "metaTitle": "Exame Para Saber o Tipo de Sangue: ABO e Fator Rh | Total Quality",
+    "subtitle": "Como a tipagem sanguínea é feita, o que significam os oito grupos, por que ela importa na gestação e se precisa de jejum",
+    "excerpt": "Exame para saber o tipo de sangue: como a tipagem ABO e Rh é feita, o que significa cada grupo, por que é pedida no pré-natal e o preparo, sem jejum obrigatório.",
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "31 Out 2026",
+    "readTime": "6 min",
+    "image": "https://totalquality.med.br/images/blog/exame-tipo-sanguineo.webp",
+    "imageAlt": "Mãos com luvas pingam amostras de sangue numa lâmina de tipagem, com tubos de coleta em estante ao lado",
+    "tags": [
+      "tipo sanguíneo",
+      "tipagem sanguínea",
+      "fator Rh",
+      "sistema ABO",
+      "pré-natal",
+      "exames de sangue"
+    ],
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-10-31",
+    "examName": "tipagem sanguínea",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue"
+    ],
+    "horaMarcada": false,
+    "related": [
+      "exames-de-sangue-guia-completo",
+      "siglas-exames-laboratoriais",
+      "exames-laboratoriais-tipos-e-preparo"
+    ]
+  },
+  {
+    "category": "Exames Laboratoriais",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "13 Nov 2026",
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-11-13",
+    "id": "52",
+    "slug": "exame-ferritina",
+    "title": "Exame de ferritina: o que mostra, ferritina baixa e alta",
+    "metaTitle": "Exame de Ferritina: O Que Mostra e Como Interpretar | Total Quality",
+    "subtitle": "O que é a ferritina, por que ela pode subir sem excesso de ferro, quando o médico pede o perfil de ferro completo e como é o preparo",
+    "excerpt": "Exame de ferritina: o que ele mostra sobre as reservas de ferro, causas de ferritina baixa e alta, a relação com inflamação e o preparo para a coleta.",
+    "readTime": "6 min",
+    "image": "https://totalquality.med.br/images/blog/exame-ferritina.webp",
+    "imageAlt": "Mão com luva segura um tubo de coleta com amostra de sangue, com analisador de laboratório ao fundo",
+    "tags": [
+      "ferritina",
+      "exame de ferritina",
+      "ferro sérico",
+      "anemia",
+      "exames de sangue"
+    ],
+    "examName": "ferritina",
+    "examType": "exames-de-sangue",
+    "examPages": [
+      "/exames/exames-de-sangue",
+      "/exames/hemograma"
+    ],
+    "horaMarcada": false,
+    "related": [
+      "exames-de-sangue-guia-completo",
+      "siglas-exames-laboratoriais",
+      "exame-tipo-sanguineo"
+    ]
+  },
+  {
+    "category": "Medicina Preventiva",
+    "author": "Equipe Total Quality",
+    "authorRole": "Total Quality Medicina Diagnóstica",
+    "date": "13 Nov 2026",
+    "draft": true,
+    "reviewStatus": "revisao_medica_pendente",
+    "dateModified": "2026-11-13",
+    "id": "53",
+    "slug": "espirometria-preparo",
+    "title": "Espirometria: para que serve, como é feita e como se preparar",
+    "metaTitle": "Espirometria: Para Que Serve e Como Se Preparar | Total Quality",
+    "subtitle": "O que o teste do sopro mede, quando entra o broncodilatador, o que significam CVF e VEF1 e os cuidados antes do exame",
+    "excerpt": "Espirometria: para que serve o teste do sopro, quando é feita a prova com broncodilatador, o que significam CVF e VEF1 e como se preparar.",
+    "readTime": "6 min",
+    "image": "https://totalquality.med.br/images/blog/espirometria-preparo.webp",
+    "imageAlt": "Homem sopra no bocal de um espirômetro enquanto uma profissional de saúde acompanha, com as curvas do exame no monitor",
+    "tags": [
+      "espirometria",
+      "teste do sopro",
+      "prova de função pulmonar",
+      "asma",
+      "DPOC",
+      "medicina do trabalho"
+    ],
+    "examName": "espirometria",
+    "examType": "espirometria",
+    "examPages": [
+      "/exames/espirometria"
+    ],
+    "horaMarcada": true,
+    "related": [
+      "aso-exames-ocupacionais",
+      "check-up-medico-quais-exames-fazer",
+      "diferenca-raio-x-tomografia"
     ]
   },
   {

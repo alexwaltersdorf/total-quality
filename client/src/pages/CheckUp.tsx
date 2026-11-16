@@ -1,27 +1,30 @@
 /*
- * Style: Optik Editorial — Giant display type, asymmetric layout, brand #9B212B
- * Theme: White background, dark gray #5A5A5A text
- * Page: Check-Up Preventivo
+ * /checkup — SEO nov/2026, Fase 3: desenhada pelo modelo unico
+ * (components/PaginaServico.tsx) com o conteudo de lib/paginasServico.ts
+ * (PAGINA_CHECKUP). Os planos entram como bloco proprio, com o detalhe de cada
+ * um (lista abaixo, a mesma que a pagina ja publicava). Sem preco.
+ *
+ * Saiu o selo "MAIS POPULAR" do plano Select: e afirmacao de comparacao sem
+ * dado que a sustente (CFM 2.336/2023).
+ *
+ * Rastreamento: os mesmos eventos de antes (trackScheduleCheckup; WhatsApp
+ * checkup_geral e checkup_pkg_<plano>; telefone checkup_topo e checkup_rodape).
  */
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { trackScheduleCheckup } from "@/lib/tracking";
-import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
-import { ArrowUpRight, Heart, Shield, Activity, Clock, CheckCircle, Stethoscope, FlaskConical, Brain } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import WhatsAppFAB from "@/components/WhatsAppFAB";
+import { useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import { ArrowUpRight, CheckCircle } from "lucide-react";
 import { useCanonical, useMetaDescription } from "@/components/SEOHead";
-import { CHECKUP_TITLE, CHECKUP_DESCRIPTION } from "@shared/const";
-import { useSchemaBreadcrumb } from "@/hooks/useSchemaLocalBusiness";
-
-const HERO_IMG = "/images/recepcao-1024.webp";
-const PROCESS_IMG = "/images/laboratorio-1024.webp";
-const BENEFITS_IMG = "/images/fachada-1024.webp";
+import { CHECKUP_TITLE, CHECKUP_H1, CHECKUP_DESCRIPTION } from "@shared/const";
+import { CHECKUP_FAQS, PAGINA_CHECKUP } from "@/lib/paginasServico";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
+import PaginaServico, { artigosDaPagina, type BlocoExtra } from "@/components/PaginaServico";
+import { mensagemSobre } from "@/contexts/AssuntoPagina";
 
 const checkupPackages = [
   {
     title: "Check-Up Básico",
-    subtitle: "19 Exames - Avaliação essencial",
+    subtitle: "19 exames · avaliação essencial",
     items: [
       "Hemograma Completo",
       "Glicemia",
@@ -33,11 +36,13 @@ const checkupPackages = [
       "Avaliação da Função do Fígado: TGO, TGP, Gama GT",
       "Avaliação da Função dos Rins: Ureia, Creatinina, Ácido Úrico, Urina Tipo I",
     ],
-    highlight: false,
   },
   {
     title: "Check-Up Select",
-    subtitle: "30 Exames - Avaliação abrangente",
+    // TODO(alex): o subtitulo dizia "30 exames", mas a lista abaixo soma 31
+    // dosagens (contando cada fracao do perfil lipidico). Sem o numero ate
+    // voce confirmar.
+    subtitle: "Avaliação abrangente",
     items: [
       "Avaliação Cardiológica: Eletrocardiograma, Espirometria, RX Tórax",
       "Testosterona (Hormônio relacionado à massa muscular, saúde óssea e libido)",
@@ -57,11 +62,10 @@ const checkupPackages = [
       "Avaliação da Função do Fígado: TGO, TGP, Gama GT",
       "Avaliação da Função dos Rins: Ureia, Creatinina, Ácido Úrico, Urina Tipo I",
     ],
-    highlight: true,
   },
   {
     title: "Check-Up Premium",
-    subtitle: "39 Exames - Avaliação completa + imagem",
+    subtitle: "39 exames · avaliação ampliada, com raio-X",
     items: [
       "Avaliação Cerebral: Eletroencefalograma",
       "Avaliação Pulmonar: Espirometria",
@@ -86,258 +90,95 @@ const checkupPackages = [
       "Ureia, Creatinina, Ácido Úrico, Urina Tipo I",
       "CEA, CA 19-9, Sangue Oculto nas Fezes",
     ],
-    highlight: false,
   },
 ];
 
-const benefits = [
-  { icon: Shield, title: "Prevenção", desc: "Detecte condições de saúde antes que se tornem problemas graves. A prevenção é o melhor tratamento." },
-  { icon: Activity, title: "Monitoramento", desc: "Acompanhe a evolução dos seus indicadores de saúde ao longo do tempo com relatórios comparativos." },
-  { icon: Clock, title: "Agilidade", desc: "Todos os exames realizados em um único dia, com resultados em até 48 horas úteis." },
-  { icon: Heart, title: "Cuidado Integral", desc: "Equipe multidisciplinar que analisa seus resultados de forma integrada e personalizada." },
-];
-
-const processSteps = [
-  { num: "01", title: "Agendamento", desc: "Entre em contato pelo WhatsApp ou telefone e escolha a melhor data. Enviaremos as orientações de preparo." },
-  { num: "02", title: "Coleta e Exames", desc: "No dia agendado, realize todos os exames laboratoriais e de imagem em nossa clínica, com conforto e agilidade." },
-  { num: "03", title: "Análise Médica", desc: "Nossa equipe médica analisa todos os resultados de forma integrada, identificando padrões e riscos." },
-  { num: "04", title: "Laudo e Orientação", desc: "Receba seu laudo completo com recomendações personalizadas e, se necessário, encaminhamento especializado." },
-];
+const ASSUNTO = "check-up";
 
 export default function CheckUp() {
   const openWhatsApp = useWhatsAppRedirect();
-  const abrirTelefone = useTelefoneRedirect();
-  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    // SEO: Título otimizado 30-60 caracteres (46 chars)
     document.title = CHECKUP_TITLE;
   }, []);
 
-  // SEO: Meta description e canonical (155 caracteres - ideal: 150-160)
   useMetaDescription(CHECKUP_DESCRIPTION);
   useCanonical("/checkup");
 
-  // SEO: Schema.org LocalBusiness para melhorar visibilidade local
-  /*
-   * REMOVIDO EM 06/09/2026 — duplicava o @id do schema.
-   *
-   * O hook injetava um segundo bloco MedicalBusiness com o MESMO @id
-   * (#medicalbusiness) do bloco que ja vem no index.html em todas as paginas,
-   * mas com conteudo diferente. Dois nos com o mesmo @id e dados conflitantes
-   * sao ambiguos para o Google, e /checkup era uma das 12 paginas que o Semrush
-   * marcou com dado estruturado invalido em 06/09.
-   *
-   * O bloco do index.html e mais completo e, por vir no HTML pre-renderizado,
-   * o rastreador ve mesmo sem executar JavaScript. Nao reintroduzir aqui.
-   */
+  // BreadcrumbList, MedicalWebPage e FAQPage: emitidos pelo servidor no <head>,
+  // dos mesmos dados desta pagina (seo-content.ts). Nao reintroduzir aqui o
+  // bloco MedicalBusiness removido em 06/09/2026 (duplicava o @id do schema).
 
-  // SEO: Breadcrumb para navegação estruturada
-  // O breadcrumb apontava para o dominio de rascunho do Manus
-  // (subdominio .manus): o Google lia o check-up como pagina
-  // de outro site. Agora, o dominio canonico.
-  useSchemaBreadcrumb([
-    { name: "Início", url: "https://totalquality.med.br/" },
-    { name: "Check-up", url: "https://totalquality.med.br/checkup" },
-  ]);
+  // Mensagem da pagina (Fase 2): "Olá, vim pelo site e quero informações sobre check-up".
+  const mensagem = mensagemSobre(ASSUNTO);
+  const agendar = () => { trackScheduleCheckup("geral"); openWhatsApp("checkup_geral", mensagem); };
 
-  useEffect(() => {
-    const root = wrapperRef.current;
-    if (!root) return;
-    const els = root.querySelectorAll(".reveal, .reveal-left, .reveal-right");
-    const obs = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
-    );
-    els.forEach((el) => obs.observe(el));
-    return () => obs.disconnect();
-  }, []);
+  const extras: BlocoExtra[] = [
+    {
+      id: "planos",
+      rotulo: "Quais exames cada plano inclui?",
+      node: (
+        <section className="py-12 lg:py-16 bg-gray-50">
+          <div className="container">
+            <h2 className="heading-display text-3xl lg:text-4xl text-text mb-4">
+              Quais exames cada <span className="text-brand">plano</span> inclui?
+            </h2>
+            <p className="text-text-light text-lg leading-relaxed max-w-3xl mb-10">
+              Três planos para necessidades diferentes de prevenção. A equipe orienta o plano mais adequado ao seu
+              perfil e histórico; valores e preparo pelo WhatsApp.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {checkupPackages.map((pkg) => (
+                <div key={pkg.title} className="rounded-lg overflow-hidden bg-white text-text shadow-lg">
+                  <div className="p-8">
+                    <h3 className="text-2xl font-bold mb-2 text-brand">{pkg.title}</h3>
+                    <p className="text-sm mb-6 text-text-muted">{pkg.subtitle}</p>
+                    <ul className="space-y-3 mb-8">
+                      {pkg.items.map((item) => (
+                        <li key={item} className="flex items-start gap-3">
+                          <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-brand" />
+                          <span className="text-sm leading-relaxed text-text-muted">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <CtaWhatsApp
+                      mensagem={mensagemSobre(`o ${pkg.title}`)}
+                      onClick={() => { trackScheduleCheckup(pkg.title); openWhatsApp(`checkup_pkg_${pkg.title}`, mensagemSobre(`o ${pkg.title}`)); }}
+                      className="block text-center w-full py-3 px-4 rounded-lg font-semibold transition-all bg-brand text-white hover:bg-brand-dark"
+                    >
+                      Agendar {pkg.title.split(" ")[1]}
+                      <ArrowUpRight className="w-3.5 h-3.5 inline ml-2" />
+                    </CtaWhatsApp>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ),
+    },
+  ];
 
   return (
-    <div ref={wrapperRef} className="min-h-screen bg-white">
-      <Navbar />
-
-      {/* Hero Section */}
-      <section className="pt-32 pb-16 lg:pb-24 px-4 bg-white">
-        <div className="container grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="reveal-left">
-            <span className="section-label mb-4 block">Saúde preventiva</span>
-            <h1 className="heading-display text-5xl lg:text-6xl mb-6 leading-tight">
-              CHECK-UP <span className="text-brand">PREVENTIVO</span>
-            </h1>
-            <p className="text-lg text-text-muted mb-8 max-w-lg leading-relaxed">
-              Avaliação completa da sua saúde com exames laboratoriais e de imagem. Escolha o plano que melhor se adequa às suas necessidades.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={() => { trackScheduleCheckup("geral"); openWhatsApp("checkup_geral", "Olá! Gostaria de agendar um Check-Up."); }}
-                className="btn-pill"
-              >
-                Agendar Check-Up
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
-              <button type="button" onClick={() => abrirTelefone("checkup_topo")} className="btn-pill bg-transparent !text-text border border-black/20 hover:!bg-black/5">
-                Ligar: (12) 3887-3535
-              </button>
-            </div>
-          </div>
-          <div className="reveal-right">
-            <img src={HERO_IMG} alt="Check-up preventivo na Total Quality em Caraguatatuba - SP - exames laboratoriais e de imagem em um só lugar" className="w-full rounded-lg shadow-lg" />
-          </div>
-        </div>
-      </section>
-
-      {/* Packages Section */}
-      <section className="py-20 px-4 bg-gray-50">
-        <div className="container">
-          <div className="text-center mb-16 reveal">
-            <span className="section-label mb-4 inline-flex">Nossos pacotes</span>
-            <h2 className="heading-display text-4xl lg:text-5xl mb-6">
-              ESCOLHA SEU <span className="text-brand">CHECK-UP</span>
-            </h2>
-            <p className="text-lg text-text-muted max-w-2xl mx-auto">
-              Três opções de pacotes para atender diferentes necessidades de saúde e prevenção.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {checkupPackages.map((pkg, idx) => (
-              <div
-                key={idx}
-                className={`reveal rounded-lg overflow-hidden transition-all ${
-                  pkg.highlight
-                    ? "md:scale-105 bg-brand text-white shadow-2xl"
-                    : "bg-white text-text shadow-lg hover:shadow-xl"
-                }`}
-              >
-                {pkg.highlight && (
-                  <div className="bg-white/20 px-4 py-2 text-center text-sm font-semibold tracking-wide">
-                    MAIS POPULAR
-                  </div>
-                )}
-                <div className="p-8">
-                  <h3 className={`text-2xl font-bold mb-2 ${pkg.highlight ? "text-white" : "text-brand"}`}>
-                    {pkg.title}
-                  </h3>
-                  <p className={`text-sm mb-6 ${pkg.highlight ? "text-white/80" : "text-text-muted"}`}>
-                    {pkg.subtitle}
-                  </p>
-
-                  <div className="space-y-3 mb-8">
-                    {pkg.items.map((item, i) => (
-                      <div key={i} className="flex items-start gap-3">
-                        <CheckCircle className={`w-5 h-5 flex-shrink-0 mt-0.5 ${pkg.highlight ? "text-white" : "text-brand"}`} />
-                        <span className={`text-sm leading-relaxed ${pkg.highlight ? "text-white/90" : "text-text-muted"}`}>
-                          {item}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={() => { trackScheduleCheckup(pkg.title); openWhatsApp(`checkup_pkg_${pkg.title}`, "Olá! Gostaria de agendar o " + pkg.title + "."); }}
-                    className={`w-full py-3 px-4 rounded-lg font-semibold transition-all ${
-                      pkg.highlight
-                        ? "bg-white text-brand hover:bg-white/90"
-                        : "bg-brand text-white hover:bg-brand-dark"
-                    }`}
-                  >
-                    Agendar {pkg.title.split(" ")[1]}
-                    <ArrowUpRight className="w-3.5 h-3.5 inline ml-2" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-20 px-4 bg-white">
-        <div className="container">
-          <div className="text-center mb-16 reveal">
-            <p className="text-sm font-semibold text-brand mb-4 tracking-wide">BENEFÍCIOS</p>
-            <h2 className="heading-display text-4xl lg:text-5xl mb-6">
-              POR QUE FAZER UM <span className="text-brand">CHECK-UP</span>
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {benefits.map((benefit, idx) => {
-              const Icon = benefit.icon;
-              return (
-                <div key={idx} className="reveal bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-all">
-                  <Icon className="w-12 h-12 text-brand mb-4" />
-                  <h3 className="text-xl font-bold mb-3 text-text">{benefit.title}</h3>
-                  <p className="text-text-muted leading-relaxed">{benefit.desc}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Process Section */}
-      <section className="py-20 px-4 bg-gray-50">
-        <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="reveal-left">
-              <p className="text-sm font-semibold text-brand mb-4 tracking-wide">COMO FUNCIONA</p>
-              <h2 className="heading-display text-4xl lg:text-5xl mb-8">
-                PROCESSO <span className="text-brand">SIMPLES</span>
-              </h2>
-
-              <div className="space-y-6">
-                {processSteps.map((step, idx) => (
-                  <div key={idx} className="flex gap-6">
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-12 w-12 rounded-full bg-brand text-white font-bold text-lg">
-                        {step.num}
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-text mb-2">{step.title}</h3>
-                      <p className="text-text-muted leading-relaxed">{step.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="reveal-right">
-              <img src={PROCESS_IMG} alt="Etapas do check-up preventivo na clínica Total Quality em Caraguatatuba - SP" className="w-full rounded-lg shadow-lg" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-4 bg-brand text-white">
-        <div className="container text-center reveal">
-          <h2 className="heading-display text-4xl lg:text-5xl mb-6">
-            PRONTO PARA CUIDAR DA SUA SAÚDE?
-          </h2>
-          <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
-            Agende seu check-up agora e comece sua jornada em direção a uma vida mais saudável e preventiva.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => { trackScheduleCheckup("geral"); openWhatsApp("checkup_geral", "Olá! Gostaria de agendar um Check-Up."); }}
-              className="btn-pill bg-white text-brand hover:bg-white/90"
-            >
-              Agendar pelo WhatsApp
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
-            <button type="button" onClick={() => abrirTelefone("checkup_rodape")} className="btn-pill bg-transparent text-white border border-white/30 hover:bg-white/10">
-              Ligar: (12) 3887-3535
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <Footer />
-      <WhatsAppFAB />
-    </div>
+    <PaginaServico
+      assunto={ASSUNTO}
+      h1={CHECKUP_H1}
+      rotulo="Saúde preventiva"
+      migalha="Check-up"
+      conteudo={PAGINA_CHECKUP}
+      faqs={CHECKUP_FAQS}
+      artigos={artigosDaPagina(PAGINA_CHECKUP.blog ?? [])}
+      mensagem={mensagem}
+      agendar={agendar}
+      textoCta="Agendar Check-Up"
+      telefone={{ topo: "checkup_topo", rodape: "checkup_rodape" }}
+      extras={extras}
+      ctaFinal={{
+        titulo: <>Agende seu <span className="text-brand">check-up</span></>,
+        texto: "Agende pelo WhatsApp: a equipe envia as orientações de preparo, e os exames do plano são feitos em um único dia, de segunda a sexta, das 7h30 às 18h.",
+        botao: "Agendar pelo WhatsApp",
+      }}
+    />
   );
 }

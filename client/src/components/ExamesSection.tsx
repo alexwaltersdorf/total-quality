@@ -14,6 +14,7 @@ import {
   Check,
 } from "lucide-react";
 import { Link } from "wouter";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 const DIAGNOSTIC_IMG = "laboratorio";
 const CARDIOLOGY_IMG = "cardiologia";
@@ -54,10 +55,7 @@ const examData: Record<
         <Link href="/exames/ultrassonografia" className="text-brand hover:underline">
           ultrassonografia geral e Doppler
         </Link>
-        ,{" "}
-        <Link href="/exames/mamografia" className="text-brand hover:underline">
-          mamografia digital
-        </Link>{" "}
+{" "}
         e{" "}
         <Link href="/exames/raio-x" className="text-brand hover:underline">
           raio-X digital
@@ -68,7 +66,7 @@ const examData: Record<
     exams: [
       { name: "Tomografia Computadorizada Multislice", href: "/exames/tomografia-computadorizada" },
       { name: "Ultrassonografia Geral e Doppler", href: "/exames/ultrassonografia" },
-      { name: "Mamografia Digital", href: "/exames/mamografia" },
+      // Mamografia saiu em 31/10/2026: a clinica nao realiza no momento.
       { name: "Raio-X Digital", href: "/exames/raio-x" },
     ],
   },
@@ -237,13 +235,14 @@ export default function ExamesSection() {
             </div>
 
             <div className="flex flex-wrap gap-3 mt-8">
-              <button
+              <CtaWhatsApp
+                mensagem="Olá! Gostaria de agendar um exame."
                 onClick={() => { trackScheduleExam("exames_section", active); openWhatsApp("exames_section", "Olá! Gostaria de agendar um exame."); }}
                 className="btn-pill-brand btn-pill"
               >
                 Agendar Exame
                 <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
+              </CtaWhatsApp>
               <Link
                 href="/checkup"
                 className="btn-pill-outline"

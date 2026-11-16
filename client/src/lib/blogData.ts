@@ -22,8 +22,7 @@
  *      Alex aprovar (ver client/src/lib/blogMeta.ts).
  */
 
-import blogIndex from "@/content/blog/index.json";
-import { isPublished, type BlogPost, type BlogPostMeta } from "@/lib/blogMeta";
+import type { BlogPost } from "@/lib/blogMeta";
 
 export type { BlogPost, BlogPostMeta } from "@/lib/blogMeta";
 export { parseBlogDate, extractFaqs } from "@/lib/blogMeta";
@@ -38,14 +37,9 @@ export const blogCategories = [
   "Bem-Estar",
 ];
 
-/** Todos os artigos, rascunhos inclusive — só para abrir a URL de um rascunho. */
-export const allBlogPosts: BlogPostMeta[] = blogIndex as BlogPostMeta[];
-
-/**
- * Metadados dos artigos PUBLICADOS — leve, seguro para o chunk inicial. É o
- * que listagem, home e relacionados usam: rascunho nunca aparece neles.
- */
-export const blogPosts: BlogPostMeta[] = allBlogPosts.filter(isPublished);
+// allBlogPosts e blogPosts vivem em blogPublicados.ts (sem import.meta.glob,
+// importavel pelo servidor) — SEO nov/2026, Fase 1.
+export { allBlogPosts, blogPosts } from "@/lib/blogPublicados";
 
 /** Cada artigo vira um chunk próprio, carregado só quando alguém o abre. */
 const articleLoaders = import.meta.glob<{ default: BlogPost }>(

@@ -67,16 +67,20 @@ original.
 | `exames-diagnostico-avc` | `photo-1691935052741-c8ce0a1ef543` | médico de jaleco diante de aparelho de ultrassom |
 | `exames-diagnostico-hipertensao` | `photo-1615486511484-92e172cc4fe0` | medidor digital de pressão com braçadeira no braço |
 | `exames-diagnostico-diabetes` | `photo-1576169210859-6796c4b93c32` | mãos enluvadas com seringa e estojo de glicosímetro |
+| `aplicativo-total-quality-health-cashback` | `photo-1483478550801-ceba5fe50e8e` | mão segurando celular com a tela iluminada, fundo de luzes desfocadas (sem marca nem rosto) |
 
 ## Imagens geradas por IA — Airticles
 
-Vieram com os artigos migrados do blog.totalquality.med.br em 27/10/2026 (unificação dos blogs). Foram
-geradas pela Airticles, a ferramenta que escreveu o texto original, e baixadas para o domínio próprio. As
-pessoas da cena **não existem** e o consultório não é a Total Quality, por isso o `alt` não afirma que a
-cena aconteceu na clínica. Na revisão médica, o Alex pode trocar por foto própria ou de banco.
+Vieram com os artigos que a Airticles escreveu e que entraram no /blog como rascunho (fluxo de 27/10/2026), incluindo os 2 migrados do blog.totalquality.med.br.
+Foram geradas pela Airticles e baixadas para o domínio próprio. As pessoas da cena **não existem** e o
+consultório não é a Total Quality, por isso o `alt` não afirma que a cena aconteceu na clínica. Na revisão
+médica, o Alex pode trocar por foto própria ou de banco.
 
 | Artigo | Arquivo de origem (api.airticles.ai/uploads/) | O que mostra |
 |---|---|---|
+| `exame-tipo-sanguineo` | `606c276e-1a20-4422-84f1-5ee1605b0fa4.webp` | mãos com luvas pingando amostras de sangue numa lâmina de tipagem, com tubos ao lado |
+| `exame-ferritina` | `f8dddcf6-720a-48d6-8099-009848aef458.webp` | mão com luva segurando tubo de coleta com sangue, analisador ao fundo |
+| `espirometria-preparo` | `ee771e60-5b9f-4662-aa3c-f5829ea84d02.webp` | homem soprando no bocal do espirômetro, profissional ao lado e curvas no monitor |
 | `ultrassom-de-tireoide` | `1de94013-1303-4ef4-a6bf-928d0742b692.webp` | transdutor apoiado no pescoço de paciente deitada, com o monitor ao fundo |
 | `tirzepatida-exames-e-falsificacao` | `83542217-d4a0-4a90-b028-f53d555a961d.webp` | médico mostrando folhas de resultado a um paciente no consultório |
 

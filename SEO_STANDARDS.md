@@ -1,356 +1,119 @@
-# 📋 Padrões de SEO - Total Quality Medicina Diagnóstica
+# Padrões de SEO — Total Quality Medicina Diagnóstica
 
-**Última atualização:** 16 de Julho de 2026
+**Última atualização:** 15 de novembro de 2026 (SEO nov/2026, Fase 7 — `docs/seo-relatorio.md`).
+A versão de 16/07/2026 recomendava `keywords`, og:image no CloudFront e listava rotas que
+não existem mais (mamografia, ecocardiograma, densitometria, teste de esforço, Outubro Rosa).
 
----
-
-## 🎯 Objetivo
-
-Este documento estabelece os **padrões obrigatórios de SEO** para todas as alterações no site Total Quality. Qualquer nova página, rota ou conteúdo DEVE seguir estas diretrizes.
-
-**Responsabilidade:** Consulte este documento ANTES de criar/modificar qualquer página que impacte SEO.
+Os testes em `server/*.test.ts` são o contrato; este documento explica o porquê. Se os dois
+divergirem, vale o teste — e este arquivo deve ser corrigido.
 
 ---
 
-## ⚠️ Problema Crítico Resolvido
+## Como o HTML de cada rota é montado
 
-**Situação anterior (ERRADA):**
-```
-GET /checkup → HTML com canonical: https://totalquality.med.br/
-GET /exames/mamografia → HTML com canonical: https://totalquality.med.br/
-GET /blog/hemograma → HTML com canonical: https://totalquality.med.br/
-```
-**Resultado:** Google via todas como duplicatas da home → 13% indexação
+| Grupo de rotas | Corpo do `#root` | Arquivo |
+|---|---|---|
+| `/exames/:slug`, `/especialidades`, `/especialidades/:slug`, `/laboratorio-caraguatatuba`, `/checkup`, `/bioimpedancia`, `/sobre`, `/contato` | **SSR do próprio React** (`renderToString`) e `hydrateRoot` no navegador — o Google e o paciente leem o mesmo HTML | `client/src/entry-server.tsx` (`isSsrPath`), `server/_core/seo-content.ts` (`getSsrPage`), `client/src/main.tsx` |
+| home, `/exames`, `/blog`, `/blog/:slug`, `/convenios`, `/privacidade` | bloco pré-renderizado à mão; o React monta por cima | `server/_core/seo-content.ts` (`getSeoContentForPath`) |
+| `/cartao` | **sem conteúdo no HTML do servidor** (só o React) — pendência, ver `docs/seo-relatorio.md` | — |
 
-**Situação atual (CORRETA):**
-```
-GET /checkup → HTML com canonical: https://totalquality.med.br/checkup
-GET /exames/mamografia → HTML com canonical: https://totalquality.med.br/exames/mamografia
-GET /blog/hemograma → HTML com canonical: https://totalquality.med.br/blog/hemograma
-```
-**Resultado:** Google indexa cada página como entidade única → 100% indexação esperada
+- **Meta tags** (title, description, canonical, og:*, robots): `server/_core/routes-metadata.ts`
+  (`getRouteMetadata`, `injectMetaTags`), injetadas por `server/_core/vite.ts`.
+- **Uma fonte só para title/description:** páginas de exame e especialidade leem
+  `metaTitle`/`metaDescription` de `client/src/lib/examesData.ts` e
+  `especialidadesData.ts`; home, laboratório, check-up, bioimpedância, blog, sobre, contato e
+  especialidades leem constantes de `shared/const.ts`; artigos, `metaTitle`/`metaDescription`
+  (ou `excerpt`) do `client/src/content/blog/index.json`. O React não pode trocar o que o
+  servidor mandou — `scripts/auditoria-sitemap.mjs` compara os dois em toda URL do sitemap.
+- **Conteúdo das páginas de serviço:** dados em `client/src/lib/paginas/*.ts` e
+  `client/src/lib/paginasServico.ts`, desenhados pelo componente `PaginaServico`.
+  Bloco sem fato verificado não é publicado: fica um `// TODO(alex): ...` no dado.
+- **JSON-LD:** sempre no `<head>`, uma cópia por rota (`server/dados-estruturados.test.ts`).
+- **Sitemap:** `server/_core/sitemap-handler.ts`, 49 URLs em 15/11/2026, todas com `lastmod`
+  real; nenhuma URL que redireciona.
 
----
+## Como adicionar uma página
 
-## 📁 Arquitetura de SEO
-
-### Arquivos Críticos (NÃO EDITAR SEM CONSULTAR ESTE MD)
-
-| Arquivo | Responsabilidade | Quando Editar |
-|---------|------------------|---------------|
-| `server/_core/routes-metadata.ts` | Mapeamento de meta tags por rota | Ao adicionar nova página/rota |
-| `server/_core/vite.ts` | Injeção de meta tags no HTML | Ao mudar lógica de SSR |
-| `server/_core/sitemap-handler.ts` | Geração de sitemap.xml | Ao adicionar/remover rotas |
-| `server/_core/index.ts` | Rotas `/sitemap.xml` e `/robots.txt` | Ao bloquear novas seções |
-
-### Fluxo de Meta Tags
-
-```
-1. Requisição chega em Express (server/_core/index.ts)
-   ↓
-2. Vite middleware (server/_core/vite.ts) intercepta
-   ↓
-3. Busca meta tags em routes-metadata.ts baseado na rota
-   ↓
-4. Injeta meta tags no HTML antes de enviar ao cliente
-   ↓
-5. Cliente recebe HTML com meta tags corretos
-```
-
----
-
-## 🔧 Como Adicionar Nova Página
-
-### Passo 1: Registre a Rota em `routes-metadata.ts`
-
-**Localização:** `/home/ubuntu/total-quality/server/_core/routes-metadata.ts`
-
-**Estrutura de Meta Tags:**
+1. **Exame ou consulta:** acrescentar o item em `examesData.ts`/`especialidadesData.ts` e o
+   conteúdo em `lib/paginas/exames.ts`/`especialidades.ts`. Rota, SSR, sitemap, hub, JSON-LD e
+   meta tags saem do dado. Texto médico só com fonte no repositório.
+2. **Outra página:** rota em `client/src/App.tsx`; metadados em `staticRoutes`
+   (`routes-metadata.ts`) com `lastmod`; conteúdo no servidor (SSR em `entry-server.tsx` ou
+   pré-render em `seo-content.ts` — o guard-rail falha se a rota do sitemap vier vazia).
+3. Rodar `pnpm vitest run`, `pnpm build && pnpm start` e
+   `node scripts/auditoria-sitemap.mjs http://localhost:3000` (e
+   `scripts/paridade-ssr.mjs` para rotas de SSR).
 
 ```typescript
-"sua-nova-rota": {
-  title: "Seu Título | Total Quality",           // 30-60 caracteres
-  description: "Sua descrição breve",            // 120-160 caracteres
-  keywords: "palavra-chave1, palavra-chave2",    // Separadas por vírgula
-  ogTitle: "Título para Open Graph",             // Pode ser diferente do title
-  ogDescription: "Descrição para redes sociais", // Pode ser diferente
-  ogImage: "https://cdn.../imagem.png",          // URL da imagem (1200x630px)
-  canonical: "https://totalquality.med.br/sua-nova-rota",
-  priority: 0.8,                                 // 0.6-1.0
-  changefreq: "monthly",                         // weekly/monthly/yearly
-}
-```
-
-**Exemplo Real - Página de Exame:**
-
-```typescript
-"exames/novo-exame": {
-  title: "Novo Exame em Caraguatatuba | Total Quality",
-  description: "Descubra tudo sobre o novo exame oferecido pela Total Quality em Caraguatatuba.",
-  keywords: "novo exame, diagnóstico, Caraguatatuba",
-  ogTitle: "Novo Exame | Total Quality",
-  ogDescription: "Saiba mais sobre nosso novo exame.",
-  ogImage: "https://d2xsxph8kpxj0f.cloudfront.net/.../novo-exame.png",
-  canonical: "https://totalquality.med.br/exames/novo-exame",
-  priority: 0.9,
+// staticRoutes em server/_core/routes-metadata.ts
+"/nova-rota": {
+  title: "Nova Página em Caraguatatuba | Total Quality", // até 60 caracteres
+  description: "…",                                      // 120 a 160 caracteres
+  ogImage: "https://totalquality.med.br/images/fachada-1024.webp", // domínio próprio
+  canonical: "https://totalquality.med.br/nova-rota",    // a própria URL, sem barra final
+  priority: 0.8,
   changefreq: "monthly",
-}
+  lastmod: "2026-11-15",
+},
 ```
 
-### Passo 2: Crie a Página React
+**Não existe mais `keywords`:** `<meta name="keywords">` foi removido do template e do
+`injectMetaTags` (Fase 6) — o Google o ignora e ele só expunha a estratégia. Não reintroduzir.
 
-**Localização:** `/home/ubuntu/total-quality/client/src/pages/`
+## Checklist de cada página (o que a auditoria confere)
 
-**Template Obrigatório:**
+- [ ] status 200 e nenhum redirecionamento; canonical = a própria URL (https, sem www, sem barra final)
+- [ ] um único `<h1>`; nas páginas de serviço, "[Nome] em Caraguatatuba" (caixa alta só no CSS)
+- [ ] title ≤ 60 caracteres, único; description 120–160, única; iguais no servidor e no React
+- [ ] JSON-LD válido, no `<head>`, sem entidade duplicada; FAQPage = FAQ visível
+- [ ] link de WhatsApp `https://api.whatsapp.com/send?phone=551238873535…` (nunca `wa.me`) com evento
+- [ ] páginas de serviço com o botão "Ligar" — **é um `<button>` que abre o formulário de
+      qualificação antes da ligação** (decisão do Alex, 15/11/2026; guard-rail em
+      `server/seo-content.test.ts`), não um link `tel:` direto
+- [ ] toda `<img>` com `alt`, `width` e `height`; imagens no domínio próprio
+- [ ] og:image no domínio próprio (`/images/…`), nunca CloudFront/S3
+- [ ] sem preço, superlativo, promessa de prazo ("24 horas"), comparação ou depoimento (CFM 2.336/2023)
 
-```tsx
-import { useEffect } from "react";
-import { useCanonical, useMetaDescription } from "@/components/SEOHead";
+## Boas práticas de texto
 
-export default function SuaNovaPage() {
-  useEffect(() => {
-    // Título que aparece na aba do navegador
-    document.title = "Seu Título | Total Quality";
-    window.scrollTo(0, 0);
-  }, []);
+- Title: "[Exame] em Caraguatatuba | Total Quality". Ex.: "Hemograma Completo em
+  Caraguatatuba | Total Quality". Nada de "última geração", "o melhor", "mais completo".
+- Description: o que a pessoa descobre na página e o próximo passo ("Tire dúvidas pelo
+  WhatsApp"). Resultado é "em curto prazo", nunca "24 horas" ou "rápido".
+- Só serviços que a clínica realiza. **Não realiza:** ecocardiograma, mamografia, ressonância,
+  endoscopia, colonoscopia, teste ergométrico (esforço) — e não se cria página "não fazemos X".
+  Densitometria óssea não tem página (a lista de jul/2026 a citava por engano).
 
-  // Meta description - OBRIGATÓRIO
-  useMetaDescription("Sua descrição breve para SEO");
+## Rotas atuais (15/11/2026)
 
-  // Canonical URL - OBRIGATÓRIO
-  useCanonical("/sua-nova-rota");
+- Institucionais: `/`, `/sobre`, `/contato`, `/convenios`, `/privacidade`, `/cartao`, `/blog`.
+- Serviços: `/exames` (hub), 13 em `/exames/:slug` (exames-de-sangue, hemograma,
+  tomografia-computadorizada, raio-x, ultrassonografia, exame-admissional, mapa, holter,
+  espirometria, eletrocardiograma, eletroencefalograma, exame-toxicologico, sexagem-fetal),
+  `/especialidades` (hub) e 5 em `/especialidades/:slug` (endocrinologista,
+  gastroenterologista, medicina-do-trabalho, cardiologista, pediatra),
+  `/laboratorio-caraguatatuba`, `/checkup`, `/bioimpedancia`.
+- Blog: `/blog/:slug`, fonte única em `client/src/content/blog/index.json`. Rascunho
+  (`draft: true`) responde 200 com `noindex` e fica fora do sitemap.
+- **Removidas com 301** (`server/_core/legacy-redirects.ts`): `/exames/mamografia` e
+  `/outubro-rosa` → `/exames/ultrassonografia`; `/posts/*` e `/category/*` → artigo
+  equivalente ou `/blog`; `/about-us`, `/contact-us` → `/sobre`, `/contato`; os artigos
+  consolidados em 22/10/2026. `/faq` responde 410.
+- Redirecionamento em **um salto só**: http/www/barra final/destino legado saem num único 301
+  com a query string (`server/_core/index.ts`). O salto http→https da CDN da Hostinger
+  (mantendo o www) é configuração do hPanel, fora do repositório.
 
-  return (
-    <div className="min-h-screen bg-white">
-      {/* Seu conteúdo aqui */}
-    </div>
-  );
-}
-```
-
-### Passo 3: Registre a Rota em `App.tsx`
-
-**Localização:** `/home/ubuntu/total-quality/client/src/App.tsx`
-
-```tsx
-import SuaNovaPage from "@/pages/SuaNovaPage";
-
-export default function App() {
-  return (
-    <Router>
-      <Route path="/sua-nova-rota" component={SuaNovaPage} />
-      {/* outras rotas */}
-    </Router>
-  );
-}
-```
-
-### Passo 4: Valide a Implementação
-
-**Teste com curl:**
+## Verificação
 
 ```bash
-curl -s http://localhost:3000/sua-nova-rota | grep "<title>"
-curl -s http://localhost:3000/sua-nova-rota | grep 'rel="canonical"'
-curl -s http://localhost:3000/sua-nova-rota | grep 'name="description"'
-curl -s http://localhost:3000/sua-nova-rota | grep 'property="og:url"'
+pnpm build && pnpm start
+node scripts/auditoria-sitemap.mjs http://localhost:3000   # todas as URLs do sitemap
+node scripts/paridade-ssr.mjs http://localhost:3000        # servidor x DOM hidratado
+curl -s http://localhost:3000/robots.txt                   # bloqueia /admin, /api, /dashboard
 ```
 
-**Resultado esperado:**
-
-```html
-<title>Seu Título | Total Quality</title>
-<link rel="canonical" href="https://totalquality.med.br/sua-nova-rota">
-<meta name="description" content="Sua descrição breve para SEO">
-<meta property="og:url" content="https://totalquality.med.br/sua-nova-rota">
-```
-
----
-
-## 📝 Checklist de SEO para Novas Páginas
-
-**ANTES de fazer commit/publicar, valide:**
-
-- [ ] Meta tags adicionados em `routes-metadata.ts`
-- [ ] Title único (30-60 caracteres)
-- [ ] Description único (120-160 caracteres)
-- [ ] Canonical URL correto (não apontando para home)
-- [ ] og:url correto
-- [ ] og:image fornecido (1200x630px)
-- [ ] Rota registrada em `App.tsx`
-- [ ] Página React criada com `useCanonical()` e `useMetaDescription()`
-- [ ] Testado com curl - title, canonical, description, og:url corretos
-- [ ] Sitemap.xml atualizado automaticamente (verificar com `curl http://localhost:3000/sitemap.xml`)
-
----
-
-## 🎨 Boas Práticas de Meta Tags
-
-### Title Tags
-
-**✅ Bom:**
-- "Check-up Preventivo em Caraguatatuba | Planos e Preços | Total Quality"
-- "Mamografia Digital em Caraguatatuba | Total Quality"
-- "Hemograma em Caraguatatuba: Como Agendar, Preparo e Resultados"
-
-**❌ Ruim:**
-- "Home" (genérico)
-- "Página 1" (sem contexto)
-- "Total Quality" (sem diferenciação)
-- Muito longo (>60 caracteres)
-
-### Meta Descriptions
-
-**✅ Bom:**
-- "Check-up preventivo em Caraguatatuba: planos básico, select e premium. Exames completos com resultados rápidos. Agende agora."
-- "Mamografia digital em Caraguatatuba - SP. Diagnóstico de câncer de mama. Tecnologia de última geração. Agende seu exame."
-
-**❌ Ruim:**
-- "Clique aqui para saber mais" (genérico)
-- Muito curto (<120 caracteres)
-- Muito longo (>160 caracteres)
-- Duplicado de outra página
-
-### Keywords
-
-**✅ Bom:**
-- "check-up, check-up preventivo, exames preventivos, Caraguatatuba"
-- "mamografia, mamografia digital, diagnóstico de mama, Caraguatatuba"
-
-**❌ Ruim:**
-- Sem keywords
-- Keywords não relacionadas ao conteúdo
-- Keyword stuffing (repetir palavra 10x)
-
----
-
-## 🔍 Estrutura de Rotas Atual
-
-### Rotas Estáticas (6)
-
-| Rota | Title | Priority |
-|------|-------|----------|
-| `/` | Laboratório em Caraguatatuba | 1.0 |
-| `/checkup` | Check-up Preventivo em Caraguatatuba | 0.9 |
-| `/bioimpedancia` | Bioimpedância - Análise de Composição Corporal | 0.8 |
-| `/blog` | Blog Total Quality | 0.8 |
-| `/cartao` | Cartão Total Quality Care | 0.8 |
-| `/laboratorio-caraguatatuba` | Laboratório em Caraguatatuba | 0.8 |
-
-### Rotas de Exames (11)
-
-Padrão: `/exames/{slug}`
-
-| Exame | Slug | Priority |
-|-------|------|----------|
-| Exames de Sangue | `exames-de-sangue` | 0.9 |
-| Tomografia | `tomografia-computadorizada` | 0.9 |
-| Raio-X | `raio-x` | 0.9 |
-| Ultrassom | `ultrassom` | 0.9 |
-| Mamografia | `mamografia` | 0.9 |
-| Ecocardiograma | `ecocardiograma` | 0.9 |
-| Eletrocardiograma | `eletrocardiograma` | 0.9 |
-| Bioimpedância | `bioimpedancia` | 0.9 |
-| Densitometria Óssea | `densitometria-ossea` | 0.9 |
-| Teste de Esforço | `teste-esforco` | 0.9 |
-| Holter 24h | `holter-24h` | 0.9 |
-
-### Rotas de Blog
-
-Padrão: `/blog/{slug}`. A fonte única é `client/src/content/blog/index.json` — a lista que
-existia aqui envelheceu. Rascunho (`draft: true`) responde 200 com `noindex` e fica fora do
-sitemap.
-
-Consolidados com 301 em 22/10/2026 (regra 24): `hemograma-caraguatatuba`,
-`ultrassonografia-caraguatatuba`, `tomografia-caraguatatuba`, `check-up-preventivo-quando-fazer`,
-`laboratorio-regiao-sul-caraguatatuba`, `laboratorio-jardim-primavera-caraguatatuba` (rascunho),
-`convenios-laboratorio-caraguatatuba` e `exame-de-sangue-caraguatatuba`. Destinos em
-`server/_core/legacy-redirects.ts`.
-
----
-
-## 🚀 Validação Automática
-
-### Verificar Sitemap
-
-```bash
-curl -s http://localhost:3000/sitemap.xml | grep "<loc>" | wc -l
-# Deve retornar: 29 (ou mais se adicionou rotas)
-```
-
-### Verificar Robots.txt
-
-```bash
-curl -s http://localhost:3000/robots.txt
-# Deve bloquear: /admin, /api, /dashboard
-```
-
-### Verificar Meta Tags de Uma Rota
-
-```bash
-curl -s http://localhost:3000/sua-rota | grep -E "<title>|canonical|og:url|name=\"description\""
-```
-
----
-
-## 📊 Monitoramento no Google Search Console
-
-**Após publicar, monitore:**
-
-1. **Indexação → Páginas**
-   - Procure por "Duplicada, o Google escolheu um canônico diferente"
-   - Deve estar VAZIO agora (antes tinha 13 URLs)
-
-2. **Cobertura**
-   - Deve mostrar "Válida" para todas as 29+ URLs
-   - Antes: 13% HTML, 77% "outro tipo de arquivo"
-   - Agora: 100% HTML
-
-3. **Melhorias**
-   - Monitore "Mobile Usability"
-   - Monitore "Experiência na Página"
-
----
-
-## 🔐 Regras Obrigatórias
-
-**NUNCA:**
-- ❌ Adicione rota sem registrar em `routes-metadata.ts`
-- ❌ Crie página sem `useCanonical()` e `useMetaDescription()`
-- ❌ Use canonical apontando para home (exceto na home)
-- ❌ Duplique meta tags de outra página
-- ❌ Deixe og:image vazio
-- ❌ Crie rota sem testar com curl
-
-**SEMPRE:**
-- ✅ Consulte este documento ANTES de criar/modificar página
-- ✅ Valide com curl ANTES de fazer commit
-- ✅ Teste sitemap.xml ANTES de publicar
-- ✅ Atualize todo.md com novo item
-- ✅ Faça checkpoint ANTES de publicar
-
----
-
-## 📞 Suporte
-
-**Dúvidas sobre SEO?**
-1. Consulte este documento
-2. Verifique exemplo em `routes-metadata.ts`
-3. Teste com curl
-4. Valide no sitemap.xml
-
-**Problema de indexação?**
-1. Verifique canonical URLs em `routes-metadata.ts`
-2. Verifique se rota está em `App.tsx`
-3. Verifique se página usa `useCanonical()` e `useMetaDescription()`
-4. Teste com curl
-5. Resubmeta sitemap.xml ao GSC
-
----
-
-**Versão:** 1.0  
-**Criado:** 16 de Julho de 2026  
-**Próxima revisão:** Quando adicionar nova categoria de páginas
+No Search Console, depois do deploy: Indexação → Páginas ("Duplicada sem canônica",
+"Página com redirecionamento", 404), Sitemaps e Melhorias (FAQ, Breadcrumb).
 
 ---
 
@@ -363,7 +126,10 @@ por testes em `server/seo-content.test.ts`:
    sem o bloco injetado por `server/_core/seo-content.ts` dentro do `#root`, o
    Google recebe HTML vazio e a página não rankeia. Ao criar uma página nova:
    metadata em `routes-metadata.ts` + conteúdo em `seo-content.ts` (o teste
-   guard-rail falha se esquecer).
+   guard-rail falha se esquecer). *Desde nov/2026 (Fase 1)* as rotas de serviço,
+   `/sobre`, `/contato` e `/especialidades` vêm do SSR do próprio React
+   (`entry-server.tsx`) com hidratação — o pré-render à mão ficou só para home,
+   `/exames`, blog, convênios e privacidade. Exceção conhecida: `/cartao`.
 2. **Uma intenção de busca por página (sem canibalização).** Home = "laboratório
    em caraguatatuba" (e "laboratório"); `/laboratorio-caraguatatuba` = "análises
    clínicas"; cada `/exames/:slug` = o nome do exame. Não repetir o mesmo
@@ -424,6 +190,9 @@ por testes em `server/seo-content.test.ts`:
     pré-renderizado precisa para pintar certo tem que estar no `<style>` inline
     do `client/index.html`** — a preflight do Tailwind chega depois. Ao mexer no
     HTML pré-renderizado, conferir se o estilo correspondente está inline.
+    *Nov/2026 (Fase 1):* nas rotas de SSR a folha de estilo volta a ser
+    bloqueante (`seo-content.ts`), porque o HTML do React precisa do Tailwind no
+    primeiro paint — sem isso o CLS só trocaria de causa.
 15. **Contraste WCAG AA**: os tokens `text`, `text-light` e `text-muted` estão
     calibrados para passar 4,5:1 sobre os três fundos do site (branco,
     `surface-light` 0.97 e `surface-dark` 0.94, que é o rodapé). Não clarear:
@@ -440,8 +209,11 @@ por testes em `server/seo-content.test.ts`:
     realiza viola as diretrizes do Google (risco de suspensão do perfil) e as
     normas do CFM — e, na prática, atrai visita que não converte e piora o sinal
     de engajamento. Hoje estão fora: **ressonância magnética** (decisão de
-    29/07/2026) e **ecocardiograma** (01/08/2026 — a clínica pretende oferecer no
-    futuro; ao passar a oferecer, remover do guard-rail ANTES de anunciar). O
+    29/07/2026), **ecocardiograma** (01/08/2026 — a clínica pretende oferecer no
+    futuro; ao passar a oferecer, remover do guard-rail ANTES de anunciar),
+    **mamografia** (31/10/2026, 301 para ultrassonografia), endoscopia,
+    colonoscopia e teste ergométrico. Cardiologista e pediatra **são** atendidos
+    (decisão de 14/11/2026). O
     teste `nunca anunciar servico nao prestado` em `server/seo-content.test.ts`
     varre todas as rotas do sitemap e falha se algum termo reaparecer. Ele já
     pegou duas menções que a busca manual não achou.
@@ -499,7 +271,17 @@ por testes em `server/seo-content.test.ts`:
     no meio e no fim de todo artigo publicado, com botão para a página do exame
     (`examPages`) e WhatsApp. Artigo que disputa a intenção de uma página de serviço é
     consolidado nela com 301, levando antes o conteúdo útil. Autoria é a clínica; o topo
-    mostra "Revisado por Alex Waltersdorf, Responsável Técnico · Atualizado em …" (nunca em
-    rascunho). Link de WhatsApp só por `whatsappUrl()` (api.whatsapp.com, fixo
+    mostra "Revisado por Dr. Alex Waltersdorf - 267.339" e "Publicado em/Atualizado em" com
+    `<time datetime>` (nov/2026, Fase 4; nunca em rascunho). Link de WhatsApp só por `whatsappUrl()` (api.whatsapp.com, fixo
     (12) 3887-3535) — nunca `wa.me`. Relatório: `docs/seo-blog-2026-10-22.md`. Travas em
     `server/blog-exames.test.ts` e `server/seo-content.test.ts`.
+
+25. **Regra do pixel em toda atualização, a começar pelo blog** (decisão do Alex,
+    29/10/2026, depois da perícia de rastreamento de 28/10): toda página nova ou
+    alterada mantém a medição completa — CTA por `tracking.ts`, conversão no
+    envio do formulário com `event_id`, evento novo também no regex do GTM,
+    consentimento negado por padrão. **No blog:** contato só pelo `ExamCTA`;
+    nenhum link de WhatsApp, `tel:`, `wa.me` ou mapa no corpo do artigo; todo
+    artigo com `examType`, e o publicado também com `examPages`; nada de script ou pixel no JSON.
+    Detalhe nos itens 8 a 13 da seção "Rastreamento" do `CLAUDE.md`. Travas em
+    `server/rastreamento-100.test.ts`.

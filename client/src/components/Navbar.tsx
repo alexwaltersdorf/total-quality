@@ -9,6 +9,8 @@ import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { trackNavClick, trackScheduleExam, trackResultsClick, trackWhatsAppClick } from "@/lib/tracking";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import { useMensagemWhatsApp } from "@/contexts/AssuntoPagina";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 /*
  * Menu (decisao do Alex, 18/10/2026): Inicio · Sobre · Contato · Nossos Exames ·
@@ -19,17 +21,24 @@ import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLead
  */
 const RESULTADOS_URL = "https://app.totalquality.med.br/";
 
-const ancoras = [
-  { label: "Sobre", href: "#sobre" },
-  { label: "Contato", href: "#contato" },
+// Sobre e Contato viraram paginas (SEO nov/2026, Fase 2). Antes eram ancoras
+// da home (#sobre, #contato) em botoes, e /sobre e /contato faziam 301 para
+// elas: o Google nao tinha uma URL para "sobre" nem para "contato".
+const paginasInstitucionais = [
+  { label: "Sobre", href: "/sobre" },
+  { label: "Contato", href: "/contato" },
 ];
 
 const extrasExames = [
   { label: "Check-up", href: "/checkup" },
   { label: "Bioimpedância", href: "/bioimpedancia" },
   // Especialidades (24/10/2026): consultas e medicina do trabalho.
+  // Cardiologista, pediatra e o indice /especialidades: Fase 3 (15/11/2026).
+  { label: "Especialidades", href: "/especialidades" },
+  { label: "Cardiologista", href: "/especialidades/cardiologista" },
   { label: "Endocrinologista", href: "/especialidades/endocrinologista" },
   { label: "Gastroenterologista", href: "/especialidades/gastroenterologista" },
+  { label: "Pediatra", href: "/especialidades/pediatra" },
   { label: "Medicina do Trabalho", href: "/especialidades/medicina-do-trabalho" },
   { label: "Cartão Total Quality", href: "/cartao" },
 ];
@@ -39,7 +48,8 @@ const examSitelinks = [
   { label: "Tomografia Computadorizada", href: "/exames/tomografia-computadorizada" },
   { label: "Raio-X", href: "/exames/raio-x" },
   { label: "Ultrassonografia", href: "/exames/ultrassonografia" },
-  { label: "Mamografia Digital", href: "/exames/mamografia" },
+  // Mamografia saiu daqui em 31/10/2026: a clinica NAO realiza no momento
+  // (decisao do Alex). /exames/mamografia faz 301 para /exames/ultrassonografia.
   { label: "MAPA", href: "/exames/mapa" },
   { label: "Holter", href: "/exames/holter" },
   { label: "Espirometria", href: "/exames/espirometria" },
@@ -104,10 +114,12 @@ export default function Navbar() {
     window.requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0 }));
   };
 
+  const mensagemAgendar = useMensagemWhatsApp("Olá! Gostaria de agendar um exame.");
+
   const handleScheduleClickNavbar = () => {
     setMobileOpen(false);
     trackScheduleExam("navbar_cta", "geral");
-    openWhatsApp("navbar_cta", "Olá! Gostaria de agendar um exame.");
+    openWhatsApp("navbar_cta", mensagemAgendar);
   };
 
   const handleWhatsAppClickNavbar = () => {
@@ -123,11 +135,11 @@ export default function Navbar() {
 
   const handleScheduleClick = handleScheduleClickNavbar;
 
+  // Link de verdade (Fase 2): o navegador abre a aba; aqui so o evento de
+  // sempre. Era "https://totalquality.med.br" — abria o proprio site.
   const handleResultsClick = () => {
     setMobileOpen(false);
     trackResultsClick();
-    // Era "https://totalquality.med.br" — abria o proprio site, nao os laudos.
-    window.open(RESULTADOS_URL, "_blank", "noopener,noreferrer");
   };
 
   const handleDropdownEnter = () => {
@@ -148,11 +160,12 @@ export default function Navbar() {
       }`}
     >
       <div className="container flex items-center justify-between py-5">
-        {/* Logo */}
-        <a
-          href="#inicio"
+        {/* Logo: link para a home (Fase 2). Na propria home, volta ao topo. */}
+        <Link
+          href="/"
           className="flex items-center gap-3 group"
-          onClick={(e) => { e.preventDefault(); scrollTo("#inicio"); }}
+          aria-label="Total Quality — página inicial"
+          onClick={handleHomeClick}
         >
           <picture>
             <source type="image/avif" srcSet="/images/logo-276.avif 276w, /images/logo-414.avif 414w" sizes="138px" />
@@ -167,17 +180,17 @@ export default function Navbar() {
               decoding="sync"
             />
           </picture>
-        </a>
+        </Link>
 
         {/* Desktop nav links */}
         <div className="hidden lg:flex items-center gap-8">
           <Link href="/" className={itemDesktop(ativo("/"))} onClick={handleHomeClick}>
             Início
           </Link>
-          {ancoras.map((link) => (
-            <button key={link.href} type="button" onClick={() => scrollTo(link.href)} className={itemDesktop(false)}>
+          {paginasInstitucionais.map((link) => (
+            <Link key={link.href} href={link.href} className={itemDesktop(ativo(link.href))} onClick={() => trackNavClick(link.label.toLowerCase())}>
               {link.label}
-            </button>
+            </Link>
           ))}
 
           {/* Exames Dropdown */}
@@ -235,17 +248,17 @@ export default function Navbar() {
           <Link href="/blog" className={itemDesktop(ativo("/blog"))} onClick={() => trackNavClick("blog")}>
             Blog
           </Link>
-          <button type="button" onClick={handleResultsClick} className={itemDesktop(false)}>
+          <a href={RESULTADOS_URL} target="_blank" rel="noopener noreferrer" onClick={handleResultsClick} className={itemDesktop(false)}>
             Resultados
-          </button>
+          </a>
         </div>
 
         {/* Desktop CTA */}
         <div className="hidden lg:flex items-center">
-          <button type="button" onClick={handleScheduleClick} className="btn-pill">
+          <CtaWhatsApp mensagem={mensagemAgendar} onClick={handleScheduleClick} className="btn-pill">
             Agendar
             <ArrowUpRight className="w-3.5 h-3.5" />
-          </button>
+          </CtaWhatsApp>
         </div>
 
         {/* Mobile menu button */}
@@ -270,15 +283,15 @@ export default function Navbar() {
             <Link href="/" className="block w-full text-left py-4 border-b border-black/10" onClick={handleHomeClick}>
               <span className={`heading-display text-4xl ${ativo("/") ? "text-brand" : "text-text"}`}>INÍCIO</span>
             </Link>
-            {ancoras.map((link) => (
-              <button
+            {paginasInstitucionais.map((link) => (
+              <Link
                 key={link.href}
-                type="button"
-                onClick={() => scrollTo(link.href)}
+                href={link.href}
+                onClick={() => { setMobileOpen(false); trackNavClick(link.label.toLowerCase()); }}
                 className="block w-full text-left py-4 border-b border-black/10"
               >
-                <span className="heading-display text-4xl text-text">{link.label.toUpperCase()}</span>
-              </button>
+                <span className={`heading-display text-4xl ${ativo(link.href) ? "text-brand" : "text-text"}`}>{link.label}</span>
+              </Link>
             ))}
 
             {/* Mobile Exames Accordion */}
@@ -327,21 +340,23 @@ export default function Navbar() {
             </Link>
           </div>
           <div className="mt-10 space-y-4">
-            <button
-              type="button"
+            <CtaWhatsApp
+              mensagem={mensagemAgendar}
               onClick={handleScheduleClick}
               className="btn-pill w-full"
             >
               Agendar
               <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
-            <button
-              type="button"
+            </CtaWhatsApp>
+            <a
+              href={RESULTADOS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={handleResultsClick}
               className="btn-pill-outline w-full"
             >
               Resultados Online
-            </button>
+            </a>
           </div>
           <div className="mt-10 text-xs text-text-muted space-y-1">
             <p>R. Padre Anchieta, 1010 - Centro, Caraguatatuba - SP</p>

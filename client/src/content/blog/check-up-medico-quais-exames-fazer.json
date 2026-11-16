@@ -5,6 +5,7 @@
   "metaTitle": "Check-up Médico: Quais Exames Fazer? | Total Quality",
   "subtitle": "Entenda como o check-up se organiza entre exames laboratoriais, cardiológicos e de imagem",
   "excerpt": "Entenda o que compõe um check-up médico, quais exames laboratoriais, cardiológicos e de imagem podem fazer parte e com que frequência repetir.",
+  "metaDescription": "Entenda o que compõe um check-up médico: exames laboratoriais, cardiológicos e de imagem, com que frequência repetir e como se preparar.",
   "category": "Medicina Preventiva",
   "author": "Equipe Total Quality",
   "authorRole": "Total Quality Medicina Diagnóstica",
@@ -60,7 +61,7 @@
     "### Tomografia",
     "Indicada em avaliações mais detalhadas de determinadas regiões do corpo, geralmente por indicação médica específica.",
     "### Mamografia",
-    "Recomendada dentro do acompanhamento preventivo da saúde da mama, conforme faixa etária e orientação médica.",
+    "Recomendada dentro do acompanhamento preventivo da saúde da mama, conforme faixa etária e orientação médica. No momento, a Total Quality não realiza mamografia.",
     "### Raio-X",
     "Pode ser utilizado na avaliação de estruturas ósseas e de determinadas regiões do corpo, conforme o quadro clínico.",
     "## Com que frequência fazer um check-up?",
@@ -74,7 +75,7 @@
     "## Por que centralizar seus exames em uma estrutura de medicina diagnóstica?",
     "Centralizar os exames em uma única estrutura de medicina diagnóstica facilita o acompanhamento contínuo da saúde, já que os resultados ficam organizados em um só histórico, e reduz a necessidade de deslocamento entre diferentes clínicas para completar um check-up. Essa centralização também tende a agilizar a comunicação entre as diferentes áreas envolvidas, como laboratório, cardiologia e diagnóstico por imagem, algo especialmente útil quando um exame aponta a necessidade de investigação complementar.",
     "## Como a Total Quality reúne exames laboratoriais, cardiológicos e de imagem em Caraguatatuba?",
-    "A **Total Quality** oferece uma estrutura completa de medicina diagnóstica em **Caraguatatuba**, reunindo exames laboratoriais, exames cardiológicos como MAPA, Holter e eletrocardiograma, além de exames de imagem como tomografia, ultrassonografia e mamografia. Toda essa estrutura também está disponível de forma integrada dentro do check-up preventivo da clínica, organizado em pacotes por faixa etária e perfil de paciente.",
+    "A **Total Quality** oferece uma estrutura completa de medicina diagnóstica em **Caraguatatuba**, reunindo exames laboratoriais, exames cardiológicos como MAPA, Holter e eletrocardiograma, além de exames de imagem como tomografia, ultrassonografia e raio-X. Toda essa estrutura também está disponível de forma integrada dentro do check-up preventivo da clínica, organizado em pacotes por faixa etária e perfil de paciente.",
     "**Quer colocar seus exames em dia? Conheça a estrutura da Total Quality Medicina Diagnóstica em Caraguatatuba e agende pelo WhatsApp (12) 3887-3535.**",
     "## Referências",
     "- [Health screenings for men ages 18 to 39](https://medlineplus.gov/ency/article/007464.htm) — MedlinePlus (NIH)\n- [Complete Blood Count (CBC)](https://medlineplus.gov/lab-tests/complete-blood-count-cbc/) — MedlinePlus (NIH)\n- [Holter heart monitor (24h)](https://medlineplus.gov/ency/article/003877.htm) — MedlinePlus (NIH)\n- [Electrocardiogram](https://medlineplus.gov/ency/article/003868.htm) — MedlinePlus (NIH)",
@@ -86,5 +87,5 @@
     "/checkup"
   ],
   "horaMarcada": true,
-  "dateModified": "2026-10-22"
+  "dateModified": "2026-10-31"
 }

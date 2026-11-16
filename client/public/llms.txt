@@ -1,13 +1,13 @@
 # Total Quality Medicina Diagnóstica
 
-> Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba - SP, desde 2003. Mais de 3.000 tipos de exames laboratoriais, diagnósticos por imagem e cardiológicos, com resultados online em até 24h.
+> Laboratório de análises clínicas e medicina diagnóstica em Caraguatatuba - SP, desde 2003. Mais de 3.000 tipos de exames laboratoriais, diagnósticos por imagem e cardiológicos, com resultados online em curto prazo.
 
 ## Informações de Contato
 
-- Endereço: R. Padre Anchieta, 1010, Centro, Caraguatatuba - SP, CEP 11660-010
+- Endereço: Rua Padre Anchieta, 1010, Centro, Caraguatatuba - SP, CEP 11660-010
 - Telefone / WhatsApp: (12) 3887-3535
 - E-mail: contato@totalquality.med.br
-- Horário: Segunda a Sexta, 08h às 18h
+- Horário: segunda a sexta, das 7h30 às 18h; sábado e domingo fechado
 - Instagram: https://www.instagram.com/totalqualitymedicina
 
 ## Exames
@@ -16,21 +16,38 @@
 - [Tomografia Computadorizada](https://totalquality.med.br/exames/tomografia-computadorizada)
 - [Raio-X](https://totalquality.med.br/exames/raio-x)
 - [Ultrassonografia](https://totalquality.med.br/exames/ultrassonografia)
-- [Mamografia Digital](https://totalquality.med.br/exames/mamografia)
 - [MAPA](https://totalquality.med.br/exames/mapa)
 - [Holter](https://totalquality.med.br/exames/holter)
 - [Espirometria](https://totalquality.med.br/exames/espirometria)
 - [Eletrocardiograma](https://totalquality.med.br/exames/eletrocardiograma)
 - [Eletroencefalograma](https://totalquality.med.br/exames/eletroencefalograma)
 - [Exame Toxicológico](https://totalquality.med.br/exames/exame-toxicologico)
+- [Hemograma Completo](https://totalquality.med.br/exames/hemograma)
+- [Sexagem Fetal](https://totalquality.med.br/exames/sexagem-fetal)
+- [Exame Admissional e ASO](https://totalquality.med.br/exames/exame-admissional)
+
+## Consultas e medicina do trabalho
+
+- [Todas as especialidades](https://totalquality.med.br/especialidades)
+- [Cardiologista](https://totalquality.med.br/especialidades/cardiologista)
+- [Endocrinologista](https://totalquality.med.br/especialidades/endocrinologista)
+- [Gastroenterologista](https://totalquality.med.br/especialidades/gastroenterologista)
+- [Pediatra](https://totalquality.med.br/especialidades/pediatra)
+- [Medicina do Trabalho (PCMSO e ASO)](https://totalquality.med.br/especialidades/medicina-do-trabalho)
 
 ## Serviços e Recursos
 
+- [Análises Clínicas](https://totalquality.med.br/laboratorio-caraguatatuba)
 - [Check-Up Preventivo](https://totalquality.med.br/checkup)
 - [Bioimpedância](https://totalquality.med.br/bioimpedancia)
 - [Cartão Total Quality](https://totalquality.med.br/cartao)
+- [Convênios aceitos](https://totalquality.med.br/convenios)
 - [Blog de Saúde](https://totalquality.med.br/blog)
+- [Sobre a Total Quality](https://totalquality.med.br/sobre)
+- [Contato](https://totalquality.med.br/contato)
 
 ## Sobre
 
-Fundada em 2003 em Caraguatatuba - SP, a Total Quality Medicina Diagnóstica atende mais de 30.000 famílias. Conta com equipamentos de última geração, 85% de energia solar e parceria acadêmica com a UNITAU. Agendamento de exames disponível pelo WhatsApp (12) 3887-3535.
+Fundada em 2003 em Caraguatatuba - SP, a Total Quality Medicina Diagnóstica atende mais de 30.000 famílias. Conta com 85% de energia solar e parceria acadêmica com a UNITAU. Coleta laboratorial sem agendamento, por ordem de chegada; exames de imagem e consultas agendados pelo WhatsApp (12) 3887-3535. Convênios: Cartão de Todos, Solumedi e Leader; fora deles, atendimento particular.
+
+Total Quality Medicina Diagnóstica — Registro 970616 · Responsável Técnico: Alex Waltersdorf - 267.339
