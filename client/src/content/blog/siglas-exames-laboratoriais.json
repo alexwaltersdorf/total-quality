@@ -22,7 +22,7 @@
  ],
  "draft": false,
  "reviewStatus": "aprovado",
- "dateModified": "2026-11-03",
+ "dateModified": "2026-11-16",
  "examName": "exames laboratoriais",
  "examType": "exames-de-sangue",
  "examPages": [
@@ -39,7 +39,7 @@
   "As **siglas de exames laboratoriais** são abreviações que o médico usa para pedir, em poucas letras, cada análise de sangue ou de urina. HMG é o hemograma, TGO e TGP avaliam o fígado, TSH e T4L avaliam a tireoide, HbA1c é a hemoglobina glicada e EAS é o exame de urina tipo 1. Cada sigla corresponde a um exame diferente, com finalidade e preparo próprios.",
   "Abaixo, as siglas mais comuns do pedido de exame de sangue e de urina, organizadas por grupo, com o nome completo e a finalidade de cada exame. Não há valores de referência aqui: eles dependem do método e vêm no laudo. Como o preparo varia, confirme o preparo do seu pedido antes da coleta.",
   "## Consulta rápida: sigla e nome do exame",
-  "| Sigla ou abreviação | Nome do exame |\n| --- | --- |\n| GJ, Glic | Glicemia de jejum |\n| HMG | [Hemograma completo](/exames/hemograma) |\n| HbA1c | Hemoglobina glicada |\n| TGO / AST | Aspartato aminotransferase |\n| TGP / ALT | Alanina aminotransferase |\n| EAS | [Urina tipo 1](/blog/exame-de-urina-eas-como-coletar) |",
+  "| Sigla ou abreviação | Nome do exame |\n| --- | --- |\n| GJ, Glic | Glicemia de jejum |\n| HMG | Hemograma completo |\n| HbA1c | Hemoglobina glicada |\n| TGO / AST | Aspartato aminotransferase |\n| TGP / ALT | Alanina aminotransferase |\n| EAS | [Urina tipo 1](/blog/exame-de-urina-eas-como-coletar) |",
   "As abreviações podem variar entre serviços. Se o pedido estiver ilegível ou usar outra sigla, confirme com a equipe; não substitua um exame por suposição.",
   "## Por que o pedido de exame de sangue vem cheio de siglas",
   "As siglas economizam espaço num pedido com vários exames. Algumas vêm do português, como VHS e TGO; outras, do inglês, como TSH, PSA e HbA1c.",
@@ -112,7 +112,9 @@
   "### Posso fazer todos os exames do pedido na mesma coleta?",
   "Na maioria das vezes, sim: vários exames de sangue saem da mesma punção. A exceção são testes com várias coletas, como a curva glicêmica. Se o pedido misturar exames com e sem jejum, faça o jejum.",
   "### Onde fazer exames laboratoriais em Caraguatatuba?",
-  "Na Total Quality, na Rua Padre Anchieta, 1010 – Centro, Caraguatatuba-SP. A coleta de exames de sangue e de urina é sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Leve o pedido médico e um documento com foto. Dúvidas sobre siglas e preparo pelo WhatsApp (12) 3887-3535."
+  "Na Total Quality, na Rua Padre Anchieta, 1010 – Centro, Caraguatatuba-SP. A coleta de exames de sangue e de urina é sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Leve o pedido médico e um documento com foto. Dúvidas sobre siglas e preparo pelo WhatsApp (12) 3887-3535.",
+  "## Referências",
+  "- [Complete Blood Count (CBC)](https://medlineplus.gov/lab-tests/complete-blood-count-cbc/) — MedlinePlus (NIH)\n- [Fasting for a Blood Test](https://medlineplus.gov/lab-tests/fasting-for-a-blood-test/) — MedlinePlus (NIH)\n- [Hemoglobin A1C (HbA1c) Test](https://medlineplus.gov/lab-tests/hemoglobin-a1c-hba1c-test/) — MedlinePlus (NIH)\n- [Cholesterol Levels](https://medlineplus.gov/lab-tests/cholesterol-levels/) — MedlinePlus (NIH)\n- [Liver Function Tests](https://medlineplus.gov/lab-tests/liver-function-tests/) — MedlinePlus (NIH)\n- [Câncer de próstata — versão para a população](https://www.gov.br/inca/pt-br/assuntos/cancer/tipos/prostata/versao-para-populacao) — Instituto Nacional de Câncer (INCA)\n- [Prostate-Specific Antigen (PSA) Test](https://medlineplus.gov/lab-tests/prostate-specific-antigen-psa-test/) — MedlinePlus (NIH)"
  ],
  "lastReviewed": "2026-10-22"
 }

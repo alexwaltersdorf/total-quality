@@ -31,6 +31,7 @@ import { resolveLeadValue } from "@/lib/leadValues";
 import { trackLeadDirect } from "@/hooks/useAnalyticsTracker";
 import { storeLeadHandoff } from "@/lib/leadHandoff";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 
 export default function ContatoSection() {
   const openWhatsApp = useWhatsAppRedirect();
@@ -150,9 +151,9 @@ export default function ContatoSection() {
           <div>
             <span className="reveal section-label mb-4 block">Exames de sangue e diagnóstico em Caraguatatuba</span>
             <h2 className="reveal heading-display text-5xl sm:text-6xl lg:text-7xl text-text" style={{ transitionDelay: "100ms" }}>
-              ENTRE EM{" "}
+              Entre em{" "}
               <br />
-              <span className="text-brand">CONTATO</span>
+              <span className="text-brand">contato</span>
             </h2>
           </div>
           <p className="reveal text-text-light max-w-md text-lg leading-relaxed" style={{ transitionDelay: "200ms" }}>
@@ -169,10 +170,7 @@ export default function ContatoSection() {
             <Link href="/exames/ultrassonografia" className="text-brand hover:underline">
               ultrassonografia
             </Link>
-            ,{" "}
-            <Link href="/exames/mamografia" className="text-brand hover:underline">
-              mamografia
-            </Link>{" "}
+{" "}
             e{" "}
             <Link href="/checkup" className="text-brand hover:underline">
               check-up
@@ -230,13 +228,13 @@ export default function ContatoSection() {
                     >
                       LIGAR: (12) 3887-3535
                     </button>
-                    <button
-                      type="button"
+                    <CtaWhatsApp
+                      mensagem="Olá! Gostaria de informações."
                       className="flex items-center justify-center px-6 py-3 bg-[#25D366] text-white rounded-full hover:bg-[#1da851] transition-colors font-semibold text-center"
                       onClick={() => { trackWhatsAppClick("contato_section"); openWhatsApp("contato_section", "Olá! Gostaria de informações."); }}
                     >
                       WHATSAPP: (12) 3887-3535
-                    </button>
+                    </CtaWhatsApp>
                   </div>
                 </div>
 
@@ -260,13 +258,14 @@ export default function ContatoSection() {
 
               {/* Quick actions */}
               <div className="mt-10 space-y-3">
-                <button
+                <CtaWhatsApp
+                  mensagem="Olá! Gostaria de informações."
                   onClick={() => { trackWhatsAppClick("contato_quick_action"); openWhatsApp("contato_quick_action", "Olá! Gostaria de informações."); }}
                   className="btn-pill w-full justify-center"
                 >
                   <MessageCircle className="w-4 h-4" />
                   WhatsApp
-                </button>
+                </CtaWhatsApp>
               </div>
 
               {/* Social */}

@@ -107,3 +107,32 @@ Não prometer ranking, citação em IA, rich result ou indexação garantidos.
   condições previstas da suíte, e build Vite/esbuild concluído. O CI do commit
   anterior do PR também foi conferido e estava aprovado. Sem novo defeito
   técnico reproduzível, esta rodada apenas acrescenta evidências ao mesmo PR.
+
+## Verificação e compatibilização de 16/11/2026
+
+- Main atual: e9c8a0a (PR #105, SEO nov/2026, fases 0–7). PR #101 permanece
+  em rascunho. Compatibilizado com a main atual, sem merge/publicação na main.
+- Preservados SSR, novos metadados, referências, FAQs locais, restrições de
+  serviços e rastreamento do #105. Descartada a constante de description de
+  hemograma deste PR, pois a main já usa examesData como fonte única.
+- A main já corrigiu RDC 978/2025 e controle externo no artigo de escolha de
+  laboratório. Essas alterações foram preservadas, sem repetir correções antigas.
+- A consulta direta de produção ainda encontrou jejum de 8 a 12 horas nas FAQs
+  de sangue/hemograma e indicação de curva glicêmica pós-prandial no artigo de
+  hipoglicemia. As correções seguem neste PR para revisão competente.
+- Produção: 10 páginas e 38 destinos internos passaram no audit-seo.mjs. HTTP,
+  canonical, H1, title, description, indexabilidade, JSON-LD sintaticamente válido,
+  sitemap e 404 passaram nos limites do script. Isso não é medição de ranking.
+- Build atualizado servido localmente: 10 páginas e 38 destinos internos, zero
+  achados no mesmo script. 1.679 testes aprovados; 34 ignorados conforme a suíte.
+- Build Vite/esbuild concluído. TypeScript ainda apresenta 13 erros em arquivos
+  alheios ao diff (baseline conferida separadamente). Nenhum guard-rail afrouxado.
+- Datas de modificação registram a edição; lastReviewed anterior foi preservado.
+  Não ocorreu nova aprovação médica. Referências primárias de jejum e
+  hipoglicemia foram reconferidas; não há ampliação de serviços ou protocolos.
+- Workflow diário ainda ausente da main: só estará ativo após integração deste PR.
+- Search Console sem acesso utilizável: não comparados períodos de 28 dias por
+  consulta, página, país e dispositivo. Sem métricas ou posições de Maps inferidas.
+- Auditoria completa com navegador, paridade de DOM, Core Web Vitals e validade
+  semântica de Schema.org não foram medidos nesta execução. O PR #94 de
+  unificação do blog segue aberto; seu escopo não foi duplicado.

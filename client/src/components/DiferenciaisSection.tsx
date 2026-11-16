@@ -22,7 +22,7 @@ const diferenciais = [
   {
     icon: Cpu,
     title: "Equipamentos digitais e laboratório automatizado",
-    description: "Equipamentos modernos de tomografia, ultrassonografia, mamografia digital e laboratório automatizado para exames de sangue e análises clínicas.",
+    description: "Equipamentos modernos de tomografia, ultrassonografia, raio-X e laboratório automatizado para exames de sangue e análises clínicas.",
   },
   {
     icon: Sun,
@@ -42,7 +42,7 @@ const diferenciais = [
   {
     icon: Globe,
     title: "Resultados de exames online",
-    description: "Acesso rápido e seguro aos seus laudos de exames de sangue, hemograma, glicemia, colesterol, tomografia, ultrassonografia e mamografia a qualquer momento.",
+    description: "Acesso rápido e seguro aos seus laudos de exames de sangue, hemograma, glicemia, colesterol, tomografia e ultrassonografia a qualquer momento.",
   },
 ];
 

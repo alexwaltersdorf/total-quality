@@ -16,6 +16,7 @@ import BlogPreviewSection from "@/components/BlogPreviewSection";
 import SobreSection from "@/components/SobreSection";
 import PorQueEscolherSection from "@/components/PorQueEscolherSection";
 import ContatoSection from "@/components/ContatoSection";
+import HomeFaqSection from "@/components/HomeFaqSection";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
 import {
@@ -93,6 +94,7 @@ export default function Home() {
         <BlogPreviewSection />
         <SobreSection />
         <PorQueEscolherSection />
+        <HomeFaqSection />
         <ContatoSection />
       </main>
       <Footer />

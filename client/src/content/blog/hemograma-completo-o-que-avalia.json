@@ -2,9 +2,9 @@
   "id": "11",
   "slug": "hemograma-completo-o-que-avalia",
   "title": "Hemograma Completo: O Que Avalia e Quais Exames Inclui",
-  "metaTitle": "Hemograma Completo: O Que Avalia e Quais Exames Inclui",
+  "metaTitle": "Hemograma Completo: Tabela do Que Cada Parte Avalia",
   "subtitle": "Série vermelha, série branca e plaquetas: o que cada parte do exame mostra, se precisa de jejum e como é a coleta",
-  "excerpt": "O hemograma completo avalia hemácias, leucócitos e plaquetas em uma só amostra de sangue. Veja o que cada série mostra e se o exame precisa de jejum.",
+  "excerpt": "Tabela com o que o hemograma completo avalia em cada série (hemácias, leucócitos e plaquetas), se precisa de jejum, como é a coleta e quando é pedido.",
   "category": "Exames Laboratoriais",
   "author": "Equipe Total Quality",
   "authorRole": "Total Quality Medicina Diagnóstica",
@@ -18,7 +18,7 @@
     "exames laboratoriais",
     "Caraguatatuba"
   ],
-  "dateModified": "2026-11-03",
+  "dateModified": "2026-11-16",
   "examName": "hemograma completo",
   "examType": "hemograma",
   "content": [
@@ -78,8 +78,10 @@
     "São as três partes do hemograma. A série vermelha mostra as hemácias e a hemoglobina, ligadas ao transporte de oxigênio; a série branca mostra os leucócitos, ligados à defesa do organismo; e as plaquetas estão ligadas à coagulação do sangue.",
     "### Preciso marcar horário para fazer o hemograma?",
     "Não. Na Total Quality, a coleta de exames laboratoriais é sem agendamento, por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Leve o pedido médico e um documento com foto.",
-    "## Fontes consultadas",
-    "[MedlinePlus: hemograma completo, componentes e preparo](https://medlineplus.gov/lab-tests/complete-blood-count-cbc/). O conteúdo explica o exame; a interpretação individual depende da avaliação clínica."
+    "### Onde fazer hemograma completo em Caraguatatuba?",
+    "Na Total Quality Medicina Diagnóstica, na Rua Padre Anchieta, 1010 – Centro, Caraguatatuba-SP. A coleta é sem agendamento, por ordem de chegada, ou com hora marcada pelo WhatsApp, de segunda a sexta, das 7h30 às 18h. Leve o pedido médico e um documento com foto. Dúvidas de preparo pelo WhatsApp (12) 3887-3535.",
+    "## Referências",
+    "- [Complete Blood Count (CBC)](https://medlineplus.gov/lab-tests/complete-blood-count-cbc/) — MedlinePlus (NIH)\n- [Conteo sanguíneo completo (CSC)](https://medlineplus.gov/spanish/ency/article/003642.htm) — MedlinePlus en español (NIH)\n- [Blood tests](https://www.nhs.uk/tests-and-treatments/blood-tests/) — NHS (Reino Unido)"
   ],
   "examPages": [
     "/exames/hemograma"

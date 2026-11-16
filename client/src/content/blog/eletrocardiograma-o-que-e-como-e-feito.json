@@ -2,9 +2,9 @@
   "id": "20",
   "slug": "eletrocardiograma-o-que-e-como-e-feito",
   "title": "Eletrocardiograma (ECG): Para Que Serve e Como É Feito",
-  "metaTitle": "Eletrocardiograma (ECG): Para Que Serve e Como É Feito",
+  "metaTitle": "Eletrocardiograma (ECG): Passo a Passo, Preparo e Duração",
   "subtitle": "O que significa ECG, para que serve, como é feito, quanto tempo demora e se precisa de jejum ou preparo",
-  "excerpt": "O eletrocardiograma (ECG) registra a atividade elétrica do coração em poucos minutos, sem dor e sem jejum. Veja para que serve, como é feito e o preparo.",
+  "excerpt": "Como é feito o eletrocardiograma passo a passo, quanto tempo demora, se precisa de jejum e uma tabela que compara ECG, Holter e MAPA. Exame sem dor.",
   "category": "Saúde do Coração",
   "author": "Equipe Total Quality",
   "authorRole": "Total Quality Medicina Diagnóstica",
@@ -75,7 +75,11 @@
     "### Eletrocardiograma precisa de jejum?",
     "Não. O ECG não exige jejum nem preparo especial; basta evitar creme ou óleo no tórax e usar roupa fácil de tirar. Se houver exames de sangue no mesmo pedido, siga o jejum indicado para eles.",
     "### Precisa marcar horário para fazer eletrocardiograma na Total Quality?",
-    "Sim. O eletrocardiograma é feito com hora marcada pelo WhatsApp (12) 3887-3535, de segunda a sexta, das 7h30 às 18h. Leve o pedido médico e um documento com foto."
+    "Sim. O eletrocardiograma é feito com hora marcada pelo WhatsApp (12) 3887-3535, de segunda a sexta, das 7h30 às 18h. Leve o pedido médico e um documento com foto.",
+    "### Onde fazer eletrocardiograma em Caraguatatuba?",
+    "Na Total Quality Medicina Diagnóstica, na Rua Padre Anchieta, 1010 – Centro, Caraguatatuba-SP. O eletrocardiograma é feito com hora marcada pelo WhatsApp (12) 3887-3535, de segunda a sexta, das 7h30 às 18h, com as orientações de preparo enviadas pela equipe.",
+    "## Referências",
+    "- [Electrocardiogram](https://medlineplus.gov/ency/article/003868.htm) — MedlinePlus (NIH)\n- [Diretriz da SBC sobre a Análise e Emissão de Laudos Eletrocardiográficos – 2022 (Arq Bras Cardiol 2022;119(4):638-680)](https://pmc.ncbi.nlm.nih.gov/articles/PMC9563889/) — Sociedade Brasileira de Cardiologia\n- [Holter heart monitor (24h)](https://medlineplus.gov/ency/article/003877.htm) — MedlinePlus (NIH)\n- [Diretrizes Brasileiras de Medidas da Pressão Arterial Dentro e Fora do Consultório – 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC11186661/) — Sociedade Brasileira de Cardiologia / SBH / SBN"
   ],
   "examPages": [
     "/exames/eletrocardiograma"

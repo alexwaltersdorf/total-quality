@@ -20,7 +20,6 @@ describe("GUARD-RAIL: valor por tipo de lead (nao remover)", () => {
     laboratorio: 135,
     exames: 135,
     "exame-toxicologico": 160,
-    mamografia: 200,
     "exame-admissional": 70,
     bioimpedancia: 100,
     cartao: 29.9,
@@ -34,6 +33,12 @@ describe("GUARD-RAIL: valor por tipo de lead (nao remover)", () => {
     espirometria: 165,
     checkup: 399,
   };
+
+  // mamografia (200) saiu em 31/10/2026: a clinica nao realiza o exame no
+  // momento (decisao do Alex), entao nao ha lead dele para valorar.
+  it("mamografia nao tem valor: o exame nao e realizado no momento", () => {
+    expect(LEAD_VALUES).not.toHaveProperty("mamografia");
+  });
 
   it("cada tipo vale exatamente o que o Alex informou", () => {
     for (const [chave, valor] of Object.entries(TABELA_DO_ALEX)) {
@@ -80,6 +85,7 @@ describe("GUARD-RAIL: valor por tipo de lead (nao remover)", () => {
      * de ticket informado. O Alex informou os dois nesse dia, e agora NENHUM
      * exame publicado fica sem valor proprio. A lista vazia e o estado certo:
      * exame novo sem valor quebra o build, que e o ponto da trava.
+     * (Em 31/10/2026 a mamografia saiu de examesData e daqui juntas.)
      */
     const CONHECIDOS_SEM_VALOR: string[] = [];
     const fonte = ler("client/src/lib/examesData.ts");

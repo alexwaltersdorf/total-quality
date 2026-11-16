@@ -2,9 +2,9 @@
   "id": "24",
   "slug": "exame-de-urina-eas-como-coletar",
   "title": "Exame de Urina (EAS): O Que É e Como Coletar Corretamente",
-  "metaTitle": "Exame de Urina EAS: O Que É e Como Coletar | Total Quality",
+  "metaTitle": "Exame de Urina EAS: Passo a Passo da Coleta e 5 Erros",
   "subtitle": "O que o EAS avalia, se precisa de jejum e o passo a passo da coleta para reduzir a chance de repetir o exame",
-  "excerpt": "O EAS (urina tipo 1) é o exame de urina de rotina: não precisa de jejum, mas exige coleta certa. Veja o que avalia e como coletar para evitar repetições.",
+  "excerpt": "Passo a passo da coleta do EAS (urina tipo 1), os 5 erros que fazem repetir o exame, se precisa de jejum e a diferença para a urocultura em tabela.",
   "category": "Exames Laboratoriais",
   "author": "Equipe Total Quality",
   "authorRole": "Total Quality Medicina Diagnóstica",
@@ -18,9 +18,9 @@
     "preparo de exame",
     "urocultura"
   ],
-  "dateModified": "2026-11-03",
+  "dateModified": "2026-11-16",
   "examName": "exame de urina (EAS)",
-  "examType": "exames-de-sangue",
+  "examType": "laboratorio",
   "content": [
     "O **EAS** (Elementos Anormais e Sedimentos), também chamado de urina tipo 1, é o exame de urina de rotina; serve para triar sinais de infecção urinária, alterações nos rins e pistas metabólicas, como glicose na urina. Não precisa de jejum, mas depende de uma coleta bem feita.",
     "Ele aparece em boa parte dos pedidos de rotina, inclusive no [check-up médico](/blog/check-up-medico-quais-exames-fazer). É também um exame em que a coleta pesa no resultado: alguns cuidados simples em casa evitam os motivos mais comuns de repetição.",
@@ -68,10 +68,14 @@
     "### Quanto tempo a urina pode ficar guardada?",
     "Até 2 horas em temperatura ambiente. Acima disso, mantenha refrigerada e leve o quanto antes. Congelar invalida a amostra.",
     "### Leucócitos na urina significa infecção?",
-    "Não necessariamente. Leucócitos aumentados são um sinal que pede interpretação junto com o restante do exame, os sintomas e, quando indicado, a urocultura. Quem conclui é o médico."
+    "Não necessariamente. Leucócitos aumentados são um sinal que pede interpretação junto com o restante do exame, os sintomas e, quando indicado, a urocultura. Quem conclui é o médico.",
+    "### Onde fazer exame de urina em Caraguatatuba?",
+    "Na Total Quality Medicina Diagnóstica, na Rua Padre Anchieta, 1010 – Centro, Caraguatatuba-SP. A coleta é sem agendamento, por ordem de chegada, ou com hora marcada pelo WhatsApp, de segunda a sexta, das 7h30 às 18h. Leve o pedido médico e um documento com foto. Dúvidas de preparo pelo WhatsApp (12) 3887-3535.",
+    "## Referências",
+    "- [Urinalysis](https://medlineplus.gov/ency/article/003579.htm) — MedlinePlus (NIH)\n- [Clean catch urine sample](https://medlineplus.gov/ency/article/007487.htm) — MedlinePlus (NIH)\n- [Urine culture](https://medlineplus.gov/ency/article/003751.htm) — MedlinePlus (NIH)\n- [24-hour urine protein](https://medlineplus.gov/ency/article/003425.htm) — MedlinePlus (NIH)"
   ],
   "examPages": [
-    "/exames/exames-de-sangue"
+    "/laboratorio-caraguatatuba"
   ],
   "lastReviewed": "2026-10-22"
 }

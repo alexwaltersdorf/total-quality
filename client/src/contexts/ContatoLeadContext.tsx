@@ -170,11 +170,18 @@ const ContatoLeadContext = createContext<ContatoLead | undefined>(undefined);
 /**
  * Insere "Meu nome é X" logo apos a saudacao, para a mensagem continuar
  * soando natural (ex.: "Olá! Meu nome é Ana. Gostaria de agendar...").
+ *
+ * Desde a Fase 2 de SEO (nov/2026) a mensagem das paginas e "Olá, vim pelo
+ * site e quero informações sobre X" (contexts/AssuntoPagina.tsx). A saudacao
+ * com virgula tambem e reconhecida, e o resto ganha maiuscula: "Olá! Meu nome
+ * é Ana. Vim pelo site e quero informações sobre hemograma completo".
  */
 function buildMessageWithName(name: string, message: string): string {
   const trimmed = name.trim();
-  if (/^olá!?\s*/i.test(message)) {
-    return message.replace(/^olá!?\s*/i, `Olá! Meu nome é ${trimmed}. `);
+  const saudacao = /^olá[!,]?\s*/i;
+  if (saudacao.test(message)) {
+    const resto = message.replace(saudacao, "");
+    return `Olá! Meu nome é ${trimmed}. ${resto.charAt(0).toUpperCase()}${resto.slice(1)}`;
   }
   return `Meu nome é ${trimmed}. ${message}`;
 }

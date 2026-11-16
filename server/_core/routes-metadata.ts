@@ -12,16 +12,26 @@ import {
   ANALISES_DESCRIPTION,
   CHECKUP_TITLE,
   CHECKUP_DESCRIPTION,
-  HEMOGRAMA_DESCRIPTION,
+  BIOIMPEDANCIA_TITLE,
+  BIOIMPEDANCIA_DESCRIPTION,
+  SOBRE_TITLE,
+  SOBRE_DESCRIPTION,
+  CONTATO_TITLE,
+  CONTATO_DESCRIPTION,
+  ESPECIALIDADES_TITLE,
+  ESPECIALIDADES_DESCRIPTION,
+  BLOG_TITLE,
+  BLOG_DESCRIPTION,
 } from "@shared/const";
 import blogIndex from "../../client/src/content/blog/index.json";
-import { blogModifiedIso, isPublished, type BlogPostMeta } from "../../client/src/lib/blogMeta";
+import { blogDateIso, blogModifiedIso, isPublished, type BlogPostMeta } from "../../client/src/lib/blogMeta";
 import { especialidadesData, ESPECIALIDADES_BASE } from "../../client/src/lib/especialidadesData";
+import { examesData } from "../../client/src/lib/examesData";
+import { conteudoDaRota } from "../../client/src/lib/paginasCatalogo";
 
 export interface RouteMetadata {
   title: string;
   description: string;
-  keywords?: string;
   ogTitle?: string;
   ogDescription?: string;
   ogImage?: string;
@@ -34,14 +44,35 @@ export interface RouteMetadata {
   ogType?: "website" | "article";
   /** true = <meta name="robots" content="noindex, nofollow"> e fora do sitemap. */
   noindex?: boolean;
+  /** Artigo do blog: datas em ISO para article:published_time / modified_time. */
+  publishedTime?: string;
+  modifiedTime?: string;
+  /** Texto alternativo da imagem de compartilhamento (padrao do index.html: a fachada). */
+  ogImageAlt?: string;
+  /** Dimensoes reais da og:image (o index.html declarava 1200x630 para uma foto 1024x843). */
+  ogImageWidth?: number;
+  ogImageHeight?: number;
+  /**
+   * true = preload da foto LCP da home (recepcao-*.avif). SEO nov/2026, Fase 6:
+   * o preload estava no template de TODAS as rotas, e a foto so e LCP na home
+   * — nas demais o navegador baixava uma imagem que nao ia usar.
+   */
+  lcpPreload?: boolean;
 }
 
-// Dados dos exames para reutilização
-const examesMetadata: Record<string, RouteMetadata> = {
+/*
+ * Paginas de exame. Title e description NAO moram aqui: vem de
+ * client/src/lib/examesData.ts, a mesma fonte que o React usa no
+ * document.title (SEO nov/2026, Fase 1 — antes havia duas versoes e o React
+ * reescrevia a do servidor depois de montar). Aqui ficam so os extras de
+ * compartilhamento e sitemap. Os textos que estavam aqui foram levados para o
+ * examesData (eram os que o Google indexava).
+ */
+type ExtrasExame = Omit<RouteMetadata, "title" | "description" | "canonical">;
+const examesExtras: Record<string, ExtrasExame & { title?: string; description?: string; canonical?: string }> = {
   "exames-de-sangue": {
     title: "Exames de Sangue em Caraguatatuba | Total Quality",
     description: "Exames de sangue em Caraguatatuba na Total Quality. Coleta por ordem de chegada, sem agendamento. Consulte preparo, prazos, convênios e orçamento pelo WhatsApp.",
-    keywords: "exames de sangue, hemograma, glicemia, colesterol, hormônios, vitamina D, PSA, laboratório, análises clínicas, Caraguatatuba",
     ogTitle: "Exames de Sangue | Total Quality Medicina Diagnóstica",
     ogDescription: "Mais de 3.000 tipos de exames de sangue. Hemograma, glicemia, colesterol, hormônios e muito mais.",
     ogImage: "https://totalquality.med.br/images/laboratorio-1440.webp",
@@ -53,7 +84,6 @@ const examesMetadata: Record<string, RouteMetadata> = {
   "tomografia-computadorizada": {
     title: "Tomografia Computadorizada em Caraguatatuba | Total Quality",
     description: "Tomografia computadorizada em Caraguatatuba - SP na Total Quality. Tomógrafo multislice para crânio, tórax, abdômen e coluna. Laudo rápido. Agende.",
-    keywords: "tomografia, tomografia computadorizada, TC, tomógrafo, diagnóstico por imagem, Caraguatatuba",
     ogTitle: "Tomografia Computadorizada | Total Quality",
     ogDescription: "Exame de diagnóstico por imagem com equipamento multislice de alta resolução.",
     ogImage: "https://totalquality.med.br/images/tomografia-1440.webp",
@@ -65,7 +95,6 @@ const examesMetadata: Record<string, RouteMetadata> = {
   "raio-x": {
     title: "Raio-X em Caraguatatuba | Clínica Total Quality",
     description: "Raio-X digital em Caraguatatuba na Total Quality. Faça exame de tórax, coluna, membros e seios da face com alta resolução. Agende o seu atendimento online.",
-    keywords: "raio-x, radiografia, diagnóstico por imagem, raio-x digital, Caraguatatuba",
     ogTitle: "Raio-X Digital | Total Quality",
     ogDescription: "Exame de radiografia com tecnologia digital de alta definição.",
     canonical: "https://totalquality.med.br/exames/raio-x",
@@ -76,7 +105,6 @@ const examesMetadata: Record<string, RouteMetadata> = {
   "ultrassonografia": {
     title: "Ultrassonografia em Caraguatatuba | Total Quality",
     description: "Ultrassonografia em Caraguatatuba - SP. Exame de imagem sem radiação. Ultrassom geral, doppler e especializado.",
-    keywords: "ultrassonografia, ultrassom, doppler, diagnóstico por imagem, Caraguatatuba",
     ogTitle: "Ultrassonografia | Total Quality",
     ogDescription: "Exame de ultrassom com equipamento de alta resolução.",
     canonical: "https://totalquality.med.br/exames/ultrassonografia",
@@ -87,7 +115,6 @@ const examesMetadata: Record<string, RouteMetadata> = {
   "mapa": {
     title: "MAPA 24h em Caraguatatuba | Total Quality",
     description: "MAPA em Caraguatatuba - SP. Monitoramento de pressão arterial por 24 horas. Diagnóstico de hipertensão. Agende seu exame.",
-    keywords: "MAPA, monitoramento ambulatorial, pressão arterial, hipertensão, Caraguatatuba",
     ogTitle: "MAPA - Monitoramento de Pressão | Total Quality",
     ogDescription: "Monitoramento ambulatorial da pressão arterial por 24 horas.",
     canonical: "https://totalquality.med.br/exames/mapa",
@@ -97,8 +124,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
 
   "holter": {
     title: "Holter 24h em Caraguatatuba | Total Quality",
-    description: "Holter 24h em Caraguatatuba - SP. Monitoramento contínuo do coração. Diagnóstico de arritmias. Agende seu exame.",
-    keywords: "holter, monitoramento cardíaco, arritmia, eletrocardiograma, Caraguatatuba",
+    description: "Holter 24h em Caraguatatuba - SP: registro contínuo do ritmo do coração durante a rotina e o sono, para investigar arritmias. Tire dúvidas pelo WhatsApp.",
     ogTitle: "Holter 24h | Total Quality",
     ogDescription: "Monitoramento contínuo do coração por 24 horas.",
     canonical: "https://totalquality.med.br/exames/holter",
@@ -109,7 +135,6 @@ const examesMetadata: Record<string, RouteMetadata> = {
   "espirometria": {
     title: "Espirometria em Caraguatatuba | Teste de Função Pulmonar",
     description: "Espirometria em Caraguatatuba - SP. Teste de função pulmonar para diagnóstico de doenças respiratórias. Agende seu exame.",
-    keywords: "espirometria, função pulmonar, teste respiratório, DPOC, asma, Caraguatatuba",
     ogTitle: "Espirometria | Total Quality",
     ogDescription: "Teste de função pulmonar com laudo médico.",
     canonical: "https://totalquality.med.br/exames/espirometria",
@@ -119,8 +144,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
 
   "eletrocardiograma": {
     title: "Eletrocardiograma (ECG) em Caraguatatuba | Total Quality",
-    description: "Eletrocardiograma em Caraguatatuba - SP. Diagnóstico de problemas cardíacos. Exame rápido e não invasivo. Agende.",
-    keywords: "eletrocardiograma, ECG, coração, diagnóstico cardíaco, Caraguatatuba",
+    description: "Eletrocardiograma (ECG) em Caraguatatuba - SP: exame rápido e indolor que registra a atividade elétrica do coração, em 5 a 10 minutos. Agende pelo WhatsApp.",
     ogTitle: "Eletrocardiograma | Total Quality",
     ogDescription: "Exame do coração rápido e não invasivo.",
     canonical: "https://totalquality.med.br/exames/eletrocardiograma",
@@ -130,8 +154,7 @@ const examesMetadata: Record<string, RouteMetadata> = {
 
   "eletroencefalograma": {
     title: "Eletroencefalograma (EEG) em Caraguatatuba | Total Quality",
-    description: "Eletroencefalograma em Caraguatatuba - SP. Diagnóstico de problemas neurológicos. Exame não invasivo. Agende seu EEG.",
-    keywords: "eletroencefalograma, EEG, neurologia, cérebro, epilepsia, Caraguatatuba",
+    description: "Eletroencefalograma (EEG) em Caraguatatuba - SP: exame não invasivo que registra a atividade elétrica do cérebro. Veja o preparo e tire dúvidas pelo WhatsApp.",
     ogTitle: "Eletroencefalograma | Total Quality",
     ogDescription: "Exame neurológico não invasivo para diagnóstico de problemas cerebrais.",
     canonical: "https://totalquality.med.br/exames/eletroencefalograma",
@@ -142,7 +165,6 @@ const examesMetadata: Record<string, RouteMetadata> = {
   "exame-toxicologico": {
     title: "Exame Toxicológico em Caraguatatuba | Total Quality",
     description: "Exame toxicológico em Caraguatatuba para CNH C, D e E e motorista profissional: coleta de cabelo ou pelo, laboratório credenciado. Dúvidas no WhatsApp.",
-    keywords: "exame toxicológico, exames toxicológicos, toxicológico CNH, toxicológico motorista profissional, teste de drogas, Caraguatatuba",
     ogTitle: "Exame Toxicológico para CNH | Total Quality",
     ogDescription: "Toxicológico para CNH C, D e E e motorista profissional, com coleta na unidade e laboratório credenciado.",
     canonical: "https://totalquality.med.br/exames/exame-toxicologico",
@@ -152,10 +174,9 @@ const examesMetadata: Record<string, RouteMetadata> = {
 
   "hemograma": {
     title: "Hemograma Completo em Caraguatatuba | Total Quality",
-    description: HEMOGRAMA_DESCRIPTION,
-    keywords: "hemograma, hemograma completo, hemograma precisa de jejum, exame de sangue, análises clínicas, Caraguatatuba",
+    description: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Resultado em curto prazo na Total Quality.",
     ogTitle: "Hemograma Completo | Total Quality",
-    ogDescription: HEMOGRAMA_DESCRIPTION,
+    ogDescription: "Tudo sobre o hemograma completo: o que avalia, preparo e resultado em curto prazo.",
     canonical: "https://totalquality.med.br/exames/hemograma",
     priority: 0.9,
     changefreq: "monthly",
@@ -164,7 +185,6 @@ const examesMetadata: Record<string, RouteMetadata> = {
   "sexagem-fetal": {
     title: "Sexagem Fetal em Caraguatatuba | Total Quality",
     description: "Sexagem fetal em Caraguatatuba: exame de sangue da gestante que identifica o sexo do bebê a partir da 8ª semana. Sem jejum. Dúvidas e valores pelo WhatsApp.",
-    keywords: "sexagem fetal, exame de sexagem fetal, sexo do bebê, DNA fetal, exame de sangue gravidez, Caraguatatuba",
     ogTitle: "Sexagem Fetal | Total Quality",
     ogDescription: "Exame de sangue da gestante que identifica o sexo do bebê a partir da 8ª semana de gestação.",
     canonical: "https://totalquality.med.br/exames/sexagem-fetal",
@@ -175,7 +195,6 @@ const examesMetadata: Record<string, RouteMetadata> = {
   "exame-admissional": {
     title: "Exame Admissional e ASO em Caraguatatuba | Total Quality",
     description: "Exame admissional, periódico, demissional e ASO em Caraguatatuba. Medicina ocupacional completa para empresas do Litoral Norte, com agilidade. Agende.",
-    keywords: "exame admissional, ASO, exame ocupacional, exame demissional, medicina do trabalho, Caraguatatuba",
     ogTitle: "Exames Ocupacionais e ASO | Total Quality",
     ogDescription: "Admissional, periódico, demissional e ASO para empresas de Caraguatatuba e região.",
     canonical: "https://totalquality.med.br/exames/exame-admissional",
@@ -183,17 +202,27 @@ const examesMetadata: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
 
-  "mamografia": {
-    title: "Mamografia Digital em Caraguatatuba | Total Quality",
-    description: "Mamografia digital em Caraguatatuba - SP. Rastreamento do câncer de mama com mamógrafo digital. Agende seu exame.",
-    keywords: "mamografia, mamografia digital, câncer de mama, diagnóstico, Caraguatatuba",
-    ogTitle: "Mamografia Digital | Total Quality",
-    ogDescription: "Exame de mamografia com tecnologia digital de alta resolução.",
-    canonical: "https://totalquality.med.br/exames/mamografia",
-    priority: 0.9,
-    changefreq: "monthly",
-  },
+  // "mamografia" saiu em 31/10/2026 (fora do sitemap): a clinica nao realiza
+  // no momento. A URL faz 301 para /exames/ultrassonografia.
 };
+
+const examesMetadata: Record<string, RouteMetadata> = Object.fromEntries(
+  examesData.map((e) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { title: _t, description: _d, canonical: _c, ...extras } = examesExtras[e.slug] ?? {};
+    return [
+      e.slug,
+      {
+        priority: 0.8,
+        changefreq: "monthly",
+        ...extras,
+        title: e.metaTitle,
+        description: e.metaDescription,
+        canonical: `https://totalquality.med.br/exames/${e.slug}`,
+      } satisfies RouteMetadata,
+    ];
+  })
+);
 
 // Paginas de especialidade (/especialidades/:slug), 24/10/2026. Title e
 // description sao os mesmos do client/src/lib/especialidadesData.ts.
@@ -203,7 +232,6 @@ const especialidadesMetadata: Record<string, RouteMetadata> = Object.fromEntries
     {
       title: e.metaTitle,
       description: e.metaDescription,
-      keywords: e.keywords.join(", "),
       ogTitle: e.metaTitle,
       ogDescription: e.metaDescription,
       canonical: `https://totalquality.med.br${ESPECIALIDADES_BASE}/${e.slug}`,
@@ -233,7 +261,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
   "tomografia-computadorizada-como-funciona": {
     title: "Tomografia Computadorizada: Como Funciona? | Total Quality",
     description: "Entenda como funciona a tomografia computadorizada, como é feito o exame, quando o contraste é necessário, quanto tempo dura e se dói.",
-    keywords: "tomografia computadorizada, tomografia, como funciona a tomografia, contraste, diagnóstico por imagem, Caraguatatuba",
     ogTitle: "Tomografia Computadorizada: Como Funciona?",
     ogDescription: "Entenda como é feito o exame, se dói, quanto tempo dura e quando o contraste é necessário.",
     ogImage: "https://totalquality.med.br/images/blog/tomografia-computadorizada-como-funciona.webp",
@@ -245,7 +272,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
   "mapa-ou-holter-diferenca": {
     title: "MAPA ou Holter: Qual a Diferença? | Total Quality",
     description: "Entenda a diferença entre MAPA e Holter: o que cada exame monitora, para que serve, se podem ser feitos juntos e como se preparar.",
-    keywords: "MAPA, Holter, monitorização ambulatorial da pressão arterial, exame cardiológico, arritmia, Caraguatatuba",
     ogTitle: "MAPA ou Holter: Qual a Diferença?",
     ogDescription: "Entenda o que cada exame monitora, para que serve e como se preparar.",
     ogImage: "https://totalquality.med.br/images/blog/mapa-ou-holter-diferenca.webp",
@@ -257,7 +283,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
   "check-up-medico-quais-exames-fazer": {
     title: "Check-up Médico: Quais Exames Fazer? | Total Quality",
     description: "Entenda o que compõe um check-up médico: exames laboratoriais, cardiológicos e de imagem, com que frequência repetir e como se preparar.",
-    keywords: "check-up médico, check-up preventivo, quais exames fazer, exames laboratoriais, medicina preventiva, Caraguatatuba",
     ogTitle: "Check-up Médico: Quais Exames Fazer?",
     ogDescription: "Entenda como o check-up se organiza entre exames laboratoriais, cardiológicos e de imagem.",
     ogImage: "https://totalquality.med.br/images/blog/check-up-medico-quais-exames-fazer.webp",
@@ -269,7 +294,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
   "diferenca-ultrassom-comum-doppler": {
     title: "Ultrassom Comum e com Doppler: Diferença | Total Quality",
     description: "Descubra a diferença entre ultrassom comum e ultrassom com Doppler, o que cada modalidade avalia e como pode ser o preparo.",
-    keywords: "diferença entre ultrassom e Doppler, ultrassom com Doppler, ultrassonografia, exame de imagem, Caraguatatuba",
     ogTitle: "Ultrassom Comum e com Doppler: Qual a Diferença?",
     ogDescription: "Entenda o que o Doppler acrescenta ao exame, quando é utilizado e como se preparar.",
     ogImage: "https://totalquality.med.br/images/cardiologia-1024.webp",
@@ -281,7 +305,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
   "mamografia-ultrassom-mamas-diferencas": {
     title: "Mamografia e Ultrassom das Mamas: Diferenças | Total Quality",
     description: "Mamografia e ultrassom das mamas não são iguais. Entenda como cada exame funciona, suas diferenças e por que um não substitui automaticamente o outro.",
-    keywords: "diferença entre mamografia e ultrassom da mama, mamografia, ultrassom das mamas, saúde da mulher, Caraguatatuba",
     ogTitle: "Mamografia e Ultrassom das Mamas: Diferenças",
     ogDescription: "Por que um exame não substitui automaticamente o outro.",
     ogImage: "https://totalquality.med.br/images/blog/mamografia-ultrassom-mamas-diferencas.webp",
@@ -293,7 +316,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
   "diferenca-raio-x-tomografia": {
     title: "Raio-X e Tomografia: Qual a Diferença? | Total Quality",
     description: "Saiba como raio-X e tomografia funcionam, as diferenças nas imagens, quando o contraste pode ser usado e como é o preparo.",
-    keywords: "diferença entre raio-X e tomografia, raio-x, tomografia computadorizada, diagnóstico por imagem, Caraguatatuba",
     ogTitle: "Raio-X e Tomografia: Quais as Diferenças?",
     ogDescription: "Entenda quando o contraste é usado, quem tem mais detalhe e como se preparar.",
     ogImage: "https://totalquality.med.br/images/blog/diferenca-raio-x-tomografia.webp",
@@ -305,7 +327,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
   "aso-exames-ocupacionais": {
     title: "ASO: O Que É e Quando Deve Ser Emitido | Total Quality",
     description: "Entenda o que é ASO, quando o documento é emitido, sua relação com os exames ocupacionais e as responsabilidades de empresas e trabalhadores.",
-    keywords: "o que é ASO, exame ocupacional, PCMSO, NR-7, atestado de saúde ocupacional, Caraguatatuba",
     ogTitle: "ASO: O Que É e Quando Deve Ser Emitido",
     ogDescription: "Entenda a diferença entre o exame ocupacional e o documento, e o que a NR-7 exige.",
     ogImage: "https://totalquality.med.br/images/blog/aso-exames-ocupacionais.webp",
@@ -317,7 +338,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
   "exame-toxicologico-cnh": {
     title: "Exame Toxicológico para CNH: Quem Precisa? | Total Quality",
     description: "Entenda quem precisa fazer exame toxicológico para CNH, quando ele pode ser exigido, como consultar o prazo e quais documentos levar.",
-    keywords: "exame toxicológico para CNH, exame toxicológico, Senatran, Detran, CNH, Caraguatatuba",
     ogTitle: "Exame Toxicológico para CNH: Quem Precisa Fazer?",
     ogDescription: "Entenda a janela de detecção, como consultar o prazo e quais documentos levar.",
     ogImage: "https://totalquality.med.br/images/blog/exame-toxicologico-cnh.webp",
@@ -335,7 +355,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
   "como-escolher-laboratorio-analises-clinicas": {
     title: "Como Escolher um Laboratório: 8 Critérios Técnicos",
     description: "Licença sanitária, responsável técnico, controle externo de qualidade e prazo por exame: os 8 critérios que mostram se um laboratório é confiável.",
-    keywords: "como escolher laboratório, laboratório confiável, controle de qualidade análises clínicas, RDC 302 Anvisa, responsável técnico laboratório, PNCQ ControlLab",
     ogTitle: "Como Escolher um Laboratório de Análises Clínicas",
     ogDescription: "Oito critérios verificáveis que dizem mais sobre o seu resultado do que marca, fachada ou preço.",
     ogImage: "https://totalquality.med.br/images/laboratorio-1024.webp",
@@ -347,7 +366,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
   "hipoglicemia-sintomas-e-exames": {
     title: "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer",
     description: "Hipoglicemia é a glicose abaixo de 70 mg/dL. Sinais de alerta, quando procurar emergência e quais exames investigam a causa.",
-    keywords: "hipoglicemia, glicose baixa, glicemia de jejum, curva glicêmica, hemoglobina glicada, insulina e peptídeo C, Caraguatatuba",
     ogTitle: "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer",
     ogDescription: "Quando a glicose cai abaixo de 70 mg/dL, o que fazer na hora e quais exames investigam a causa.",
     ogImage: "https://totalquality.med.br/images/blog/hipoglicemia-sintomas-e-exames.webp",
@@ -359,7 +377,6 @@ const blogMetadata: Record<string, RouteMetadata> = {
   "resultado-de-exames-online-seguranca": {
     title: "Resultado de Exames Online: Acesso Seguro e LGPD",
     description: "Como acessar seu resultado de exames online com segurança, quem pode recebê-lo e o que a LGPD garante sobre o seu dado sensível de saúde.",
-    keywords: "resultado de exames online, resultado de exames Caraguatatuba, LGPD saúde, dado sensível de saúde, sigilo de resultado de exame",
     ogTitle: "Resultado de Exames Online: Como Acessar com Segurança",
     ogDescription: "Quem pode receber, o que a LGPD garante e por que o laudo nunca vai para um grupo de mensagens.",
     ogImage: "https://totalquality.med.br/images/blog/resultado-de-exames-online-seguranca.webp",
@@ -377,10 +394,12 @@ const staticRoutes: Record<string, RouteMetadata> = {
   "/": {
     title: HOME_TITLE,
     description: homeDescription(),
-    keywords: "laboratório Caraguatatuba, exames de sangue, tomografia, ultrassom, check-up",
     ogTitle: "Total Quality Medicina Diagnóstica e Laboratorial | Exames de Sangue em Caraguatatuba - SP",
-    ogDescription: "Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba - SP. Exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia, mamografia e mais de 3.000 tipos de exames. Agende pelo WhatsApp.",
-    ogImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029159398/JL54VveRaBTccEphCgT7vi/optik-hero_756f938d.png",
+    ogDescription: "Laboratório de análises clínicas e clínica de medicina diagnóstica em Caraguatatuba - SP. Exames de sangue, hemograma, glicemia, colesterol, hormônios, tomografia, ultrassonografia e mais de 3.000 tipos de exames. Agende pelo WhatsApp.",
+    ogImage: "https://totalquality.med.br/images/fachada-1024.webp",
+    ogImageWidth: 1024,
+    ogImageHeight: 843,
+    lcpPreload: true,
     canonical: "https://totalquality.med.br/",
     priority: 1.0,
     changefreq: "weekly",
@@ -389,7 +408,6 @@ const staticRoutes: Record<string, RouteMetadata> = {
   "/checkup": {
     title: CHECKUP_TITLE,
     description: CHECKUP_DESCRIPTION,
-    keywords: "check-up completo Caraguatatuba, check-up, check-up preventivo, exames preventivos, Caraguatatuba",
     ogTitle: "Check-up Preventivo | Total Quality",
     ogDescription: "Planos de check-up preventivo com exames completos para sua saúde.",
     canonical: "https://totalquality.med.br/checkup",
@@ -397,10 +415,20 @@ const staticRoutes: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
 
+  // Indice das especialidades (SEO nov/2026, Fase 3): antes 404.
+  "/especialidades": {
+    title: ESPECIALIDADES_TITLE,
+    description: ESPECIALIDADES_DESCRIPTION,
+    ogTitle: ESPECIALIDADES_TITLE,
+    ogDescription: ESPECIALIDADES_DESCRIPTION,
+    canonical: "https://totalquality.med.br/especialidades",
+    priority: 0.8,
+    changefreq: "monthly",
+  },
+
   "/bioimpedancia": {
-    title: "Bioimpedância em Caraguatatuba | Total Quality",
-    description: "Bioimpedância em Caraguatatuba - SP. Análise de composição corporal (gordura, músculo, água). Agende seu exame.",
-    keywords: "bioimpedância, composição corporal, gordura corporal, análise de corpo, Caraguatatuba",
+    title: BIOIMPEDANCIA_TITLE,
+    description: BIOIMPEDANCIA_DESCRIPTION,
     ogTitle: "Bioimpedância | Total Quality",
     ogDescription: "Análise de composição corporal com tecnologia de bioimpedância.",
     canonical: "https://totalquality.med.br/bioimpedancia",
@@ -409,9 +437,8 @@ const staticRoutes: Record<string, RouteMetadata> = {
   },
 
   "/blog": {
-    title: "Blog Total Quality | Artigos sobre Saúde e Diagnóstico",
-    description: "Blog Total Quality: artigos sobre saúde, diagnóstico, exames preventivos e bem-estar. Informações de especialistas.",
-    keywords: "blog saúde, artigos médicos, diagnóstico, exames, bem-estar",
+    title: BLOG_TITLE,
+    description: BLOG_DESCRIPTION,
     ogTitle: "Blog Total Quality | Saúde e Diagnóstico",
     ogDescription: "Leia artigos sobre saúde, diagnóstico e bem-estar de especialistas.",
     canonical: "https://totalquality.med.br/blog",
@@ -422,7 +449,6 @@ const staticRoutes: Record<string, RouteMetadata> = {
   "/privacidade": {
     title: "Política de Privacidade | Total Quality Medicina Diagnóstica",
     description: "Como a Total Quality coleta, usa e protege seus dados pessoais e de saúde, conforme a LGPD. Seus direitos e como exercê-los.",
-    keywords: "política de privacidade, LGPD, proteção de dados, dados de saúde",
     ogTitle: "Política de Privacidade | Total Quality",
     ogDescription: "Tratamento de dados pessoais e de saúde na Total Quality, conforme a LGPD.",
     canonical: "https://totalquality.med.br/privacidade",
@@ -432,8 +458,7 @@ const staticRoutes: Record<string, RouteMetadata> = {
 
   "/exames": {
     title: "Exames Laboratoriais e de Imagem | Total Quality",
-    description: "Todos os exames da Total Quality em Caraguatatuba: exames laboratoriais, hemograma, ultrassom, tomografia, cardiológicos, ocupacionais e mais. Veja a lista completa.",
-    keywords: "exames laboratoriais, exames Caraguatatuba, análises clínicas, exames de imagem, lista de exames",
+    description: "Exames da Total Quality em Caraguatatuba: laboratoriais, hemograma, ultrassom, tomografia, raio-X, cardiológicos, ocupacionais e mais. Veja a lista completa.",
     ogTitle: "Exames | Total Quality Medicina Diagnóstica",
     ogDescription: "Lista completa de exames laboratoriais, de imagem e cardiológicos em Caraguatatuba.",
     canonical: "https://totalquality.med.br/exames",
@@ -444,7 +469,6 @@ const staticRoutes: Record<string, RouteMetadata> = {
   "/convenios": {
     title: "Convênios Aceitos | Laboratório Total Quality Caraguatatuba",
     description: "Convênios aceitos no laboratório Total Quality em Caraguatatuba: Cartão de Todos, Solumedi e Leader. Fora deles, atendimento particular. Confirme pelo WhatsApp.",
-    keywords: "convênios laboratório Caraguatatuba, Cartão de Todos Caraguatatuba, Solumedi, Leader",
     ogTitle: "Convênios Aceitos | Total Quality Caraguatatuba",
     ogDescription: "Convênios aceitos para exames laboratoriais e de imagem em Caraguatatuba: Cartão de Todos, Solumedi e Leader.",
     canonical: "https://totalquality.med.br/convenios",
@@ -452,24 +476,29 @@ const staticRoutes: Record<string, RouteMetadata> = {
     changefreq: "monthly",
   },
 
-  /*
-   * Campanha Check-up Outubro Rosa. Rota sazonal: quando a campanha encerrar,
-   * tirar esta entrada (sai do sitemap), tirar a rota do App.tsx e o bloco do
-   * seo-content.ts. O passo a passo esta em docs/campanha-outubro-rosa.md.
-   *
-   * priority abaixo da landing de laboratorio de proposito: campanha nao
-   * disputa a pagina permanente que sustenta o termo o ano inteiro.
-   */
-  "/outubro-rosa": {
-    title: "Check-up Outubro Rosa em Caraguatatuba | Total Quality",
-    description: "Check-up Outubro Rosa na Total Quality: ultrassonografia das mamas, transvaginal e Papanicolau por R$ 399,90. Agende em Caraguatatuba.",
-    keywords: "check-up outubro rosa Caraguatatuba, ultrassonografia das mamas, ultrassonografia transvaginal, papanicolau Caraguatatuba, preventivo",
-    ogTitle: "Check-up Outubro Rosa | Total Quality",
-    ogDescription: "Ultrassonografia das mamas, transvaginal e Papanicolau por R$ 399,90, em Caraguatatuba. Fale com a equipe pelo WhatsApp.",
-    ogImage: "https://totalquality.med.br/images/outubro-rosa-og.webp",
-    canonical: "https://totalquality.med.br/outubro-rosa",
+  // /outubro-rosa saiu em 15/11/2026 (campanha encerrada, decisao do Alex de
+  // 14/11: sem preco de exame no site): 301 para /exames/ultrassonografia.
+
+  // Paginas institucionais reais (SEO nov/2026, Fase 2). Ate 14/11/2026 as
+  // duas URLs faziam 301 para /#sobre e /#contato.
+  "/sobre": {
+    title: SOBRE_TITLE,
+    description: SOBRE_DESCRIPTION,
+    ogTitle: SOBRE_TITLE,
+    ogDescription: SOBRE_DESCRIPTION,
+    canonical: "https://totalquality.med.br/sobre",
+    priority: 0.6,
+    changefreq: "yearly",
+  },
+
+  "/contato": {
+    title: CONTATO_TITLE,
+    description: CONTATO_DESCRIPTION,
+    ogTitle: CONTATO_TITLE,
+    ogDescription: CONTATO_DESCRIPTION,
+    canonical: "https://totalquality.med.br/contato",
     priority: 0.7,
-    changefreq: "weekly",
+    changefreq: "yearly",
   },
 
   "/laboratorio-caraguatatuba": {
@@ -478,7 +507,6 @@ const staticRoutes: Record<string, RouteMetadata> = {
     // para "Laboratorio em Caraguatatuba" — o mesmo termo da home.
     title: ANALISES_TITLE,
     description: ANALISES_DESCRIPTION,
-    keywords: "análises clínicas Caraguatatuba, exames laboratoriais, hemograma, exames de sangue",
     ogTitle: ANALISES_TITLE,
     ogDescription: ANALISES_DESCRIPTION,
     canonical: "https://totalquality.med.br/laboratorio-caraguatatuba",
@@ -489,7 +517,6 @@ const staticRoutes: Record<string, RouteMetadata> = {
   "/cartao": {
     title: "Cartão Total Quality Care | Benefícios e Cashback",
     description: "Cartão Total Quality Care: benefícios, cashback, planos e preços. Saúde preventiva com vantagens financeiras.",
-    keywords: "cartão de saúde, total quality care, cashback, benefícios",
     ogTitle: "Cartão Total Quality Care | Benefícios e Cashback",
     ogDescription: "Cartão de saúde com cashback e benefícios exclusivos para sua família.",
     canonical: "https://totalquality.med.br/cartao",
@@ -502,8 +529,64 @@ const staticRoutes: Record<string, RouteMetadata> = {
  * Obter meta tags para uma rota específica
  */
 export function getRouteMetadata(pathname: string): RouteMetadata | null {
-  // Remover query string e trailing slash
   const path = pathname.split("?")[0].replace(/\/$/, "") || "/";
+  const meta = metadataBruta(path);
+  return meta ? enriquecer(path, meta) : null;
+}
+
+/*
+ * SEO nov/2026, Fase 6 — data real de alteracao (lastmod do sitemap) das
+ * paginas que nao tem data no proprio dado. Data da ultima mudanca de
+ * CONTEUDO da pagina no git (conferida em 15/11/2026); ao mudar o texto de
+ * uma delas, atualizar aqui. Paginas do modelo (exames, especialidades,
+ * analises, check-up, bioimpedancia) usam `atualizadoEm` do dado; artigos, o
+ * dateModified; os indices, a pagina mais recente que listam.
+ */
+const LASTMOD_ESTATICO: Record<string, string> = {
+  "/": "2026-11-15", // Fases 1 e 2: FAQ visivel, CTAs como links
+  "/sobre": "2026-11-15", // pagina criada na Fase 2
+  "/contato": "2026-11-15", // pagina criada na Fase 2
+  "/convenios": "2026-10-31", // client/src/lib/conveniosData.ts
+  "/cartao": "2026-10-27", // CartaoPage.tsx / cartaoPlanos.ts
+  "/privacidade": "2026-09-20", // Privacidade.tsx
+};
+
+const maxData = (datas: Array<string | undefined>): string | undefined =>
+  datas.filter((d): d is string => Boolean(d)).sort().at(-1);
+
+function lastmodDaRota(path: string, meta: RouteMetadata): string | undefined {
+  if (meta.lastmod) return meta.lastmod;
+  const modelo = conteudoDaRota(path);
+  if (modelo) return modelo.atualizadoEm;
+  if (LASTMOD_ESTATICO[path]) return LASTMOD_ESTATICO[path];
+  if (path === "/exames") return maxData(examesData.map((e) => conteudoDaRota(`/exames/${e.slug}`)?.atualizadoEm));
+  if (path === ESPECIALIDADES_BASE)
+    return maxData(especialidadesData.map((e) => conteudoDaRota(`${ESPECIALIDADES_BASE}/${e.slug}`)?.atualizadoEm));
+  if (path === "/blog") return maxData(blogPostsMeta.filter(isPublished).map((p) => blogModifiedIso(p)));
+  return undefined;
+}
+
+/**
+ * og:image da pagina de servico com foto REAL da clinica (Fase 6): a foto do
+ * proprio modelo (ConteudoPagina.imagem), variante de 1024px, com o alt e as
+ * dimensoes reais. Pagina sem foto fica com a fachada do index.html.
+ */
+function fotoDaPagina(path: string): Partial<RouteMetadata> {
+  const img = conteudoDaRota(path)?.imagem;
+  if (!img || !img.widths.includes(1024)) return {};
+  return {
+    ogImage: `https://totalquality.med.br/images/${img.slug}-1024.webp`,
+    ogImageAlt: img.alt,
+    ogImageWidth: 1024,
+    ogImageHeight: Math.round((1024 * img.height) / img.width),
+  };
+}
+
+function enriquecer(path: string, meta: RouteMetadata): RouteMetadata {
+  return { ...meta, ...fotoDaPagina(path), lastmod: lastmodDaRota(path, meta) };
+}
+
+function metadataBruta(path: string): RouteMetadata | null {
 
   // Verificar rotas estáticas exatas
   if (staticRoutes[path]) {
@@ -553,8 +636,7 @@ function blogRoute(slug: string): RouteMetadata | null {
   const canonical = `https://totalquality.med.br/blog/${slug}`;
   const base: RouteMetadata = blogMetadata[slug] ?? {
     title: post.metaTitle ?? post.title,
-    description: post.excerpt,
-    keywords: post.tags.join(", "),
+    description: post.metaDescription ?? post.excerpt,
     ogTitle: post.title,
     ogDescription: post.excerpt,
     ogImage: post.image,
@@ -566,6 +648,9 @@ function blogRoute(slug: string): RouteMetadata | null {
     ...base,
     ogType: "article",
     lastmod: blogModifiedIso(post),
+    publishedTime: blogDateIso(post.date),
+    modifiedTime: blogModifiedIso(post),
+    ogImageAlt: post.title,
     ...(isPublished(post) ? {} : { noindex: true }),
   };
 }
@@ -591,7 +676,7 @@ export function getAllRoutes(): RouteMetadata[] {
     if (route && !route.noindex) routes.push(route);
   }
 
-  return routes;
+  return routes.map((r) => enriquecer(new URL(r.canonical).pathname, r));
 }
 
 /**
@@ -643,6 +728,34 @@ export function injectMetaTags(html: string, metadata: RouteMetadata): string {
     );
   }
 
+  // Twitter/X: ate 27/10/2026 o title, a description e a imagem do cartao
+  // ficavam com o texto da home em TODAS as paginas, porque so as tags og eram
+  // trocadas. Passam a seguir as mesmas da pagina (system prompt do blog, 27/10).
+  const ogTitle = escapeHtml(metadata.ogTitle || metadata.title);
+  const ogDesc = escapeHtml(metadata.ogDescription || metadata.description);
+  result = result
+    .replace(/<meta name="twitter:title" content="[^"]*"/, `<meta name="twitter:title" content="${ogTitle}"`)
+    .replace(/<meta name="twitter:description" content="[^"]*"/, `<meta name="twitter:description" content="${ogDesc}"`);
+  if (metadata.ogImage) {
+    result = result.replace(
+      /<meta name="twitter:image" content="[^"]*"/,
+      `<meta name="twitter:image" content="${escapeHtml(metadata.ogImage)}"`
+    );
+  }
+  if (metadata.ogImageAlt) {
+    result = result.replace(
+      /<meta property="og:image:alt" content="[^"]*"/,
+      `<meta property="og:image:alt" content="${escapeHtml(metadata.ogImageAlt)}"`
+    );
+  }
+  // Datas do artigo, logo depois do og:type
+  if (metadata.ogType === "article" && metadata.publishedTime) {
+    const datas =
+      `<meta property="article:published_time" content="${escapeHtml(metadata.publishedTime)}" />` +
+      (metadata.modifiedTime ? `\n    <meta property="article:modified_time" content="${escapeHtml(metadata.modifiedTime)}" />` : "");
+    result = result.replace(/(<meta property="og:type" content="article"\s*\/?>)/, `$1\n    ${datas}`);
+  }
+
   // Rascunho do blog: acessivel para revisao, mas fora do indice do Google
   if (metadata.noindex) {
     result = result.replace(
@@ -659,15 +772,41 @@ export function injectMetaTags(html: string, metadata: RouteMetadata): string {
     );
   }
 
-  // Injetar keywords se fornecido
-  if (metadata.keywords) {
-    result = result.replace(
-      /<meta name="keywords" content="[^"]*"/,
-      `<meta name="keywords" content="${escapeHtml(metadata.keywords)}"`
-    );
+  if (metadata.ogImageWidth && metadata.ogImageHeight) {
+    result = result
+      .replace(/<meta property="og:image:width" content="[^"]*"/, `<meta property="og:image:width" content="${metadata.ogImageWidth}"`)
+      .replace(/<meta property="og:image:height" content="[^"]*"/, `<meta property="og:image:height" content="${metadata.ogImageHeight}"`);
   }
 
+  // <meta name="keywords"> saiu em 15/11/2026 (Fase 6): o Google ignora a tag
+  // e ela so expunha a lista de termos aos concorrentes.
+
+  if (metadata.lcpPreload) result = result.replace(LCP_MARCADOR, LCP_PRELOAD_HOME);
+
   return result;
+}
+
+/** Marcador no index.html onde entra o preload da imagem LCP da rota. */
+export const LCP_MARCADOR = "<!-- lcp-preload -->";
+
+/** Foto da recepcao: LCP da home (HeroSection.tsx). So na home. */
+export const LCP_PRELOAD_HOME = `<link rel="preload" as="image" type="image/avif" href="/images/recepcao-1024.avif" imagesrcset="/images/recepcao-480.avif 480w, /images/recepcao-768.avif 768w, /images/recepcao-1024.avif 1024w" imagesizes="(max-width: 1024px) 100vw, 55vw" fetchpriority="high" />`;
+
+/**
+ * Resposta 404 (Fase 6): sem canonical (a pagina nao existe — antes saia o
+ * canonical da home), noindex, titulo e description proprios em portugues.
+ */
+export function injectNotFoundMeta(html: string): string {
+  return html
+    .replace(/<title>.*?<\/title>/, "<title>Página não encontrada | Total Quality</title>")
+    .replace(
+      /<meta name="description" content="[^"]*"/,
+      '<meta name="description" content="Página não encontrada. Veja os exames, as especialidades e o blog da Total Quality Medicina Diagnóstica em Caraguatatuba."'
+    )
+    .replace(/<meta name="robots" content="[^"]*"/, '<meta name="robots" content="noindex, follow"')
+    .replace(/\s*<!-- SEO: Canonical URL -->\s*<link rel="canonical" href="[^"]*" \/>/, "")
+    .replace(/<link rel="canonical" href="[^"]*" ?\/?>/, "")
+    .replace(/\s*<meta property="og:url" content="[^"]*" ?\/?>/, "");
 }
 
 /**

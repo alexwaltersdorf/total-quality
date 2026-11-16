@@ -4,15 +4,23 @@
  */
 import { Phone, MessageCircle, Instagram, MapPin, ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
+import type { MouseEvent as ReactMouseEvent } from "react";
 import { trackScheduleExam, trackWhatsAppClick, trackExternalLink } from "@/lib/tracking";
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
+import { useMensagemWhatsApp } from "@/contexts/AssuntoPagina";
+import CtaWhatsApp from "@/components/CtaWhatsApp";
 import { BLOG_EXTERNO_URL } from "@shared/const";
 
+/*
+ * Navegacao do rodape como links de verdade (SEO nov/2026, Fase 2). Sobre e
+ * Contato sao paginas; "Diferenciais" e uma secao da home (/#diferenciais),
+ * que antes so funcionava estando na home.
+ */
 const footerLinks = [
-  { label: "Início", href: "#inicio" },
-  { label: "Diferenciais", href: "#diferenciais" },
-  { label: "Sobre", href: "#sobre" },
-  { label: "Contato", href: "#contato" },
+  { label: "Início", href: "/", isRoute: true },
+  { label: "Diferenciais", href: "/#diferenciais", anchor: true },
+  { label: "Sobre", href: "/sobre", isRoute: true },
+  { label: "Contato", href: "/contato", isRoute: true },
   { label: "Blog", href: "/blog", isRoute: true },
   { label: "Mais artigos de saúde", href: BLOG_EXTERNO_URL, external: true },
   { label: "Check-Up Preventivo", href: "/checkup", isRoute: true },
@@ -24,24 +32,37 @@ const examSitelinks = [
   { label: "Tomografia Computadorizada", href: "/exames/tomografia-computadorizada" },
   { label: "Raio-X", href: "/exames/raio-x" },
   { label: "Ultrassonografia", href: "/exames/ultrassonografia" },
-  { label: "Mamografia Digital", href: "/exames/mamografia" },
+  // Mamografia saiu daqui em 31/10/2026: a clinica NAO realiza no momento
+  // (decisao do Alex). /exames/mamografia faz 301 para /exames/ultrassonografia.
   { label: "MAPA", href: "/exames/mapa" },
   { label: "Holter", href: "/exames/holter" },
   { label: "Espirometria", href: "/exames/espirometria" },
   { label: "Eletrocardiograma", href: "/exames/eletrocardiograma" },
   { label: "Eletroencefalograma", href: "/exames/eletroencefalograma" },
   { label: "Exame Toxicológico", href: "/exames/exame-toxicologico" },
+  // Fase 3 (15/11/2026): cardiologista, pediatra e o indice /especialidades.
+  { label: "Especialidades", href: "/especialidades" },
+  { label: "Cardiologista", href: "/especialidades/cardiologista" },
   { label: "Endocrinologista", href: "/especialidades/endocrinologista" },
   { label: "Gastroenterologista", href: "/especialidades/gastroenterologista" },
+  { label: "Pediatra", href: "/especialidades/pediatra" },
   { label: "Medicina do Trabalho", href: "/especialidades/medicina-do-trabalho" },
 ];
 
 export default function Footer({ laboratory = false }: { laboratory?: boolean }) {
   const openWhatsApp = useWhatsAppRedirect();
   const abrirTelefone = useTelefoneRedirect();
-  const scrollTo = (href: string) => {
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+  const mensagemCta = useMensagemWhatsApp(
+    laboratory ? "Olá! Gostaria de consultar preparo e orçamento de exames laboratoriais." : "Olá! Gostaria de agendar um exame."
+  );
+  const mensagemContato = useMensagemWhatsApp("Olá! Gostaria de mais informações.");
+  // Na home, a ancora rola ate a secao; fora dela o link leva a home nela.
+  const irParaSecao = (e: ReactMouseEvent<HTMLAnchorElement>, href: string) => {
+    const el = document.querySelector(href.replace("/", ""));
+    if (el) {
+      e.preventDefault();
+      el.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
@@ -54,13 +75,14 @@ export default function Footer({ laboratory = false }: { laboratory?: boolean })
             <br />
             <span className="text-brand">{laboratory ? "DÚVIDAS" : "EXAME AGORA"}</span>
           </h2>
-          <button
-            onClick={() => { trackScheduleExam("footer_cta", "geral"); openWhatsApp("footer_cta", laboratory ? "Olá! Gostaria de consultar preparo e orçamento de exames laboratoriais." : "Olá! Gostaria de agendar um exame."); }}
+          <CtaWhatsApp
+            mensagem={mensagemCta}
+            onClick={() => { trackScheduleExam("footer_cta", "geral"); openWhatsApp("footer_cta", mensagemCta); }}
             className="btn-pill"
           >
             {laboratory ? "Consultar pelo WhatsApp" : "Agendar pelo WhatsApp"}
             <ArrowUpRight className="w-3.5 h-3.5" />
-          </button>
+          </CtaWhatsApp>
         </div>
       </div>
 
@@ -93,12 +115,13 @@ export default function Footer({ laboratory = false }: { laboratory?: boolean })
                       {link.label}
                     </Link>
                   ) : (
-                    <button
-                      onClick={() => scrollTo(link.href)}
+                    <a
+                      href={link.href}
+                      onClick={(e) => irParaSecao(e, link.href)}
                       className="text-text-light hover:text-brand text-sm transition-colors"
                     >
                       {link.label}
-                    </button>
+                    </a>
                   )}
                 </li>
               ))}
@@ -142,14 +165,14 @@ export default function Footer({ laboratory = false }: { laboratory?: boolean })
                 <Phone className="w-4 h-4 text-brand" />
                 (12) 3887-3535
               </button>
-              <button
-                type="button"
+              <CtaWhatsApp
+                mensagem={mensagemContato}
                 className="flex items-center gap-3 text-text-light hover:text-brand text-sm transition-colors"
-                onClick={() => { trackWhatsAppClick("footer"); openWhatsApp("footer_contact", "Olá! Gostaria de mais informações."); }}
+                onClick={() => { trackWhatsAppClick("footer"); openWhatsApp("footer_contact", mensagemContato); }}
               >
                 <MessageCircle className="w-4 h-4 text-brand" />
                 (12) 3887-3535
-              </button>
+              </CtaWhatsApp>
             </div>
           </div>
 

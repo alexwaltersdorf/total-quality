@@ -14,7 +14,7 @@ import { trackPhoneClick } from "@/lib/tracking";
 export default function Privacidade() {
   useCanonical("https://totalquality.med.br/privacidade");
   useMetaDescription(
-    "Política de Privacidade da Total Quality Medicina Diagnóstica: como coletamos, usamos e protegemos seus dados pessoais e de saúde, conforme a LGPD."
+    "Como a Total Quality coleta, usa e protege seus dados pessoais e de saúde, conforme a LGPD. Seus direitos e como exercê-los."
   );
 
   return (
