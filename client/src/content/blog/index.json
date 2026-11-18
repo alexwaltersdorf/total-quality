@@ -25,7 +25,8 @@
     "examPages": [
       "/exames/exames-de-sangue"
     ],
-    "dateModified": "2026-10-22"
+    "dateModified": "2026-11-16",
+    "lastReviewed": "2026-10-22"
   },
   {
     "id": "2",
@@ -53,7 +54,8 @@
     "examPages": [
       "/exames/exames-de-sangue"
     ],
-    "dateModified": "2026-10-22"
+    "dateModified": "2026-11-16",
+    "lastReviewed": "2026-10-22"
   },
   {
     "id": "3",
@@ -158,12 +160,13 @@
       "exames laboratoriais",
       "Caraguatatuba"
     ],
-    "dateModified": "2026-10-22",
+    "dateModified": "2026-11-16",
     "examName": "hemograma completo",
     "examType": "hemograma",
     "examPages": [
       "/exames/hemograma"
-    ]
+    ],
+    "lastReviewed": "2026-10-22"
   },
   {
     "id": "12",
@@ -451,7 +454,8 @@
     "examPages": [
       "/laboratorio-caraguatatuba"
     ],
-    "dateModified": "2026-10-22"
+    "dateModified": "2026-11-16",
+    "lastReviewed": "2026-10-22"
   },
   {
     "id": "23",
@@ -501,12 +505,13 @@
       "preparo de exame",
       "urocultura"
     ],
-    "dateModified": "2026-10-22",
+    "dateModified": "2026-11-16",
     "examName": "exame de urina (EAS)",
     "examType": "laboratorio",
     "examPages": [
       "/laboratorio-caraguatatuba"
-    ]
+    ],
+    "lastReviewed": "2026-10-22"
   },
   {
     "id": "25",
@@ -1064,7 +1069,7 @@
     ],
     "draft": false,
     "reviewStatus": "aprovado",
-    "dateModified": "2026-10-22",
+    "dateModified": "2026-11-16",
     "examName": "exames laboratoriais",
     "examType": "exames-de-sangue",
     "examPages": [

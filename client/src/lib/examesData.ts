@@ -61,7 +61,7 @@ export const examesData: ExamData[] = [
     metaDescription: "Exames de sangue em Caraguatatuba na Total Quality. Coleta por ordem de chegada, sem agendamento. Consulte preparo, prazos, convênios e orçamento pelo WhatsApp.",
     heroDescription: "Realizamos mais de 3.000 tipos de exames de sangue e análises clínicas com equipamentos automatizados e equipe especializada. Hemograma, glicemia, colesterol, hormônios, marcadores tumorais, sorologias e muito mais.",
     whatIs: "Os exames de sangue são análises laboratoriais realizadas a partir de uma amostra de sangue coletada por punção venosa. São fundamentais para avaliar o funcionamento dos órgãos, detectar doenças, monitorar tratamentos e realizar check-ups preventivos. Na Total Quality, as amostras são processadas em equipamentos automatizados, e o laudo traz os valores de referência do método usado.",
-    howItWorks: "A coleta é realizada por profissionais treinados em ambiente confortável e seguro. O sangue é processado em nosso laboratório com equipamentos automatizados. Os resultados ficam disponíveis online, em curto prazo para a maioria dos exames.",
+    howItWorks: "A coleta é realizada por profissionais treinados. Confirme com a equipe o preparo, o prazo de cada exame e quais análises são processadas na unidade ou encaminhadas a laboratório de apoio. Os resultados ficam disponíveis online.",
     indications: [
       "Check-up preventivo anual",
       "Acompanhamento de doenças crônicas (diabetes, colesterol alto, tireoide)",
@@ -72,13 +72,13 @@ export const examesData: ExamData[] = [
       "Detecção de infecções e doenças autoimunes",
     ],
     preparations: [
-      { icon: Clock, text: "Jejum de 8 a 12 horas para exames de glicemia e perfil lipídico" },
+      { icon: Clock, text: "O preparo depende do pedido: confirme o jejum de cada exame antes da coleta" },
       { icon: Droplets, text: "Beba água normalmente durante o período de jejum" },
       { icon: AlertTriangle, text: "Informe os medicamentos em uso ao laboratório" },
       { icon: FileText, text: "Traga o pedido médico e documento com foto" },
     ],
     faqs: [
-      { q: "Preciso estar em jejum para todos os exames de sangue?", a: "Não. Apenas alguns exames como glicemia de jejum e perfil lipídico exigem jejum de 8 a 12 horas. Muitos exames como hemograma, hormônios e sorologias não necessitam de jejum." },
+      { q: "Preciso estar em jejum para todos os exames de sangue?", a: "Não. O hemograma isolado geralmente não exige jejum. A glicemia de jejum tem preparo específico, e o perfil lipídico pode ser coletado sem jejum em muitas situações. Siga a orientação do pedido e confirme com a equipe o preparo do conjunto de exames; não prolongue o jejum por conta própria." },
       { q: "Quanto tempo demora para sair o resultado?", a: "A maioria dos exames tem resultado em curto prazo. Alguns exames específicos podem levar até 7 dias úteis. Os resultados ficam disponíveis online." },
       { q: "Posso tomar água durante o jejum?", a: "Sim! A ingestão de água é permitida e até recomendada durante o período de jejum. Evite apenas sucos, café e outras bebidas." },
       { q: "Quais exames de sangue vocês realizam?", a: "Realizamos mais de 3.000 tipos, incluindo hemograma, glicemia, colesterol, triglicerídeos, TSH, T4 livre, PSA, vitamina D, ácido úrico, ureia, creatinina, TGO, TGP, hormônios, marcadores tumorais e muito mais." },
@@ -475,12 +475,12 @@ export const examesData: ExamData[] = [
     ],
     preparations: [
       { icon: CheckCircle, text: "Não é necessário jejum para o hemograma isolado" },
-      { icon: Clock, text: "Se houver outros exames no pedido (glicemia, colesterol), o jejum deles prevalece" },
+      { icon: Clock, text: "Se houver outros exames no pedido, confirme o preparo do conjunto antes da coleta" },
       { icon: AlertTriangle, text: "Informe medicamentos em uso — alguns interferem no resultado" },
       { icon: FileText, text: "Traga o pedido médico e documento com foto" },
     ],
     faqs: [
-      { q: "Hemograma precisa de jejum?", a: "Não. O hemograma isolado não exige jejum. Se o seu pedido incluir também glicemia de jejum ou perfil lipídico, siga a orientação de jejum desses exames (8 a 12 horas) e faça tudo na mesma coleta." },
+      { q: "Hemograma precisa de jejum?", a: "Não. O hemograma isolado geralmente não exige jejum. Se houver glicemia de jejum ou outro exame com preparo específico, confirme a orientação do pedido completo com a equipe. O perfil lipídico não exige jejum em todas as situações." },
       { q: "O que o hemograma completo detecta?", a: "Ele avalia glóbulos vermelhos (anemias), glóbulos brancos (infecções, inflamações e alterações da imunidade) e plaquetas (coagulação). É um exame de triagem: alterações devem sempre ser interpretadas pelo médico junto ao quadro clínico." },
       { q: "Em quanto tempo sai o resultado do hemograma?", a: "Na Total Quality, o resultado do hemograma fica pronto em curto prazo e pode ser acessado online, sem precisar voltar ao laboratório." },
       { q: "Quanto custa um hemograma completo?", a: `Consulte o valor particular atualizado pelo WhatsApp (12) 3887-3535. Nos convênios atendidos (${CONVENIOS_TEXTO}), a equipe confirma a cobertura antes do exame.` },

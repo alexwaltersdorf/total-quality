@@ -115,9 +115,7 @@ export const PAGINAS_EXAMES: Record<string, ConteudoPagina> = {
     respostaCurta:
       "Exames de sangue são análises feitas a partir de uma amostra colhida da veia do braço, usadas para avaliar órgãos, investigar sintomas, acompanhar tratamentos e fazer check-ups. A Total Quality realiza mais de 3.000 tipos de exames laboratoriais em Caraguatatuba, com coleta sem agendamento, por ordem de chegada, e resultados online.",
     resumo: {
-      // TODO(alex): o jejum do perfil lipidico diverge entre o dado (8 a 12 h)
-      // e o artigo de alimentacao (nao obrigatorio na maioria dos casos). O
-      // PR #101 trata disso; a tabela so diz o que vale para todos.
+      // O preparo depende do pedido; não impor jejum universal ao perfil lipídico.
       jejum: "Depende dos exames do pedido; quando houver mais de um, vale o preparo mais exigente. Água pode ser tomada normalmente",
       preparo: "Informe os medicamentos e suplementos em uso e evite exercício intenso nas 24 horas anteriores",
       duracao: "A coleta leva poucos minutos",
