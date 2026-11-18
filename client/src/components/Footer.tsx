@@ -9,7 +9,6 @@ import { trackScheduleExam, trackWhatsAppClick, trackExternalLink } from "@/lib/
 import { useTelefoneRedirect, useWhatsAppRedirect } from "@/contexts/ContatoLeadContext";
 import { useMensagemWhatsApp } from "@/contexts/AssuntoPagina";
 import CtaWhatsApp from "@/components/CtaWhatsApp";
-import { BLOG_EXTERNO_URL } from "@shared/const";
 
 /*
  * Navegacao do rodape como links de verdade (SEO nov/2026, Fase 2). Sobre e
@@ -22,7 +21,6 @@ const footerLinks = [
   { label: "Sobre", href: "/sobre", isRoute: true },
   { label: "Contato", href: "/contato", isRoute: true },
   { label: "Blog", href: "/blog", isRoute: true },
-  { label: "Mais artigos de saúde", href: BLOG_EXTERNO_URL, external: true },
   { label: "Check-Up Preventivo", href: "/checkup", isRoute: true },
   { label: "Bioimpedância", href: "/bioimpedancia", isRoute: true },
 ];
