@@ -409,7 +409,7 @@ describe("GUARD-RAIL: menu e botão de resultados (out/2026)", () => {
     "utf-8"
   );
   it("Resultados abre o portal de laudos, não o próprio site", () => {
-    expect(navbar).toContain('RESULTADOS_URL = "https://app.totalquality.med.br/"');
+    expect(navbar).toContain('RESULTADOS_URL = "https://unipacslaudos.avantix.com.br/"');
     expect(navbar).not.toMatch(/window\.open\("https:\/\/totalquality\.med\.br"/);
   });
   it("menu na ordem decidida pelo Alex: Início, Sobre, Contato, Nossos Exames, Blog, Resultados, Agendar", () => {

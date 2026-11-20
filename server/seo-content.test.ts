@@ -1051,7 +1051,15 @@ describe("GUARD-RAIL: soft 404 do catch-all de artigos (Search Console, ago/2026
     // SEO nov/2026, Fase 2 (14/11/2026): /sobre e /contato deixaram de ser 301
     // para a home e viraram paginas reais — "rota valida" com conteudo proprio.
     const PAGINAS_REAIS = new Set(["/sobre", "/contato"]);
+    // /login (Alex, 20/11/2026): pagina administrativa que nao deve aparecer no
+    // Google — 410 Gone em vez de 301 para a home.
+    const REMOVIDAS = new Set(["/login"]);
     for (const url of reportadas) {
+      if (REMOVIDAS.has(url)) {
+        expect(isGone(url), `${url} deveria responder 410`).toBe(true);
+        expect(getLegacyRedirect(url)).toBeNull();
+        continue;
+      }
       if (PAGINAS_REAIS.has(url)) {
         expect(getLegacyRedirect(url)).toBeNull();
         expect(resolveHttpStatus(url, blogSlugs, new Set<string>())).toBe(200);
