@@ -459,8 +459,11 @@ export const examesData: ExamData[] = [
     shortTitle: "Hemograma",
     subtitle: "Análises Clínicas",
     description: "Glóbulos vermelhos, glóbulos brancos e plaquetas em uma coleta, sem agendamento.",
-    metaTitle: "Hemograma Completo em Caraguatatuba | Total Quality",
-    metaDescription: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Resultado em curto prazo na Total Quality.",
+    // 20/11/2026 (GSC 21/10–17/11: 4.320 impressoes, 0 cliques, posicao 9,1;
+    // "hemograma precisa de jejum" 919 impr. quase todas aqui): title e
+    // description respondem jejum e resultado. Unicos em relacao ao artigo.
+    metaTitle: "Hemograma Completo em Caraguatatuba: Jejum e Resultado",
+    metaDescription: "Hemograma completo em Caraguatatuba: o exame isolado não precisa de jejum, a coleta é sem agendamento e o resultado sai em curto prazo, com acesso online.",
     heroDescription: "O hemograma completo é um exame de sangue que avalia glóbulos vermelhos, glóbulos brancos e plaquetas em uma única coleta. Na Total Quality, a coleta leva minutos e o resultado sai em curto prazo, disponível online.",
     whatIs: "O hemograma completo é uma análise quantitativa e qualitativa das células do sangue, dividida em três partes: o eritrograma (glóbulos vermelhos, hemoglobina e hematócrito, usados para investigar anemias), o leucograma (glóbulos brancos, que indicam infecções, inflamações e alterações imunológicas) e a contagem de plaquetas (relacionada à coagulação). É um exame de triagem fundamental em check-ups, no pré-operatório, no pré-natal e na investigação de sintomas como cansaço, febre prolongada e sangramentos.",
     howItWorks: "A coleta é feita por punção venosa no braço e leva poucos minutos. Não é necessário jejum para o hemograma isolado — apenas evite atividade física intensa imediatamente antes. A amostra é processada em analisador hematológico automatizado e revisada pela equipe do laboratório. O resultado fica disponível online em curto prazo; os valores de referência vêm impressos no laudo e devem sempre ser interpretados pelo seu médico, junto ao seu histórico clínico.",
@@ -480,9 +483,12 @@ export const examesData: ExamData[] = [
       { icon: FileText, text: "Traga o pedido médico e documento com foto" },
     ],
     faqs: [
-      { q: "Hemograma precisa de jejum?", a: "Não. O hemograma isolado geralmente não exige jejum. Se houver glicemia de jejum ou outro exame com preparo específico, confirme a orientação do pedido completo com a equipe. O perfil lipídico não exige jejum em todas as situações." },
+      { q: "Hemograma precisa de jejum?", a: "Não. O hemograma isolado não exige jejum. Se houver glicemia de jejum ou outro exame com preparo específico, confirme a orientação do pedido completo com a equipe. O perfil lipídico não exige jejum em todas as situações." },
+      // 20/11/2026: "hemograma precisa de jejum de quantas horas" (GSC). Sem numero
+      // de horas: o fato do repositorio e que o hemograma isolado nao exige jejum.
+      { q: "Hemograma precisa de jejum de quantas horas?", a: "Para o hemograma isolado, nenhuma: ele não exige jejum. As horas de jejum valem para outros exames que vierem no mesmo pedido, como a glicemia de jejum; nesse caso, siga o preparo desses exames e confirme pelo WhatsApp (12) 3887-3535." },
       { q: "O que o hemograma completo detecta?", a: "Ele avalia glóbulos vermelhos (anemias), glóbulos brancos (infecções, inflamações e alterações da imunidade) e plaquetas (coagulação). É um exame de triagem: alterações devem sempre ser interpretadas pelo médico junto ao quadro clínico." },
-      { q: "Em quanto tempo sai o resultado do hemograma?", a: "Na Total Quality, o resultado do hemograma fica pronto em curto prazo e pode ser acessado online, sem precisar voltar ao laboratório." },
+      { q: "Quanto tempo o hemograma fica pronto?", a: "Em curto prazo, com acesso online: na Total Quality, você consulta o resultado do hemograma sem precisar voltar ao laboratório." },
       { q: "Quanto custa um hemograma completo?", a: `Consulte o valor particular atualizado pelo WhatsApp (12) 3887-3535. Nos convênios atendidos (${CONVENIOS_TEXTO}), a equipe confirma a cobertura antes do exame.` },
       { q: "Preciso agendar para fazer o hemograma?", a: "Não é necessário agendamento: basta comparecer com o pedido médico e um documento com foto. A coleta funciona de segunda a sexta a partir das 7h30." },
       // Fase 3 (15/11/2026): do artigo publicado hemograma-completo-o-que-avalia (sem repetir o texto dele).

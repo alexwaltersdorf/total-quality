@@ -41,7 +41,7 @@ export const PAGINAS_EXAMES: Record<string, ConteudoPagina> = {
     // cada serie do hemograma mostra e do artigo
     // /blog/hemograma-completo-o-que-avalia — aqui so um resumo e o link.
     respostaCurta:
-      "O hemograma completo é o exame de sangue que conta e analisa os glóbulos vermelhos, os glóbulos brancos e as plaquetas em uma única amostra. O médico o pede em check-ups, no pré-operatório, no pré-natal e na investigação de sintomas. Na Total Quality, a coleta é sem agendamento, por ordem de chegada, e o hemograma isolado não exige jejum.",
+      "O hemograma completo é o exame de sangue que avalia glóbulos vermelhos, glóbulos brancos e plaquetas em uma única amostra. O hemograma isolado não exige jejum. Na Total Quality, em Caraguatatuba, a coleta é sem agendamento, por ordem de chegada, e o resultado sai em curto prazo, com acesso online.",
     resumo: {
       jejum: "Não é necessário para o hemograma isolado; se o pedido tiver glicemia ou outros exames com jejum, vale o jejum deles",
       preparo: "Evite atividade física intensa logo antes e informe os medicamentos em uso",
@@ -55,7 +55,34 @@ export const PAGINAS_EXAMES: Record<string, ConteudoPagina> = {
       ...FOTO_LABORATORIO,
       alt: "Bancada do laboratório da Total Quality em Caraguatatuba, onde as amostras de sangue são processadas",
     },
+    // Ordem (20/11/2026, GSC 21/10–17/11): "hemograma precisa de jejum" (919
+    // impressoes, quase todas nesta URL) e "quanto tempo fica pronto" vem
+    // primeiro, com a resposta na primeira frase. O que cada serie mostra e
+    // o laudo ficam no artigo do blog.
     secoes: [
+      {
+        id: "jejum-e-preparo",
+        titulo: "Hemograma precisa de jejum?",
+        paragrafos: [
+          "Não: o hemograma isolado não exige jejum. Se o mesmo pedido trouxer glicemia de jejum ou outros exames com preparo próprio, siga a orientação do exame mais exigente e faça tudo na mesma coleta — assim você vem uma vez só.",
+          "Evite atividade física intensa imediatamente antes da coleta e informe na recepção os medicamentos que usa, sem suspender nenhum por conta própria: alguns interferem no resultado, e o médico precisa saber deles para ler o laudo.",
+        ],
+      },
+      {
+        id: "resultado",
+        titulo: "Quando sai o resultado do hemograma?",
+        paragrafos: [
+          "Em curto prazo: o processamento é automatizado e o laudo é liberado online, sem precisar voltar ao laboratório. Se o pedido tiver outros exames, o prazo de cada um é informado no atendimento.",
+        ],
+      },
+      {
+        id: "como-e-feito",
+        titulo: "Como é feita a coleta do hemograma?",
+        paragrafos: [
+          "A coleta é uma punção venosa no braço e leva poucos minutos. A amostra é processada em analisador hematológico automatizado e revisada pela equipe do laboratório; os valores de referência do método vêm impressos no laudo.",
+          "Não precisa marcar horário: basta chegar com o pedido médico e um documento com foto, de segunda a sexta, das 7h30 às 18h, e a coleta segue a ordem de chegada. Para quem não pode se deslocar, existe coleta domiciliar, com área, horário e valor confirmados pelo WhatsApp.",
+        ],
+      },
       {
         id: "o-que-e",
         titulo: "O que é o hemograma completo?",
@@ -79,36 +106,13 @@ export const PAGINAS_EXAMES: Record<string, ConteudoPagina> = {
           "Sangramentos ou manchas roxas frequentes",
         ],
       },
-      {
-        id: "como-e-feito",
-        titulo: "Como é feita a coleta do hemograma?",
-        paragrafos: [
-          "A coleta é uma punção venosa no braço e leva poucos minutos. A amostra é processada em analisador hematológico automatizado e revisada pela equipe do laboratório; os valores de referência do método vêm impressos no laudo.",
-          "Não precisa marcar horário: basta chegar com o pedido médico e um documento com foto, de segunda a sexta, das 7h30 às 18h, e a coleta segue a ordem de chegada. Para quem não pode se deslocar, existe coleta domiciliar, com área, horário e valor confirmados pelo WhatsApp.",
-        ],
-      },
-      {
-        id: "jejum-e-preparo",
-        titulo: "Hemograma precisa de jejum ou preparo?",
-        paragrafos: [
-          "O hemograma isolado não exige jejum. Se o mesmo pedido trouxer glicemia de jejum ou outros exames com preparo próprio, siga a orientação do exame mais exigente e faça tudo na mesma coleta — assim você vem uma vez só.",
-          "Evite atividade física intensa imediatamente antes da coleta e informe na recepção os medicamentos que usa, sem suspender nenhum por conta própria: alguns interferem no resultado, e o médico precisa saber deles para ler o laudo.",
-        ],
-      },
-      {
-        id: "resultado",
-        titulo: "Quando sai o resultado do hemograma?",
-        paragrafos: [
-          "O processamento é automatizado e o resultado fica pronto em curto prazo. O laudo é liberado online, sem precisar voltar ao laboratório. Se o pedido tiver outros exames, o prazo de cada um é informado no atendimento.",
-        ],
-      },
     ],
     nomeOndeFazer: "hemograma",
     mensagemOndeFazer:
       "Faça seu hemograma sem agendamento: a coleta é por ordem de chegada, de segunda a sexta, das 7h30 às 18h. Dúvidas de preparo e convênio pelo WhatsApp.",
     blog: ["hemograma-completo-o-que-avalia", "siglas-exames-laboratoriais", "exames-de-sangue-guia-completo", "alimentacao-e-exames-laboratoriais"],
     relacionados: ["/exames/exames-de-sangue", "/laboratorio-caraguatatuba", "/checkup", "/exames/sexagem-fetal"],
-    atualizadoEm: REVISAO_FASE_3,
+    atualizadoEm: "2026-11-20",
   },
 
   "exames-de-sangue": {

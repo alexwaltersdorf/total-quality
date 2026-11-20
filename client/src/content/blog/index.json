@@ -144,9 +144,9 @@
     "id": "11",
     "slug": "hemograma-completo-o-que-avalia",
     "title": "Hemograma Completo: O Que Avalia e Quais Exames Inclui",
-    "metaTitle": "Hemograma Completo: Tabela do Que Cada Parte Avalia",
-    "subtitle": "Série vermelha, série branca e plaquetas: o que cada parte do exame mostra, se precisa de jejum e como é a coleta",
-    "excerpt": "Tabela com o que o hemograma completo avalia em cada série (hemácias, leucócitos e plaquetas), se precisa de jejum, como é a coleta e quando é pedido.",
+    "metaTitle": "Hemograma Completo: Quais Exames Inclui e o Que Avalia",
+    "subtitle": "Série vermelha, série branca e plaquetas: quais exames o hemograma inclui, como vem o laudo e como ler o resultado",
+    "excerpt": "Hemograma completo inclui série vermelha, série branca e plaquetas. Veja o que cada parte mede, se precisa de jejum e se inclui exame de fezes e urina.",
     "category": "Exames Laboratoriais",
     "author": "Equipe Total Quality",
     "authorRole": "Total Quality Medicina Diagnóstica",
@@ -160,13 +160,13 @@
       "exames laboratoriais",
       "Caraguatatuba"
     ],
-    "dateModified": "2026-11-16",
+    "dateModified": "2026-11-20",
     "examName": "hemograma completo",
     "examType": "hemograma",
     "examPages": [
       "/exames/hemograma"
     ],
-    "lastReviewed": "2026-10-22"
+    "lastReviewed": "2026-11-20"
   },
   {
     "id": "12",

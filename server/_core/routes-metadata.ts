@@ -173,8 +173,8 @@ const examesExtras: Record<string, ExtrasExame & { title?: string; description?:
   },
 
   "hemograma": {
-    title: "Hemograma Completo em Caraguatatuba | Total Quality",
-    description: "Hemograma completo em Caraguatatuba: o que é, se precisa de jejum, o que detecta e em quanto tempo sai o resultado. Resultado em curto prazo na Total Quality.",
+    title: "Hemograma Completo em Caraguatatuba: Jejum e Resultado",
+    description: "Hemograma completo em Caraguatatuba: o exame isolado não precisa de jejum, a coleta é sem agendamento e o resultado sai em curto prazo, com acesso online.",
     ogTitle: "Hemograma Completo | Total Quality",
     ogDescription: "Tudo sobre o hemograma completo: o que avalia, preparo e resultado em curto prazo.",
     canonical: "https://totalquality.med.br/exames/hemograma",
