@@ -19,7 +19,9 @@ import CtaWhatsApp from "@/components/CtaWhatsApp";
  * exames e na home. Cor: cinza para todos, vinho so no item da pagina atual —
  * antes 4 itens eram vinho sem criterio e a cor deixava de significar algo.
  */
-const RESULTADOS_URL = "https://app.totalquality.med.br/";
+// Portal de laudos (Alex, 20/11/2026): o app.totalquality.med.br ficou com o certificado
+// vencido em 19/11/2026; os resultados passam a ser entregues pelo portal da Avantix.
+const RESULTADOS_URL = "https://unipacslaudos.avantix.com.br/";
 
 // Sobre e Contato viraram paginas (SEO nov/2026, Fase 2). Antes eram ancoras
 // da home (#sobre, #contato) em botoes, e /sobre e /contato faziam 301 para

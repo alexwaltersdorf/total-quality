@@ -36,8 +36,6 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
   "/blog/index": "/blog",
   "/blog/privacidade": "/privacidade",
 
-  // Portal de resultados: o login vive em subdomínio próprio
-  "/login": "/",
 
   // Canibalizacao de palavras-chave (auditoria de SEO, 12/09): dois artigos
   // do blog disputavam a mesma busca ("exames de sangue") e a pagina de
@@ -143,6 +141,10 @@ export const GONE_PATHS = new Set([
   // FAQ geral do WordPress antigo (auditoria de indexacao, 23/10/2026): as
   // perguntas hoje vivem em cada pagina de exame, sem uma pagina equivalente.
   "/faq",
+  // Pagina administrativa (Alex, 20/11/2026: "/login — pagina administrativa, nao
+  // aparecer"). Antes fazia 301 para a home, o que o Google trata como soft 404.
+  // 410 tira do indice; nao ha /login publico no site.
+  "/login",
 ]);
 
 /** Resolve o destino do 301 para uma URL legada, ou null se não houver. */

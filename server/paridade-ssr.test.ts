@@ -193,7 +193,7 @@ describe("Fase 2: CTAs como links reais no HTML do servidor", () => {
     const html = getSsrPage("/checkup")!.body;
     expect(html).toContain('href="/sobre"');
     expect(html).toContain('href="/contato"');
-    expect(html).toContain('href="https://app.totalquality.med.br/"');
+    expect(html).toContain('href="https://unipacslaudos.avantix.com.br/"');
     expect(html).not.toMatch(/href="#(sobre|contato|inicio)"/);
   });
 });
