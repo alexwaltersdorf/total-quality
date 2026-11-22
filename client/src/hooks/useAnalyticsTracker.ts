@@ -6,6 +6,7 @@
 import { trpc } from "@/lib/trpc";
 import { useCallback, useRef } from "react";
 import { getLeadClickIdsForAPI, getUTMForAPI } from "@/lib/utmTracker";
+import type { EnderecoDoLead } from "@/lib/enderecoLead";
 
 // Gerar ou recuperar sessionId do sessionStorage
 function getSessionId(): string {
@@ -125,7 +126,12 @@ export async function trackEventDirect(
  */
 export async function trackLeadDirect(
   source: string,
-  extraData?: { name?: string; phone?: string; email?: string },
+  /*
+   * O endereco (opcional, desde 22/11/2026) entra AQUI e so aqui: vai ao
+   * banco e a planilha. Nao confundir com `conversao`, que alimenta Meta e
+   * GA4 pelo servidor e nunca leva endereco (lib/enderecoLead.ts).
+   */
+  extraData?: { name?: string; phone?: string; email?: string } & EnderecoDoLead,
   conversao?: {
     eventId: string;
     examType?: string;

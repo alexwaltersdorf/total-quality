@@ -53,6 +53,16 @@ var MAPA_CABECALHOS = {
   'CEP': 'zipCode',
   'Endereço': 'address',
   'Endereco': 'address',
+  // Desde 22/11/2026 (autocompletar de endereco do formulario de
+  // qualificacao). 'Endereço' traz o texto inteiro (com o complemento);
+  // as colunas abaixo trazem as partes devolvidas pelo Google Maps e so
+  // vem preenchidas quando a pessoa escolhe uma sugestao.
+  'Número / complemento': 'addressComplement',
+  'Complemento': 'addressComplement',
+  'Rua': 'street',
+  'Número': 'streetNumber',
+  'Numero': 'streetNumber',
+  'Bairro': 'neighborhood',
   'Referrer': 'referrer',
   'Session ID': 'sessionId',
   // Desde 29/10/2026 (pericia de rastreamento). Nomes proprios, para nao

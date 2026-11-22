@@ -25,7 +25,7 @@ export default function Privacidade() {
           <h1 className="heading-display text-[clamp(2rem,5vw,3.5rem)] leading-[1.05] text-text mb-4">
             Política de Privacidade
           </h1>
-          <p className="text-text-muted text-sm mb-12">Última atualização: julho de 2026</p>
+          <p className="text-text-muted text-sm mb-12">Última atualização: novembro de 2026</p>
 
           <div className="space-y-8 text-text-light leading-relaxed">
             <section>
@@ -45,6 +45,23 @@ export default function Privacidade() {
                 <li>
                   <strong>Dados de contato</strong> informados voluntariamente no formulário do
                   site ou pelo WhatsApp: nome, telefone, e-mail e o exame de interesse.
+                </li>
+                <li>
+                  <strong>Endereço (opcional)</strong>: se você quiser informá-lo no formulário
+                  de contato, usamos o endereço para agilizar o cadastro e o atendimento,
+                  inclusive a coleta domiciliar. Ele fica só nos sistemas da clínica e não é
+                  enviado às ferramentas de análise e de anúncios. Para sugerir endereços
+                  enquanto você digita, o campo usa o Google Maps Platform: o Google recebe o
+                  que é digitado nesse campo, conforme a{" "}
+                  <a
+                    className="text-brand"
+                    href="https://policies.google.com/privacy?hl=pt-BR"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    política de privacidade do Google
+                  </a>
+                  .
                 </li>
                 <li>
                   <strong>Dados de navegação</strong>: páginas visitadas, origem do acesso,

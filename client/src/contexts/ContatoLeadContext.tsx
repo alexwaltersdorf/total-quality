@@ -29,6 +29,13 @@
  *   3. servidor -> Meta Conversions API e GA4 Measurement Protocol
  *      (server/_core/conversions.ts), compartilhando o event_id da etapa 1
  *      para as plataformas nao contarem a mesma conversao duas vezes.
+ *
+ * ENDERECO (desde 22/11/2026, pedido do Alex). Dois campos OPCIONAIS depois do
+ * e-mail — "Endereco", com sugestoes do Google Maps, e "Numero / complemento".
+ * Nao entram em CAMPOS_OBRIGATORIOS (o atrito acima vale em dobro aqui) e vao
+ * SO para a etapa 2: nunca para a 1 nem para a 3, nem para a mensagem do
+ * WhatsApp. Ver lib/enderecoLead.ts e o guard-rail em
+ * server/endereco-lead.test.ts.
  */
 import {
   createContext,
@@ -54,6 +61,8 @@ import { consentState, readFbCookies, readGaClientId } from "@/lib/conversionCon
 import { examTypeAtual } from "@/lib/pageContext";
 import { resolveLeadValue } from "@/lib/leadValues";
 import { whatsappUrl } from "@shared/const";
+import { LIMITES_ENDERECO, montarEnderecoLead, type ComponentesEndereco } from "@/lib/enderecoLead";
+import CampoEnderecoGoogle from "@/components/CampoEnderecoGoogle";
 
 
 /**
@@ -266,6 +275,10 @@ export function ContatoLeadProvider({ children }: { children: ReactNode }) {
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [email, setEmail] = useState("");
+  // Opcionais e fora da validacao: nunca barram o envio.
+  const [endereco, setEndereco] = useState("");
+  const [complemento, setComplemento] = useState("");
+  const [componentes, setComponentes] = useState<ComponentesEndereco | null>(null);
   const [erros, setErros] = useState<Erros>({});
   const [submitting, setSubmitting] = useState(false);
   const submitLock = useRef(false);
@@ -275,6 +288,9 @@ export function ContatoLeadProvider({ children }: { children: ReactNode }) {
     setNome("");
     setTelefone("");
     setEmail("");
+    setEndereco("");
+    setComplemento("");
+    setComponentes(null);
     setErros({});
     setSubmitting(false);
     submitLock.current = false;
@@ -340,6 +356,9 @@ export function ContatoLeadProvider({ children }: { children: ReactNode }) {
       const telefoneLimpo = telefone.trim() || undefined;
       const emailLimpo = email.trim() || undefined;
       const examType = examTypeAtual();
+      // So para o lead.create (banco e planilha). Fica fora do
+      // trackLeadQualificado, da conversao pelo servidor e da mensagem.
+      const enderecoLead = montarEnderecoLead(endereco, complemento, componentes);
 
       /*
        * Ordem importa. O evento do navegador sai primeiro e devolve o
@@ -363,7 +382,7 @@ export function ContatoLeadProvider({ children }: { children: ReactNode }) {
       const { fbc, fbp } = readFbCookies();
       void trackLeadDirect(
         pending.source,
-        { name: nomeLimpo, phone: telefoneLimpo, email: emailLimpo },
+        { name: nomeLimpo, phone: telefoneLimpo, email: emailLimpo, ...enderecoLead },
         eventId
           ? {
               eventId,
@@ -388,12 +407,12 @@ export function ContatoLeadProvider({ children }: { children: ReactNode }) {
 
       close();
     },
-    [pending, nome, telefone, email, close]
+    [pending, nome, telefone, email, endereco, complemento, componentes, close]
   );
 
-  const campoClasse = (campo: Campo) =>
+  const campoClasse = (campo: Campo | "endereco" | "complemento") =>
     `w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand ${
-      erros[campo] ? "border-red-500" : "border-gray-300"
+      erros[campo as Campo] ? "border-red-500" : "border-gray-300"
     }`;
 
   const valor = useMemo<ContatoLead>(
@@ -487,7 +506,7 @@ export function ContatoLeadProvider({ children }: { children: ReactNode }) {
                 )}
               </div>
 
-              <div className="mb-4">
+              <div className="mb-3">
                 <label
                   htmlFor={`${idBase}-email`}
                   className="block text-sm font-semibold text-text-light mb-1"
@@ -514,6 +533,43 @@ export function ContatoLeadProvider({ children }: { children: ReactNode }) {
                 )}
               </div>
 
+              <div className="mb-3">
+                <label
+                  htmlFor={`${idBase}-endereco`}
+                  className="block text-sm font-semibold text-text-light mb-1"
+                >
+                  Endereço <span className="font-normal text-text-light/60">(opcional)</span>
+                </label>
+                <CampoEnderecoGoogle
+                  id={`${idBase}-endereco`}
+                  valor={endereco}
+                  maxLength={LIMITES_ENDERECO.address}
+                  onTexto={setEndereco}
+                  onComponentes={setComponentes}
+                  className={campoClasse("endereco")}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label
+                  htmlFor={`${idBase}-complemento`}
+                  className="block text-sm font-semibold text-text-light mb-1"
+                >
+                  Número / complemento <span className="font-normal text-text-light/60">(opcional)</span>
+                </label>
+                <input
+                  id={`${idBase}-complemento`}
+                  name="complemento"
+                  type="text"
+                  autoComplete="address-line2"
+                  maxLength={LIMITES_ENDERECO.addressComplement}
+                  value={complemento}
+                  onChange={(e) => setComplemento(e.target.value)}
+                  placeholder="Ex.: 120, apto 32"
+                  className={campoClasse("complemento")}
+                />
+              </div>
+
               <button
                 type="submit"
                 disabled={submitting}
@@ -522,8 +578,13 @@ export function ContatoLeadProvider({ children }: { children: ReactNode }) {
                 {submitting ? copy.acaoCarregando : copy.acao}
               </button>
               <p className="text-[11px] leading-snug text-text-light/60 mt-3">
-                Usamos seus dados apenas para retornar o contato. Nada é publicado
-                nem compartilhado fora disso.
+                Usamos seus dados apenas para retornar o contato e agilizar o
+                atendimento. Nada é publicado nem compartilhado fora disso; só o
+                que você digita no endereço passa pelo Google Maps, para sugerir
+                o endereço.{" "}
+                <a href="/privacidade" target="_blank" rel="noopener" className="underline">
+                  Política de privacidade
+                </a>
               </p>
             </form>
           </div>

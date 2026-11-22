@@ -37,6 +37,17 @@ const dateFilterSchema = z.object({
   dateTo: z.string().optional(),   // ISO date string e.g. "2026-01-31"
 }).optional();
 
+/**
+ * Coluna `address` do banco (varchar 500, existe desde a migracao 0002 — o
+ * insert do drizzle ja nomeia todas as colunas da tabela, entao nenhum lead
+ * seria gravado se ela faltasse em producao). O complemento digitado a parte
+ * entra no mesmo texto, porque o banco nao tem coluna propria para ele.
+ */
+function enderecoParaBanco(endereco?: string, complemento?: string): string | undefined {
+  const partes = [endereco?.trim(), complemento?.trim() && `Nº/compl.: ${complemento.trim()}`].filter(Boolean);
+  return partes.length ? partes.join(" — ").slice(0, 500) : undefined;
+}
+
 // Helper to resolve date range from input
 function resolveDateRange(input?: { days?: number; dateFrom?: string; dateTo?: string }): { since: Date; until?: Date } {
   if (input?.dateFrom) {
@@ -206,6 +217,13 @@ export const appRouter = router({
         city: z.string().max(100).optional(),
         state: z.string().max(50).optional(),
         zipCode: z.string().max(20).optional(),
+        // Endereco do formulario de qualificacao (22/11/2026). O banco nao
+        // tem colunas para estes quatro: o complemento entra junto do
+        // endereco em `address`, e as partes vao so para a planilha.
+        addressComplement: z.string().max(100).optional(),
+        street: z.string().max(200).optional(),
+        streetNumber: z.string().max(20).optional(),
+        neighborhood: z.string().max(100).optional(),
         utmSource: z.string().max(200).optional(),
         utmMedium: z.string().max(200).optional(),
         utmCampaign: z.string().max(500).optional(),
@@ -237,11 +255,21 @@ export const appRouter = router({
           eventId, examType, value, leadChannel, clientId, fbc, fbp,
           consentMarketing, consentAnalytics, gclid, gbraid, wbraid, ...leadInput
         } = input;
+        /*
+         * LGPD (minimizacao): o endereco vai SO para o banco e a planilha da
+         * clinica. dispatchLeadConversion abaixo recebe campo a campo, sem
+         * endereco, e notifyOwner (servico da Manus) tambem nao o recebe.
+         * Guard-rail: server/endereco-lead.test.ts.
+         */
+        leadInput.address = enderecoParaBanco(leadInput.address, leadInput.addressComplement);
+        // Partes do endereco sem coluna no banco: so a planilha as recebe.
+        const { addressComplement, street, streetNumber, neighborhood, ...colunasDoBanco } = leadInput;
+        void [addressComplement, street, streetNumber, neighborhood];
         const userAgent = ctx.req.headers["user-agent"] ?? null;
         const ipAddress =
           (ctx.req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? ctx.req.ip ?? null;
         const result = await persistLead(
-          () => createLead({ ...leadInput, userAgent, ipAddress }),
+          () => createLead({ ...colunasDoBanco, userAgent, ipAddress }),
           () => syncLeadToSheet({ ...leadInput, gclid, gbraid, wbraid, examType, eventId, value }),
         );
         /*

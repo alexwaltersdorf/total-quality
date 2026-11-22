@@ -11,6 +11,12 @@ export type LeadForSheet = {
   city?: string;
   state?: string;
   zipCode?: string;
+  // Desde 22/11/2026 (autocompletar de endereco do formulario). Cabecalhos na
+  // planilha: docs/scripts/gravar-lead-por-cabecalho.gs.
+  addressComplement?: string;
+  street?: string;
+  streetNumber?: string;
+  neighborhood?: string;
   utmSource?: string;
   utmMedium?: string;
   utmCampaign?: string;

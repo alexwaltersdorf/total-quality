@@ -674,6 +674,7 @@ const privacidadeHtml = `
     <h2>Quais dados coletamos</h2>
     <ul>
       <li>Dados de contato informados no formulário do site ou pelo WhatsApp: nome, telefone, e-mail e exame de interesse.</li>
+      <li>Endereço (opcional), se informado no formulário de contato: usado para agilizar o cadastro e o atendimento, inclusive a coleta domiciliar. Fica só nos sistemas da clínica e não é enviado às ferramentas de análise e de anúncios. As sugestões de endereço do campo usam o Google Maps Platform: o Google recebe o que é digitado nesse campo.</li>
       <li>Dados de navegação: páginas visitadas, origem do acesso e dispositivo, por meio de cookies e ferramentas de análise.</li>
       <li>Dados de saúde: coletados apenas no atendimento presencial. O site não coleta nem armazena resultados de exames.</li>
     </ul>

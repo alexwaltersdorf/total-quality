@@ -104,6 +104,25 @@ export function whatsappUrl(text?: string): string {
   return text ? `${base}&text=${encodeURIComponent(text)}` : base;
 }
 
+/**
+ * Chave de NAVEGADOR do Google Maps Platform (projeto Google Cloud do Alex),
+ * usada SO no autocompletar de endereco do formulario de qualificacao
+ * (client/src/lib/enderecoGoogle.ts, pedido do Alex em 22/11/2026). Chave de
+ * navegador e publica por natureza — vai no <script> que o visitante baixa —,
+ * entao a protecao NAO e esconde-la, e sim restringi-la no Google Cloud
+ * (APIs e servicos -> Credenciais -> esta chave):
+ *   - Restricao de aplicativo: referenciadores HTTP
+ *       https://totalquality.med.br/*
+ *       https://www.totalquality.med.br/*
+ *   - Restricao de API: somente Maps JavaScript API e Places API (New)
+ *     (e Places API, a legada, apenas se o projeto ainda a tiver).
+ * Sem essas restricoes, qualquer site pode gastar a cota da clinica.
+ *
+ * Sobrescrevivel por VITE_GOOGLE_MAPS_API_KEY no build (ver enderecoGoogle.ts).
+ * Lida apenas pelo modulo carregado sob demanda quando o formulario abre.
+ */
+export const GOOGLE_MAPS_BROWSER_KEY = "AIzaSyDg2KNn5Mpxp6gZQBbf25X3qwYbLDgwE_8";
+
 /** /especialidades — indice das consultas (SEO nov/2026, Fase 3). */
 export const ESPECIALIDADES_TITLE = "Especialidades Médicas em Caraguatatuba | Total Quality";
 export const ESPECIALIDADES_H1 = "Especialidades em Caraguatatuba";
