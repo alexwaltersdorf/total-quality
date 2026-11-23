@@ -1,5 +1,15 @@
 # Operação de SEO e conteúdo laboratorial
 
+## Estado verificado em 23/11/2026
+
+PRs #94 e #101 integrados em 18/11. O workflow diário já está na main e suas
+quatro execuções de 19 a 22/11 passaram. O blog antigo continua atendido pela
+Vercel na amostra pública: merge do código não ativou a migração do host.
+Search Console agora está acessível pela conexão Google existente.
+Relatório público atual, inventário e plano de reversão:
+[`seo-auditoria-2026-11-23.md`](seo-auditoria-2026-11-23.md).
+As seções datadas abaixo preservam os resultados históricos das rodadas anteriores.
+
 ## Decisões desta revisão (03/11/2026)
 
 - Preservar a intenção da home para laboratório em Caraguatatuba. A decisão já
@@ -45,6 +55,16 @@ Falhas ficam no resultado do job e no artefato JSON, retido por 30 dias. Bloquei
 anti-bot é relatado como impedimento de observação, nunca como queda de posição.
 O script não mede rankings, Core Web Vitals, qualidade clínica ou presença nas IAs.
 Não faz mudanças automáticas no site.
+
+A extensão preparada em 23/11 acrescenta o job independente `blog-migration`,
+executando `node scripts/audit-blog-migration.mjs --output /tmp/blog-migration.json`.
+Usa o mesmo agendamento, sem credenciais adicionais. Inventaria sitemaps/links e
+URLs históricas conhecidas; compara com a tabela compartilhada pelo resolver.
+Artefato `seo-blog-migration`, retido por 30 dias. Estado `inactive`/`partial`
+aparece como aviso, sem autorizar qualquer mudança externa. Exit 0 indica coleta
+concluída sem erro técnico detectado, **não** migração ativa. Erro de redirect ou
+destino noindex retorna 1; limitação de observação retorna 2, sem status inventado.
+Esta extensão só executará no workflow após integração autorizada do novo PR.
 
 ```sh
 node scripts/audit-seo.mjs

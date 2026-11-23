@@ -30,3 +30,21 @@ jobs:
           name: seo-laboratory-health
           path: ${{ runner.temp }}/seo-audit.json
           retention-days: 30
+
+  blog-migration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Inventory old blog and compare public redirects
+        run: node scripts/audit-blog-migration.mjs --output "$RUNNER_TEMP/blog-migration.json"
+      - name: Save migration evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-blog-migration
+          path: ${{ runner.temp }}/blog-migration.json
+          retention-days: 30
