@@ -1,0 +1,77 @@
+{
+  "discoveredAt": "2026-11-23",
+  "scope": "URLs publicas observadas em sitemap/links e caminhos historicos ja documentados no repositorio, confirmados por HTTP; nao garante todas as URLs historicas",
+  "urls": [
+    {
+      "url": "https://blog.totalquality.med.br/",
+      "sources": [
+        "https://blog.totalquality.med.br/",
+        "https://blog.totalquality.med.br/category/dicas-de-saude",
+        "https://blog.totalquality.med.br/category/exames-de-imagem",
+        "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+        "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+        "https://blog.totalquality.med.br/sitemaps/pages.xml"
+      ]
+    },
+    {
+      "url": "https://blog.totalquality.med.br/category/dicas-de-saude",
+      "sources": [
+        "https://blog.totalquality.med.br/",
+        "https://blog.totalquality.med.br/category/dicas-de-saude",
+        "https://blog.totalquality.med.br/category/exames-de-imagem",
+        "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+        "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+        "https://blog.totalquality.med.br/sitemaps/categories.xml"
+      ]
+    },
+    {
+      "url": "https://blog.totalquality.med.br/category/exames-de-imagem",
+      "sources": [
+        "https://blog.totalquality.med.br/",
+        "https://blog.totalquality.med.br/category/dicas-de-saude",
+        "https://blog.totalquality.med.br/category/exames-de-imagem",
+        "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+        "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+        "https://blog.totalquality.med.br/sitemaps/categories.xml"
+      ]
+    },
+    {
+      "url": "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+      "sources": [
+        "https://blog.totalquality.med.br/",
+        "https://blog.totalquality.med.br/category/exames-de-imagem",
+        "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+        "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+        "https://blog.totalquality.med.br/sitemaps/posts-1.xml"
+      ]
+    },
+    {
+      "url": "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+      "sources": [
+        "https://blog.totalquality.med.br/",
+        "https://blog.totalquality.med.br/category/dicas-de-saude",
+        "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+        "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+        "https://blog.totalquality.med.br/sitemaps/posts-1.xml"
+      ]
+    },
+    {
+      "url": "https://blog.totalquality.med.br/posts/hipoglicemia-o-que-voce-precisa-saber-para-manter-sua-saude-em-dia",
+      "sources": [
+        "server/_core/blog-subdominio.ts; caminho historico confirmado por HTTP publico em 23/11/2026"
+      ]
+    },
+    {
+      "url": "https://blog.totalquality.med.br/posts/hormonios-do-amor-o-que-sao-e-como-agem",
+      "sources": [
+        "server/_core/blog-subdominio.ts; caminho historico confirmado por HTTP publico em 23/11/2026"
+      ]
+    },
+    {
+      "url": "https://blog.totalquality.med.br/posts/hemograma-completo-o-que-ele-pode-revelar",
+      "sources": [
+        "server/_core/blog-subdominio.ts; caminho historico confirmado por HTTP publico em 23/11/2026"
+      ]
+    }
+  ]
+}

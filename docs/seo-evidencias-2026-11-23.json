@@ -1,0 +1,2369 @@
+{
+  "checkedAt": "2026-11-23T11:19:59.296Z",
+  "laboratory": {
+    "checkedAt": "2026-11-23T11:11:23.462Z",
+    "origin": "https://totalquality.med.br",
+    "pages": [
+      {
+        "path": "/",
+        "status": 200,
+        "title": "Laboratório em Caraguatatuba | Total Quality",
+        "description": "Laboratório de análises clínicas em Caraguatatuba há 23 anos. Exames de sangue sem agendamento, por ordem de chegada, coleta domiciliar e exames de imagem."
+      },
+      {
+        "path": "/laboratorio-caraguatatuba",
+        "status": 200,
+        "title": "Análises Clínicas em Caraguatatuba | Total Quality",
+        "description": "Análises clínicas em Caraguatatuba: hemograma, glicemia, colesterol, hormônios, urina e fezes. Coleta sem agendamento, por ordem de chegada, e resultado online."
+      },
+      {
+        "path": "/exames/exames-de-sangue",
+        "status": 200,
+        "title": "Exames de Sangue em Caraguatatuba | Total Quality",
+        "description": "Exames de sangue em Caraguatatuba na Total Quality. Coleta por ordem de chegada, sem agendamento. Consulte preparo, prazos, convênios e orçamento pelo WhatsApp."
+      },
+      {
+        "path": "/exames/hemograma",
+        "status": 200,
+        "title": "Hemograma Completo em Caraguatatuba: Jejum e Resultado",
+        "description": "Hemograma completo em Caraguatatuba: o exame isolado não precisa de jejum, a coleta é sem agendamento e o resultado sai em curto prazo, com acesso online."
+      },
+      {
+        "path": "/blog/siglas-exames-laboratoriais",
+        "status": 200,
+        "title": "Siglas de Exames Laboratoriais: Guia | Total Quality",
+        "description": "Entenda as siglas de exames laboratoriais do pedido médico: HMG, TGO, TGP, TSH, HbA1c, EAS, PSA e outras. Saiba o que avaliam e quando pedem jejum."
+      },
+      {
+        "path": "/blog/hipoglicemia-sintomas-e-exames",
+        "status": 200,
+        "title": "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer",
+        "description": "Hipoglicemia é a glicose abaixo de 70 mg/dL. Sinais de alerta, quando procurar emergência e quais exames investigam a causa."
+      },
+      {
+        "path": "/blog/como-escolher-laboratorio-analises-clinicas",
+        "status": 200,
+        "title": "Como Escolher um Laboratório: 8 Critérios Técnicos",
+        "description": "Licença sanitária, responsável técnico, controle externo de qualidade e prazo por exame: os 8 critérios que mostram se um laboratório é confiável."
+      },
+      {
+        "path": "/blog/exame-de-urina-eas-como-coletar",
+        "status": 200,
+        "title": "Exame de Urina EAS: Passo a Passo da Coleta e 5 Erros",
+        "description": "Passo a passo da coleta do EAS (urina tipo 1), os 5 erros que fazem repetir o exame, se precisa de jejum e a diferença para a urocultura em tabela."
+      },
+      {
+        "path": "/blog/hemograma-completo-o-que-avalia",
+        "status": 200,
+        "title": "Hemograma Completo: Quais Exames Inclui e o Que Avalia",
+        "description": "Hemograma completo inclui série vermelha, série branca e plaquetas. Veja o que cada parte mede, se precisa de jejum e se inclui exame de fezes e urina."
+      },
+      {
+        "path": "/blog/exames-de-sangue-guia-completo",
+        "status": 200,
+        "title": "Tipos de Exame de Sangue: Tabela, Preparo e Como Ler o Laudo",
+        "description": "Tabela com os tipos de exame de sangue mais pedidos e o que cada um avalia, o preparo e o jejum, e como ler o laudo: resultado, unidade e referência."
+      }
+    ],
+    "internalLinksChecked": 38,
+    "issues": []
+  },
+  "migration": {
+    "checkedAt": "2026-11-23T11:19:59.296Z",
+    "state": "inactive",
+    "discoveryComplete": true,
+    "scope": "sitemaps e links consultados, mais inventario historico conhecido; nao garante todas as URLs historicas",
+    "robots": {
+      "url": "https://blog.totalquality.med.br/robots.txt",
+      "chain": [
+        {
+          "url": "https://blog.totalquality.med.br/robots.txt",
+          "status": 200
+        }
+      ],
+      "finalUrl": "https://blog.totalquality.med.br/robots.txt",
+      "finalStatus": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "xRobotsTag": null,
+      "hosting": {
+        "platform": null,
+        "vercelId": "cle1::iad1::kzpzc-1795432784205-b8b2e9380190",
+        "matchedPath": "/blogsite/[tenant]/robots.txt"
+      },
+      "body": "User-agent: *\nAllow: /\nSitemap: https://blog.totalquality.med.br/sitemap.xml"
+    },
+    "sitemaps": [
+      {
+        "url": "https://blog.totalquality.med.br/sitemap.xml",
+        "chain": [
+          {
+            "url": "https://blog.totalquality.med.br/sitemap.xml",
+            "status": 200
+          }
+        ],
+        "finalUrl": "https://blog.totalquality.med.br/sitemap.xml",
+        "finalStatus": 200,
+        "contentType": "application/xml; charset=utf-8",
+        "xRobotsTag": null,
+        "hosting": {
+          "platform": null,
+          "vercelId": "cle1::iad1::szfrz-1795432787530-a81a452fa6f7",
+          "matchedPath": "/blogsite/[tenant]/sitemap.xml"
+        }
+      },
+      {
+        "url": "https://blog.totalquality.med.br/sitemaps/pages.xml",
+        "chain": [
+          {
+            "url": "https://blog.totalquality.med.br/sitemaps/pages.xml",
+            "status": 200
+          }
+        ],
+        "finalUrl": "https://blog.totalquality.med.br/sitemaps/pages.xml",
+        "finalStatus": 200,
+        "contentType": "application/xml; charset=utf-8",
+        "xRobotsTag": null,
+        "hosting": {
+          "platform": null,
+          "vercelId": "cle1::iad1::5h76p-1795432787663-820c7e38b75b",
+          "matchedPath": "/blogsite/[tenant]/sitemaps/[file]"
+        }
+      },
+      {
+        "url": "https://blog.totalquality.med.br/sitemaps/categories.xml",
+        "chain": [
+          {
+            "url": "https://blog.totalquality.med.br/sitemaps/categories.xml",
+            "status": 200
+          }
+        ],
+        "finalUrl": "https://blog.totalquality.med.br/sitemaps/categories.xml",
+        "finalStatus": 200,
+        "contentType": "application/xml; charset=utf-8",
+        "xRobotsTag": null,
+        "hosting": {
+          "platform": null,
+          "vercelId": "cle1::iad1::kzpzc-1795432787811-8b01b1829454",
+          "matchedPath": "/blogsite/[tenant]/sitemaps/[file]"
+        }
+      },
+      {
+        "url": "https://blog.totalquality.med.br/sitemaps/posts-1.xml",
+        "chain": [
+          {
+            "url": "https://blog.totalquality.med.br/sitemaps/posts-1.xml",
+            "status": 200
+          }
+        ],
+        "finalUrl": "https://blog.totalquality.med.br/sitemaps/posts-1.xml",
+        "finalStatus": 200,
+        "contentType": "application/xml; charset=utf-8",
+        "xRobotsTag": null,
+        "hosting": {
+          "platform": null,
+          "vercelId": "cle1::iad1::z7kbq-1795432787940-2dc0c1d3b69d",
+          "matchedPath": "/blogsite/[tenant]/sitemaps/[file]"
+        }
+      }
+    ],
+    "pages": [
+      {
+        "url": "https://blog.totalquality.med.br/",
+        "chain": [
+          {
+            "url": "https://blog.totalquality.med.br/",
+            "status": 200
+          }
+        ],
+        "finalUrl": "https://blog.totalquality.med.br/",
+        "finalStatus": 200,
+        "contentType": "text/html; charset=utf-8",
+        "xRobotsTag": null,
+        "hosting": {
+          "platform": null,
+          "vercelId": "cle1::iad1::rtwtp-1795432788170-f2428a092bf0",
+          "matchedPath": "/blogsite/[tenant]"
+        },
+        "sources": [
+          "https://blog.totalquality.med.br/",
+          "https://blog.totalquality.med.br/category/dicas-de-saude",
+          "https://blog.totalquality.med.br/category/exames-de-imagem",
+          "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+          "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+          "https://blog.totalquality.med.br/sitemaps/pages.xml"
+        ],
+        "expected": {
+          "status": 301,
+          "location": "https://totalquality.med.br/blog"
+        },
+        "matchesPreparedRule": false,
+        "html": {
+          "title": [
+            "Total Quality Medicina Diagnóstica"
+          ],
+          "h1": [
+            "Total Quality Medicina Diagnóstica",
+            "Últimos Artigos"
+          ],
+          "description": [
+            "O Total Quality é um laboratório e clínica de medicina diagnóstica em Caraguatatuba, SP, oferecendo uma ampla gama de exames laboratoriais e de imagem. Com mai…"
+          ],
+          "robots": [
+            "index, follow",
+            "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+          ],
+          "canonical": [
+            "https://blog.totalquality.med.br"
+          ],
+          "schemas": [
+            {
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Total Quality Medicina Diagnóstica",
+              "url": "https://blog.totalquality.med.br",
+              "description": "O Total Quality é um laboratório e clínica de medicina diagnóstica em Caraguatatuba, SP, oferecendo uma ampla gama de exames laboratoriais e de imagem. Com mai…"
+            }
+          ],
+          "initialBodyWords": 390,
+          "images": [
+            {
+              "src": "https://api.airticles.ai/uploads/1de94013-1303-4ef4-a6bf-928d0742b692.webp",
+              "alt": "Ultrassom de Tireoide: Para Que Serve e Como É Feito",
+              "width": "400",
+              "height": "225"
+            },
+            {
+              "src": "https://api.airticles.ai/uploads/83542217-d4a0-4a90-b028-f53d555a961d.webp",
+              "alt": "Tirzepatida: exames de acompanhamento e alerta da Anvisa sobre falsificação",
+              "width": "400",
+              "height": "225"
+            }
+          ],
+          "links": [
+            "/",
+            "/",
+            "/category/dicas-de-saude",
+            "/category/exames-de-imagem",
+            "https://totalquality.med.br",
+            "/category/exames-de-imagem",
+            "/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+            "/category/dicas-de-saude",
+            "/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+            "https://totalquality.med.br",
+            "/",
+            "/category/dicas-de-saude",
+            "/category/exames-de-imagem",
+            "https://totalquality.med.br",
+            "https://airticles.ai"
+          ]
+        }
+      },
+      {
+        "url": "https://blog.totalquality.med.br/category/dicas-de-saude",
+        "chain": [
+          {
+            "url": "https://blog.totalquality.med.br/category/dicas-de-saude",
+            "status": 200
+          }
+        ],
+        "finalUrl": "https://blog.totalquality.med.br/category/dicas-de-saude",
+        "finalStatus": 200,
+        "contentType": "text/html; charset=utf-8",
+        "xRobotsTag": null,
+        "hosting": {
+          "platform": null,
+          "vercelId": "cle1::iad1::sf2cb-1795432794125-03d877a122e7",
+          "matchedPath": "/blogsite/[tenant]/category/[categorySlug]"
+        },
+        "sources": [
+          "https://blog.totalquality.med.br/",
+          "https://blog.totalquality.med.br/category/dicas-de-saude",
+          "https://blog.totalquality.med.br/category/exames-de-imagem",
+          "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+          "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+          "https://blog.totalquality.med.br/sitemaps/categories.xml"
+        ],
+        "expected": {
+          "status": 301,
+          "location": "https://totalquality.med.br/blog"
+        },
+        "matchesPreparedRule": false,
+        "html": {
+          "title": [
+            "Dicas de Saúde"
+          ],
+          "h1": [
+            "Dicas de Saúde",
+            "Dicas de Saúde"
+          ],
+          "description": [
+            "Artigos sobre Dicas de Saúde"
+          ],
+          "robots": [
+            "index, follow",
+            "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+          ],
+          "canonical": [
+            "https://blog.totalquality.med.br/category/dicas-de-saude"
+          ],
+          "schemas": [
+            {
+              "@context": "https://schema.org",
+              "@type": "CollectionPage",
+              "name": "Dicas de Saúde",
+              "description": "Artigos sobre Dicas de Saúde"
+            }
+          ],
+          "initialBodyWords": 250,
+          "images": [
+            {
+              "src": "https://api.airticles.ai/uploads/83542217-d4a0-4a90-b028-f53d555a961d.webp",
+              "alt": "Tirzepatida: exames de acompanhamento e alerta da Anvisa sobre falsificação",
+              "width": "400",
+              "height": "225"
+            }
+          ],
+          "links": [
+            "/",
+            "/",
+            "/category/dicas-de-saude",
+            "/category/exames-de-imagem",
+            "https://totalquality.med.br",
+            "/category/dicas-de-saude",
+            "/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+            "https://totalquality.med.br",
+            "/",
+            "/category/dicas-de-saude",
+            "/category/exames-de-imagem",
+            "https://totalquality.med.br",
+            "https://airticles.ai"
+          ]
+        }
+      },
+      {
+        "url": "https://blog.totalquality.med.br/category/exames-de-imagem",
+        "chain": [
+          {
+            "url": "https://blog.totalquality.med.br/category/exames-de-imagem",
+            "status": 200
+          }
+        ],
+        "finalUrl": "https://blog.totalquality.med.br/category/exames-de-imagem",
+        "finalStatus": 200,
+        "contentType": "text/html; charset=utf-8",
+        "xRobotsTag": null,
+        "hosting": {
+          "platform": null,
+          "vercelId": "cle1::iad1::z7kbq-1795432794123-4d240359c9ec",
+          "matchedPath": "/blogsite/[tenant]/category/[categorySlug]"
+        },
+        "sources": [
+          "https://blog.totalquality.med.br/",
+          "https://blog.totalquality.med.br/category/dicas-de-saude",
+          "https://blog.totalquality.med.br/category/exames-de-imagem",
+          "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+          "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+          "https://blog.totalquality.med.br/sitemaps/categories.xml"
+        ],
+        "expected": {
+          "status": 301,
+          "location": "https://totalquality.med.br/blog"
+        },
+        "matchesPreparedRule": false,
+        "html": {
+          "title": [
+            "Exames de Imagem"
+          ],
+          "h1": [
+            "Exames de Imagem",
+            "Exames de Imagem"
+          ],
+          "description": [
+            "Artigos sobre Exames de Imagem"
+          ],
+          "robots": [
+            "index, follow",
+            "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+          ],
+          "canonical": [
+            "https://blog.totalquality.med.br/category/exames-de-imagem"
+          ],
+          "schemas": [
+            {
+              "@context": "https://schema.org",
+              "@type": "CollectionPage",
+              "name": "Exames de Imagem",
+              "description": "Artigos sobre Exames de Imagem"
+            }
+          ],
+          "initialBodyWords": 250,
+          "images": [
+            {
+              "src": "https://api.airticles.ai/uploads/1de94013-1303-4ef4-a6bf-928d0742b692.webp",
+              "alt": "Ultrassom de Tireoide: Para Que Serve e Como É Feito",
+              "width": "400",
+              "height": "225"
+            }
+          ],
+          "links": [
+            "/",
+            "/",
+            "/category/dicas-de-saude",
+            "/category/exames-de-imagem",
+            "https://totalquality.med.br",
+            "/category/exames-de-imagem",
+            "/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+            "https://totalquality.med.br",
+            "/",
+            "/category/dicas-de-saude",
+            "/category/exames-de-imagem",
+            "https://totalquality.med.br",
+            "https://airticles.ai"
+          ]
+        }
+      },
+      {
+        "url": "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+        "chain": [
+          {
+            "url": "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+            "status": 200
+          }
+        ],
+        "finalUrl": "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+        "finalStatus": 200,
+        "contentType": "text/html; charset=utf-8",
+        "xRobotsTag": null,
+        "hosting": {
+          "platform": null,
+          "vercelId": "cle1::iad1::hhnnl-1795432794116-cf5e4d04a0cf",
+          "matchedPath": "/blogsite/[tenant]/posts/[postSlug]"
+        },
+        "sources": [
+          "https://blog.totalquality.med.br/",
+          "https://blog.totalquality.med.br/category/exames-de-imagem",
+          "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+          "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+          "https://blog.totalquality.med.br/sitemaps/posts-1.xml"
+        ],
+        "expected": {
+          "status": 301,
+          "location": "https://totalquality.med.br/exames/ultrassonografia"
+        },
+        "matchesPreparedRule": false,
+        "html": {
+          "title": [
+            "Ultrassom de Tireoide: Para Que Serve e Como É Feito"
+          ],
+          "h1": [
+            "Ultrassom de Tireoide: Para Que Serve e Como É Feito"
+          ],
+          "description": [
+            "Ultrassom de tireoide: para que serve, como é feito, preparo e o papel do Doppler e do ACR TI-RADS na avaliação de nódulos e cistos."
+          ],
+          "robots": [
+            "index, follow",
+            "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+          ],
+          "canonical": [
+            "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito"
+          ],
+          "schemas": [
+            {
+              "@context": "https://schema.org",
+              "@type": "Article",
+              "headline": "Ultrassom de Tireoide: Para Que Serve e Como É Feito",
+              "image": "https://api.airticles.ai/uploads/1de94013-1303-4ef4-a6bf-928d0742b692.webp",
+              "datePublished": "2026-10-26T21:02:01.670Z",
+              "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito"
+              }
+            }
+          ],
+          "initialBodyWords": 1860,
+          "images": [
+            {
+              "src": "https://api.airticles.ai/uploads/1de94013-1303-4ef4-a6bf-928d0742b692.webp",
+              "alt": "Ultrassom de Tireoide: Para Que Serve e Como É Feito",
+              "width": "760",
+              "height": "428"
+            },
+            {
+              "src": "https://api.airticles.ai/uploads/c11a930f-56d7-482b-8bfc-ccacc48f1930.webp",
+              "alt": "Detalhe de sonda aplicando gel durante ultrassom de tireoide para avaliação médica"
+            },
+            {
+              "src": "https://api.airticles.ai/uploads/00648b8d-72b4-479b-b2d0-b17c7cd1197d.webp",
+              "alt": "Médico explicando resultados do ultrassom de tireoide para paciente em consultório"
+            }
+          ],
+          "links": [
+            "/",
+            "/",
+            "/category/dicas-de-saude",
+            "/category/exames-de-imagem",
+            "https://totalquality.med.br",
+            "/",
+            "/category/exames-de-imagem",
+            "/category/exames-de-imagem",
+            "#para-que-serve-o-ultrassom-de-tireoide-e-quando-e-indicado",
+            "#como-e-feito-o-exame-e-orientacoes-de-preparo",
+            "#ultrassom-convencional-vs-ultrassonografia-com-doppler-na-avaliacao-da-tireoide",
+            "#classificacao-acr-ti-rads-e-a-correlacao-com-exames-hormonais-e-paaf",
+            "#conclusao",
+            "#perguntas-frequentes",
+            "https://totalquality.med.br/exames/exames-de-sangue",
+            "https://totalquality.med.br/exames/ultrassonografia",
+            "https://totalquality.med.br/exames/ultrassonografia",
+            "https://totalquality.med.br/exames/ultrassonografia",
+            "https://www.acr.org/",
+            "https://totalquality.med.br/exames/exames-de-sangue",
+            "https://profiles.wustl.edu/en/publications/thyroid-ultrasound-reporting-lexicon-white-paper-of-the-acr-thyro/",
+            "https://totalquality.med.br/exames/ultrassonografia",
+            "https://totalquality.med.br/exames/exames-de-sangue",
+            "https://api.whatsapp.com/send?phone=551238873535&text=Ol%C3%A1!%20Vim%20pelo%20blog%20e%20quero%20informa%C3%A7%C3%B5es%20sobre%20ultrassom%20de%20tireoide.",
+            "https://api.whatsapp.com/send?phone=551238873535&text=Ol%C3%A1!%20Vim%20pelo%20blog%20e%20quero%20informa%C3%A7%C3%B5es%20sobre%20ultrassom%20de%20tireoide.",
+            "#para-que-serve-o-ultrassom-de-tireoide-e-quando-e-indicado",
+            "#como-e-feito-o-exame-e-orientacoes-de-preparo",
+            "#ultrassom-convencional-vs-ultrassonografia-com-doppler-na-avaliacao-da-tireoide",
+            "#classificacao-acr-ti-rads-e-a-correlacao-com-exames-hormonais-e-paaf",
+            "#conclusao",
+            "#perguntas-frequentes",
+            "https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fblog.totalquality.med.br%2Fposts%2Fultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+            "https://twitter.com/intent/tweet?url=https%3A%2F%2Fblog.totalquality.med.br%2Fposts%2Fultrassom-de-tireoide-para-que-serve-e-como-e-feito&text=Ultrassom%20de%20Tireoide%3A%20Para%20Que%20Serve%20e%20Como%20%C3%89%20Feito",
+            "https://wa.me/?text=Ultrassom%20de%20Tireoide%3A%20Para%20Que%20Serve%20e%20Como%20%C3%89%20Feito%20https%3A%2F%2Fblog.totalquality.med.br%2Fposts%2Fultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+            "https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fblog.totalquality.med.br%2Fposts%2Fultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+            "/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+            "/category/dicas-de-saude",
+            "/category/exames-de-imagem",
+            "https://totalquality.med.br",
+            "/",
+            "/category/dicas-de-saude",
+            "/category/exames-de-imagem",
+            "https://totalquality.med.br",
+            "https://airticles.ai"
+          ]
+        }
+      },
+      {
+        "url": "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+        "chain": [
+          {
+            "url": "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+            "status": 200
+          }
+        ],
+        "finalUrl": "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+        "finalStatus": 200,
+        "contentType": "text/html; charset=utf-8",
+        "xRobotsTag": null,
+        "hosting": {
+          "platform": null,
+          "vercelId": "cle1::iad1::5h76p-1795432799001-a833dc297538",
+          "matchedPath": "/blogsite/[tenant]/posts/[postSlug]"
+        },
+        "sources": [
+          "https://blog.totalquality.med.br/",
+          "https://blog.totalquality.med.br/category/dicas-de-saude",
+          "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+          "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+          "https://blog.totalquality.med.br/sitemaps/posts-1.xml"
+        ],
+        "expected": {
+          "status": 301,
+          "location": "https://totalquality.med.br/exames/exames-de-sangue"
+        },
+        "matchesPreparedRule": false,
+        "html": {
+          "title": [
+            "Tirzepatida: exames de acompanhamento e alerta da Anvisa sobre falsificação"
+          ],
+          "h1": [
+            "Tirzepatida: exames de acompanhamento e alerta da Anvisa sobre falsificação"
+          ],
+          "description": [
+            "Tirzepatida (Mounjaro): quais exames o médico pode pedir no acompanhamento, sinais de alerta e o que a Anvisa orienta sobre o lote falsificado."
+          ],
+          "robots": [
+            "index, follow",
+            "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+          ],
+          "canonical": [
+            "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao"
+          ],
+          "schemas": [
+            {
+              "@context": "https://schema.org",
+              "@type": "Article",
+              "headline": "Tirzepatida: exames de acompanhamento e alerta da Anvisa sobre falsificação",
+              "image": "https://api.airticles.ai/uploads/83542217-d4a0-4a90-b028-f53d555a961d.webp",
+              "datePublished": "2026-10-22T01:12:15.402Z",
+              "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao"
+              }
+            }
+          ],
+          "initialBodyWords": 1825,
+          "images": [
+            {
+              "src": "https://api.airticles.ai/uploads/83542217-d4a0-4a90-b028-f53d555a961d.webp",
+              "alt": "Tirzepatida: exames de acompanhamento e alerta da Anvisa sobre falsificação",
+              "width": "760",
+              "height": "428"
+            },
+            {
+              "src": "https://api.airticles.ai/uploads/252640d7-ed95-4597-ab2b-d849fba897eb.webp",
+              "alt": "Tubos de coleta sanguínea para monitoramento laboratorial de rotina associado ao uso de tirzepatida."
+            },
+            {
+              "src": "https://api.airticles.ai/uploads/dcdd39be-cc1f-4725-a0cc-75b0ad37214c.webp",
+              "alt": "Farmacêutico verificando integridade de embalagem e nota fiscal para prevenir falsificação de tirzepatida."
+            }
+          ],
+          "links": [
+            "/",
+            "/",
+            "/category/dicas-de-saude",
+            "/category/exames-de-imagem",
+            "https://totalquality.med.br",
+            "/",
+            "/category/dicas-de-saude",
+            "/category/dicas-de-saude",
+            "#o-que-e-a-tirzepatida-e-como-funciona-o-mecanismo-de-acao-dual",
+            "#alerta-sanitario-da-anvisa-identificacao-de-lotes-falsificados-e-medidas-de-seguranca",
+            "#painel-de-seguranca-vs-monitoramento-de-eficacia-tipos-de-exames-laboratoriais-indicados",
+            "#sinais-de-alerta-clinico-e-a-importancia-do-acompanhamento-medico-continuo",
+            "#conclusao",
+            "#perguntas-frequentes",
+            "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/novos-medicamentos-e-indicacoes/mounjaro-r-tirzepatida-nova-indicacao",
+            "https://agenciabrasil.ebc.com.br/saude/noticia/2026-07/anvisa-determina-apreensao-de-lote-falsificado-de-mounjaro",
+            "https://agenciabrasil.ebc.com.br/saude/noticia/2026-07/anvisa-determina-apreensao-de-lote-falsificado-de-mounjaro",
+            "https://totalquality.med.br/exames",
+            "https://totalquality.med.br/exames/hemograma",
+            "https://www.gov.br/saude/pt-br/composicao/saes/samu-192",
+            "https://totalquality.med.br/exames/exames-de-sangue",
+            "https://totalquality.med.br/checkup",
+            "https://api.whatsapp.com/send?phone=551238873535&text=Ol%C3%A1!%20Vim%20pelo%20blog%20e%20tenho%20uma%20d%C3%BAvida%20sobre%20os%20exames%20de%20acompanhamento.",
+            "https://api.whatsapp.com/send?phone=551238873535&text=Ol%C3%A1!%20Vim%20pelo%20blog%20e%20tenho%20uma%20d%C3%BAvida%20sobre%20os%20exames%20de%20acompanhamento.",
+            "#o-que-e-a-tirzepatida-e-como-funciona-o-mecanismo-de-acao-dual",
+            "#alerta-sanitario-da-anvisa-identificacao-de-lotes-falsificados-e-medidas-de-seguranca",
+            "#painel-de-seguranca-vs-monitoramento-de-eficacia-tipos-de-exames-laboratoriais-indicados",
+            "#sinais-de-alerta-clinico-e-a-importancia-do-acompanhamento-medico-continuo",
+            "#conclusao",
+            "#perguntas-frequentes",
+            "https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fblog.totalquality.med.br%2Fposts%2Ftirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+            "https://twitter.com/intent/tweet?url=https%3A%2F%2Fblog.totalquality.med.br%2Fposts%2Ftirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao&text=Tirzepatida%3A%20exames%20de%20acompanhamento%20e%20alerta%20da%20Anvisa%20sobre%20falsifica%C3%A7%C3%A3o",
+            "https://wa.me/?text=Tirzepatida%3A%20exames%20de%20acompanhamento%20e%20alerta%20da%20Anvisa%20sobre%20falsifica%C3%A7%C3%A3o%20https%3A%2F%2Fblog.totalquality.med.br%2Fposts%2Ftirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+            "https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fblog.totalquality.med.br%2Fposts%2Ftirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+            "/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+            "/category/dicas-de-saude",
+            "/category/exames-de-imagem",
+            "https://totalquality.med.br",
+            "/",
+            "/category/dicas-de-saude",
+            "/category/exames-de-imagem",
+            "https://totalquality.med.br",
+            "https://airticles.ai"
+          ]
+        }
+      },
+      {
+        "url": "https://blog.totalquality.med.br/posts/hipoglicemia-o-que-voce-precisa-saber-para-manter-sua-saude-em-dia",
+        "chain": [
+          {
+            "url": "https://blog.totalquality.med.br/posts/hipoglicemia-o-que-voce-precisa-saber-para-manter-sua-saude-em-dia",
+            "status": 404
+          }
+        ],
+        "finalUrl": "https://blog.totalquality.med.br/posts/hipoglicemia-o-que-voce-precisa-saber-para-manter-sua-saude-em-dia",
+        "finalStatus": 404,
+        "contentType": "text/html; charset=utf-8",
+        "xRobotsTag": null,
+        "hosting": {
+          "platform": null,
+          "vercelId": "cle1::iad1::zqqcn-1795432798998-07bc0f63dfa6",
+          "matchedPath": "/blogsite/[tenant]/posts/[postSlug]"
+        },
+        "sources": [
+          "server/_core/blog-subdominio.ts; caminho historico confirmado por HTTP publico em 23/11/2026"
+        ],
+        "expected": {
+          "status": 301,
+          "location": "https://totalquality.med.br/blog/hipoglicemia-sintomas-e-exames"
+        },
+        "matchesPreparedRule": false,
+        "html": {
+          "title": [
+            "Airticles - SEO Automatizado com IA | Primeira Página do Google"
+          ],
+          "h1": [],
+          "description": [
+            "SEO automatizado com IA: artigos otimizados, palavras-chave estratégicas e publicação automática. Resultados em semanas, não meses. Teste grátis 7 dias."
+          ],
+          "robots": [
+            "noindex",
+            "index, follow",
+            "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+          ],
+          "canonical": [
+            "https://app.airticles.ai"
+          ],
+          "schemas": [],
+          "initialBodyWords": 0,
+          "images": [],
+          "links": []
+        }
+      },
+      {
+        "url": "https://blog.totalquality.med.br/posts/hormonios-do-amor-o-que-sao-e-como-agem",
+        "chain": [
+          {
+            "url": "https://blog.totalquality.med.br/posts/hormonios-do-amor-o-que-sao-e-como-agem",
+            "status": 404
+          }
+        ],
+        "finalUrl": "https://blog.totalquality.med.br/posts/hormonios-do-amor-o-que-sao-e-como-agem",
+        "finalStatus": 404,
+        "contentType": "text/html; charset=utf-8",
+        "xRobotsTag": null,
+        "hosting": {
+          "platform": null,
+          "vercelId": "cle1::iad1::gwd9c-1795432798998-a86f0082ae4f",
+          "matchedPath": "/blogsite/[tenant]/posts/[postSlug]"
+        },
+        "sources": [
+          "server/_core/blog-subdominio.ts; caminho historico confirmado por HTTP publico em 23/11/2026"
+        ],
+        "expected": {
+          "status": 410
+        },
+        "matchesPreparedRule": false,
+        "html": {
+          "title": [
+            "Airticles - SEO Automatizado com IA | Primeira Página do Google"
+          ],
+          "h1": [],
+          "description": [
+            "SEO automatizado com IA: artigos otimizados, palavras-chave estratégicas e publicação automática. Resultados em semanas, não meses. Teste grátis 7 dias."
+          ],
+          "robots": [
+            "noindex",
+            "index, follow",
+            "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+          ],
+          "canonical": [
+            "https://app.airticles.ai"
+          ],
+          "schemas": [],
+          "initialBodyWords": 0,
+          "images": [],
+          "links": []
+        }
+      },
+      {
+        "url": "https://blog.totalquality.med.br/posts/hemograma-completo-o-que-ele-pode-revelar",
+        "chain": [
+          {
+            "url": "https://blog.totalquality.med.br/posts/hemograma-completo-o-que-ele-pode-revelar",
+            "status": 404
+          }
+        ],
+        "finalUrl": "https://blog.totalquality.med.br/posts/hemograma-completo-o-que-ele-pode-revelar",
+        "finalStatus": 404,
+        "contentType": "text/html; charset=utf-8",
+        "xRobotsTag": null,
+        "hosting": {
+          "platform": null,
+          "vercelId": "cle1::iad1::hhnnl-1795432798996-ebea8f3362ff",
+          "matchedPath": "/blogsite/[tenant]/posts/[postSlug]"
+        },
+        "sources": [
+          "server/_core/blog-subdominio.ts; caminho historico confirmado por HTTP publico em 23/11/2026"
+        ],
+        "expected": {
+          "status": 301,
+          "location": "https://totalquality.med.br/blog/hemograma-completo-o-que-avalia"
+        },
+        "matchesPreparedRule": false,
+        "html": {
+          "title": [
+            "Airticles - SEO Automatizado com IA | Primeira Página do Google"
+          ],
+          "h1": [],
+          "description": [
+            "SEO automatizado com IA: artigos otimizados, palavras-chave estratégicas e publicação automática. Resultados em semanas, não meses. Teste grátis 7 dias."
+          ],
+          "robots": [
+            "noindex",
+            "index, follow",
+            "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+          ],
+          "canonical": [
+            "https://app.airticles.ai"
+          ],
+          "schemas": [],
+          "initialBodyWords": 0,
+          "images": [],
+          "links": []
+        }
+      }
+    ],
+    "errors": [],
+    "unavailable": [],
+    "warnings": [
+      {
+        "url": "https://blog.totalquality.med.br/",
+        "error": "quantidade de H1 diferente de 1",
+        "count": 2
+      },
+      {
+        "url": "https://blog.totalquality.med.br/category/dicas-de-saude",
+        "error": "quantidade de H1 diferente de 1",
+        "count": 2
+      },
+      {
+        "url": "https://blog.totalquality.med.br/category/exames-de-imagem",
+        "error": "quantidade de H1 diferente de 1",
+        "count": 2
+      },
+      {
+        "url": "https://blog.totalquality.med.br/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+        "error": "imagem sem alt ou dimensoes"
+      },
+      {
+        "url": "https://blog.totalquality.med.br/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+        "error": "imagem sem alt ou dimensoes"
+      },
+      {
+        "url": "https://blog.totalquality.med.br/posts/hipoglicemia-o-que-voce-precisa-saber-para-manter-sua-saude-em-dia",
+        "error": "quantidade de H1 diferente de 1",
+        "count": 0
+      },
+      {
+        "url": "https://blog.totalquality.med.br/posts/hormonios-do-amor-o-que-sao-e-como-agem",
+        "error": "quantidade de H1 diferente de 1",
+        "count": 0
+      },
+      {
+        "url": "https://blog.totalquality.med.br/posts/hemograma-completo-o-que-ele-pode-revelar",
+        "error": "quantidade de H1 diferente de 1",
+        "count": 0
+      },
+      {
+        "error": "migracao nao comprovada para todas as URLs; nenhuma alteracao de DNS/hospedagem realizada",
+        "state": "inactive"
+      }
+    ]
+  },
+  "localMigration": [
+    {
+      "path": "/",
+      "status": 301,
+      "location": "https://totalquality.med.br/blog"
+    },
+    {
+      "path": "/category/dicas-de-saude",
+      "status": 301,
+      "location": "https://totalquality.med.br/blog"
+    },
+    {
+      "path": "/posts/hemograma-completo-o-que-ele-pode-revelar",
+      "status": 301,
+      "location": "https://totalquality.med.br/blog/hemograma-completo-o-que-avalia"
+    },
+    {
+      "path": "/posts/hipoglicemia-o-que-voce-precisa-saber-para-manter-sua-saude-em-dia",
+      "status": 301,
+      "location": "https://totalquality.med.br/blog/hipoglicemia-sintomas-e-exames"
+    },
+    {
+      "path": "/posts/tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao",
+      "status": 301,
+      "location": "https://totalquality.med.br/exames/exames-de-sangue"
+    },
+    {
+      "path": "/posts/ultrassom-de-tireoide-para-que-serve-e-como-e-feito",
+      "status": 301,
+      "location": "https://totalquality.med.br/exames/ultrassonografia"
+    },
+    {
+      "path": "/posts/hormonios-do-amor-o-que-sao-e-como-agem",
+      "status": 410
+    }
+  ],
+  "mainSitemapInitialHtml": [
+    {
+      "url": "https://totalquality.med.br/",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Laboratório em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Laboratório de análises clínicas em Caraguatatuba há 23 anos. Exames de sangue sem agendamento, por ordem de chegada, coleta domiciliar e exames de imagem."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Laboratório em Caraguatatuba: análises clínicas e medicina diagnóstica"
+      ],
+      "initialBodyWords": 520,
+      "jsonLdBlocks": 3
+    },
+    {
+      "url": "https://totalquality.med.br/checkup",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/checkup",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Check-up Completo em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Check-up em Caraguatatuba com planos Básico, Select e Premium: exames de sangue, cardiológicos e de imagem por faixa etária. Dúvidas pelo WhatsApp."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/checkup"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Check-up Preventivo em Caraguatatuba"
+      ],
+      "initialBodyWords": 1367,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/exames",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/exames",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Exames Laboratoriais e de Imagem | Total Quality"
+      ],
+      "description": [
+        "Exames da Total Quality em Caraguatatuba: laboratoriais, hemograma, ultrassom, tomografia, raio-X, cardiológicos, ocupacionais e mais. Veja a lista completa."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/exames"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Exames Laboratoriais e de Imagem em Caraguatatuba"
+      ],
+      "initialBodyWords": 405,
+      "jsonLdBlocks": 4
+    },
+    {
+      "url": "https://totalquality.med.br/exames/exames-de-sangue",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/exames/exames-de-sangue",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Exames de Sangue em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Exames de sangue em Caraguatatuba na Total Quality. Coleta por ordem de chegada, sem agendamento. Consulte preparo, prazos, convênios e orçamento pelo WhatsApp."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/exames/exames-de-sangue"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Exames de Sangue em Caraguatatuba"
+      ],
+      "initialBodyWords": 1461,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/exames/tomografia-computadorizada",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/exames/tomografia-computadorizada",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Tomografia Computadorizada em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Tomografia computadorizada em Caraguatatuba - SP na Total Quality. Tomógrafo multislice para crânio, tórax, abdômen e coluna, com e sem contraste. Agende."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/exames/tomografia-computadorizada"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Tomografia Computadorizada em Caraguatatuba"
+      ],
+      "initialBodyWords": 1225,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/exames/raio-x",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/exames/raio-x",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Raio-X em Caraguatatuba | Clínica Total Quality"
+      ],
+      "description": [
+        "Raio-X digital em Caraguatatuba na Total Quality. Faça exame de tórax, coluna, membros e seios da face com alta resolução. Agende o seu atendimento online."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/exames/raio-x"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Raio-X em Caraguatatuba"
+      ],
+      "initialBodyWords": 1123,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/exames/ultrassonografia",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/exames/ultrassonografia",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Ultrassonografia (Ultrassom) Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Ultrassom (ultrassonografia) em Caraguatatuba: abdome total, pélvico, obstétrico, tireoide, mamas e Doppler, com hora marcada. Preparo pelo WhatsApp."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/exames/ultrassonografia"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Ultrassonografia em Caraguatatuba"
+      ],
+      "initialBodyWords": 1325,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/exames/hemograma",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/exames/hemograma",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Hemograma Completo em Caraguatatuba: Jejum e Resultado"
+      ],
+      "description": [
+        "Hemograma completo em Caraguatatuba: o exame isolado não precisa de jejum, a coleta é sem agendamento e o resultado sai em curto prazo, com acesso online."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/exames/hemograma"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Hemograma Completo em Caraguatatuba"
+      ],
+      "initialBodyWords": 1394,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/exames/exame-admissional",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/exames/exame-admissional",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Exame Admissional e ASO em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Exame admissional, periódico, demissional e ASO em Caraguatatuba. Exames complementares no mesmo local, para empresas do Litoral Norte. Agende."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/exames/exame-admissional"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Exame Admissional e ASO em Caraguatatuba"
+      ],
+      "initialBodyWords": 1246,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/especialidades",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/especialidades",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Especialidades Médicas em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Especialidades da Total Quality em Caraguatatuba: cardiologista, endocrinologista, gastroenterologista, pediatra e medicina do trabalho. Agende pelo WhatsApp."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/especialidades"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Especialidades em Caraguatatuba"
+      ],
+      "initialBodyWords": 489,
+      "jsonLdBlocks": 4
+    },
+    {
+      "url": "https://totalquality.med.br/bioimpedancia",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/bioimpedancia",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Bioimpedância em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Bioimpedância em Caraguatatuba - SP: análise da composição corporal (gordura, músculo e água) na Total Quality. Tire dúvidas e agende pelo WhatsApp."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/bioimpedancia"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Bioimpedância em Caraguatatuba"
+      ],
+      "initialBodyWords": 1146,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/blog",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Blog Total Quality | Artigos sobre Saúde e Diagnóstico"
+      ],
+      "description": [
+        "Blog da Total Quality em Caraguatatuba: artigos sobre exames laboratoriais e de imagem, preparo, check-up e saúde preventiva, com revisão médica."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Blog Total Quality — Saúde e Diagnóstico"
+      ],
+      "initialBodyWords": 794,
+      "jsonLdBlocks": 4
+    },
+    {
+      "url": "https://totalquality.med.br/laboratorio-caraguatatuba",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/laboratorio-caraguatatuba",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Análises Clínicas em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Análises clínicas em Caraguatatuba: hemograma, glicemia, colesterol, hormônios, urina e fezes. Coleta sem agendamento, por ordem de chegada, e resultado online."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/laboratorio-caraguatatuba"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Análises clínicas em Caraguatatuba"
+      ],
+      "initialBodyWords": 1719,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/cartao",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/cartao",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [
+        "H1 ausente, vazio ou duplicado",
+        "conteudo prerenderizado insuficiente"
+      ],
+      "imageIssues": [],
+      "title": [
+        "Cartão Total Quality Care | Benefícios e Cashback"
+      ],
+      "description": [
+        "Cartão Total Quality Care: benefícios, cashback, planos e preços. Saúde preventiva com vantagens financeiras."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/cartao"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [],
+      "initialBodyWords": 0,
+      "jsonLdBlocks": 2
+    },
+    {
+      "url": "https://totalquality.med.br/exames/mapa",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/exames/mapa",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "MAPA 24h em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "MAPA em Caraguatatuba - SP. Monitoramento de pressão arterial por 24 horas. Diagnóstico de hipertensão. Agende seu exame."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/exames/mapa"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "MAPA 24h em Caraguatatuba"
+      ],
+      "initialBodyWords": 1161,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/exames/holter",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/exames/holter",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Holter 24h em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Holter 24h em Caraguatatuba - SP: registro contínuo do ritmo do coração durante a rotina e o sono, para investigar arritmias. Tire dúvidas pelo WhatsApp."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/exames/holter"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Holter 24h em Caraguatatuba"
+      ],
+      "initialBodyWords": 1103,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/exames/espirometria",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/exames/espirometria",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Espirometria em Caraguatatuba | Teste de Função Pulmonar"
+      ],
+      "description": [
+        "Espirometria em Caraguatatuba - SP. Teste de função pulmonar para diagnóstico de doenças respiratórias. Agende seu exame."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/exames/espirometria"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Espirometria em Caraguatatuba"
+      ],
+      "initialBodyWords": 987,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/exames/eletrocardiograma",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/exames/eletrocardiograma",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Eletrocardiograma (ECG) em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Eletrocardiograma (ECG) em Caraguatatuba - SP: exame rápido e indolor que registra a atividade elétrica do coração, em 5 a 10 minutos. Agende pelo WhatsApp."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/exames/eletrocardiograma"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Eletrocardiograma (ECG) em Caraguatatuba"
+      ],
+      "initialBodyWords": 1119,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/exames/eletroencefalograma",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/exames/eletroencefalograma",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Eletroencefalograma (EEG) em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Eletroencefalograma (EEG) em Caraguatatuba - SP: exame não invasivo que registra a atividade elétrica do cérebro. Veja o preparo e tire dúvidas pelo WhatsApp."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/exames/eletroencefalograma"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Eletroencefalograma (EEG) em Caraguatatuba"
+      ],
+      "initialBodyWords": 926,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/exames/exame-toxicologico",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/exames/exame-toxicologico",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Exame Toxicológico em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Exame toxicológico em Caraguatatuba para CNH C, D e E e motorista profissional: coleta de cabelo ou pelo, laboratório credenciado. Dúvidas no WhatsApp."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/exames/exame-toxicologico"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Exame Toxicológico em Caraguatatuba"
+      ],
+      "initialBodyWords": 1274,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/exames/sexagem-fetal",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/exames/sexagem-fetal",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Sexagem Fetal em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Sexagem fetal em Caraguatatuba: exame de sangue da gestante que identifica o sexo do bebê a partir da 8ª semana. Sem jejum. Dúvidas e valores pelo WhatsApp."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/exames/sexagem-fetal"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Sexagem Fetal em Caraguatatuba"
+      ],
+      "initialBodyWords": 1153,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/especialidades/endocrinologista",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/especialidades/endocrinologista",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Endocrinologista em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Consulta com endocrinologista em Caraguatatuba: diabetes, tireoide, obesidade e hormônios. Particular e convênios. Agende pelo WhatsApp (12) 3887-3535."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/especialidades/endocrinologista"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Endocrinologista em Caraguatatuba"
+      ],
+      "initialBodyWords": 1101,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/especialidades/gastroenterologista",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/especialidades/gastroenterologista",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Gastroenterologista em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Consulta com gastroenterologista em Caraguatatuba: refluxo, gastrite, dor abdominal, intestino e fígado. Particular e convênios. WhatsApp (12) 3887-3535."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/especialidades/gastroenterologista"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Gastroenterologista em Caraguatatuba"
+      ],
+      "initialBodyWords": 1147,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/especialidades/medicina-do-trabalho",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/especialidades/medicina-do-trabalho",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Medicina do Trabalho em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Medicina do trabalho em Caraguatatuba para empresas: PCMSO, ASO admissional, periódico e demissional e exames complementares no mesmo local."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/especialidades/medicina-do-trabalho"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Medicina do Trabalho em Caraguatatuba"
+      ],
+      "initialBodyWords": 1255,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/especialidades/cardiologista",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/especialidades/cardiologista",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Cardiologista em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Consulta com cardiologista em Caraguatatuba, com hora marcada. Eletrocardiograma, Holter e MAPA na própria clínica. Agende pelo WhatsApp (12) 3887-3535."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/especialidades/cardiologista"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Cardiologista em Caraguatatuba"
+      ],
+      "initialBodyWords": 1039,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/especialidades/pediatra",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/especialidades/pediatra",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Pediatra em Caraguatatuba | Total Quality"
+      ],
+      "description": [
+        "Consulta com pediatra em Caraguatatuba, com hora marcada pelo WhatsApp (12) 3887-3535. Total Quality, Rua Padre Anchieta, 1010, Centro."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/especialidades/pediatra"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Pediatra em Caraguatatuba"
+      ],
+      "initialBodyWords": 858,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/convenios",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/convenios",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Convênios Aceitos | Laboratório Total Quality Caraguatatuba"
+      ],
+      "description": [
+        "Convênios aceitos no laboratório Total Quality em Caraguatatuba: Cartão de Todos, Solumedi e Leader. Fora deles, atendimento particular. Confirme pelo WhatsApp."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/convenios"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Convênios Aceitos no Laboratório em Caraguatatuba"
+      ],
+      "initialBodyWords": 370,
+      "jsonLdBlocks": 4
+    },
+    {
+      "url": "https://totalquality.med.br/contato",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/contato",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Contato | Total Quality em Caraguatatuba"
+      ],
+      "description": [
+        "Fale com a Total Quality: Rua Padre Anchieta, 1010, Centro, Caraguatatuba - SP. Telefone e WhatsApp (12) 3887-3535, de segunda a sexta, das 7h30 às 18h."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/contato"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Contato da Total Quality em Caraguatatuba"
+      ],
+      "initialBodyWords": 390,
+      "jsonLdBlocks": 4
+    },
+    {
+      "url": "https://totalquality.med.br/blog/hipoglicemia-sintomas-e-exames",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/hipoglicemia-sintomas-e-exames",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer"
+      ],
+      "description": [
+        "Hipoglicemia é a glicose abaixo de 70 mg/dL. Sinais de alerta, quando procurar emergência e quais exames investigam a causa."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/hipoglicemia-sintomas-e-exames"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Hipoglicemia: Sintomas, Causas e Quais Exames Fazer"
+      ],
+      "initialBodyWords": 1792,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/blog/exames-de-sangue-guia-completo",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/exames-de-sangue-guia-completo",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Tipos de Exame de Sangue: Tabela, Preparo e Como Ler o Laudo"
+      ],
+      "description": [
+        "Tabela com os tipos de exame de sangue mais pedidos e o que cada um avalia, o preparo e o jejum, e como ler o laudo: resultado, unidade e referência."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/exames-de-sangue-guia-completo"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Exames de Sangue: Tipos e Como Entender o Resultado"
+      ],
+      "initialBodyWords": 2190,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/blog/saude-do-coracao-prevencao",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/saude-do-coracao-prevencao",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Saúde do Coração: 7 Hábitos e Exames | Total Quality"
+      ],
+      "description": [
+        "Conheça 7 hábitos que ajudam a reduzir o risco de doenças do coração, os exames que o médico pode pedir e os sinais de alerta que pedem emergência."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/saude-do-coracao-prevencao"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Saúde do Coração: 7 Hábitos e os Exames de Acompanhamento"
+      ],
+      "initialBodyWords": 1834,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/blog/alimentacao-e-exames-laboratoriais",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/alimentacao-e-exames-laboratoriais",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Alimentação e Exames: Jejum e o Que Evitar | Total Quality"
+      ],
+      "description": [
+        "Veja como jejum, refeições gordurosas, álcool, café e suplementos como a biotina podem alterar exames laboratoriais e como se preparar para a coleta."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/alimentacao-e-exames-laboratoriais"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Alimentação Antes do Exame: o Que Pode Alterar o Resultado"
+      ],
+      "initialBodyWords": 1793,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/blog/vitamina-d-importancia-saude",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/vitamina-d-importancia-saude",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Vitamina D: Exame, Valores e Deficiência | Total Quality"
+      ],
+      "description": [
+        "Para que serve a vitamina D, quem tem mais risco de deficiência, como é o exame 25(OH)D e o que indicam as faixas de referência. Entenda o laudo."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/vitamina-d-importancia-saude"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Vitamina D: Para Que Serve, Exame e Valores de Referência"
+      ],
+      "initialBodyWords": 1999,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/blog/hemograma-completo-o-que-avalia",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/hemograma-completo-o-que-avalia",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Hemograma Completo: Quais Exames Inclui e o Que Avalia"
+      ],
+      "description": [
+        "Hemograma completo inclui série vermelha, série branca e plaquetas. Veja o que cada parte mede, se precisa de jejum e se inclui exame de fezes e urina."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/hemograma-completo-o-que-avalia"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Hemograma Completo: O Que Avalia e Quais Exames Inclui"
+      ],
+      "initialBodyWords": 2058,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/blog/tomografia-computadorizada-como-funciona",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/tomografia-computadorizada-como-funciona",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Tomografia Computadorizada: Como Funciona? | Total Quality"
+      ],
+      "description": [
+        "Entenda como funciona a tomografia computadorizada, como é feito o exame, quando o contraste é necessário, quanto tempo dura e se dói."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/tomografia-computadorizada-como-funciona"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Tomografia Computadorizada: Como Funciona e Quando É Indicada?"
+      ],
+      "initialBodyWords": 1356,
+      "jsonLdBlocks": 4
+    },
+    {
+      "url": "https://totalquality.med.br/blog/mapa-ou-holter-diferenca",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/mapa-ou-holter-diferenca",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "MAPA ou Holter: Qual a Diferença? | Total Quality"
+      ],
+      "description": [
+        "Entenda a diferença entre MAPA e Holter: o que cada exame monitora, para que serve, se podem ser feitos juntos e como se preparar."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/mapa-ou-holter-diferenca"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "MAPA ou Holter: Qual a Diferença Entre os Exames?"
+      ],
+      "initialBodyWords": 1539,
+      "jsonLdBlocks": 4
+    },
+    {
+      "url": "https://totalquality.med.br/blog/check-up-medico-quais-exames-fazer",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/check-up-medico-quais-exames-fazer",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Check-up Médico: Quais Exames Fazer? | Total Quality"
+      ],
+      "description": [
+        "Entenda o que compõe um check-up médico: exames laboratoriais, cardiológicos e de imagem, com que frequência repetir e como se preparar."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/check-up-medico-quais-exames-fazer"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Check-up Médico: Quais Exames Fazer e Com Que Frequência?"
+      ],
+      "initialBodyWords": 1753,
+      "jsonLdBlocks": 4
+    },
+    {
+      "url": "https://totalquality.med.br/blog/diferenca-ultrassom-comum-doppler",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/diferenca-ultrassom-comum-doppler",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Ultrassom Comum e com Doppler: Diferença | Total Quality"
+      ],
+      "description": [
+        "Descubra a diferença entre ultrassom comum e ultrassom com Doppler, o que cada modalidade avalia e como pode ser o preparo."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/diferenca-ultrassom-comum-doppler"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Ultrassom Comum e Ultrassom com Doppler: Qual a Diferença?"
+      ],
+      "initialBodyWords": 1383,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/blog/mamografia-ultrassom-mamas-diferencas",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/mamografia-ultrassom-mamas-diferencas",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Mamografia e Ultrassom das Mamas: Diferenças | Total Quality"
+      ],
+      "description": [
+        "Mamografia e ultrassom das mamas não são iguais. Entenda como cada exame funciona, suas diferenças e por que um não substitui automaticamente o outro."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/mamografia-ultrassom-mamas-diferencas"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Mamografia e Ultrassom das Mamas: Entenda as Diferenças"
+      ],
+      "initialBodyWords": 1410,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/blog/diferenca-raio-x-tomografia",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/diferenca-raio-x-tomografia",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Raio-X e Tomografia: Qual a Diferença? | Total Quality"
+      ],
+      "description": [
+        "Saiba como raio-X e tomografia funcionam, as diferenças nas imagens, quando o contraste pode ser usado e como é o preparo."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/diferenca-raio-x-tomografia"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Raio-X e Tomografia: Quais São as Principais Diferenças?"
+      ],
+      "initialBodyWords": 1421,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/blog/eletrocardiograma-o-que-e-como-e-feito",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/eletrocardiograma-o-que-e-como-e-feito",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Eletrocardiograma (ECG): Passo a Passo, Preparo e Duração"
+      ],
+      "description": [
+        "Como é feito o eletrocardiograma passo a passo, quanto tempo demora, se precisa de jejum e uma tabela que compara ECG, Holter e MAPA. Exame sem dor."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/eletrocardiograma-o-que-e-como-e-feito"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Eletrocardiograma (ECG): Para Que Serve e Como É Feito"
+      ],
+      "initialBodyWords": 1963,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/blog/como-escolher-laboratorio-analises-clinicas",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/como-escolher-laboratorio-analises-clinicas",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Como Escolher um Laboratório: 8 Critérios Técnicos"
+      ],
+      "description": [
+        "Licença sanitária, responsável técnico, controle externo de qualidade e prazo por exame: os 8 critérios que mostram se um laboratório é confiável."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/como-escolher-laboratorio-analises-clinicas"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Como Escolher um Laboratório de Análises Clínicas: 8 Critérios Técnicos"
+      ],
+      "initialBodyWords": 1536,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/blog/resultado-de-exames-online-seguranca",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/resultado-de-exames-online-seguranca",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Resultado de Exames Online: Acesso Seguro e LGPD"
+      ],
+      "description": [
+        "Como acessar seu resultado de exames online com segurança, quem pode recebê-lo e o que a LGPD garante sobre o seu dado sensível de saúde."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/resultado-de-exames-online-seguranca"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Resultado de Exames Online: Como Acessar com Segurança"
+      ],
+      "initialBodyWords": 1319,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/blog/exame-de-urina-eas-como-coletar",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/exame-de-urina-eas-como-coletar",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Exame de Urina EAS: Passo a Passo da Coleta e 5 Erros"
+      ],
+      "description": [
+        "Passo a passo da coleta do EAS (urina tipo 1), os 5 erros que fazem repetir o exame, se precisa de jejum e a diferença para a urocultura em tabela."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/exame-de-urina-eas-como-coletar"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Exame de Urina (EAS): O Que É e Como Coletar Corretamente"
+      ],
+      "initialBodyWords": 1777,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/blog/siglas-exames-laboratoriais",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/siglas-exames-laboratoriais",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Siglas de Exames Laboratoriais: Guia | Total Quality"
+      ],
+      "description": [
+        "Entenda as siglas de exames laboratoriais do pedido médico: HMG, TGO, TGP, TSH, HbA1c, EAS, PSA e outras. Saiba o que avaliam e quando pedem jejum."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/siglas-exames-laboratoriais"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Siglas de exames laboratoriais: o que significa cada uma no pedido médico"
+      ],
+      "initialBodyWords": 2935,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/sobre",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/sobre",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Sobre a Total Quality | Caraguatatuba desde 2003"
+      ],
+      "description": [
+        "Total Quality Medicina Diagnóstica, desde 2003 no Centro de Caraguatatuba: análises clínicas e diagnóstico por imagem no mesmo endereço."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/sobre"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Sobre a Total Quality em Caraguatatuba"
+      ],
+      "initialBodyWords": 574,
+      "jsonLdBlocks": 4
+    },
+    {
+      "url": "https://totalquality.med.br/blog/aso-exames-ocupacionais",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/aso-exames-ocupacionais",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "ASO: O Que É e Quando Deve Ser Emitido | Total Quality"
+      ],
+      "description": [
+        "Entenda o que é ASO, quando o documento é emitido, sua relação com os exames ocupacionais e as responsabilidades de empresas e trabalhadores."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/aso-exames-ocupacionais"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "ASO: O Que É e Qual Sua Relação com os Exames Ocupacionais?"
+      ],
+      "initialBodyWords": 1712,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/blog/exame-toxicologico-cnh",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/blog/exame-toxicologico-cnh",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Exame Toxicológico para CNH: Quem Precisa? | Total Quality"
+      ],
+      "description": [
+        "Entenda quem precisa fazer exame toxicológico para CNH, quando ele pode ser exigido, como consultar o prazo e quais documentos levar."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/blog/exame-toxicologico-cnh"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Exame Toxicológico para CNH: Quem Precisa e Quando Fazer?"
+      ],
+      "initialBodyWords": 1749,
+      "jsonLdBlocks": 5
+    },
+    {
+      "url": "https://totalquality.med.br/privacidade",
+      "chain": [
+        {
+          "url": "https://totalquality.med.br/privacidade",
+          "status": 200
+        }
+      ],
+      "finalStatus": 200,
+      "unavailable": null,
+      "issues": [],
+      "imageIssues": [],
+      "title": [
+        "Política de Privacidade | Total Quality Medicina Diagnóstica"
+      ],
+      "description": [
+        "Como a Total Quality coleta, usa e protege seus dados pessoais e de saúde, conforme a LGPD. Seus direitos e como exercê-los."
+      ],
+      "canonical": [
+        "https://totalquality.med.br/privacidade"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      ],
+      "h1": [
+        "Política de Privacidade"
+      ],
+      "initialBodyWords": 239,
+      "jsonLdBlocks": 2
+    }
+  ]
+}

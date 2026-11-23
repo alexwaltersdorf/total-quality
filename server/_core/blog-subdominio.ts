@@ -17,23 +17,16 @@
  *   - qualquer outro caminho               -> /blog.
  */
 import blogIndex from "../../client/src/content/blog/index.json";
+import migrationRoutes from "./blog-migration-routes.json";
 
 export const BLOG_SUBDOMINIO_HOST = "blog.totalquality.med.br";
 const DESTINO_BASE = "https://totalquality.med.br";
 
 /** Slug da Airticles (/posts/<slug>) -> slug do /blog. */
-export const POSTS_MIGRADOS: Record<string, string> = {
-  // Migrados em 27/10/2026, nascem rascunho para a revisao medica.
-  "ultrassom-de-tireoide-para-que-serve-e-como-e-feito": "ultrassom-de-tireoide",
-  "tirzepatida-exames-de-acompanhamento-e-alerta-da-anvisa-sobre-falsificacao":
-    "tirzepatida-exames-e-falsificacao",
-  // Despublicados em 22/10/2026 por repetirem tema do /blog.
-  "hipoglicemia-o-que-voce-precisa-saber-para-manter-sua-saude-em-dia": "hipoglicemia-sintomas-e-exames",
-  "hemograma-completo-o-que-ele-pode-revelar": "hemograma-completo-o-que-avalia",
-};
+export const POSTS_MIGRADOS: Record<string, string> = migrationRoutes.migrated;
 
 /** Retirados por estarem fora do foco da clinica: sem equivalente, 410. */
-export const POSTS_REMOVIDOS = new Set(["hormonios-do-amor-o-que-sao-e-como-agem"]);
+export const POSTS_REMOVIDOS = new Set(migrationRoutes.removed);
 
 type PostIndice = { slug: string; draft?: boolean; examPages?: string[] };
 const INDICE = blogIndex as PostIndice[];

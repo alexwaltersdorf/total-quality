@@ -1,5 +1,9 @@
 # Relatório de SEO — nov/2026 (Fase 7: verificação)
 
+> Histórico da Fase 7 em 15/11. Estado público, PRs #94/#101 já integrados,
+> Search Console e migração em 23/11: [auditoria atual](seo-auditoria-2026-11-23.md).
+> Os estados de PR e pendências abaixo pertencem à data original.
+
 **Branch:** `seo/otimizacao-nov-2026` (PR #105), comparado com `origin/main` em `fc5bfe0`.
 **Data:** 15/11/2026. **Ambiente:** servidor de produção local (`pnpm build` +
 `NODE_ENV=production node dist/index.js`) — a main na porta 3200 ("antes"), o branch na 3100

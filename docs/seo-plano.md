@@ -1,5 +1,10 @@
 # Plano de otimização de SEO — nov/2026 (Fase 0)
 
+> Plano histórico. Em 23/11, #94 e #101 já foram integrados, mas a migração do
+> host antigo ainda não está ativa publicamente. Ver [evidências atuais e plano
+> de ativação/reversão](seo-auditoria-2026-11-23.md); não repetir os PRs antigos
+> nem executar mudanças de DNS/hospedagem sem confirmação específica do Alex.
+
 **Status:** aguardando aprovação do Alex. Nenhum código foi alterado nesta fase.
 **Branch:** `seo/otimizacao-nov-2026` (a partir de `origin/main` em `fc5bfe0`, merge do PR #104).
 **Base:** briefing de 14/11/2026 (decisões da seção 3 preenchidas pelo Alex), `CLAUDE.md`,
