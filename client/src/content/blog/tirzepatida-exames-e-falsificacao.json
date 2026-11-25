@@ -20,9 +20,9 @@
     "exames de sangue",
     "medicamento falsificado"
   ],
-  "draft": true,
-  "reviewStatus": "revisao_medica_pendente",
-  "dateModified": "2026-10-27",
+  "draft": false,
+  "reviewStatus": "aprovado",
+  "dateModified": "2026-11-25",
   "examName": "exames de sangue",
   "examType": "exames-de-sangue",
   "examPages": [
@@ -74,5 +74,6 @@
     "- [Anvisa determina apreensão de lote falsificado de Mounjaro](https://agenciabrasil.ebc.com.br/saude/noticia/2026-07/anvisa-determina-apreensao-de-lote-falsificado-de-mounjaro) — Agência Brasil, 2026",
     "- [SAMU 192](https://www.gov.br/saude/pt-br/composicao/saes/samu-192) — Ministério da Saúde",
     "Este artigo é informativo e não substitui consulta médica. A indicação dos exames, do tratamento e a interpretação de qualquer resultado são do seu médico. Em caso de urgência, ligue para o SAMU 192."
-  ]
+  ],
+  "lastReviewed": "2026-11-25"
 }
