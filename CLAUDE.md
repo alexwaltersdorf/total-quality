@@ -14,6 +14,25 @@ A base de conhecimento do trabalho de SEO e do perfil no Google vive no outro
 repositório, `alexwaltersdorf/SEO---Total-Quality` (`CLAUDE.md` e
 `REGRA-GTM-RASTREAMENTO.md`).
 
+## Identificação profissional (CFM) — texto fixo
+
+A Resolução CFM nº 2.336/2023 (arts. 4º, 5º e 6º) exige identificação em peça pública de
+estabelecimento de saúde. Para a Total Quality os dados são estes, definidos pelo Alex:
+
+- **Registro no CRM/SP: `970616`**
+- **Responsável Técnico: `Alex Waltersdorf - 267.339`**
+
+**Nunca escrever a sigla "CRM" no texto renderizado nem em campo de dado.** Só os números.
+Vale para rodapé, `authorRole` de artigo, JSON-LD, meta tag, alt de imagem — qualquer coisa
+que chegue ao usuário ou ao robô.
+
+Bloco padrão:
+
+> Total Quality Medicina Diagnóstica — Registro 970616
+> Responsável Técnico: Alex Waltersdorf - 267.339
+
+`266.339` é um número errado que já circulou em rascunho. Se aparecer, trocar por `267.339`.
+
 ## Rastreamento — regra permanente
 
 Vale para qualquer alteração que toque pixel, tag, evento ou conversão, mesmo
