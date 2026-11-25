@@ -20,9 +20,9 @@
     "Doppler",
     "TSH e T4 livre"
   ],
-  "draft": true,
-  "reviewStatus": "revisao_medica_pendente",
-  "dateModified": "2026-10-27",
+  "draft": false,
+  "reviewStatus": "aprovado",
+  "dateModified": "2026-11-25",
   "examName": "ultrassom de tireoide",
   "examType": "ultrassonografia",
   "examPages": [
@@ -78,5 +78,6 @@
     "- [Thyroid ultrasound](https://medlineplus.gov/ency/article/003776.htm) — MedlinePlus, National Library of Medicine (EUA)",
     "- [ACR Thyroid Imaging, Reporting and Data System (TI-RADS): White Paper of the ACR TI-RADS Committee](https://pubmed.ncbi.nlm.nih.gov/28372962/) — Journal of the American College of Radiology, 2017",
     "Este artigo é informativo e não substitui consulta médica. A indicação do exame e a interpretação do laudo são do seu médico."
-  ]
+  ],
+  "lastReviewed": "2026-11-25"
 }

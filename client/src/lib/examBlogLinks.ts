@@ -28,6 +28,7 @@ export const EXAM_BLOG_LINKS: Record<string, string[]> = {
     "exame-de-urina-eas-como-coletar",
     "resultado-de-exames-online-seguranca",
     "como-escolher-laboratorio-analises-clinicas",
+    "tirzepatida-exames-e-falsificacao",
   ],
   hemograma: [
     "hemograma-completo-o-que-avalia",
@@ -56,6 +57,7 @@ export const EXAM_BLOG_LINKS: Record<string, string[]> = {
     "ultrassom-transvaginal-preparo",
     "diferenca-ultrassom-comum-doppler",
     "mamografia-ultrassom-mamas-diferencas",
+    "ultrassom-de-tireoide",
   ],
   mapa: [
     "exames-diagnostico-hipertensao",

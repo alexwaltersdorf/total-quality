@@ -1405,9 +1405,9 @@
       "Doppler",
       "TSH e T4 livre"
     ],
-    "draft": true,
-    "reviewStatus": "revisao_medica_pendente",
-    "dateModified": "2026-10-27",
+    "draft": false,
+    "reviewStatus": "aprovado",
+    "dateModified": "2026-11-25",
     "examName": "ultrassom de tireoide",
     "examType": "ultrassonografia",
     "examPages": [
@@ -1418,7 +1418,8 @@
       "diferenca-ultrassom-comum-doppler",
       "siglas-exames-laboratoriais",
       "exames-de-sangue-guia-completo"
-    ]
+    ],
+    "lastReviewed": "2026-11-25"
   },
   {
     "id": "49",
@@ -1442,9 +1443,9 @@
       "exames de sangue",
       "medicamento falsificado"
     ],
-    "draft": true,
-    "reviewStatus": "revisao_medica_pendente",
-    "dateModified": "2026-10-27",
+    "draft": false,
+    "reviewStatus": "aprovado",
+    "dateModified": "2026-11-25",
     "examName": "exames de sangue",
     "examType": "exames-de-sangue",
     "examPages": [
@@ -1455,6 +1456,7 @@
       "siglas-exames-laboratoriais",
       "exames-de-sangue-guia-completo",
       "hemograma-completo-o-que-avalia"
-    ]
+    ],
+    "lastReviewed": "2026-11-25"
   }
 ]
